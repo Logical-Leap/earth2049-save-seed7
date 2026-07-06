@@ -1,5 +1,7 @@
 # EARTH 2049: SAVE SEED 7
 
+**▶ PLAY NOW: https://logical-leap.github.io/earth2049-save-seed7/** — desktop or phone, no install.
+
 A first-person roguelike shooter set in the Earth 2049 universe. You are **Punished Elliot**,
 casting combat simulations through the OG Device to find the timeline where Turing falls.
 
