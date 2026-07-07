@@ -11,19 +11,19 @@ const Assets = (() => {
     shill: {
       url: 'assets/models/enemies/shillz-common.glb',
       height: 0.18,
-      rootScale: 0.2,
+      rootScale: 0.1,
       anim: { idle:/alert|idle/i, walk:/walk_forward|walking|walk/i, run:/run_and_shoot|running|run/i, attack:/boxing|shoot/i, hit:/hit|reaction/i, dead:/dead/i },
     },
     runner: {
       url: 'assets/models/enemies/musker-common.glb',
       height: 0.19,
-      rootScale: 0.2,
+      rootScale: 0.1,
       anim: { idle:/idle/i, walk:/walking|walk/i, run:/runfast|running|run_fast|run/i, attack:/kick|hook|punch|charge|lunge/i, hit:/knock|hit|shot/i, dead:/dead|fall/i },
     },
     broker: {
       url: 'assets/models/enemies/cryptid-common.glb',
       height: 0.18,
-      rootScale: 0.2,
+      rootScale: 0.1,
       anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
     },
   };
