@@ -52,13 +52,27 @@ LRX-7 Harbinger Sniper · Compliance Saw LMG · Plasma Lancer · MGL-6 Thunderer
 
 ## Tech Notes
 
-- Core world, pickups, projectiles, and fallback enemies are generated procedurally in code
-  (canvas textures, rigged low-poly meshes, synthesized WebAudio SFX/music)
-- Selected finished GLB enemies are loaded for matching faction commons: ShillZ common,
-  Musker runner, and Cryptid broker
-- The finished AR GLB is loaded as the M-52 Revenant assault-rifle viewmodel
-- Three.js r147 (UMD) + UnrealBloom postprocessing, local copies in `lib/` — fully offline
+- No-build static Three.js r147 (UMD) + UnrealBloom postprocessing, local copies in `lib/`
+- `js/loader.js` provides a runtime asset/data layer for Three.js Editor scene JSON, GLB manifests, and optional external data overrides
+- Districts can reference editor-authored scenes under `assets/scenes/districts/`; ShillZ Central includes a small sample scene with player start, boss arena, enemy spawn, pickup, and collider markers
+- Core gameplay remains code-driven: waves, AI, weapons, abilities, upgrades, Turing Director, HUD, saves, and mobile controls
+- Procedural districts, pickups, projectiles, and fallback enemies remain available when external scenes/models fail or are omitted
+- Selected finished GLB enemies are loaded for matching faction commons: ShillZ common, Musker runner, and Cryptid broker
+- The finished AR GLB is loaded as the M-52 Revenant assault-rifle viewmodel via `assets/data/asset-manifest.json`
 - Save data (GigaTech, upgrades, stats, options) persists in browser localStorage
 - Adaptive quality: resolution and bloom scale down automatically on slower devices
+
+## Editor / Asset Workflow
+
+- Use the official Three.js Editor: https://threejs.org/editor/
+- Export scene JSON into `assets/scenes/districts/`
+- Add gameplay markers named `E2049_PLAYER_START`, `E2049_BOSS_ARENA`, `E2049_ENEMY_SPAWN`, `E2049_PICKUP_SPAWN`, `E2049_COLLIDER`, `E2049_COVER`, or `E2049_BLOCKER`
+- Reference the scene with `sceneUrl` in `DISTRICTS`
+- Put GLBs under `assets/models/` and reference them from `assets/data/asset-manifest.json`
+
+See:
+
+- [`THREEJS_EDITOR_WORKFLOW.md`](THREEJS_EDITOR_WORKFLOW.md)
+- [`ASSET_PIPELINE.md`](ASSET_PIPELINE.md)
 
 *This revolution brought to you by GigaCorp.*

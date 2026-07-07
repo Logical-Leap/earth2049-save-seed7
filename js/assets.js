@@ -346,7 +346,8 @@ const Assets = (() => {
     rig.root.add(sp);
   }
 
-  function preloadExternalModels() {
+  async function preloadExternalModels() {
+    await AssetLoader?.preloadManifest?.();
     if (!THREE.GLTFLoader) return Promise.resolve();
     const loader = new THREE.GLTFLoader();
     const entries = [
@@ -375,7 +376,8 @@ const Assets = (() => {
 
   function makeExternalRig(typeId) {
     const def = EXTERNAL_MODELS[typeId];
-    const rec = def && modelCache['enemy:' + typeId];
+    const manifestGltf = AssetLoader?.getModel?.('enemy.' + typeId);
+    const rec = manifestGltf ? { gltf: manifestGltf, error: null } : (def && modelCache['enemy:' + typeId]);
     if (!def || !rec?.gltf || rec.error) return null;
     const rig = newRig();
     rig.external = true;
@@ -921,7 +923,8 @@ const Assets = (() => {
 
   function makeExternalGun(clsKey) {
     const def = EXTERNAL_GUNS[clsKey];
-    const rec = def && modelCache['gun:' + clsKey];
+    const manifestGltf = AssetLoader?.getModel?.('weapon.' + clsKey);
+    const rec = manifestGltf ? { gltf: manifestGltf, error: null } : (def && modelCache['gun:' + clsKey]);
     if (!def || !rec?.gltf || rec.error) return null;
     const g = new THREE.Group();
     const model = cloneExternalScene(rec.gltf.scene);

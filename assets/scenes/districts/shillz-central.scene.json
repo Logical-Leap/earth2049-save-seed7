@@ -1,0 +1,114 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 sample Three.js Editor scene"
+  },
+  "geometries": [
+    { "uuid": "geo-marker", "type": "BoxGeometry", "width": 1, "height": 1, "depth": 1 },
+    { "uuid": "geo-floor", "type": "BoxGeometry", "width": 34, "height": 0.08, "depth": 34 },
+    { "uuid": "geo-cover", "type": "BoxGeometry", "width": 4, "height": 1.1, "depth": 1.4 }
+  ],
+  "materials": [
+    { "uuid": "mat-marker", "type": "MeshBasicMaterial", "color": 16776960, "transparent": true, "opacity": 0.35 },
+    { "uuid": "mat-floor", "type": "MeshBasicMaterial", "color": 2631720, "transparent": true, "opacity": 0.28 },
+    { "uuid": "mat-cover", "type": "MeshStandardMaterial", "color": 16739840, "roughness": 0.55, "metalness": 0.25 }
+  ],
+  "object": {
+    "uuid": "scene-shillz-central-editor-sample",
+    "type": "Scene",
+    "name": "SHILLZ CENTRAL EDITOR SAMPLE",
+    "children": [
+      {
+        "uuid": "floor-sample",
+        "type": "Mesh",
+        "name": "E2049_PROP_SAMPLE_EDITOR_FLOOR",
+        "geometry": "geo-floor",
+        "material": "mat-floor",
+        "position": [0, -0.04, 0]
+      },
+      {
+        "uuid": "player-start",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker",
+        "position": [0, 0.5, 14],
+        "scale": [1.2, 0.2, 1.2]
+      },
+      {
+        "uuid": "boss-arena",
+        "type": "Mesh",
+        "name": "E2049_BOSS_ARENA",
+        "geometry": "geo-marker",
+        "material": "mat-marker",
+        "position": [0, 0.5, -13],
+        "scale": [2, 0.2, 2]
+      },
+      {
+        "uuid": "enemy-spawn-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker",
+        "position": [-10, 0.5, -7],
+        "scale": [1, 0.2, 1]
+      },
+      {
+        "uuid": "enemy-spawn-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker",
+        "position": [10, 0.5, -7],
+        "scale": [1, 0.2, 1]
+      },
+      {
+        "uuid": "pickup-spawn-a",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker",
+        "position": [8, 0.5, 8],
+        "scale": [0.8, 0.2, 0.8]
+      },
+      {
+        "uuid": "cover-visible-a",
+        "type": "Mesh",
+        "name": "EDITOR_SAMPLE_VISIBLE_COVER_A",
+        "geometry": "geo-cover",
+        "material": "mat-cover",
+        "position": [-4, 0.55, 2]
+      },
+      {
+        "uuid": "cover-collider-a",
+        "type": "Mesh",
+        "name": "E2049_COLLIDER_COVER_A",
+        "geometry": "geo-cover",
+        "material": "mat-marker",
+        "position": [-4, 0.55, 2],
+        "userData": { "climb": true, "gameplayType": "cover" }
+      },
+      {
+        "uuid": "blocker-north",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_NORTH",
+        "geometry": "geo-cover",
+        "material": "mat-marker",
+        "position": [0, 1.5, -17],
+        "scale": [8, 2.4, 0.8],
+        "userData": { "gameplayType": "arenaWall" }
+      },
+      {
+        "uuid": "light-key",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_KEY_SHILLZ",
+        "color": 16770560,
+        "intensity": 1.4,
+        "distance": 40,
+        "decay": 2,
+        "position": [0, 7, 0]
+      }
+    ]
+  }
+}
