@@ -502,12 +502,18 @@ const World = (() => {
     return !r;
   }
 
-  // axis-separated circle vs grid movement
-  function moveCircle(x, z, dx, dz, r, y) {
+  // Enemy/nav movement remains grid-only. Player movement adds authored prop collision.
+  function moveCircle(x, z, dx, dz, r) {
+    return moveWithHitTest(x, z, dx, dz, r, circleHits);
+  }
+  function movePlayerCircle(x, z, dx, dz, r, y) {
+    return moveWithHitTest(x, z, dx, dz, r, (cx, cz, cr) => circleHits(cx, cz, cr) || playerPropHits(cx, cz, cr, y));
+  }
+  function moveWithHitTest(x, z, dx, dz, r, hitTest) {
     let nx = x + dx, nz = z + dz;
-    if (circleHits(nx, z, r, y)) nx = x;
-    if (circleHits(nx, nz, r, y)) nz = z;
-    if (circleHits(nx, nz, r, y)) { nx = x; nz = z; }
+    if (hitTest(nx, z, r)) nx = x;
+    if (hitTest(nx, nz, r)) nz = z;
+    if (hitTest(nx, nz, r)) { nx = x; nz = z; }
     return { x: nx, z: nz };
   }
   function gridCircleHits(x, z, r) {
@@ -521,15 +527,19 @@ const World = (() => {
     }
     return false;
   }
-  function colliderBlocks(c, x, z, r, y) {
+  function playerColliderBlocks(c, x, z, r, y) {
     if (!rectCircleHit(c, x, z, r)) return false;
-    if (y === undefined) return true;
     if (c.y0 > y + CFG.PLAYER_H) return false;
     return !(c.climb && y + 0.18 >= c.h);
   }
-  function circleHits(x, z, r, y) {
-    if (gridCircleHits(x, z, r)) return true;
-    return colliders.some(c => colliderBlocks(c, x, z, r, y));
+  function spawnBlockedByProp(x, z, r) {
+    return colliders.some(c => !c.climb && rectCircleHit(c, x, z, r));
+  }
+  function circleHits(x, z, r) {
+    return gridCircleHits(x, z, r);
+  }
+  function playerPropHits(x, z, r, y) {
+    return colliders.some(c => playerColliderBlocks(c, x, z, r, y));
   }
   function groundHeight(x, z, r) {
     let h = 0;
@@ -576,7 +586,7 @@ const World = (() => {
     for (let i = 0; i < 60; i++) {
       const c = freeCells[(Math.random() * freeCells.length) | 0];
       const { x, z } = cellCenter(c.cx, c.cy);
-      if (Math.hypot(x - px, z - pz) >= minD && !circleHits(x, z, 0.8)) return { x, z };
+      if (Math.hypot(x - px, z - pz) >= minD && !circleHits(x, z, 0.8) && !spawnBlockedByProp(x, z, 0.8)) return { x, z };
     }
     const c = freeCells[(Math.random() * freeCells.length) | 0];
     return cellCenter(c.cx, c.cy);
@@ -593,5 +603,5 @@ const World = (() => {
     return cellCenter((W - 1) / 2, (H - 1) / 2);
   }
 
-  return { build, tick, raycast, losClear, moveCircle, circleHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; } };
+  return { build, tick, raycast, losClear, moveCircle, movePlayerCircle, circleHits, playerPropHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; } };
 })();
