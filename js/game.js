@@ -1074,7 +1074,7 @@ function playerTick(dt) {
   Input.dash = false;
   if (p.dashT > 0) { p.dashT -= dt; mvx = p.dashX * CFG.DASH_SPEED; mvz = p.dashZ * CFG.DASH_SPEED; }
 
-  const r = World.moveCircle(p.pos.x, p.pos.z, mvx * dt, mvz * dt, CFG.PLAYER_R, p.pos.y);
+  const r = World.movePlayerCircle(p.pos.x, p.pos.z, mvx * dt, mvz * dt, CFG.PLAYER_R, p.pos.y);
   p.pos.x = r.x; p.pos.z = r.z;
 
   // gravity / jump, including reachable ShillZ cover tops.
