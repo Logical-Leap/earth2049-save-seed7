@@ -1074,15 +1074,17 @@ function playerTick(dt) {
   Input.dash = false;
   if (p.dashT > 0) { p.dashT -= dt; mvx = p.dashX * CFG.DASH_SPEED; mvz = p.dashZ * CFG.DASH_SPEED; }
 
-  const r = World.moveCircle(p.pos.x, p.pos.z, mvx * dt, mvz * dt, CFG.PLAYER_R);
+  const r = World.moveCircle(p.pos.x, p.pos.z, mvx * dt, mvz * dt, CFG.PLAYER_R, p.pos.y);
   p.pos.x = r.x; p.pos.z = r.z;
 
-  // gravity / jump
+  // gravity / jump, including reachable ShillZ cover tops.
+  const floorY = World.groundHeight ? World.groundHeight(p.pos.x, p.pos.z, CFG.PLAYER_R * 0.75) : 0;
   if (Input.jump && p.onGround) { p.velY = CFG.JUMP_V; p.onGround = false; AudioSys.sfx('jump'); }
   Input.jump = false;
   p.velY += CFG.GRAVITY * dt;
   p.pos.y += p.velY * dt;
-  if (p.pos.y <= 0) { p.pos.y = 0; p.velY = 0; p.onGround = true; }
+  if (p.pos.y <= floorY && p.velY <= 0) { p.pos.y = floorY; p.velY = 0; p.onGround = true; }
+  else if (p.pos.y > floorY + 0.08) p.onGround = false;
 
   p.iframesT -= dt; p.fireT -= dt; p.swapT -= dt; p.adrenalT -= dt;
   if (kl > 0.1 && p.onGround) p.bobT += dt * spd * 1.55;

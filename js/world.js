@@ -12,7 +12,7 @@ const World = (() => {
   let rain = null, rainPos = null, rainVel = null;
   let embers = null, emberPos = null;
   let signMats = [], holos = [];
-  let themeRef = null, spawnCell = null, bossCell = null;
+  let themeRef = null, spawnCell = null, bossCell = null, colliders = [];
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -52,14 +52,10 @@ const World = (() => {
     for (let i = 0; i < W; i++) { grid[idx(i, 0)] = CFG.WALL_H; grid[idx(i, H - 1)] = CFG.WALL_H; }
     for (let j = 0; j < H; j++) { grid[idx(0, j)] = CFG.WALL_H; grid[idx(W - 1, j)] = CFG.WALL_H; }
 
-    const S = 0.62;
-    const cover = [
-      [-22,-6,5,2],[-15,-3,4,2],[-7,-5,5,2],[3,-7,5,2],[12,-5,5,2],
-      [21,-8,7,2],[27,-5,4,2],[32,-1,6,2],[-29,5,7,2],[-20,9,5,2],
-      [-9,8,6,2],[7,9,5,2],[18,8,8,2],[28,10,5,2],
-    ];
-    for (const [x, z, sx, sz] of cover) stampWorldRect(x * S, z * S, sx * S, sz * S, 2.3);
-    for (const [x, z, sx, sz] of [[26,-3,13,2],[32,5,2,14],[0,8,16,1.2],[-34,18,13,7],[28,22,17,12]]) {
+    const S = 0.72;
+    // Keep the navigation grid open through the plaza; physical cover is handled
+    // by fine-grained colliders so players can jump onto reachable props.
+    for (const [x, z, sx, sz] of [[-34,18,13,7],[28,22,17,12]]) {
       stampWorldRect(x * S, z * S, sx * S, sz * S, 2.3);
     }
     for (const [x, z, sx, sz] of [[0,-36.2,29,1.2],[-52,1,2.8,62],[52,1,2.8,62],[0,31.5,74,2.4]]) {
@@ -108,14 +104,29 @@ const World = (() => {
   function mapMat(color, emissive, intensity) {
     return new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.18, emissive: emissive || 0x000000, emissiveIntensity: intensity || 0 });
   }
-  function mapBox(name, x, y, z, sx, sy, sz, mat) {
+  function registerCollider(name, x, y, z, sx, sy, sz, opts) {
+    const top = y + sy;
+    colliders.push({ name, x, z, sx, sz, y0: y, h: top, climb: opts?.climb ?? (y <= 0.15 && top <= 1.25) });
+  }
+  function mapBox(name, x, y, z, sx, sy, sz, mat, opts) {
     const g = new THREE.BoxGeometry(sx, sy, sz);
     const m = new THREE.Mesh(g, mat);
     m.name = name;
     m.position.set(x, y + sy / 2, z);
     group.add(m);
+    if (!opts || opts.collide !== false) registerCollider(name, x, y, z, sx, sy, sz, opts);
     return m;
   }
+  function rectCircleHit(c, x, z, r) {
+    const hx = c.sx / 2, hz = c.sz / 2;
+    const px = Math.max(c.x - hx, Math.min(x, c.x + hx));
+    const pz = Math.max(c.z - hz, Math.min(z, c.z + hz));
+    return (px - x) * (px - x) + (pz - z) * (pz - z) < r * r;
+  }
+  function pointInRect(c, x, z) {
+    return Math.abs(x - c.x) <= c.sx / 2 && Math.abs(z - c.z) <= c.sz / 2;
+  }
+
   function mapPlane(name, x, y, z, sx, sz, mat) {
     const m = new THREE.Mesh(new THREE.PlaneGeometry(sx, sz), mat);
     m.name = name;
@@ -133,7 +144,7 @@ const World = (() => {
     return mesh;
   }
   function buildEngagementSquareBlockout(fac) {
-    const S = 0.62;
+    const S = 0.72;
     const sc = (v) => v * S;
     const yellow = mapMat(fac.neon, fac.neon, 0.1);
     const orange = mapMat(0xff6a00, 0xff6a00, 0.05);
@@ -154,13 +165,36 @@ const World = (() => {
     mapBox('speaker_tower_R', sc(16.5), 0, sc(-33), 1.4, 7.8, 1.4, black);
 
     const cover = [
-      [-22,-6,5,2],[-15,-3,4,2],[-7,-5,5,2],[3,-7,5,2],[12,-5,5,2],[21,-8,7,2],[27,-5,4,2],[32,-1,6,2],
-      [-29,5,7,2],[-20,9,5,2],[-9,8,6,2],[7,9,5,2],[18,8,8,2],[28,10,5,2],
+      [-22,-6,5,2,'sponsor_barrier'],[-15,-3,4,2,'speaker_case'],[-7,-5,5,2,'media_riser'],[3,-7,5,2,'ad_block'],
+      [12,-5,5,2,'newsstand'],[21,-8,7,2,'barricade'],[27,-5,4,2,'speaker_case'],[32,-1,6,2,'ad_block'],
+      [-29,5,7,2,'merch_table'],[-20,9,5,2,'sponsor_barrier'],[-9,8,6,2,'speaker_case'],[7,9,5,2,'ad_block'],
+      [18,8,8,2,'merch_table'],[28,10,5,2,'newsstand'],
     ];
-    cover.forEach((c, i) => mapBox('ENGAGEMENT_COVER_CRATE_' + i, sc(c[0]), 0, sc(c[1]), sc(c[2]), 1.45, sc(c[3]), i % 3 === 0 ? yellow : metal));
-    mapBox('ENGAGEMENT_CHOKE_right_barricade_A', sc(26), 0, sc(-3), sc(13), 1.55, sc(2), orange);
-    mapBox('ENGAGEMENT_CHOKE_right_barricade_B', sc(32), 0, sc(5), sc(2), 1.55, sc(14), orange);
-    mapBox('ENGAGEMENT_CHOKE_mid_low_wall', 0, 0, sc(8), sc(16), 1.0, 0.8, metal);
+    function addCoverVariant(c, i) {
+      const [x, z, sx, sz, type] = c;
+      const bx = sc(x), bz = sc(z), bsx = sc(sx), bsz = sc(sz);
+      if (type === 'speaker_case') {
+        mapBox('SHILLZ_SPEAKER_CASE_collidable_' + i, bx, 0, bz, bsx, 0.95, bsz, black, { climb: true });
+        mapBox('SHILLZ_SPEAKER_STACK_visual_' + i, bx - bsx * 0.22, 0.95, bz, bsx * 0.28, 1.1, bsz * 0.75, yellow, { collide: false });
+      } else if (type === 'merch_table') {
+        mapBox('SHILLZ_MERCH_TABLE_jumpable_' + i, bx, 0, bz, bsx, 0.82, bsz, yellow, { climb: true });
+        mapBox('SHILLZ_MERCH_CANOPY_visual_' + i, bx, 1.95, bz, bsx * 1.08, 0.22, bsz * 1.35, black, { collide: false });
+      } else if (type === 'newsstand') {
+        mapBox('SHILLZ_NEWSSTAND_blocker_' + i, bx, 0, bz, bsx, 1.65, bsz, metal, { climb: false });
+        mapSign('BUY\nRISE', bx, 1.95, bz - bsz * 0.54, Math.max(2.2, bsx * 0.9), 1.2, fac.neon, 0);
+      } else if (type === 'media_riser') {
+        mapBox('SHILLZ_MEDIA_RISER_jumpable_' + i, bx, 0, bz, bsx, 1.05, bsz, cyan, { climb: true });
+        mapBox('SHILLZ_MEDIA_RISER_trim_' + i, bx, 1.05, bz, bsx, 0.12, bsz, yellow, { collide: false });
+      } else if (type === 'barricade') {
+        mapBox('SHILLZ_CROWD_BARRICADE_' + i, bx, 0, bz, bsx, 1.15, bsz, orange, { climb: true });
+      } else {
+        mapBox('SHILLZ_SPONSOR_BARRIER_' + i, bx, 0, bz, bsx, 0.92, bsz, i % 2 ? metal : yellow, { climb: true });
+      }
+    }
+    cover.forEach(addCoverVariant);
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_A', sc(26), 0, sc(-3), sc(13), 1.15, sc(2), orange, { climb: true });
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_B', sc(32), 0, sc(5), sc(2), 1.15, sc(14), orange, { climb: true });
+    mapBox('ENGAGEMENT_CHOKE_mid_low_wall', 0, 0, sc(8), sc(16), 0.9, 0.8, metal, { climb: true });
 
     mapBox('MERCH_KIOSK_LOOT_counter', sc(-34), 0, sc(18), sc(13), 2.0, sc(7), black);
     mapBox('MERCH_KIOSK_LOOT_awning', sc(-34), 2.0, sc(18), sc(15), 0.45, sc(8.5), yellow);
@@ -197,7 +231,7 @@ const World = (() => {
   function build(scene, dIdx) {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
-    signMats = []; holos = [];
+    signMats = []; holos = []; colliders = [];
     const theme = DISTRICTS[dIdx]; themeRef = theme;
     const fac = FACTIONS[theme.fac];
     genLayout();
@@ -243,18 +277,19 @@ const World = (() => {
         }
       }
     }
-    if (wallGeos.length) {
+    if (theme.map !== 'engagementSquare' && wallGeos.length) {
       const merged = THREE.BufferGeometryUtils.mergeBufferGeometries(wallGeos);
       const wm = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 0.8, metalness: 0.2 }));
       group.add(wm);
       wallGeos.forEach(g => g.dispose());
     }
-    if (crateGeos.length) {
+    if (theme.map !== 'engagementSquare' && crateGeos.length) {
       const merged = THREE.BufferGeometryUtils.mergeBufferGeometries(crateGeos);
       const cm = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ map: Assets.crateTex(theme), roughness: 0.7, metalness: 0.3 }));
       group.add(cm);
       crateGeos.forEach(g => g.dispose());
     }
+    if (theme.map === 'engagementSquare') { wallGeos.forEach(g => g.dispose()); crateGeos.forEach(g => g.dispose()); }
 
     // neon trim on top of arena walls
     const trim = new THREE.Mesh(
@@ -439,6 +474,20 @@ const World = (() => {
         }
       }
     }
+    if (colliders.length) {
+      const steps = Math.max(2, Math.min(80, Math.ceil(maxDist / 0.35)));
+      for (let i = 1; i <= steps; i++) {
+        const t = maxDist * i / steps;
+        if (t >= best) break;
+        const x = ox + dx * t, y = oy + dy * t, z = oz + dz * t;
+        for (const c of colliders) {
+          if (y >= c.y0 - 0.05 && y <= c.h + 0.05 && pointInRect(c, x, z)) {
+            best = t; hit = true; ground = false;
+            break;
+          }
+        }
+      }
+    }
     if (!hit) return null;
     return { t: best, ground, x: ox + dx * best, y: oy + dy * best, z: oz + dz * best };
   }
@@ -452,14 +501,15 @@ const World = (() => {
   }
 
   // axis-separated circle vs grid movement
-  function moveCircle(x, z, dx, dz, r) {
+  function moveCircle(x, z, dx, dz, r, y) {
     let nx = x + dx, nz = z + dz;
-    if (circleHits(nx, z, r)) nx = x;
-    if (circleHits(nx, nz, r)) nz = z;
-    if (circleHits(nx, nz, r)) { nx = x; nz = z; }
+    if (circleHits(nx, z, r, y)) nx = x;
+    if (circleHits(nx, nz, r, y)) nz = z;
+    if (circleHits(nx, nz, r, y)) { nx = x; nz = z; }
     return { x: nx, z: nz };
   }
-  function circleHits(x, z, r) {
+  function circleHits(x, z, r, y) {
+    const yTop = y === undefined ? 0 : y + 0.18;
     const minCx = Math.floor((x - r + HALF_W) / CELL), maxCx = Math.floor((x + r + HALF_W) / CELL);
     const minCy = Math.floor((z - r + HALF_H) / CELL), maxCy = Math.floor((z + r + HALF_H) / CELL);
     for (let cy = minCy; cy <= maxCy; cy++) for (let cx = minCx; cx <= maxCx; cx++) {
@@ -469,7 +519,21 @@ const World = (() => {
         if ((px - x) * (px - x) + (pz - z) * (pz - z) < r * r) return true;
       }
     }
+    for (const c of colliders) {
+      if (!rectCircleHit(c, x, z, r)) continue;
+      if (y === undefined) return true;
+      if (c.y0 > y + CFG.PLAYER_H) continue;
+      if (c.climb && yTop >= c.h) continue;
+      return true;
+    }
     return false;
+  }
+  function groundHeight(x, z, r) {
+    let h = 0;
+    for (const c of colliders) {
+      if (c.climb && rectCircleHit(c, x, z, r || CFG.PLAYER_R * 0.8)) h = Math.max(h, c.h);
+    }
+    return h;
   }
 
   /* flow field toward player */
@@ -509,7 +573,7 @@ const World = (() => {
     for (let i = 0; i < 60; i++) {
       const c = freeCells[(Math.random() * freeCells.length) | 0];
       const { x, z } = cellCenter(c.cx, c.cy);
-      if (Math.hypot(x - px, z - pz) >= minD) return { x, z };
+      if (Math.hypot(x - px, z - pz) >= minD && !circleHits(x, z, 0.8)) return { x, z };
     }
     const c = freeCells[(Math.random() * freeCells.length) | 0];
     return cellCenter(c.cx, c.cy);
@@ -526,5 +590,5 @@ const World = (() => {
     return cellCenter((W - 1) / 2, (H - 1) / 2);
   }
 
-  return { build, tick, raycast, losClear, moveCircle, circleHits, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; } };
+  return { build, tick, raycast, losClear, moveCircle, circleHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; } };
 })();
