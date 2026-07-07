@@ -23,11 +23,37 @@ function loadSave() {
   try { SAVE = JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch (e) { SAVE = null; }
   if (!SAVE) SAVE = { gt: 0, up: {}, runs: 0, bestD: 0, kills: 0, wins: 0, opts: { sens: 1, music: true, sfx: true, auto: true } };
   if (!SAVE.opts) SAVE.opts = { sens: 1, music: true, sfx: true, auto: true };
+  if (!SAVE.up) SAVE.up = {};
   if (!SAVE.intel) SAVE.intel = {};
   for (const id of Object.keys(FACTIONS)) if (id !== 'rebels' && !SAVE.intel[id]) SAVE.intel[id] = { points: 0, leaders: 0 };
+  SAVE.corruption = Number(SAVE.corruption || 0);
+  if (!SAVE.abilities) SAVE.abilities = {};
+  for (const id of Object.keys(ABILITIES)) if (!SAVE.abilities[id]) SAVE.abilities[id] = { unlocked: id === 'empGrenade', level: id === 'empGrenade' ? 1 : 0 };
+  if (!Array.isArray(SAVE.equippedAbilities)) SAVE.equippedAbilities = ['empGrenade'];
+  if (!SAVE.mastery) SAVE.mastery = {};
+  for (const id of Object.keys(WEAPONS)) if (!SAVE.mastery[id]) SAVE.mastery[id] = { xp: 0, level: 0, kills: 0, eliteKills: 0, bossDamage: 0, headshots: 0, clears: 0 };
+  if (!SAVE.relics) SAVE.relics = {};
+  SAVE.simTier = Math.max(1, Number(SAVE.simTier || 1));
+  if (!SAVE.modifiersSeen) SAVE.modifiersSeen = {};
+  if (!SAVE.codex) SAVE.codex = {};
+  if (!SAVE.corruptionUp) SAVE.corruptionUp = {};
 }
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {} }
 const upLv = id => SAVE.up[id] || 0;
+const corruptLv = id => SAVE.corruptionUp?.[id] || 0;
+const abilityLv = id => SAVE.abilities?.[id]?.level || 0;
+const hasRelic = id => !!SAVE.relics?.[id];
+function intelPoints(fac){ return SAVE.intel?.[fac]?.points || 0; }
+function intelRank(fac){ const p = intelPoints(fac); return p >= 180 ? 4 : p >= 90 ? 3 : p >= 35 ? 2 : p > 0 ? 1 : 0; }
+function ensureAbilityUnlocks(){
+  for (const [id,a] of Object.entries(ABILITIES)) {
+    const rec = SAVE.abilities[id] || (SAVE.abilities[id] = { unlocked:false, level:0 });
+    if (rec.unlocked) continue;
+    if (a.unlock?.intel && intelPoints(a.unlock.intel.fac) >= a.unlock.intel.points) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
+    if (a.unlock?.up && upLv(a.unlock.up) > 0) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
+  }
+  if (!SAVE.equippedAbilities.length) SAVE.equippedAbilities.push('empGrenade');
+}
 
 /* ============ boot ============ */
 function boot() {
@@ -202,10 +228,129 @@ function tracerTick(dt) {
   }
 }
 
+
+/* ============ progression systems ============ */
+function masteryXpForLevel(lvl){ return Math.round(80 * Math.pow(lvl + 1, 1.45)); }
+function addMastery(id, xp, stats) {
+  const m = SAVE.mastery[id] || (SAVE.mastery[id] = { xp:0, level:0, kills:0, eliteKills:0, bossDamage:0, headshots:0, clears:0 });
+  if (stats) for (const [k,v] of Object.entries(stats)) m[k] = (m[k] || 0) + v;
+  m.xp += Math.round(xp);
+  while (m.level < 10 && m.xp >= masteryXpForLevel(m.level)) { m.xp -= masteryXpForLevel(m.level); m.level++; SAVE.codex['mastery_' + id + '_' + m.level] = true; }
+}
+function weaponMasteryLevel(id){ return SAVE.mastery?.[id]?.level || 0; }
+function abilitySlot(slot){ return SAVE.equippedAbilities[slot] || null; }
+function abilityCooldown(id){ return G?.p?.abilityCd?.[id] || 0; }
+function rollRunModifiers() {
+  const tier = simTierData(SAVE.simTier);
+  const count = clamp(Math.floor(tier.mods + Math.min(2, SAVE.corruption / 8) + corruptLv('reroll') * 0.34), 1, 4);
+  const pool = MODIFIERS.filter(m => (m.tier || 1) <= SAVE.simTier + Math.floor(SAVE.corruption / 10));
+  const picked = [];
+  while (picked.length < count && pool.length) picked.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+  for (const m of picked) SAVE.modifiersSeen[m.id] = true;
+  return picked;
+}
+function applyRunProgression(p) {
+  ensureAbilityUnlocks();
+  p.mods.gt += 0.20 * corruptLv('greed');
+  p.mods.crit += 0.01 * weaponMasteryLevel('pistol');
+  if (hasRelic('riyaRelic')) p.comboBonus = 0.8;
+  if (hasRelic('blitzRelic')) p.mods.gt += 0.15;
+  if (hasRelic('turingRelic')) SAVE.codex.simTiers = true;
+}
+function applyModifierData(g) {
+  g.modStats = { shillShield:0, debt:false, botFragments:false, muskerRush:0, compliance:false, deleteProjectiles:0, lootbox:false, timelineDrift:false };
+  for (const m of g.modifiers) if (m.ap) m.ap(g);
+}
+function factionDamageIncomingMult(src) {
+  const fac = src?.type?.fac;
+  let mult = 1;
+  if (fac === 'shillz' && intelRank('shillz') >= 3) mult *= 0.88;
+  if (fac === 'muskers' && src?.boss && intelRank('muskers') >= 3) mult *= 0.88;
+  if (G?.p?.fieldT > 0) {
+    const d = src ? Math.hypot(src.pos.x - G.p.fieldX, src.pos.z - G.p.fieldZ) : 0;
+    if (!src || d < G.p.fieldR) mult *= (0.72 - 0.05 * Math.max(0, abilityLv('adBlockerField') - 1));
+  }
+  return mult;
+}
+function abilityUnlocked(id){ return !!SAVE.abilities?.[id]?.unlocked && abilityLv(id) > 0; }
+function activeAbility(slot) {
+  const id = abilitySlot(slot), a = id && ABILITIES[id];
+  if (!a || !abilityUnlocked(id) || state !== 'run' || paused || !G) return;
+  const p = G.p;
+  if ((p.abilityCd[id] || 0) > 0) { banner(a.name, 'COOLDOWN ' + Math.ceil(p.abilityCd[id]) + 's'); return; }
+  const lv = Math.max(1, abilityLv(id));
+  let cd = a.cooldown * (1 - 0.06 * (lv - 1));
+  if (id === 'empGrenade') {
+    const radius = 6.5 + lv * 0.8;
+    spawnShock(p.pos.x, 1.1, p.pos.z, 0x00e5ff, radius);
+    for (const e of G.enemies) if (e.state !== 'dying') {
+      const d = Math.hypot(e.pos.x - p.pos.x, e.pos.z - p.pos.z);
+      if (d < radius) { e.stunT = Math.max(e.stunT || 0, 2 + lv * 0.35); damageEnemy(e, (e.type.fac === 'bots' || e.type.fac === 'gigacorp' ? 95 : 48) * (1 + lv * 0.18), false, e.pos); }
+    }
+  } else if (id === 'signalJammer') {
+    p.jammerT = 4 + lv;
+    spawnShock(p.pos.x, 1.1, p.pos.z, 0xffe600, 8 + lv);
+    for (const pr of G.projs) if (pr.owner !== 'p') pr.dead = true;
+  } else if (id === 'ogRewindPulse') {
+    const snap = p.rewindHist[0];
+    if (snap) { p.pos.set(snap.x, snap.y, snap.z); p.hp = Math.min(p.maxHp, Math.max(p.hp, snap.hp) + 10 * lv); p.armor = Math.min(p.maxArmor, p.armor + 8 * lv); }
+    p.iframesT = Math.max(p.iframesT, 1.2 + lv * 0.25);
+    spawnShock(p.pos.x, 1, p.pos.z, 0x9b59ff, 7 + lv);
+  } else if (id === 'purpleDrone') {
+    p.droneT = 8 + lv * 2; p.dronePulseT = 0;
+    spawnBeam(p.pos.x, p.pos.z, 0x9b59ff, 7);
+  } else if (id === 'adBlockerField') {
+    p.fieldT = 7 + lv; p.fieldX = p.pos.x; p.fieldZ = p.pos.z; p.fieldR = 6 + lv * 1.2;
+    spawnShock(p.fieldX, 0.8, p.fieldZ, 0xffe600, p.fieldR);
+  }
+  p.abilityCd[id] = cd;
+  AudioSys.sfx('augment');
+  banner(a.name, 'ABILITY ACTIVATED');
+}
+function abilityTick(dt) {
+  const p = G.p;
+  for (const id of Object.keys(p.abilityCd)) p.abilityCd[id] = Math.max(0, p.abilityCd[id] - dt);
+  p.rewindSampleT -= dt;
+  if (p.rewindSampleT <= 0) { p.rewindSampleT = 0.25; p.rewindHist.unshift({ x:p.pos.x, y:p.pos.y, z:p.pos.z, hp:p.hp }); p.rewindHist.length = Math.min(p.rewindHist.length, 18 + abilityLv('ogRewindPulse') * 4); }
+  p.jammerT = Math.max(0, p.jammerT - dt); p.droneT = Math.max(0, p.droneT - dt); p.fieldT = Math.max(0, p.fieldT - dt);
+  if (p.droneT > 0) {
+    p.dronePulseT -= dt;
+    if (p.dronePulseT <= 0) {
+      p.dronePulseT = 0.7;
+      const targets = G.enemies.filter(e => e.state !== 'dying').sort((a,b)=>Math.hypot(a.pos.x-p.pos.x,a.pos.z-p.pos.z)-Math.hypot(b.pos.x-p.pos.x,b.pos.z-p.pos.z)).slice(0, abilityLv('purpleDrone') >= 3 ? 2 : 1);
+      for (const e of targets) { spawnTracer(_v1.set(p.pos.x, p.pos.y + 2.0, p.pos.z).clone(), _v2.set(e.pos.x, e.rootY + e.size, e.pos.z).clone(), 0x9b59ff); damageEnemy(e, 22 + abilityLv('purpleDrone') * 10, false, e.pos); }
+    }
+  }
+  if (p.fieldT > 0 && abilityLv('adBlockerField') >= 3) for (const e of G.enemies) if (e.type.fac === 'shillz' && Math.hypot(e.pos.x - p.fieldX, e.pos.z - p.fieldZ) < p.fieldR) damageEnemy(e, 8 * dt, false, e.pos);
+}
+function levelAbility(id) {
+  const rec = SAVE.abilities[id];
+  if (!rec || !rec.unlocked) return false;
+  const a = ABILITIES[id], lv = rec.level || 1;
+  if (lv >= a.max) return false;
+  const cost = 110 * (lv + 1);
+  if (SAVE.gt < cost) return false;
+  SAVE.gt -= cost; rec.level = lv + 1; persist(); return true;
+}
+function setAbilitySlot(id) {
+  if (!abilityUnlocked(id)) return;
+  const arr = SAVE.equippedAbilities;
+  if (arr.includes(id)) SAVE.equippedAbilities = arr.filter(x => x !== id);
+  else { SAVE.equippedAbilities = arr.concat(id).slice(-2); }
+  persist();
+}
+function buyCorruptionUpgrade(id) {
+  const u = CORRUPTION_UPGRADES.find(x => x.id === id), lv = corruptLv(id);
+  if (!u || lv >= u.max) return false;
+  const cost = corruptionCost(u, lv);
+  if (SAVE.corruption < cost) return false;
+  SAVE.corruption -= cost; SAVE.corruptionUp[id] = lv + 1; persist(); return true;
+}
+
 /* ============ run state ============ */
 function makeWeapon(id, rarity) {
-  const w = WEAPONS[id], r = RARITIES[rarity];
-  return {
+  const w = WEAPONS[id], r = RARITIES[rarity], ml = weaponMasteryLevel(id);
+  const gun = {
     id, rar: rarity, cls: w.cls, type: w.type,
     name: (rarity > 0 ? r.prefix + ' ' : '') + w.name,
     dmg: w.dmg * r.mult, rpm: w.rpm * (1 + rarity * 0.03),
@@ -214,6 +359,18 @@ function makeWeapon(id, rarity) {
     ammoMax: w.ammo === Infinity ? Infinity : Math.round(w.ammo * (1 + rarity * 0.08)),
     ammo: w.ammo === Infinity ? Infinity : Math.round(w.ammo * (1 + rarity * 0.08)),
   };
+  if (ml >= 1) {
+    if (id === 'smg') gun.rpm *= 1.08;
+    if (id === 'shotgun') gun.dmg *= 1.08;
+    if (id === 'ar') gun.spread *= 0.9;
+    if (id === 'dmr') gun.pierce += 1;
+    if (id === 'lmg') gun.rpm *= 1.06;
+    if (id === 'energy') gun.projSpd *= 1.1;
+    if (id === 'rocket') gun.aoe *= 1.08;
+  }
+  if (ml >= 5) { gun.dmg *= 1.08; if (gun.ammoMax !== Infinity) { gun.ammoMax = Math.round(gun.ammoMax * 1.12); gun.ammo = gun.ammoMax; } }
+  if (ml >= 10) { gun.dmg *= 1.12; gun.rpm *= 1.08; }
+  return gun;
 }
 
 function resetRunWorld() {
@@ -236,6 +393,7 @@ function newRun() {
     maxHp: CFG.BASE_HP + 20 * upLv('vitality'), hp: 0,
     maxArmor: 50 + 12 * upLv('plating'), armor: 12 * upLv('plating'),
     mods: { dmg: 0.06 * upLv('lethality'), rate: 0, crit: 0.05 + 0.03 * upLv('deadeye'), critDmg: 0, spd: 0.04 * upLv('reflex'), gt: 0.10 * upLv('fortune'), leech: 0, scraps: 0, dashCd: 1, iframe: 0, ricochet: 0, volatile: false, adrenal: false, ammo: 0 },
+    abilityCd: {}, rewindHist: [], rewindSampleT: 0, jammerT: 0, droneT: 0, dronePulseT: 0, fieldT: 0, fieldX: 0, fieldZ: 0, fieldR: 0, comboBonus: 0,
     weapons: [makeWeapon('pistol', 0), null], cur: 0,
     fireT: 0, swapT: 0, adrenalT: 0, bobT: 0, recoil: 0,
     dashT: 0, dashCdT: 0, dashX: 0, dashZ: 0, iframesT: 0,
@@ -253,7 +411,10 @@ function newRun() {
     director: { threat: 0.5, t: 4, msgT: 14, kills: [], taken: [] },
     augs: [], theme: null, autoFire: SAVE.opts.auto,
     currentRoute: null, nextRoute: ROUTES[0], mission: null, ammoPity: 0,
+    simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {},
   };
+  applyRunProgression(p);
+  applyModifierData(G);
   SAVE.runs++; persist();
   AudioSys.init(); AudioSys.resume(); if (SAVE.opts.music) AudioSys.musicStart();
   AudioSys.setSfx(SAVE.opts.sfx); AudioSys.setMusic(SAVE.opts.music);
@@ -271,11 +432,12 @@ function startDistrict(i) {
   G.p.pos.set(s.x, 0, s.z); G.p.velY = 0;
   G.p.yaw = Math.atan2(s.x, s.z); // face arena center
   G.p.hp = Math.min(G.p.maxHp, G.p.hp + Math.round(G.p.maxHp * 0.3));
+  if (G.modStats.timelineDrift) G.director.threat = Math.min(1.6, G.director.threat + 0.08);
   G.wave = 0; G.phase = 'intro'; G.waveDelay = 2.6; G.boss = null;
   G.currentRoute = G.nextRoute || ROUTES[0];
   G.nextRoute = null;
   startMission(G.currentRoute, DISTRICTS[i]);
-  G.director.threat = clamp(G.director.threat + (G.currentRoute.threat || 0), 0.15, 1.35);
+  G.director.threat = clamp(G.director.threat + (G.currentRoute.threat || 0) + 0.04 * corruptLv('greed') + 0.03 * corruptLv('reroll'), 0.15, 1.6);
   el('bossBar').style.display = 'none';
   banner('DISTRICT ' + (i + 1) + ' — ' + DISTRICTS[i].name, G.currentRoute.n.toUpperCase() + ' — ' + MISSION_COPY[G.mission.type].n.toUpperCase());
   AudioSys.setIntensity(0.35 + i * 0.1);
@@ -366,9 +528,10 @@ function startWave() {
   const d = G.district, dist = DISTRICTS[d];
   G.phase = 'wave';
   const routeEnemy = G.currentRoute?.enemy || 1;
-  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy);
+  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy * (1 + (G.simTier - 1) * 0.07));
   G.pending = [];
   for (let i = 0; i < n; i++) G.pending.push(pickFromPool(dist.pool));
+  if (G.modStats.compliance && G.district < 4) for (let i = 0; i < Math.max(1, Math.floor(n * 0.16)); i++) G.pending.push('trooper');
   G.spawnT = 0.2;
   banner('WAVE ' + G.wave + ' / ' + dist.waves, dist.name);
   AudioSys.sfx('wave');
@@ -392,13 +555,15 @@ function startBoss() {
 function spawnEnemy(typeId, x, z, elite, bossId) {
   const def = bossId ? BOSSES[bossId] : ETYPES[typeId];
   const rig = bossId ? Assets.buildBoss(bossId) : Assets.buildEnemy(typeId);
-  const hpMult = (1 + G.district * 0.5) * (0.9 + G.director.threat * 0.3) * (elite ? 2.2 : 1);
+  let hpMult = (1 + G.district * 0.5) * (0.9 + G.director.threat * 0.3) * (elite ? 2.2 : 1) * G.tierData.hp;
+  if (def.fac === 'shillz' && G.modStats.shillShield) hpMult *= 1 + G.modStats.shillShield / 100;
+  if (def.fac === 'bots' && intelRank('bots') >= 4 && bossId === 'spyder') hpMult *= 0.9;
   const e = {
     type: def, typeId: typeId || bossId, boss: bossId || null, rig, elite,
     pos: V3().set(x, 0, z), yaw: 0,
     hp: def.hp * hpMult, maxHp: def.hp * hpMult,
-    dmg: def.dmg * (1 + G.district * 0.2) * (elite ? 1.3 : 1),
-    spd: def.spd * (elite ? 1.1 : 1) * rnd(0.92, 1.08),
+    dmg: def.dmg * (1 + G.district * 0.2) * (elite ? 1.3 : 1) * G.tierData.dmg * (bossId && corruptLv('revive') ? 1 + 0.04 * corruptLv('revive') : 1),
+    spd: def.spd * (elite ? 1.1 : 1) * rnd(0.92, 1.08) * (def.fac === 'muskers' ? 1 + G.modStats.muskerRush : 1) * (def.fac === 'muskers' && intelRank('muskers') >= 4 && elite ? 0.92 : 1),
     state: 'drop', dropV: 0, rootY: 12,
     atkT: rnd(0.5, 1.5), windup: 0, burstN: 0, burstT: 0,
     dashT: 0, dashCdT: rnd(1, 2), strafe: Math.random() < 0.5 ? 1 : -1, strafeT: rnd(1, 3),
@@ -434,7 +599,7 @@ function waveTick(dt) {
         G.spawnT = 0.4;
         const t = G.pending.pop();
         const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 12);
-        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + (G.currentRoute?.elite || 0);
+        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + (G.currentRoute?.elite || 0) + G.tierData.elite + 0.02 * corruptLv('rarity');
         spawnEnemy(t, sp.x, sp.z, Math.random() < eliteCh);
       }
     }
@@ -462,6 +627,7 @@ function waveTick(dt) {
 function enemyTick(e, dt) {
   const p = G.p;
   const rig = e.rig;
+  if (e.stunT > 0) { e.stunT -= dt; e.flash = Math.max(e.flash, 0.25); rig.root.position.set(e.pos.x, e.rootY, e.pos.z); return; }
   if (e.state === 'drop') {
     e.dropV += 30 * dt; e.rootY -= e.dropV * dt;
     const floor = e.fly ? e.fly : 0;
@@ -565,6 +731,7 @@ function enemyTick(e, dt) {
 }
 
 function enemyShoot(e, dist) {
+  if (G.p.jammerT > 0 && (e.type.atk === 'ranged' || e.boss)) { e.atkT = 0.8; return; }
   e.atkAnim = 1;
   const t = e.type;
   e.atkT = (t.fireCd || 1.6) * rnd(0.85, 1.2) / (0.8 + G.director.threat * 0.4);
@@ -660,6 +827,9 @@ function bossTick(e, dt, dist, ux, uz, los) {
 /* ============ projectiles ============ */
 const projPool = [];
 function spawnProj(o) {
+  if (o.owner === 'e' && G?.p?.jammerT > 0) { Particles.burst(o.x, o.y, o.z, 0xffe600, 6, 2, 0.25); return; }
+  if (o.owner === 'e' && G?.modStats?.deleteProjectiles && Math.random() < G.modStats.deleteProjectiles) { Particles.burst(o.x, o.y, o.z, 0x00e5ff, 5, 2, 0.25); return; }
+  if (o.owner === 'e' && hasRelic('spyderRelic') && Math.random() < 0.08) { spawnPickup('gt', o.x, o.z, 2); return; }
   let pr = projPool.pop();
   if (!pr) pr = { mesh: null };
   if (!pr.mesh) { pr.mesh = Assets.projMesh(0xffffff, 1); }
@@ -832,6 +1002,8 @@ function hitscan(o, dir, w, muzzle) {
     let dmg = w.dmg * (1 + p.mods.dmg);
     let crit = h.head || Math.random() < p.mods.crit;
     if (crit) dmg *= 2 + p.mods.critDmg;
+    if (h.head) addMastery(w.id, 3, { headshots: 1 });
+    if (w.id === 'dmr' && weaponMasteryLevel('dmr') >= 1) w.pierce = Math.max(w.pierce || 1, 2);
     const hp = _v1.set(o.x + dir.x * h.t, o.y + dir.y * h.t, o.z + dir.z * h.t);
     damageEnemy(h.e, dmg, crit, hp);
     // ricochet
@@ -852,8 +1024,11 @@ function hitscan(o, dir, w, muzzle) {
 
 function damageEnemy(e, dmg, crit, at) {
   if (e.state === 'dying' || state !== 'run') return;
+  if (e.type.fac === 'bots' && intelRank('bots') >= 3) dmg *= 1.06;
   e.hp -= dmg; e.flash = 0.75;
   G.p.stats.dmg += dmg;
+  const cw = curWeapon();
+  if (e.boss) addMastery(cw.id, Math.max(1, dmg * 0.04), { bossDamage: Math.round(dmg) });
   DmgNums.spawn(_v1.set(at.x, (e.rootY + e.size * 1.5), at.z), String(Math.round(dmg)), crit);
   showHitmark(crit, e.hp <= 0);
   Particles.burst(at.x, at.y || e.rootY + e.size, at.z, FACTIONS[e.type.fac].neon, crit ? 8 : 4, 3, 0.4);
@@ -866,6 +1041,7 @@ function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
   p.stats.kills++; SAVE.kills++;
+  addMastery(curWeapon().id, e.boss ? 35 : (e.elite ? 14 : 6), { kills: e.boss ? 0 : 1, eliteKills: e.elite ? 1 : 0 });
   let intelGain = 1;
   if (e.elite) intelGain = 3;
   if (e.boss) intelGain = 25;
@@ -873,7 +1049,7 @@ function killEnemy(e) {
   progressMission('kills', 1);
   progressMission('intel', intelGain);
   if (e.elite || e.boss) progressMission('elite', 1);
-  p.combo++; p.comboT = 3; p.bestCombo = Math.max(p.bestCombo, p.combo);
+  p.combo++; p.comboT = 3 + (p.comboBonus || 0); p.bestCombo = Math.max(p.bestCombo, p.combo);
   for (const [th, name] of COMBO_TIERS) if (p.combo === th) { banner(name, 'COMBO x' + th); AudioSys.sfx('combo'); }
   AudioSys.sfx('kill');
   const fac = FACTIONS[e.type.fac];
@@ -882,6 +1058,9 @@ function killEnemy(e) {
   if (p.mods.leech) p.hp = Math.min(p.maxHp, p.hp + p.mods.leech);
   if (p.mods.scraps) p.armor = Math.min(p.maxArmor, p.armor + p.mods.scraps);
   if (p.mods.adrenal) p.adrenalT = 3;
+  const ml = weaponMasteryLevel(curWeapon().id);
+  if (curWeapon().id === 'smg' && ml >= 3 && curWeapon().ammo !== Infinity) curWeapon().ammo = Math.min(curWeapon().ammoMax, curWeapon().ammo + 6);
+  if (curWeapon().id === 'lmg' && ml >= 3) p.armor = Math.min(p.maxArmor, p.armor + 3);
   if (p.mods.volatile) {
     const vd = 30 + G.district * 12;
     spawnShock(e.pos.x, 1, e.pos.z, 0xff9040, 3.4);
@@ -892,10 +1071,11 @@ function killEnemy(e) {
     }
   }
   // drops
-  const gtv = Math.round(e.type.gt * (e.elite ? 3 : 1) * (1 + G.district * 0.15));
+  const gtv = Math.round(e.type.gt * (e.elite ? 3 : 1) * (1 + G.district * 0.15) * G.tierData.reward);
   const nSh = e.boss ? 12 : (1 + (Math.random() * 2 | 0));
   for (let i = 0; i < nSh; i++) spawnPickup('gt', e.pos.x + rnd(-0.8, 0.8), e.pos.z + rnd(-0.8, 0.8), Math.max(1, Math.round(gtv / nSh)));
   const r = Math.random();
+  if (!e.boss && G.modStats.botFragments && e.type.fac === 'bots' && Math.random() < 0.22) spawnPickup('gt', e.pos.x, e.pos.z, 3);
   if (e.boss) {
     spawnPickup('weapon', e.pos.x + 1.2, e.pos.z, 0, rollWeapon(2));
     spawnPickup('weapon', e.pos.x - 1.2, e.pos.z, 0, rollWeapon(1));
@@ -921,10 +1101,14 @@ function bossKilled(e) {
   G.phase = 'bossdead';
   G.waveDelay = G.district >= DISTRICTS.length - 1 ? 4.5 : 10.5;
   banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'COLLECT WEAPON CORES — NEXT DISTRICT SOON');
-  G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt));
+  G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt) * G.tierData.reward);
+  addMastery(curWeapon().id, 25, { clears: 1 });
+  const relic = Object.values(BOSS_RELICS).find(r => r.boss === e.boss);
+  if (relic && !SAVE.relics[relic.id]) { SAVE.relics[relic.id] = { owned:true, firstAt: Date.now() }; SAVE.codex[relic.id] = true; banner('RELIC ACQUIRED', relic.name.toUpperCase()); }
+  if (e.boss === 'turing') SAVE.simTier = Math.max(SAVE.simTier, G.simTier + 1);
   if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
   finishCleanMission();
-  AudioSys.sfx('expl'); AudioSys.setIntensity(0.4);
+  AudioSys.sfx('expl'); AudioSys.setIntensity(0.4); persist();
   // clear remaining enemies
   for (const e2 of G.enemies) if (e2 !== e && e2.state !== 'dying') { e2.hp = 0; e2.state = 'dying'; e2.dieT = 0; Particles.burst(e2.pos.x, 1, e2.pos.z, 0xffffff, 8, 3, 0.5); }
 }
@@ -933,7 +1117,7 @@ function bossKilled(e) {
 function rollWeapon(boost) {
   const d = G.district;
   const base = [42, 26, 16, 9, 4.5, 2, 0.6];
-  const score = d * 0.45 + (boost || 0) * 0.9;
+  const score = d * 0.45 + (boost || 0) * 0.9 + (G?.tierData?.rarity || 0) + 0.16 * corruptLv('rarity');
   let tw = 0; const ws = base.map((b, i) => { const w = b * Math.pow(1 + score, i * 0.55); tw += w; return w; });
   let r = Math.random() * tw, rar = 0;
   for (let i = 0; i < 7; i++) { r -= ws[i]; if (r <= 0) { rar = i; break; } }
@@ -943,6 +1127,8 @@ function rollWeapon(boost) {
 }
 const PICKUP_COLORS = { gt: 0x00e5ff, hp: 0xff2d55, ammo: 0xffe600, armor: 0x2979ff };
 function spawnPickup(kind, x, z, val, weapon) {
+  if (kind !== 'weapon' && G?.modStats?.lootbox && Math.random() < 0.12) kind = ['gt','hp','ammo','armor'][(Math.random() * 4) | 0];
+  if (kind === 'gt' && hasRelic('blitzRelic') && Math.random() < 0.12) { val *= 2; G.director.threat = Math.min(1.6, G.director.threat + 0.03); }
   const hex = kind === 'weapon' ? RARITIES[weapon.rar].hex : PICKUP_COLORS[kind];
   const mesh = Assets.pickupMesh(kind, hex);
   mesh.position.set(x, 0, z);
@@ -967,6 +1153,7 @@ function pickupTick(pk, dt) {
       const mult = 1 + Math.min(p.combo, 25) * 0.06;
       const gain = Math.max(1, Math.round(pk.val * mult * (1 + p.mods.gt)));
       p.gt += gain;
+      if (G.modStats.debt && DISTRICTS[G.district].fac === 'cryptids') G.director.threat = Math.min(1.6, G.director.threat + 0.01);
       progressMission('gt', gain);
       AudioSys.sfx('shard');
     } else if (pk.kind === 'hp') { p.hp = Math.min(p.maxHp, p.hp + pk.val); AudioSys.sfx('pickup'); }
@@ -1016,6 +1203,7 @@ function takeCrate() {
 function damagePlayer(dmg, src) {
   const p = G.p;
   if (state !== 'run' || p.iframesT > 0 || p.dashT > 0) return;
+  dmg *= factionDamageIncomingMult(src);
   const absorbed = Math.min(p.armor, dmg * 0.65);
   p.armor -= absorbed;
   p.hp -= (dmg - absorbed);
@@ -1087,6 +1275,7 @@ function playerTick(dt) {
   else if (p.pos.y > floorY + 0.08) p.onGround = false;
 
   p.iframesT -= dt; p.fireT -= dt; p.swapT -= dt; p.adrenalT -= dt;
+  abilityTick(dt);
   if (kl > 0.1 && p.onGround) p.bobT += dt * spd * 1.55;
   p.recoil = Math.max(0, p.recoil - dt * 6);
 
@@ -1209,6 +1398,7 @@ function openOG() {
   const maybeContinue = () => {
     if (!pickedAug || !pickedRoute) return;
     pickedAug.ap(G.p); G.augs.push(pickedAug.id);
+    if (pickedRoute.corruption) { SAVE.corruption += pickedRoute.corruption; G.director.threat = Math.min(1.6, G.director.threat + 0.12); persist(); }
     G.nextRoute = pickedRoute;
     AudioSys.sfx('augment');
     el('ovOG').classList.remove('show');
@@ -1217,7 +1407,8 @@ function openOG() {
   };
   const opts = [];
   const pool = AUGMENTS.slice();
-  while (opts.length < 3 && pool.length) opts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+  const wantAug = 3 + (hasRelic('magnusRelic') ? 1 : 0) + Math.min(1, corruptLv('reroll'));
+  while (opts.length < wantAug && pool.length) opts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
   const wrap = el('ogCards'); wrap.innerHTML = '';
   for (const a of opts) {
     const c = document.createElement('div');
@@ -1234,7 +1425,8 @@ function openOG() {
   const rwrap = el('routeCards'); rwrap.innerHTML = '';
   const rpool = ROUTES.slice();
   const routes = [];
-  while (routes.length < 2 && rpool.length) routes.push(rpool.splice(Math.trunc(Math.random() * rpool.length), 1)[0]); // NOSONAR - gameplay route variety, not security-sensitive
+  while (routes.length < 3 && rpool.length) routes.push(rpool.splice(Math.trunc(Math.random() * rpool.length), 1)[0]); // NOSONAR - gameplay route variety, not security-sensitive
+  if (SAVE.corruption > 0 || G.simTier > 1) routes.push({ id:'cursed', n:'Cursed Timeline', t:'Corruption Route', d:'+2 corruption and better payout. Adds Turing instability.', threat:0.32, enemy:1.12, reward:0.55, intel:12, mission:'elite', corruption:2 });
   for (const r of routes) {
     const c = document.createElement('div');
     c.className = 'ogcard route';
@@ -1264,6 +1456,7 @@ function bankGT() {
     SAVE.intel[fac].leaders = Math.max(SAVE.intel[fac].leaders || 0, 1);
   }
   SAVE.bestD = Math.max(SAVE.bestD, G.district + (G.phase === 'bossdead' || state === 'victory' ? 1 : 0));
+  ensureAbilityUnlocks();
   persist();
 }
 function doDeath() {
@@ -1278,10 +1471,12 @@ function doDeath() {
 function doVictory() {
   setState('victory');
   SAVE.wins++;
-  G.p.gt += 500;
+  G.p.gt += Math.round(500 * G.tierData.reward);
+  SAVE.corruption += Math.max(1, Math.floor(G.simTier / 2));
+  SAVE.simTier = Math.max(SAVE.simTier, G.simTier + 1);
   bankGT();
   AudioSys.musicStop();
-  el('victStats').innerHTML = statLines() + '<br>VICTORY BONUS <b>+500 &#11042;</b>';
+  el('victStats').innerHTML = statLines() + '<br>VICTORY BONUS <b>+' + Math.round(500 * G.tierData.reward) + ' &#11042;</b><br>SIM TIER UNLOCKED <b>' + SAVE.simTier + '</b>';
   el('ovVictory').classList.add('show');
   document.exitPointerLock && document.exitPointerLock();
 }
@@ -1293,7 +1488,8 @@ function statLines() {
     'KILLS <b>' + p.stats.kills + '</b> &nbsp; BEST COMBO <b>x' + p.bestCombo + '</b><br>' +
     'DAMAGE DEALT <b>' + Math.round(p.stats.dmg) + '</b><br>' +
     'FACTION INTEL RECOVERED <b>+' + intel + '</b><br>' +
-    'GIGATECH BANKED <b>+' + p.gt + ' &#11042;</b>';
+    'GIGATECH BANKED <b>+' + p.gt + ' &#11042;</b><br>' +
+    'SIM TIER <b>' + G.simTier + '</b> &nbsp; CORRUPTION <b>' + SAVE.corruption + '</b>';
 }
 
 /* ============ HUD ============ */
@@ -1325,6 +1521,12 @@ function hudTick() {
   el('distText').textContent = 'DISTRICT ' + (G.district + 1) + ' — ' + DISTRICTS[G.district].name;
   el('waveText').textContent = G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves;
   el('hostText').textContent = 'HOSTILES: ' + (G.enemies.filter(e => e.state !== 'dying').length + G.pending.length);
+  el('modText').textContent = 'TIER ' + G.simTier + ' — ' + simTierData(G.simTier).n + (G.modifiers.length ? ' | MODS: ' + G.modifiers.map(m => m.n).join(' / ') : '');
+  const aw = el('abilityHud');
+  aw.innerHTML = SAVE.equippedAbilities.map((id, i) => {
+    const a = ABILITIES[id], cd = Math.ceil(abilityCooldown(id));
+    return '<span class="abilpill ' + (cd > 0 ? 'cool' : '') + '">' + (i === 0 ? 'F' : 'R') + ': ' + a.name + (cd > 0 ? ' ' + cd + 's' : ' READY') + '</span>';
+  }).join('');
   updateMissionHud();
   const cb = el('comboBox');
   if (p.combo >= 2) {
@@ -1355,6 +1557,8 @@ function initInput() {
     if (e.code === 'Digit1') swapWeapon(0);
     if (e.code === 'Digit2') swapWeapon(1);
     if (e.code === 'KeyE') takeCrate();
+    if (e.code === 'KeyF') activeAbility(0);
+    if (e.code === 'KeyR') activeAbility(1);
   });
   addEventListener('keyup', e => { Input.keys[e.code] = false; });
   cv.addEventListener('mousedown', e => {
@@ -1425,6 +1629,8 @@ function initInput() {
   };
   bind('btnFire', () => Input.fire = true, () => Input.fire = false);
   bind('btnDash', () => Input.dash = true);
+  bind('btnAbil1', () => activeAbility(0));
+  bind('btnAbil2', () => activeAbility(1));
   bind('btnSwap', () => swapWeapon());
   bind('btnPick', () => takeCrate());
   bind('btnAuto', () => {
@@ -1457,7 +1663,8 @@ function setPaused(v) {
   if (v) { document.exitPointerLock && document.exitPointerLock(); }
 }
 function updateTitle() {
-  el('titleGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH BANKED';
+  ensureAbilityUnlocks();
+  el('titleGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH BANKED &nbsp; | &nbsp; CORRUPTION ' + SAVE.corruption + ' &nbsp; | &nbsp; TIER ' + SAVE.simTier;
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
@@ -1481,33 +1688,81 @@ function renderBriefing() {
     .map(([id, f]) => factionIntelRow(id, f));
   wrap.innerHTML = rows.join('') || '<p>No faction intelligence recovered yet.</p>';
 }
+let activeArmoryTab = 'body';
+function cardHtml(title, body, action) {
+  return '<h3>' + title + '</h3><p>' + body + '</p>' + (action || '');
+}
 function renderArmory() {
-  el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH';
+  ensureAbilityUnlocks();
+  el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH &nbsp; | &nbsp; CORRUPTION ' + SAVE.corruption + ' &nbsp; | &nbsp; SIM TIER ' + SAVE.simTier;
+  const tabs = [ ['body','Body Mods'], ['arsenal','Arsenal'], ['og','OG Device'], ['abilities','Abilities'], ['research','Faction Research'], ['corruption','Corruption'] ];
+  const tabWrap = el('armoryTabs');
+  tabWrap.innerHTML = '';
+  for (const [id,n] of tabs) {
+    const b = document.createElement('div'); b.className = 'armtab ' + (activeArmoryTab === id ? 'on' : ''); b.textContent = n;
+    b.onclick = () => { activeArmoryTab = id; AudioSys.sfx('ui'); renderArmory(); };
+    tabWrap.appendChild(b);
+  }
   const grid = el('armoryGrid'); grid.innerHTML = '';
-  for (const u of METAUP) {
-    const lv = upLv(u.id);
-    const card = document.createElement('div'); card.className = 'upcard';
-    let pips = '<div class="uplvl">';
-    for (let i = 0; i < u.max; i++) pips += '<i class="' + (i < lv ? 'on' : '') + '"></i>';
-    pips += '</div>';
-    const maxed = lv >= u.max;
-    const cost = maxed ? 0 : metaCost(u, lv);
-    card.innerHTML = '<h3>' + u.n + '</h3>' + pips + '<p>' + u.d + '</p>';
-    const btn = document.createElement('div');
-    let btnState = '';
-    if (maxed) btnState = 'max';
-    else if (SAVE.gt < cost) btnState = 'cant';
-    btn.className = 'buybtn ' + btnState;
-    btn.innerHTML = maxed ? 'MAXED' : 'UPGRADE — ' + cost + ' &#11042;';
-    if (!maxed && SAVE.gt >= cost) btn.onclick = () => {
-      SAVE.gt -= cost; SAVE.up[u.id] = lv + 1; persist();
-      AudioSys.init(); AudioSys.sfx('pickup');
-      renderArmory();
-    };
-    card.appendChild(btn);
-    grid.appendChild(card);
+  const add = (html, cb) => { const card = document.createElement('div'); card.className = 'upcard'; card.innerHTML = html; if (cb) cb(card); grid.appendChild(card); };
+  if (activeArmoryTab === 'body') {
+    for (const u of METAUP) addMetaCard(u, add);
+  } else if (activeArmoryTab === 'arsenal') {
+    for (const [id,w] of Object.entries(WEAPONS)) {
+      const m = SAVE.mastery[id], data = WEAPON_MASTERY[id];
+      const unlocks = Object.entries(data.levels).map(([lv,txt]) => '<br><b>L' + lv + '</b> ' + txt).join('');
+      add(cardHtml(data.n, w.cls + ' — Level ' + m.level + ' / 10<br>XP ' + m.xp + ' / ' + masteryXpForLevel(m.level) + '<br>Kills ' + m.kills + ' | Elite ' + m.eliteKills + ' | Headshots ' + m.headshots + '<br>' + unlocks));
+    }
+  } else if (activeArmoryTab === 'og') {
+    add(cardHtml('Simulation Tier', simTierData(SAVE.simTier).n + '<br>Higher tiers add HP, damage, elite chance, modifiers, rewards, and rarity bias. Defeat Turing to unlock the next tier.'));
+    add(cardHtml('Boss Relics', Object.values(BOSS_RELICS).map(r => (hasRelic(r.id) ? '&#10003; ' : '&#9671; ') + r.name + '<br><span style="opacity:.7">' + r.d + '</span>').join('<br>')));
+    add(cardHtml('Codex', Object.keys(SAVE.codex).length + ' entries discovered. Relics, mastery breakpoints, and simulation tier data populate this archive.'));
+  } else if (activeArmoryTab === 'abilities') {
+    for (const [id,a] of Object.entries(ABILITIES)) {
+      const rec = SAVE.abilities[id];
+      const equip = SAVE.equippedAbilities.includes(id) ? 'EQUIPPED' : 'EQUIP';
+      const lvl = rec?.level || 0, maxed = lvl >= a.max;
+      let btns = '';
+      if (!rec?.unlocked) btns = '<div class="buybtn cant">LOCKED</div>';
+      else {
+        btns = '<div class="buybtn" data-equip="' + id + '">' + equip + '</div> ';
+        const cost = 110 * (lvl + 1);
+        btns += '<div class="buybtn ' + (maxed ? 'max' : SAVE.gt >= cost ? '' : 'cant') + '" data-level="' + id + '">' + (maxed ? 'MAXED' : 'LEVEL — ' + cost + ' &#11042;') + '</div>';
+      }
+      add(cardHtml(a.name + ' L' + lvl, a.category + ' — CD ' + a.cooldown + 's<br>' + a.d + '<br>' + (a.scaling || []).join('<br>'), btns), card => {
+        const eq = card.querySelector('[data-equip]'); if (eq) eq.onclick = () => { setAbilitySlot(id); renderArmory(); };
+        const lv = card.querySelector('[data-level]'); if (lv) lv.onclick = () => { if (levelAbility(id)) AudioSys.sfx('pickup'); renderArmory(); };
+      });
+    }
+  } else if (activeArmoryTab === 'research') {
+    for (const [id,f] of Object.entries(FACTIONS).filter(([id]) => id !== 'rebels')) {
+      const rank = intelRank(id), pts = intelPoints(id);
+      const rows = (FACTION_RESEARCH[id] || []).map((r,i) => (i < rank ? '&#10003; ' : '&#9671; ') + r.level + ' — ' + r.d).join('<br>');
+      add(cardHtml(f.name + ' Research', pts + ' intel — ' + factionIntelLevel(pts) + '<br>' + rows));
+    }
+  } else if (activeArmoryTab === 'corruption') {
+    for (const u of CORRUPTION_UPGRADES) {
+      const lv = corruptLv(u.id), maxed = lv >= u.max, cost = maxed ? 0 : corruptionCost(u, lv);
+      const action = '<div class="buybtn ' + (maxed ? 'max' : SAVE.corruption >= cost ? '' : 'cant') + '" data-corrupt="' + u.id + '">' + (maxed ? 'MAXED' : 'UPGRADE — ' + cost + ' CORRUPTION') + '</div>';
+      add(cardHtml(u.n + ' L' + lv + '/' + u.max, u.d, action), card => {
+        const b = card.querySelector('[data-corrupt]'); if (b) b.onclick = () => { if (buyCorruptionUpgrade(u.id)) AudioSys.sfx('augment'); renderArmory(); };
+      });
+    }
   }
 }
+function addMetaCard(u, add) {
+  const lv = upLv(u.id);
+  let pips = '<div class="uplvl">';
+  for (let i = 0; i < u.max; i++) pips += '<i class="' + (i < lv ? 'on' : '') + '"></i>';
+  pips += '</div>';
+  const maxed = lv >= u.max, cost = maxed ? 0 : metaCost(u, lv);
+  const btn = '<div class="buybtn ' + (maxed ? 'max' : SAVE.gt >= cost ? '' : 'cant') + '" data-meta="' + u.id + '">' + (maxed ? 'MAXED' : 'UPGRADE — ' + cost + ' &#11042;') + '</div>';
+  add('<h3>' + u.n + '</h3>' + pips + '<p>' + u.d + '</p>' + btn, card => {
+    const b = card.querySelector('[data-meta]');
+    if (b && !maxed && SAVE.gt >= cost) b.onclick = () => { SAVE.gt -= cost; SAVE.up[u.id] = lv + 1; persist(); AudioSys.init(); AudioSys.sfx('pickup'); renderArmory(); };
+  });
+}
+
 function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
   el('btnStart').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
