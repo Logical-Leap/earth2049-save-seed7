@@ -24,6 +24,15 @@ const Assets = (() => {
       anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
     },
   };
+  const EXTERNAL_GUNS = {
+    ar: {
+      url: 'assets/models/weapons/ar.glb',
+      length: 0.78,
+      muzzleZ: -0.66,
+      centerY: 0.02,
+      centerZ: -0.18,
+    },
+  };
 
 
   function cv(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
@@ -335,11 +344,15 @@ const Assets = (() => {
   function preloadExternalModels() {
     if (!THREE.GLTFLoader) return Promise.resolve();
     const loader = new THREE.GLTFLoader();
-    return Promise.all(Object.entries(EXTERNAL_MODELS).map(([id, def]) => {
+    const entries = [
+      ...Object.entries(EXTERNAL_MODELS).map(([id, def]) => ['enemy:' + id, def]),
+      ...Object.entries(EXTERNAL_GUNS).map(([id, def]) => ['gun:' + id, def]),
+    ];
+    return Promise.all(entries.map(([id, def]) => {
       if (modelCache[id]) return modelCache[id].promise;
       const rec = { gltf:null, error:null };
       rec.promise = new Promise(resolve => {
-        loader.load(def.url, gltf => { rec.gltf = gltf; resolve(); }, undefined, err => { rec.error = err; console.warn('GLB enemy model failed:', id, err); resolve(); });
+        loader.load(def.url, gltf => { rec.gltf = gltf; resolve(); }, undefined, err => { rec.error = err; console.warn('GLB model failed:', id, err); resolve(); });
       });
       modelCache[id] = rec;
       return rec.promise;
@@ -357,7 +370,7 @@ const Assets = (() => {
 
   function makeExternalRig(typeId) {
     const def = EXTERNAL_MODELS[typeId];
-    const rec = def && modelCache[typeId];
+    const rec = def && modelCache['enemy:' + typeId];
     if (!def || !rec?.gltf || rec.error) return null;
     const rig = newRig();
     rig.external = true;
@@ -900,8 +913,49 @@ const Assets = (() => {
     return rig;
   }
 
+  function makeExternalGun(clsKey) {
+    const def = EXTERNAL_GUNS[clsKey];
+    const rec = def && modelCache['gun:' + clsKey];
+    if (!def || !rec?.gltf || rec.error) return null;
+    const g = new THREE.Group();
+    const model = cloneExternalScene(rec.gltf.scene);
+    model.name = 'GLB_gun_' + clsKey;
+    model.traverse(o => {
+      if (o.isMesh) {
+        o.castShadow = false;
+        o.receiveShadow = false;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        for (const m of mats) if (m) {
+          if (m.map) { m.map.encoding = THREE.sRGBEncoding; m.map.anisotropy = 4; }
+          if (m.emissiveMap) m.emissiveIntensity = Math.min(m.emissiveIntensity || 0.35, 0.5);
+        }
+      }
+    });
+    g.add(model);
+    model.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const longest = Math.max(size.x, size.y, size.z, 0.01);
+    model.scale.setScalar(def.length / longest);
+    if (size.x >= size.z && size.x >= size.y) model.rotation.y = Math.PI / 2;
+    model.updateMatrixWorld(true);
+    const fit = new THREE.Box3().setFromObject(model);
+    model.position.x -= (fit.min.x + fit.max.x) / 2;
+    model.position.y += def.centerY - (fit.min.y + fit.max.y) / 2;
+    model.position.z += def.centerZ - (fit.min.z + fit.max.z) / 2;
+    const tip = new THREE.Object3D();
+    tip.position.set(0, def.centerY, def.muzzleZ);
+    g.add(tip);
+    const acc = emat(0x4caf50, 0.4);
+    const slide = new THREE.Object3D();
+    slide.position.z = 0;
+    return { root:g, tip, acc, slide, slideZ:0, external:true };
+  }
+
   /* ================= gun viewmodels (Global Arsenal) ================= */
   function buildGun(clsKey) {
+    const externalGun = makeExternalGun(clsKey);
+    if (externalGun) return externalGun;
     const g = new THREE.Group();
     const dark = mat(0x14171d, { metalness: 0.65, roughness: 0.35 });
     const mid = mat(0x252b36, { metalness: 0.55, roughness: 0.4 });

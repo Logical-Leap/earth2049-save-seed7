@@ -56,6 +56,7 @@ LRX-7 Harbinger Sniper · Compliance Saw LMG · Plasma Lancer · MGL-6 Thunderer
   (canvas textures, rigged low-poly meshes, synthesized WebAudio SFX/music)
 - Selected finished GLB enemies are loaded for matching faction commons: ShillZ common,
   Musker runner, and Cryptid broker
+- The finished AR GLB is loaded as the M-52 Revenant assault-rifle viewmodel
 - Three.js r147 (UMD) + UnrealBloom postprocessing, local copies in `lib/` — fully offline
 - Save data (GigaTech, upgrades, stats, options) persists in browser localStorage
 - Adaptive quality: resolution and bloom scale down automatically on slower devices

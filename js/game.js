@@ -77,6 +77,10 @@ async function boot() {
   composer.addPass(bloomPass);
   composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
 
+  const loadScreen = el('loadScreen');
+  if (loadScreen) loadScreen.textContent = 'LOADING FACTION MODELS…';
+  await Assets.preloadExternalModels();
+
   // viewmodel
   gunGroup = new THREE.Group();
   gunGroup.position.set(0.25, -0.28, -0.46);
@@ -97,10 +101,6 @@ async function boot() {
   onResize();
   addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run') setPaused(true); });
-
-  const loadScreen = el('loadScreen');
-  if (loadScreen) loadScreen.textContent = 'LOADING FACTION MODELS…';
-  await Assets.preloadExternalModels();
 
   // living city backdrop behind the title screen
   World.build(scene, 0);
