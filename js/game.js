@@ -23,6 +23,8 @@ function loadSave() {
   try { SAVE = JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch (e) { SAVE = null; }
   if (!SAVE) SAVE = { gt: 0, up: {}, runs: 0, bestD: 0, kills: 0, wins: 0, opts: { sens: 1, music: true, sfx: true, auto: true } };
   if (!SAVE.opts) SAVE.opts = { sens: 1, music: true, sfx: true, auto: true };
+  if (!SAVE.intel) SAVE.intel = {};
+  for (const id of Object.keys(FACTIONS)) if (id !== 'rebels' && !SAVE.intel[id]) SAVE.intel[id] = { points: 0, leaders: 0 };
 }
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {} }
 const upLv = id => SAVE.up[id] || 0;
@@ -224,7 +226,7 @@ function newRun() {
     fireT: 0, swapT: 0, adrenalT: 0, bobT: 0, recoil: 0,
     dashT: 0, dashCdT: 0, dashX: 0, dashZ: 0, iframesT: 0,
     combo: 0, comboT: 0, bestCombo: 0, gt: 0,
-    stats: { kills: 0, dmg: 0, taken: 0 }, reviveUsed: false,
+    stats: { kills: 0, dmg: 0, taken: 0, missions: 0 }, intel: {}, reviveUsed: false,
   };
   p.hp = p.maxHp;
   p.slideK = 0; p.swayX = 0; p.swayY = 0;
@@ -236,6 +238,7 @@ function newRun() {
     boss: null, timeScale: 1, shake: 0, dmgVin: 0, time: 0,
     director: { threat: 0.5, t: 4, msgT: 14, kills: [], taken: [] },
     augs: [], theme: null, autoFire: SAVE.opts.auto,
+    currentRoute: null, nextRoute: ROUTES[0], mission: null,
   };
   SAVE.runs++; persist();
   AudioSys.init(); AudioSys.resume(); if (SAVE.opts.music) AudioSys.musicStart();
@@ -255,8 +258,12 @@ function startDistrict(i) {
   G.p.yaw = Math.atan2(s.x, s.z); // face arena center
   G.p.hp = Math.min(G.p.maxHp, G.p.hp + Math.round(G.p.maxHp * 0.3));
   G.wave = 0; G.phase = 'intro'; G.waveDelay = 2.6; G.boss = null;
+  G.currentRoute = G.nextRoute || ROUTES[0];
+  G.nextRoute = null;
+  startMission(G.currentRoute, DISTRICTS[i]);
+  G.director.threat = clamp(G.director.threat + (G.currentRoute.threat || 0), 0.15, 1.35);
   el('bossBar').style.display = 'none';
-  banner('DISTRICT ' + (i + 1) + ' — ' + DISTRICTS[i].name, 'CONTROLLED BY ' + FACTIONS[DISTRICTS[i].fac].name.toUpperCase() + ' — LIQUIDATE ALL HOSTILES');
+  banner('DISTRICT ' + (i + 1) + ' — ' + DISTRICTS[i].name, G.currentRoute.n.toUpperCase() + ' — ' + MISSION_COPY[G.mission.type].n.toUpperCase());
   AudioSys.setIntensity(0.35 + i * 0.1);
 }
 
@@ -273,6 +280,65 @@ function despawnRig(e) {
   e.rig.root.traverse(o => { if (o.material && o.material.dispose) { if (Array.isArray(o.material)) o.material.forEach(m => m.dispose()); else o.material.dispose(); } });
 }
 
+function startMission(route, dist) {
+  const type = route?.mission || 'kills';
+  const d = G.district + 1;
+  const targets = { kills: 8 + d * 4, gt: 30 + d * 18, intel: 10 + d * 6, clean: 38 + d * 12, elite: 1 };
+  const reward = Math.round((18 + d * 12) * (1 + (route?.reward || 0)));
+  G.mission = {
+    type,
+    name: MISSION_COPY[type].n,
+    desc: MISSION_COPY[type].d,
+    progress: 0,
+    target: targets[type] || 10,
+    reward,
+    intel: route?.intel || Math.round(6 + d * 2),
+    completed: false,
+    failed: false,
+    startTaken: G.p.stats.taken,
+  };
+  updateMissionHud();
+}
+function progressMission(type, amount) {
+  const m = G?.mission;
+  if (!m || m.completed || m.failed || m.type !== type) return;
+  m.progress = Math.min(m.target, m.progress + amount);
+  if (m.progress >= m.target) completeMission();
+  else updateMissionHud();
+}
+function completeMission() {
+  const m = G?.mission;
+  if (!m || m.completed || m.failed) return;
+  m.completed = true;
+  G.p.stats.missions++;
+  G.p.gt += Math.round(m.reward * (1 + G.p.mods.gt));
+  const fac = DISTRICTS[G.district].fac;
+  G.p.intel[fac] = (G.p.intel[fac] || 0) + m.intel;
+  banner('MISSION COMPLETE', m.name.toUpperCase() + ' — +' + m.reward + ' GIGATECH / +' + m.intel + ' INTEL');
+  AudioSys.sfx('augment');
+  updateMissionHud();
+}
+function finishCleanMission() {
+  const m = G?.mission;
+  if (!m || m.type !== 'clean' || m.completed || m.failed) return;
+  const taken = Math.round(G.p.stats.taken - m.startTaken);
+  if (taken <= m.target) completeMission();
+  else { m.failed = true; updateMissionHud(); }
+}
+function updateMissionHud() {
+  const box = el('missionBox');
+  if (!box || !G?.mission) return;
+  const m = G.mission;
+  box.style.display = state === 'run' ? 'block' : 'none';
+  let prefix = 'MISSION: ';
+  if (m.completed) prefix = 'MISSION COMPLETE: ';
+  else if (m.failed) prefix = 'MISSION FAILED: ';
+  el('missionName').textContent = prefix + m.name;
+  let prog = m.progress;
+  if (m.type === 'clean') prog = Math.max(0, m.target - Math.round(G.p.stats.taken - m.startTaken));
+  el('missionProg').textContent = m.desc + ' — ' + prog + ' / ' + m.target + ' ' + MISSION_COPY[m.type].unit;
+}
+
 /* ============ waves & spawning ============ */
 function pickFromPool(pool) {
   let tw = 0; for (const [, w] of pool) tw += w;
@@ -284,7 +350,8 @@ function startWave() {
   G.wave++;
   const d = G.district, dist = DISTRICTS[d];
   G.phase = 'wave';
-  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5));
+  const routeEnemy = G.currentRoute?.enemy || 1;
+  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy);
   G.pending = [];
   for (let i = 0; i < n; i++) G.pending.push(pickFromPool(dist.pool));
   G.spawnT = 0.2;
@@ -352,14 +419,16 @@ function waveTick(dt) {
         G.spawnT = 0.4;
         const t = G.pending.pop();
         const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 12);
-        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06;
+        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + (G.currentRoute?.elite || 0);
         spawnEnemy(t, sp.x, sp.z, Math.random() < eliteCh);
       }
     }
     if (!G.pending.length && !G.enemies.length) {
-      G.p.gt += Math.round(8 * (G.district + 1) * (1 + G.p.mods.gt));
+      const waveReward = Math.round(8 * (G.district + 1) * (1 + G.p.mods.gt) * (1 + (G.currentRoute?.reward || 0)));
+      G.p.gt += waveReward;
+      progressMission('wave', 1);
       if (G.wave >= DISTRICTS[G.district].waves) { G.phase = 'preboss'; G.waveDelay = 2.2; banner('SECTOR SWEPT', 'FACTION LEADER INBOUND'); }
-      else { G.phase = 'break'; G.waveDelay = 2.4; banner('SECTOR SWEPT', '+' + Math.round(8 * (G.district + 1)) + ' GIGATECH'); }
+      else { G.phase = 'break'; G.waveDelay = 2.4; banner('SECTOR SWEPT', '+' + waveReward + ' GIGATECH'); }
     }
     return;
   }
@@ -782,6 +851,13 @@ function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
   p.stats.kills++; SAVE.kills++;
+  let intelGain = 1;
+  if (e.elite) intelGain = 3;
+  if (e.boss) intelGain = 25;
+  p.intel[e.type.fac] = (p.intel[e.type.fac] || 0) + intelGain;
+  progressMission('kills', 1);
+  progressMission('intel', intelGain);
+  if (e.elite || e.boss) progressMission('elite', 1);
   p.combo++; p.comboT = 3; p.bestCombo = Math.max(p.bestCombo, p.combo);
   for (const [th, name] of COMBO_TIERS) if (p.combo === th) { banner(name, 'COMBO x' + th); AudioSys.sfx('combo'); }
   AudioSys.sfx('kill');
@@ -826,6 +902,8 @@ function bossKilled(e) {
   G.phase = 'bossdead'; G.waveDelay = 2.4;
   banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'DISTRICT LIBERATED');
   G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt));
+  if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
+  finishCleanMission();
   AudioSys.sfx('expl'); AudioSys.setIntensity(0.4);
   // clear remaining enemies
   for (const e2 of G.enemies) if (e2 !== e && e2.state !== 'dying') { e2.hp = 0; e2.state = 'dying'; e2.dieT = 0; Particles.burst(e2.pos.x, 1, e2.pos.z, 0xffffff, 8, 3, 0.5); }
@@ -867,7 +945,9 @@ function pickupTick(pk, dt) {
   if (d < 1.1 && pk.kind !== 'weapon') {
     if (pk.kind === 'gt') {
       const mult = 1 + Math.min(p.combo, 25) * 0.06;
-      p.gt += Math.max(1, Math.round(pk.val * mult * (1 + p.mods.gt)));
+      const gain = Math.max(1, Math.round(pk.val * mult * (1 + p.mods.gt)));
+      p.gt += gain;
+      progressMission('gt', gain);
       AudioSys.sfx('shard');
     } else if (pk.kind === 'hp') { p.hp = Math.min(p.maxHp, p.hp + pk.val); AudioSys.sfx('pickup'); }
     else if (pk.kind === 'armor') { p.armor = Math.min(p.maxArmor, p.armor + pk.val); AudioSys.sfx('pickup'); }
@@ -920,6 +1000,7 @@ function damagePlayer(dmg, src) {
   p.armor -= absorbed;
   p.hp -= (dmg - absorbed);
   p.stats.taken += dmg;
+  if (G.mission && G.mission.type === 'clean') updateMissionHud();
   G.dmgVin = 1; G.shake = Math.min(1, G.shake + 0.25);
   AudioSys.sfx('hurt');
   G.director.taken.push(G.time);
@@ -1099,8 +1180,19 @@ function turingSay(txt) {
 /* ============ OG device / augments ============ */
 function openOG() {
   setState('og');
+  for (const o of document.querySelectorAll('.ov')) o.classList.remove('show');
   document.exitPointerLock && document.exitPointerLock();
   AudioSys.sfx('augment');
+  let pickedAug = null, pickedRoute = null;
+  const maybeContinue = () => {
+    if (!pickedAug || !pickedRoute) return;
+    pickedAug.ap(G.p); G.augs.push(pickedAug.id);
+    G.nextRoute = pickedRoute;
+    AudioSys.sfx('augment');
+    el('ovOG').classList.remove('show');
+    startDistrict(G.district + 1);
+    setState('run');
+  };
   const opts = [];
   const pool = AUGMENTS.slice();
   while (opts.length < 3 && pool.length) opts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
@@ -1110,13 +1202,28 @@ function openOG() {
     c.className = 'ogcard';
     c.innerHTML = '<div class="ogtype">' + a.t + ' PROTOCOL</div><h3>' + a.n + '</h3><p>' + a.d + '</p>';
     c.onclick = () => {
-      a.ap(G.p); G.augs.push(a.id);
-      AudioSys.sfx('augment');
-      el('ovOG').classList.remove('show');
-      startDistrict(G.district + 1);
-      setState('run');
+      pickedAug = a;
+      for (const x of wrap.children) x.classList.remove('sel');
+      c.classList.add('sel');
+      maybeContinue();
     };
     wrap.appendChild(c);
+  }
+  const rwrap = el('routeCards'); rwrap.innerHTML = '';
+  const rpool = ROUTES.slice();
+  const routes = [];
+  while (routes.length < 2 && rpool.length) routes.push(rpool.splice(Math.trunc(Math.random() * rpool.length), 1)[0]); // NOSONAR - gameplay route variety, not security-sensitive
+  for (const r of routes) {
+    const c = document.createElement('div');
+    c.className = 'ogcard route';
+    c.innerHTML = '<div class="ogtype">' + r.t + '</div><h3>' + r.n + '</h3><p>' + r.d + '</p>';
+    c.onclick = () => {
+      pickedRoute = r;
+      for (const x of rwrap.children) x.classList.remove('sel');
+      c.classList.add('sel');
+      maybeContinue();
+    };
+    rwrap.appendChild(c);
   }
   el('ovOG').classList.add('show');
 }
@@ -1124,6 +1231,16 @@ function openOG() {
 /* ============ death & victory ============ */
 function bankGT() {
   SAVE.gt += G.p.gt;
+  if (!SAVE.intel) SAVE.intel = {};
+  for (const [fac, pts] of Object.entries(G.p.intel || {})) {
+    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
+    SAVE.intel[fac].points += pts;
+  }
+  if ((G.phase === 'bossdead' || state === 'victory') && DISTRICTS[G.district]) {
+    const fac = DISTRICTS[G.district].fac;
+    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
+    SAVE.intel[fac].leaders = Math.max(SAVE.intel[fac].leaders || 0, 1);
+  }
   SAVE.bestD = Math.max(SAVE.bestD, G.district + (G.phase === 'bossdead' || state === 'victory' ? 1 : 0));
   persist();
 }
@@ -1148,9 +1265,12 @@ function doVictory() {
 }
 function statLines() {
   const p = G.p;
+  const intel = Object.values(p.intel || {}).reduce((a, b) => a + b, 0);
   return 'DISTRICTS CLEARED <b>' + (G.district + (state === 'victory' ? 1 : 0)) + ' / 5</b><br>' +
+    'MISSIONS COMPLETE <b>' + p.stats.missions + '</b><br>' +
     'KILLS <b>' + p.stats.kills + '</b> &nbsp; BEST COMBO <b>x' + p.bestCombo + '</b><br>' +
     'DAMAGE DEALT <b>' + Math.round(p.stats.dmg) + '</b><br>' +
+    'FACTION INTEL RECOVERED <b>+' + intel + '</b><br>' +
     'GIGATECH BANKED <b>+' + p.gt + ' &#11042;</b>';
 }
 
@@ -1183,6 +1303,7 @@ function hudTick() {
   el('distText').textContent = 'DISTRICT ' + (G.district + 1) + ' — ' + DISTRICTS[G.district].name;
   el('waveText').textContent = G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves;
   el('hostText').textContent = 'HOSTILES: ' + (G.enemies.filter(e => e.state !== 'dying').length + G.pending.length);
+  updateMissionHud();
   const cb = el('comboBox');
   if (p.combo >= 2) {
     cb.style.opacity = '1';
@@ -1318,6 +1439,26 @@ function updateTitle() {
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
+function factionIntelLevel(points) {
+  if (points >= 180) return 'COMPROMISED';
+  if (points >= 90) return 'MAPPED';
+  if (points >= 35) return 'PROFILED';
+  if (points > 0) return 'CONTACT';
+  return 'UNKNOWN';
+}
+function factionIntelRow(id, f) {
+  const data = SAVE.intel?.[id] || { points: 0, leaders: 0 };
+  const leader = data.leaders ? 'LEADER BROKEN' : 'LEADER ACTIVE';
+  return '<div class="intelrow"><b style="color:#' + f.neon.toString(16).padStart(6, '0') + '">' + f.name + '</b><span>' + factionIntelLevel(data.points) + ' — ' + data.points + ' INTEL — ' + leader + '</span></div>';
+}
+function renderBriefing() {
+  const wrap = el('factionIntel');
+  if (!wrap) return;
+  const rows = Object.entries(FACTIONS)
+    .filter(([id]) => id !== 'rebels')
+    .map(([id, f]) => factionIntelRow(id, f));
+  wrap.innerHTML = rows.join('') || '<p>No faction intelligence recovered yet.</p>';
+}
 function renderArmory() {
   el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH';
   const grid = el('armoryGrid'); grid.innerHTML = '';
@@ -1331,7 +1472,10 @@ function renderArmory() {
     const cost = maxed ? 0 : metaCost(u, lv);
     card.innerHTML = '<h3>' + u.n + '</h3>' + pips + '<p>' + u.d + '</p>';
     const btn = document.createElement('div');
-    btn.className = 'buybtn ' + (maxed ? 'max' : (SAVE.gt < cost ? 'cant' : ''));
+    let btnState = '';
+    if (maxed) btnState = 'max';
+    else if (SAVE.gt < cost) btnState = 'cant';
+    btn.className = 'buybtn ' + btnState;
     btn.innerHTML = maxed ? 'MAXED' : 'UPGRADE — ' + cost + ' &#11042;';
     if (!maxed && SAVE.gt >= cost) btn.onclick = () => {
       SAVE.gt -= cost; SAVE.up[u.id] = lv + 1; persist();
@@ -1347,7 +1491,7 @@ function wireMenus() {
   el('btnStart').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
   el('btnArmBack').onclick = () => { AudioSys.sfx('ui'); updateTitle(); show('ovTitle'); };
-  el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovHelp'); };
+  el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
   el('btnHelpBack').onclick = () => { AudioSys.sfx('ui'); show('ovTitle'); };
   el('btnRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun(); };
   el('btnDeathArmory').onclick = () => { AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };

@@ -77,6 +77,9 @@ body.inrun #hud{display:block;}
 #distText{opacity:.75;margin-top:3px;}
 #waveText{opacity:.75;margin-top:2px;}
 #hostText{color:#ff8a9d;margin-top:2px;}
+#missionBox{margin-top:6px;padding:5px 8px;border-left:2px solid var(--purple);background:rgba(10,14,26,.38);max-width:min(42vw,330px);}
+#missionName{color:var(--yellow);font-weight:900;}
+#missionProg{font-size:10px;opacity:.75;margin-top:2px;}
 
 #comboBox{position:absolute;right:calc(16px + env(safe-area-inset-right));top:26vh;text-align:right;opacity:0;transition:opacity .2s;}
 #comboNum{font-size:clamp(28px,5vw,44px);font-weight:900;color:var(--yellow);text-shadow:0 0 16px rgba(255,230,0,.8);line-height:1;}
@@ -173,13 +176,17 @@ h2.ovtitle{font-size:clamp(20px,4.6vw,34px);font-weight:900;letter-spacing:.34em
 
 /* og device */
 #ovOG{background:radial-gradient(ellipse at 50% 40%,rgba(60,20,90,.95),rgba(4,2,12,.98) 75%);}
-#ogCards{display:flex;gap:14px;margin-top:26px;flex-wrap:wrap;justify-content:center;}
+#ogCards,#routeCards{display:flex;gap:14px;margin-top:18px;flex-wrap:wrap;justify-content:center;}
+#routeCards{margin-top:12px;}
 .ogcard{pointer-events:auto;cursor:pointer;width:min(230px,84vw);border:1px solid rgba(155,89,255,.5);
   background:linear-gradient(180deg,rgba(40,20,80,.55),rgba(10,6,24,.8));padding:18px 16px;transition:all .15s;text-align:left;}
-.ogcard:hover,.ogcard:active{transform:translateY(-4px);box-shadow:0 8px 34px rgba(155,89,255,.45);border-color:#c9a4ff;}
+.ogcard.route{border-color:rgba(0,229,255,.42);}
+.ogcard:hover,.ogcard:active,.ogcard.sel{transform:translateY(-4px);box-shadow:0 8px 34px rgba(155,89,255,.45);border-color:#c9a4ff;}
+.ogcard.route.sel{box-shadow:0 8px 34px rgba(0,229,255,.35);border-color:var(--cyan);}
 .ogcard h3{font-size:14px;letter-spacing:.12em;color:#fff;text-transform:uppercase;text-shadow:0 0 10px var(--purple);}
 .ogcard .ogtype{font-size:9px;letter-spacing:.34em;color:var(--cyan);text-transform:uppercase;margin-bottom:8px;}
 .ogcard p{font-size:12px;line-height:1.5;opacity:.8;}
+#ogHint{font-size:10px;letter-spacing:.24em;text-transform:uppercase;opacity:.65;margin-top:18px;}
 
 /* death / victory stat block */
 .stats{margin-top:18px;font-size:13px;letter-spacing:.16em;line-height:2;text-transform:uppercase;opacity:.85;}
@@ -193,6 +200,9 @@ h2.ovtitle{font-size:clamp(20px,4.6vw,34px);font-weight:900;letter-spacing:.34em
 #helpCols h3{font-size:12px;letter-spacing:.3em;color:var(--cyan);text-transform:uppercase;margin-bottom:8px;}
 #helpCols p{font-size:12px;line-height:1.9;opacity:.75;}
 #helpCols b{color:#fff;}
+#factionIntel{display:flex;flex-direction:column;gap:6px;margin-top:3px;}
+.intelrow{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(120,150,255,.16);padding:4px 0;font-size:11px;line-height:1.35;}
+.intelrow span{text-align:right;opacity:.72;}
 kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:1px 6px;font-size:11px;border-radius:3px;font-family:Consolas,monospace;}
 
 /* pause */
@@ -240,6 +250,7 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
     <div id="distText">DISTRICT 1 — SHILLZ CENTRAL</div>
     <div id="waveText">WAVE 1/3</div>
     <div id="hostText">HOSTILES: 0</div>
+    <div id="missionBox"><div id="missionName">MISSION: —</div><div id="missionProg"></div></div>
   </div>
   <div id="comboBox"><div id="comboLbl">COMBO</div><div id="comboNum">x2</div><div id="comboTier"></div></div>
   <div id="bossBar"><div id="bossTitle">VOICE OF THE FEED</div><div id="bossName">RIYA VEX</div>
@@ -297,6 +308,7 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
       <b style="color:#4caf50">Common</b> <b style="color:#42a5f5">Uncommon</b> <b style="color:#ab47bc">Rare</b>
       <b style="color:#ff9800">Epic</b> <b style="color:#ef5350">Legendary</b> <b style="color:#ffd54f">Mythic</b>
       <b style="color:#00e5ff">Relic</b>. Chain kills to build <b>combo</b> — more combo, more GigaTech.</p></div>
+    <div><h3>Faction Intel</h3><p>Enemy scans and leader kills now bank faction intelligence after extraction. Intel levels track how well Purple Team understands each hostile network.</p><div id="factionIntel"></div></div>
   </div>
   <div class="btnrow"><div class="btn" id="btnHelpBack">Back</div></div>
 </div>
@@ -304,7 +316,9 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
 <div class="ov" id="ovOG">
   <h2 class="ovtitle">OG Device</h2>
   <div class="ovsub">Timeline Glimpse &mdash; Choose One Path</div>
+  <div id="ogHint">Choose one augment and one route into the next district</div>
   <div id="ogCards"></div>
+  <div id="routeCards"></div>
 </div>
 
 <div class="ov" id="ovDeath">
