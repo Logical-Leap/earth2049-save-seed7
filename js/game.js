@@ -216,7 +216,21 @@ function makeWeapon(id, rarity) {
   };
 }
 
+function resetRunWorld() {
+  if (G) clearEntities();
+  nearCrate = null;
+  for (const id of ['pickupPrompt', 'btnPick', 'bossBar', 'missionBox']) {
+    const node = el(id);
+    if (node) node.style.display = 'none';
+  }
+  if (turingT) { clearTimeout(turingT); turingT = null; }
+  const turingBox = el('turingBox');
+  if (turingBox) turingBox.classList.remove('show');
+  if (gunGroup) gunGroup.visible = false;
+}
+
 function newRun() {
+  resetRunWorld();
   const p = {
     pos: V3(), velY: 0, yaw: Math.PI * 0.25, pitch: 0, onGround: true,
     maxHp: CFG.BASE_HP + 20 * upLv('vitality'), hp: 0,
@@ -238,7 +252,7 @@ function newRun() {
     boss: null, timeScale: 1, shake: 0, dmgVin: 0, time: 0,
     director: { threat: 0.5, t: 4, msgT: 14, kills: [], taken: [] },
     augs: [], theme: null, autoFire: SAVE.opts.auto,
-    currentRoute: null, nextRoute: ROUTES[0], mission: null,
+    currentRoute: null, nextRoute: ROUTES[0], mission: null, ammoPity: 0,
   };
   SAVE.runs++; persist();
   AudioSys.init(); AudioSys.resume(); if (SAVE.opts.music) AudioSys.musicStart();
@@ -268,6 +282,7 @@ function startDistrict(i) {
 }
 
 function clearEntities() {
+  if (!G) return;
   for (const e of G.enemies) despawnRig(e);
   for (const pr of G.projs) scene.remove(pr.mesh);
   for (const pk of G.pickups) scene.remove(pk.mesh);
@@ -884,12 +899,16 @@ function killEnemy(e) {
   if (e.boss) {
     spawnPickup('weapon', e.pos.x + 1.2, e.pos.z, 0, rollWeapon(2));
     spawnPickup('weapon', e.pos.x - 1.2, e.pos.z, 0, rollWeapon(1));
-    spawnPickup('hp', e.pos.x, e.pos.z + 1.2, 30);
+    spawnPickup('ammo', e.pos.x, e.pos.z + 1.2, 0);
+    spawnPickup('hp', e.pos.x, e.pos.z - 1.2, 30);
     bossKilled(e);
   } else {
-    if (r < 0.10) spawnPickup('hp', e.pos.x, e.pos.z, 20);
-    else if (r < 0.2) spawnPickup('ammo', e.pos.x, e.pos.z, 0);
-    else if (r < 0.26) spawnPickup('armor', e.pos.x, e.pos.z, 20);
+    G.ammoPity++;
+    const ammoChance = e.fly ? 0.28 : 0.10;
+    if (G.ammoPity >= 6) { spawnPickup('ammo', e.pos.x, e.pos.z, 0); G.ammoPity = 0; }
+    else if (r < 0.10) spawnPickup('hp', e.pos.x, e.pos.z, 20);
+    else if (r < 0.10 + ammoChance) { spawnPickup('ammo', e.pos.x, e.pos.z, 0); G.ammoPity = 0; }
+    else if (r < 0.26 + ammoChance) spawnPickup('armor', e.pos.x, e.pos.z, 20);
     if (e.elite && Math.random() < 0.35) spawnPickup('weapon', e.pos.x, e.pos.z, 0, rollWeapon(0));
   }
   G.director.kills.push(G.time);
@@ -899,8 +918,9 @@ function bossKilled(e) {
   G.boss = null;
   el('bossBar').style.display = 'none';
   G.timeScale = 0.3;
-  G.phase = 'bossdead'; G.waveDelay = 2.4;
-  banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'DISTRICT LIBERATED');
+  G.phase = 'bossdead';
+  G.waveDelay = G.district >= DISTRICTS.length - 1 ? 4.5 : 10.5;
+  banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'COLLECT WEAPON CORES — NEXT DISTRICT SOON');
   G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt));
   if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
   finishCleanMission();
@@ -953,7 +973,7 @@ function pickupTick(pk, dt) {
     else if (pk.kind === 'armor') { p.armor = Math.min(p.maxArmor, p.armor + pk.val); AudioSys.sfx('pickup'); }
     else if (pk.kind === 'ammo') {
       const w = p.weapons[1];
-      if (w && w.ammo !== Infinity) w.ammo = Math.min(w.ammoMax, w.ammo + Math.round(w.ammoMax * 0.3));
+      if (w && w.ammo !== Infinity) w.ammo = Math.min(w.ammoMax, w.ammo + Math.round(w.ammoMax * 0.45));
       AudioSys.sfx('pickup');
     }
     pk.dead = true;
