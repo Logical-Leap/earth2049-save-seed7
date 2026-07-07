@@ -1,0 +1,8 @@
+{
+  "models": {
+    "enemy.shill": "assets/models/enemies/shillz-common.glb",
+    "enemy.runner": "assets/models/enemies/musker-common.glb",
+    "enemy.broker": "assets/models/enemies/cryptid-common.glb",
+    "weapon.ar": "assets/models/weapons/ar.glb"
+  }
+}

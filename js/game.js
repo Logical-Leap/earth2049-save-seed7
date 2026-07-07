@@ -78,6 +78,8 @@ async function boot() {
   composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
 
   const loadScreen = el('loadScreen');
+  if (loadScreen) loadScreen.textContent = 'LOADING SIMULATION DATA…';
+  await GameData?.load?.();
   if (loadScreen) loadScreen.textContent = 'LOADING FACTION MODELS…';
   await Assets.preloadExternalModels();
 
@@ -103,7 +105,7 @@ async function boot() {
   document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run') setPaused(true); });
 
   // living city backdrop behind the title screen
-  World.build(scene, 0);
+  await World.build(scene, 0);
   el('loadScreen').style.display = 'none';
   updateTitle();
   requestAnimationFrame(frame);
@@ -390,7 +392,7 @@ function resetRunWorld() {
   if (gunGroup) gunGroup.visible = false;
 }
 
-function newRun() {
+async function newRun() {
   resetRunWorld();
   const p = {
     pos: V3(), velY: 0, yaw: Math.PI * 0.25, pitch: 0, onGround: true,
@@ -423,18 +425,19 @@ function newRun() {
   AudioSys.init(); AudioSys.resume(); if (SAVE.opts.music) AudioSys.musicStart();
   AudioSys.setSfx(SAVE.opts.sfx); AudioSys.setMusic(SAVE.opts.music);
   equipGun();
-  startDistrict(0);
+  setState('loading');
+  await startDistrict(0);
   banner('SIMULATION #' + SAVE.runs, 'OPERATION DREAMCASTER — CAST INITIATED');
   setState('run');
 }
 
-function startDistrict(i) {
+async function startDistrict(i) {
   G.district = i;
   clearEntities();
-  G.theme = World.build(scene, i);
+  G.theme = await World.build(scene, i);
   const s = World.playerStart();
   G.p.pos.set(s.x, 0, s.z); G.p.velY = 0;
-  G.p.yaw = Math.atan2(s.x, s.z); // face arena center
+  G.p.yaw = s.yaw !== undefined ? s.yaw : Math.atan2(s.x, s.z); // authored start yaw or face arena center
   G.p.hp = Math.min(G.p.maxHp, G.p.hp + Math.round(G.p.maxHp * 0.3));
   if (G.modStats.timelineDrift) G.director.threat = Math.min(1.6, G.director.threat + 0.08);
   G.wave = 0; G.phase = 'intro'; G.waveDelay = 2.6; G.boss = null;
@@ -445,6 +448,7 @@ function startDistrict(i) {
   el('bossBar').style.display = 'none';
   banner('DISTRICT ' + (i + 1) + ' — ' + DISTRICTS[i].name, G.currentRoute.n.toUpperCase() + ' — ' + MISSION_COPY[G.mission.type].n.toUpperCase());
   AudioSys.setIntensity(0.35 + i * 0.1);
+  return true;
 }
 
 function clearEntities() {
@@ -602,7 +606,7 @@ function waveTick(dt) {
       if (G.spawnT <= 0) {
         G.spawnT = 0.4;
         const t = G.pending.pop();
-        const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 12);
+        const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 12, t);
         const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + (G.currentRoute?.elite || 0) + G.tierData.elite + 0.02 * corruptLv('rarity');
         spawnEnemy(t, sp.x, sp.z, Math.random() < eliteCh);
       }
@@ -815,7 +819,7 @@ function bossTick(e, dt, dist, ux, uz, los) {
     } else if (a === 'summon') {
       const n = e.phase2 ? 4 : 3;
       for (let i = 0; i < n; i++) {
-        const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 8);
+        const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 8, b.summon);
         spawnEnemy(b.summon, sp.x, sp.z, false);
       }
     } else if (a === 'charge') {
@@ -1412,14 +1416,15 @@ function openOG() {
   document.exitPointerLock && document.exitPointerLock();
   AudioSys.sfx('augment');
   let pickedAug = null, pickedRoute = null;
-  const maybeContinue = () => {
+  const maybeContinue = async () => {
     if (!pickedAug || !pickedRoute) return;
     pickedAug.ap(G.p); G.augs.push(pickedAug.id);
     if (pickedRoute.corruption) { SAVE.corruption += pickedRoute.corruption; G.director.threat = Math.min(1.6, G.director.threat + 0.12); persist(); }
     G.nextRoute = pickedRoute;
     AudioSys.sfx('augment');
     el('ovOG').classList.remove('show');
-    startDistrict(G.district + 1);
+    setState('loading');
+    await startDistrict(G.district + 1);
     setState('run');
   };
   const opts = [];

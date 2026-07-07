@@ -13,6 +13,7 @@ const World = (() => {
   let embers = null, emberPos = null;
   let signMats = [], holos = [];
   let themeRef = null, spawnCell = null, bossCell = null, colliders = [], spawnCursor = 0;
+  let usingExternalScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [];
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -68,6 +69,13 @@ const World = (() => {
     rebuildFreeCells();
   }
 
+  function genOpenLayout() {
+    grid.fill(0);
+    for (let i = 0; i < W; i++) { grid[idx(i, 0)] = CFG.WALL_H; grid[idx(i, H - 1)] = CFG.WALL_H; }
+    for (let j = 0; j < H; j++) { grid[idx(0, j)] = CFG.WALL_H; grid[idx(W - 1, j)] = CFG.WALL_H; }
+    rebuildFreeCells();
+  }
+
   function genLayout() {
     spawnCell = null; bossCell = null;
     if (themeRef && themeRef.map === 'engagementSquare') { genEngagementSquareLayout(); return; }
@@ -107,7 +115,63 @@ const World = (() => {
   function registerCollider(name, dims, opts) {
     const [x, y, z, sx, sy, sz] = dims;
     const top = y + sy;
-    colliders.push({ name, x, z, sx, sz, y0: y, h: top, climb: opts?.climb ?? (y <= 0.15 && top <= 1.25) });
+    colliders.push({ name, x, z, sx, sz, y0: y, h: top, climb: opts?.climb ?? (y <= 0.15 && top <= 1.25), gameplayType: opts?.gameplayType || null });
+  }
+  function markerFaction(name) {
+    const n = name.toUpperCase();
+    if (n.includes('SHILLZ')) return 'shillz';
+    if (n.includes('MUSKERS')) return 'muskers';
+    if (n.includes('BOTS')) return 'bots';
+    if (n.includes('CRYPTIDS')) return 'cryptids';
+    if (n.includes('GIGACORP')) return 'gigacorp';
+    return null;
+  }
+  function markerWorldPosition(obj) {
+    const v = new THREE.Vector3();
+    obj.getWorldPosition(v);
+    return v;
+  }
+  function registerEditorCollider(obj) {
+    const box = new THREE.Box3().setFromObject(obj);
+    if (!isFinite(box.min.x) || !isFinite(box.max.x)) return;
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    if (size.x <= 0.01 || size.z <= 0.01) return;
+    colliders.push({
+      name: obj.name,
+      x: center.x,
+      z: center.z,
+      sx: size.x,
+      sz: size.z,
+      y0: box.min.y,
+      h: box.max.y,
+      climb: obj.userData?.climb === true,
+      gameplayType: obj.userData?.gameplayType || null,
+    });
+  }
+  function parseEditorScene(root) {
+    const markers = { player:0, boss:0, enemy:0, pickup:0, collider:0 };
+    root.updateMatrixWorld(true);
+    root.traverse(obj => {
+      if (!obj.name) return;
+      const name = obj.name.toUpperCase();
+      const bare = name.replace(/^E2049_/, '');
+      const isMarker = name.startsWith('E2049_') || bare.startsWith('PLAYER_START') || bare.startsWith('BOSS_ARENA') || bare.startsWith('ENEMY_SPAWN') || bare.startsWith('PICKUP_SPAWN') || bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER');
+      if (bare.startsWith('PLAYER_START')) {
+        const p = markerWorldPosition(obj); playerStartPos = { x:p.x, z:p.z }; spawnCell = cellFromWorld(p.x, p.z); markers.player++;
+      } else if (bare.startsWith('BOSS_ARENA')) {
+        const p = markerWorldPosition(obj); bossArenaPos = { x:p.x, z:p.z }; bossCell = cellFromWorld(p.x, p.z); markers.boss++;
+      } else if (bare.startsWith('ENEMY_SPAWN')) {
+        const p = markerWorldPosition(obj); editorSpawnPoints.push({ x:p.x, z:p.z, fac:markerFaction(name), name:obj.name }); markers.enemy++;
+      } else if (bare.startsWith('PICKUP_SPAWN')) {
+        const p = markerWorldPosition(obj); pickupSpawnPoints.push({ x:p.x, z:p.z, name:obj.name }); markers.pickup++;
+      } else if (bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER')) {
+        if (bare.startsWith('COVER') && obj.userData && obj.userData.climb === undefined) obj.userData.climb = true;
+        registerEditorCollider(obj); markers.collider++;
+      }
+      if (isMarker && obj.userData?.visibleMarker !== true) obj.visible = false;
+    });
+    console.info('[E2049] Editor scene markers:', markers);
   }
   function mapBox(name, dims, mat, opts) {
     const [x, y, z, sx, sy, sz] = dims;
@@ -230,13 +294,16 @@ const World = (() => {
   }
 
   /* ---------- build scenery ---------- */
-  function build(scene, dIdx) {
+  async function build(scene, dIdx) {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
     signMats = []; holos = []; colliders = []; spawnCursor = 0;
+    playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false;
     const theme = DISTRICTS[dIdx]; themeRef = theme;
     const fac = FACTIONS[theme.fac];
-    genLayout();
+    const editorScene = theme.sceneUrl && AssetLoader ? await AssetLoader.loadScene(theme.sceneUrl) : null;
+    usingExternalScene = !!editorScene;
+    if (editorScene) genOpenLayout(); else genLayout();
 
     scene.fog = new THREE.FogExp2(theme.fog, CFG.FOG_DENS);
     scene.background = new THREE.Color(theme.sky);
@@ -259,6 +326,12 @@ const World = (() => {
     const facLight = new THREE.PointLight(fac.neon, 2.2, 70, 1.6);
     facLight.position.set(0, 12, 0); group.add(facLight);
 
+    if (editorScene) {
+      editorScene.name = editorScene.name || ('EditorScene_' + theme.name);
+      group.add(editorScene);
+      parseEditorScene(editorScene);
+    }
+
     // arena walls (merged)
     const wallTexture = Assets.wallTex(theme);
     const wallGeos = [], crateGeos = [];
@@ -279,19 +352,19 @@ const World = (() => {
         }
       }
     }
-    if (theme.map !== 'engagementSquare' && wallGeos.length) {
+    if (!editorScene && theme.map !== 'engagementSquare' && wallGeos.length) {
       const merged = THREE.BufferGeometryUtils.mergeBufferGeometries(wallGeos);
       const wm = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ map: wallTexture, roughness: 0.8, metalness: 0.2 }));
       group.add(wm);
       wallGeos.forEach(g => g.dispose());
     }
-    if (theme.map !== 'engagementSquare' && crateGeos.length) {
+    if (!editorScene && theme.map !== 'engagementSquare' && crateGeos.length) {
       const merged = THREE.BufferGeometryUtils.mergeBufferGeometries(crateGeos);
       const cm = new THREE.Mesh(merged, new THREE.MeshStandardMaterial({ map: Assets.crateTex(theme), roughness: 0.7, metalness: 0.3 }));
       group.add(cm);
       crateGeos.forEach(g => g.dispose());
     }
-    if (theme.map === 'engagementSquare') { wallGeos.forEach(g => g.dispose()); crateGeos.forEach(g => g.dispose()); }
+    if (editorScene || theme.map === 'engagementSquare') { wallGeos.forEach(g => g.dispose()); crateGeos.forEach(g => g.dispose()); }
 
     // neon trim on top of arena walls
     const trim = new THREE.Mesh(
@@ -352,7 +425,8 @@ const World = (() => {
       group.add(holo); holos.push(holo);
     }
 
-    if (theme.map === 'engagementSquare') buildEngagementSquareBlockout(fac);
+    if (!editorScene && theme.map === 'engagementSquare') buildEngagementSquareBlockout(fac);
+
 
     // pillar cell neon rings
     for (let cy = 1; cy < H - 1; cy++) for (let cx = 1; cx < W - 1; cx++) {
@@ -589,7 +663,7 @@ const World = (() => {
     return Math.abs(x) <= 28 && z >= -24 && z <= 20;
   }
   function spawnZoneAllows(x, z) {
-    return themeRef?.map !== 'engagementSquare' || engagementSpawnZone(x, z);
+    return usingExternalScene || themeRef?.map !== 'engagementSquare' || engagementSpawnZone(x, z);
   }
   function spawnPointSafe(x, z, px, pz, minD) {
     return spawnZoneAllows(x, z)
@@ -597,7 +671,18 @@ const World = (() => {
       && !circleHits(x, z, 0.8)
       && !spawnBlockedByProp(x, z, 0.8);
   }
-  function randomSpawn(px, pz, minD) {
+  function randomSpawn(px, pz, minD, typeId) {
+    const fac = typeId && ETYPES[typeId]?.fac;
+    if (editorSpawnPoints.length) {
+      const preferred = editorSpawnPoints.filter(p => (!p.fac || !fac || p.fac === fac) && spawnPointSafe(p.x, p.z, px, pz, minD));
+      const anySafe = editorSpawnPoints.filter(p => spawnPointSafe(p.x, p.z, px, pz, minD));
+      const pool = preferred.length ? preferred : anySafe;
+      if (pool.length) {
+        const p = pool[spawnCursor % pool.length];
+        spawnCursor += 7;
+        return { x:p.x, z:p.z };
+      }
+    }
     const safeCells = freeCells.filter(c => {
       const { x, z } = cellCenter(c.cx, c.cy);
       return spawnPointSafe(x, z, px, pz, minD);
@@ -624,15 +709,17 @@ const World = (() => {
   }
 
   function playerStart() {
+    if (playerStartPos) return playerStartPos;
     if (spawnCell) return cellCenter(spawnCell.cx, spawnCell.cy);
     // clear corner near (2,2)
     for (const c of freeCells) if (c.cx <= 3 && c.cy <= 3) return cellCenter(c.cx, c.cy);
     return cellCenter(freeCells[0].cx, freeCells[0].cy);
   }
   function bossArena() {
+    if (bossArenaPos) return bossArenaPos;
     if (bossCell) return cellCenter(bossCell.cx, bossCell.cy);
     return cellCenter((W - 1) / 2, (H - 1) / 2);
   }
 
-  return { build, tick, raycast, losClear, moveCircle, movePlayerCircle, circleHits, playerPropHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; } };
+  return { build, tick, raycast, losClear, moveCircle, movePlayerCircle, circleHits, playerPropHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; }, get editorSpawnPoints() { return editorSpawnPoints; }, get pickupSpawnPoints() { return pickupSpawnPoints; }, get usingExternalScene() { return usingExternalScene; } };
 })();
