@@ -12,7 +12,7 @@ const World = (() => {
   let rain = null, rainPos = null, rainVel = null;
   let embers = null, emberPos = null;
   let signMats = [], holos = [];
-  let themeRef = null, spawnCell = null, bossCell = null, colliders = [];
+  let themeRef = null, spawnCell = null, bossCell = null, colliders = [], spawnCursor = 0;
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -233,7 +233,7 @@ const World = (() => {
   function build(scene, dIdx) {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
-    signMats = []; holos = []; colliders = [];
+    signMats = []; holos = []; colliders = []; spawnCursor = 0;
     const theme = DISTRICTS[dIdx]; themeRef = theme;
     const fac = FACTIONS[theme.fac];
     genLayout();
@@ -533,7 +533,7 @@ const World = (() => {
     return !(c.climb && y + 0.18 >= c.h);
   }
   function spawnBlockedByProp(x, z, r) {
-    return colliders.some(c => !c.climb && rectCircleHit(c, x, z, r));
+    return colliders.some(c => rectCircleHit(c, x, z, r));
   }
   function circleHits(x, z, r) {
     return gridCircleHits(x, z, r);
@@ -582,13 +582,41 @@ const World = (() => {
     return { x: dx / d, z: dz / d };
   }
 
+  function engagementSpawnZone(x, z) {
+    // Authored ShillZ play space is inside the visible containment walls. The
+    // coarse 17x17 nav grid extends behind those walls, so do not use every
+    // grid-free cell as a wave spawn candidate on this map.
+    return Math.abs(x) <= 28 && z >= -24 && z <= 20;
+  }
+  function spawnZoneAllows(x, z) {
+    return themeRef?.map !== 'engagementSquare' || engagementSpawnZone(x, z);
+  }
+  function spawnPointSafe(x, z, px, pz, minD) {
+    return spawnZoneAllows(x, z)
+      && Math.hypot(x - px, z - pz) >= minD
+      && !circleHits(x, z, 0.8)
+      && !spawnBlockedByProp(x, z, 0.8);
+  }
   function randomSpawn(px, pz, minD) {
-    for (let i = 0; i < 60; i++) {
-      const c = freeCells[(Math.random() * freeCells.length) | 0];
+    const safeCells = freeCells.filter(c => {
       const { x, z } = cellCenter(c.cx, c.cy);
-      if (Math.hypot(x - px, z - pz) >= minD && !circleHits(x, z, 0.8) && !spawnBlockedByProp(x, z, 0.8)) return { x, z };
+      return spawnPointSafe(x, z, px, pz, minD);
+    });
+    if (safeCells.length) {
+      const c = safeCells[spawnCursor % safeCells.length];
+      spawnCursor += 7;
+      return cellCenter(c.cx, c.cy);
     }
-    const c = freeCells[(Math.random() * freeCells.length) | 0];
+
+    // If the player is standing near the only safe cells, still pick an in-map,
+    // unblocked spawn instead of falling back to cells behind containment.
+    const inMapCells = freeCells.filter(c => {
+      const { x, z } = cellCenter(c.cx, c.cy);
+      return spawnZoneAllows(x, z) && !circleHits(x, z, 0.8) && !spawnBlockedByProp(x, z, 0.8);
+    });
+    const fallbackCells = inMapCells.length ? inMapCells : freeCells;
+    const c = fallbackCells[spawnCursor % fallbackCells.length];
+    spawnCursor += 7;
     return cellCenter(c.cx, c.cy);
   }
 
