@@ -77,6 +77,10 @@ body.inrun #hud{display:block;}
 #distText{opacity:.75;margin-top:3px;}
 #waveText{opacity:.75;margin-top:2px;}
 #hostText{color:#ff8a9d;margin-top:2px;}
+#modText{color:var(--yellow);margin-top:2px;max-width:min(52vw,440px);white-space:normal;line-height:1.35;}
+#abilityHud{margin-top:5px;display:flex;gap:6px;flex-wrap:wrap;max-width:min(50vw,420px);}
+.abilpill{border:1px solid rgba(0,229,255,.35);background:rgba(0,40,60,.34);padding:3px 7px;font-size:10px;letter-spacing:.12em;color:var(--cyan);}
+.abilpill.cool{color:#ff8a9d;border-color:rgba(255,45,85,.4);}
 #missionBox{margin-top:6px;padding:5px 8px;border-left:2px solid var(--purple);background:rgba(10,14,26,.38);max-width:min(42vw,330px);}
 #missionName{color:var(--yellow);font-weight:900;}
 #missionProg{font-size:10px;opacity:.75;margin-top:2px;}
@@ -129,6 +133,8 @@ body.touch.inrun #touchUI{display:block;}
   border-color:rgba(255,80,110,.55);background:rgba(60,10,22,.4);}
 #btnFire:active{background:rgba(255,45,85,.4);}
 #btnDash{width:62px;height:62px;right:132px;bottom:34px;border-color:rgba(0,229,255,.5);}
+#btnAbil1{width:58px;height:58px;right:208px;bottom:48px;border-color:rgba(155,89,255,.65);background:rgba(50,20,90,.45);}
+#btnAbil2{width:58px;height:58px;right:206px;bottom:112px;border-color:rgba(0,229,255,.6);background:rgba(0,50,80,.4);}
 #btnSwap{width:56px;height:56px;right:36px;bottom:178px;}
 #btnPick{width:70px;height:70px;right:140px;bottom:120px;border-color:rgba(255,230,0,.6);background:rgba(60,50,0,.45);display:none;}
 #btnAuto{position:absolute;top:12px;right:64px;width:auto;height:30px;border-radius:15px;padding:0 12px;font-size:10px;}
@@ -161,7 +167,10 @@ h2.ovtitle{font-size:clamp(20px,4.6vw,34px);font-weight:900;letter-spacing:.34em
 .ovsub{font-size:11px;letter-spacing:.34em;opacity:.55;text-transform:uppercase;margin-bottom:22px;}
 
 /* armory */
-#armoryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;width:min(860px,94vw);margin-top:8px;}
+#armoryTabs{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;width:min(940px,94vw);}
+.armtab{pointer-events:auto;cursor:pointer;border:1px solid rgba(120,150,255,.35);padding:7px 10px;font-size:10px;letter-spacing:.16em;text-transform:uppercase;background:rgba(14,18,36,.45);}
+.armtab.on{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 14px rgba(0,229,255,.28);}
+#armoryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;width:min(940px,94vw);margin-top:8px;}
 .upcard{border:1px solid rgba(120,150,255,.3);background:rgba(14,18,36,.6);padding:12px;text-align:left;}
 .upcard h3{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#fff;}
 .upcard p{font-size:11px;opacity:.65;margin:5px 0 8px;}
@@ -250,6 +259,8 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
     <div id="distText">DISTRICT 1 — SHILLZ CENTRAL</div>
     <div id="waveText">WAVE 1/3</div>
     <div id="hostText">HOSTILES: 0</div>
+    <div id="modText"></div>
+    <div id="abilityHud"></div>
     <div id="missionBox"><div id="missionName">MISSION: —</div><div id="missionProg"></div></div>
   </div>
   <div id="comboBox"><div id="comboLbl">COMBO</div><div id="comboNum">x2</div><div id="comboTier"></div></div>
@@ -264,6 +275,8 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
   <div id="stickBase"></div><div id="stickKnob"></div>
   <div class="tbtn" id="btnFire">FIRE</div>
   <div class="tbtn" id="btnDash">DASH</div>
+  <div class="tbtn" id="btnAbil1">F</div>
+  <div class="tbtn" id="btnAbil2">R</div>
   <div class="tbtn" id="btnSwap">SWAP</div>
   <div class="tbtn" id="btnPick">TAKE</div>
   <div class="tbtn" id="btnAuto">AUTO: ON</div>
@@ -288,6 +301,7 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
   <h2 class="ovtitle">Armory</h2>
   <div class="ovsub">Permanent Upgrades &mdash; Purple Team Requisitions</div>
   <div class="gtwallet" id="armGT">&#11042; 0 GIGATECH</div>
+  <div id="armoryTabs"></div>
   <div id="armoryGrid"></div>
   <div class="btnrow"><div class="btn" id="btnArmBack">Back</div></div>
 </div>
@@ -301,9 +315,9 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
       Death is data — <b>GigaTech persists</b> between runs.</p></div>
     <div><h3>Desktop</h3><p><kbd>W A S D</kbd> Move &nbsp; <kbd>Mouse</kbd> Aim<br>
       <kbd>LMB</kbd> Fire &nbsp; <kbd>Shift</kbd> Dash &nbsp; <kbd>Space</kbd> Jump<br>
-      <kbd>Q</kbd> Swap Weapon &nbsp; <kbd>E</kbd> Take Weapon<br><kbd>Esc</kbd> Pause</p></div>
+      <kbd>Q</kbd> Swap Weapon &nbsp; <kbd>E</kbd> Take Weapon<br><kbd>F</kbd>/<kbd>R</kbd> Active Abilities &nbsp; <kbd>Esc</kbd> Pause</p></div>
     <div><h3>Mobile</h3><p><b>Left thumb</b> — move stick<br><b>Right thumb</b> — drag to aim<br>
-      <b>FIRE / DASH / SWAP</b> buttons<br><b>AUTO</b> — auto-fire when on target</p></div>
+      <b>FIRE / DASH / ABILITY / SWAP</b> buttons<br><b>AUTO</b> — auto-fire when on target</p></div>
     <div><h3>Loot</h3><p>Bosses and elites drop weapon cores. Rarity tiers:
       <b style="color:#4caf50">Common</b> <b style="color:#42a5f5">Uncommon</b> <b style="color:#ab47bc">Rare</b>
       <b style="color:#ff9800">Epic</b> <b style="color:#ef5350">Legendary</b> <b style="color:#ffd54f">Mythic</b>
@@ -359,20 +373,20 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
 <div id="rotateHint"><div class="ph">&#128241;</div>ROTATE DEVICE<br>LANDSCAPE RECOMMENDED<div class="btn" id="btnRotateSkip" style="margin-top:22px;">Play Anyway</div></div>
 <div id="loadScreen">INITIALIZING OG DEVICE…</div>
 
-<script src="lib/three.min.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/CopyShader.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/LuminosityHighPassShader.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/GammaCorrectionShader.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/EffectComposer.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/MaskPass.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/ShaderPass.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/RenderPass.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/UnrealBloomPass.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="lib/BufferGeometryUtils.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="js/config.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="js/audio.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="js/assets.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="js/world.js?v=20260707-shillz-spawn-hardening"></script>
-<script src="js/game.js?v=20260707-shillz-spawn-hardening"></script>
+<script src="lib/three.min.js?v=20260707-progression-systems"></script>
+<script src="lib/CopyShader.js?v=20260707-progression-systems"></script>
+<script src="lib/LuminosityHighPassShader.js?v=20260707-progression-systems"></script>
+<script src="lib/GammaCorrectionShader.js?v=20260707-progression-systems"></script>
+<script src="lib/EffectComposer.js?v=20260707-progression-systems"></script>
+<script src="lib/MaskPass.js?v=20260707-progression-systems"></script>
+<script src="lib/ShaderPass.js?v=20260707-progression-systems"></script>
+<script src="lib/RenderPass.js?v=20260707-progression-systems"></script>
+<script src="lib/UnrealBloomPass.js?v=20260707-progression-systems"></script>
+<script src="lib/BufferGeometryUtils.js?v=20260707-progression-systems"></script>
+<script src="js/config.js?v=20260707-progression-systems"></script>
+<script src="js/audio.js?v=20260707-progression-systems"></script>
+<script src="js/assets.js?v=20260707-progression-systems"></script>
+<script src="js/world.js?v=20260707-progression-systems"></script>
+<script src="js/game.js?v=20260707-progression-systems"></script>
 </body>
 </html>

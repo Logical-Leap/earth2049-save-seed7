@@ -154,6 +154,105 @@ const METAUP = [
 ];
 function metaCost(u, lvl){ return Math.round(u.base * Math.pow(lvl+1, 1.6)); }
 
+
+const ABILITIES = {
+  empGrenade: { id:'empGrenade', name:'EMP Grenade', category:'Countermeasure', cooldown:16,
+    d:'AoE stun and damage. Double effect against Bots/GigaCorp.', unlock:{ intel:{ fac:'bots', points:35 } }, max:3,
+    scaling:[ 'Radius +10%', 'Cooldown -15%', 'Bot damage +35%' ] },
+  signalJammer: { id:'signalJammer', name:'Signal Jammer', category:'Disruption', cooldown:22,
+    d:'Briefly disables ranged attacks and hostile projectiles.', unlock:{ intel:{ fac:'shillz', points:35 } }, max:3,
+    scaling:[ 'Duration +1s', 'Projectile decay', 'Cooldown -20%' ] },
+  ogRewindPulse: { id:'ogRewindPulse', name:'OG Rewind Pulse', category:'Survival', cooldown:34,
+    d:'Rewinds position and restores HP from a few seconds ago.', unlock:{ up:'revive' }, max:3,
+    scaling:[ 'Longer rewind', 'Bonus armor', 'Cooldown -20%' ] },
+  purpleDrone: { id:'purpleDrone', name:'Purple Drone', category:'Offense', cooldown:28,
+    d:'Deploys a temporary allied drone that pulses damage at nearby hostiles.', unlock:{ intel:{ fac:'muskers', points:35 } }, max:3,
+    scaling:[ 'Duration +3s', 'Pulse damage +25%', 'Two targets per pulse' ] },
+  adBlockerField: { id:'adBlockerField', name:'Ad-Blocker Field', category:'Defense', cooldown:26,
+    d:'Drops a defensive field that reduces incoming damage in its radius.', unlock:{ intel:{ fac:'shillz', points:90 } }, max:3,
+    scaling:[ 'Radius +20%', 'Damage reduction +10%', 'Damages ShillZ inside' ] },
+};
+
+const WEAPON_MASTERY = {
+  pistol: { n:'Pistol Discipline', levels:{ 1:'Crit +2%', 3:'Swap reload burst', 5:'Headshot GigaTech trickle', 8:'Combo timer +0.8s', 10:'Sidearm weakpoint economy' } },
+  smg: { n:'SMG Torrent', levels:{ 1:'Fire-rate ramp', 3:'Kill streak ammo', 5:'Move speed after kills', 8:'Elite shred', 10:'Ripper overdrive' } },
+  shotgun: { n:'Shotgun Breach', levels:{ 1:'Knockback pulse', 3:'Armor shred', 5:'Pellet sustain', 8:'Close-range crits', 10:'Room-clearing shock' } },
+  ar: { n:'AR Tactics', levels:{ 1:'Stable burst', 3:'Tactical reload', 5:'Weakpoint reveal', 8:'Elite mark', 10:'Revenant command loop' } },
+  dmr: { n:'DMR Harbinger', levels:{ 1:'Pierce +1', 3:'Boss weakpoint damage', 5:'Headshot refund', 8:'Longshot crit', 10:'Timeline perforation' } },
+  lmg: { n:'LMG Suppression', levels:{ 1:'Ramping suppression', 3:'Armor on sustained fire', 5:'Less spread ramp', 8:'Suppress elites', 10:'Compliance storm' } },
+  energy: { n:'Energy Control', levels:{ 1:'Projectile speed +10%', 3:'Chain micro-arcs', 5:'Shield burn', 8:'Projectile bloom', 10:'Plasma recursion' } },
+  rocket: { n:'Rocket Demolition', levels:{ 1:'Blast radius +8%', 3:'Cluster sparks', 5:'Self-damage guard', 8:'Boss stagger', 10:'Thunderer apocalypse' } },
+};
+
+const BOSS_RELICS = {
+  riya: { id:'riyaRelic', boss:'riya', name:'Riya Vex Relic — Viral Immunity', d:'Combo timers last longer and ShillZ ranged pressure weakens.' },
+  magnus: { id:'magnusRelic', boss:'magnus', name:'Magnus Relic — Unstable Ascension', d:'OG Device can surface unstable rare augment choices.' },
+  spyder: { id:'spyderRelic', boss:'spyder', name:'SPYD3R Relic — Packet Capture', d:'Hostile projectiles can convert into data shards.' },
+  blitz: { id:'blitzRelic', boss:'blitz', name:'Blitz Relic — Risk Dividend', d:'GigaTech pickups sometimes double but spike Turing threat.' },
+  turing: { id:'turingRelic', boss:'turing', name:'Turing Relic — Recursive Key', d:'Unlocks Simulation Tiers and corruption modifiers.' },
+};
+
+const FACTION_RESEARCH = {
+  shillz: [
+    { level:'CONTACT', d:'ShillZ propaganda tracked: combo decay is slower in ShillZ districts.' },
+    { level:'PROFILED', d:'Unlocks EMP/Jammer tuning against ShillZ ranged units.' },
+    { level:'MAPPED', d:'Riya broadcasts weaken: ShillZ ranged cooldowns are longer.' },
+    { level:'COMPROMISED', d:'Riya starts with compromised shielding.' },
+  ],
+  muskers: [
+    { level:'CONTACT', d:'Muskers dash tells are tagged sooner.' },
+    { level:'PROFILED', d:'Purple Drone unlocks additional pulse time.' },
+    { level:'MAPPED', d:'Magnus charge damage reduced.' },
+    { level:'COMPROMISED', d:'Muskers elites lose some speed scaling.' },
+  ],
+  bots: [
+    { level:'CONTACT', d:'Bot projectile cadence identified.' },
+    { level:'PROFILED', d:'EMP Grenade unlocks and hits Bots harder.' },
+    { level:'MAPPED', d:'Bots take bonus ability damage.' },
+    { level:'COMPROMISED', d:'SPYD3R summons enter with lower HP.' },
+  ],
+  cryptids: [
+    { level:'CONTACT', d:'Debt patterns reveal safer pickup timing.' },
+    { level:'PROFILED', d:'Cryptid drones drop more ammo.' },
+    { level:'MAPPED', d:'Broker homing weakens inside fields.' },
+    { level:'COMPROMISED', d:'Blitz risk payouts improve.' },
+  ],
+  gigacorp: [
+    { level:'CONTACT', d:'GigaCorp armor taxonomy recorded.' },
+    { level:'PROFILED', d:'EMP damage vs GigaCorp increased.' },
+    { level:'MAPPED', d:'Compliance fire loses accuracy.' },
+    { level:'COMPROMISED', d:'Turing simulation unlocks tier control.' },
+  ],
+};
+
+const MODIFIERS = [
+  { id:'sponsoredHostiles', n:'Sponsored Hostiles', kind:'negative', tier:1, d:'ShillZ gain ad shields.', ap:g=>{g.modStats.shillShield=18;} },
+  { id:'debtSpiral', n:'Debt Spiral', kind:'negative', tier:2, d:'Cryptid pressure steals value from uncollected shards.', ap:g=>{g.modStats.debt=true;} },
+  { id:'firmwareRot', n:'Firmware Rot', kind:'wild', tier:2, d:'Bots fracture into extra data on death.', ap:g=>{g.modStats.botFragments=true;} },
+  { id:'muskerRush', n:'Musker Rush', kind:'negative', tier:1, d:'Muskers gain speed over time.', ap:g=>{g.modStats.muskerRush=0.10;} },
+  { id:'complianceSweep', n:'Compliance Sweep', kind:'negative', tier:3, d:'GigaCorp invades earlier districts.', ap:g=>{g.modStats.compliance=true;} },
+  { id:'protocol404', n:'404 Protocol', kind:'positive', tier:2, d:'Some hostile projectiles randomly delete.', ap:g=>{g.modStats.deleteProjectiles=0.18;} },
+  { id:'lootboxWeather', n:'Lootbox Weather', kind:'wild', tier:1, d:'Pickups can mutate between types.', ap:g=>{g.modStats.lootbox=true;} },
+  { id:'timelineDrift', n:'Timeline Drift', kind:'wild', tier:3, d:'District rewards and threats drift upward.', ap:g=>{g.modStats.timelineDrift=true;} },
+];
+
+const SIM_TIERS = [
+  { tier:1, n:'Live Fire Simulation', hp:1.00, dmg:1.00, elite:0.00, mods:1, reward:1.00, rarity:0.00 },
+  { tier:2, n:'Turing Aware', hp:1.14, dmg:1.08, elite:0.03, mods:1, reward:1.12, rarity:0.15 },
+  { tier:3, n:'Recursive Hell', hp:1.30, dmg:1.16, elite:0.06, mods:2, reward:1.25, rarity:0.30 },
+  { tier:4, n:'Dead Timeline', hp:1.50, dmg:1.26, elite:0.09, mods:2, reward:1.42, rarity:0.45 },
+  { tier:5, n:'Perfect Save Candidate', hp:1.75, dmg:1.38, elite:0.13, mods:3, reward:1.65, rarity:0.65 },
+];
+function simTierData(tier){ return SIM_TIERS[Math.min(SIM_TIERS.length, Math.max(1, tier)) - 1] || { tier, n:'Seed Drift +' + (tier - 5), hp:1.75 + (tier - 5) * 0.18, dmg:1.38 + (tier - 5) * 0.08, elite:0.13 + (tier - 5) * 0.02, mods:3, reward:1.65 + (tier - 5) * 0.12, rarity:0.65 + (tier - 5) * 0.1 }; }
+
+const CORRUPTION_UPGRADES = [
+  { id:'greed', n:'Greed Spiral', d:'+20% rewards; Turing threat starts higher.', max:5, cost:2 },
+  { id:'reroll', n:'Anomaly Rerolls', d:'Extra OG Device choices; adds instability.', max:3, cost:3 },
+  { id:'revive', n:'Cursed Rewind', d:'Revives restore more HP; bosses scale harder.', max:3, cost:4 },
+  { id:'rarity', n:'Illegal Rarity Bias', d:'Better weapon rarity odds; more elites.', max:5, cost:3 },
+];
+function corruptionCost(u, lvl){ return Math.round(u.cost * Math.pow(lvl + 1, 1.35)); }
+
 const TAUNTS = {
   dominate: [
     'TURING: Anomaly detected. Recalibrating.',
