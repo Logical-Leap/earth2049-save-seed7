@@ -10,27 +10,31 @@ const Assets = (() => {
     // only for the grounded Broker so the rig/animations stay coherent.
     shill: {
       url: 'assets/models/enemies/shillz-common.glb',
-      height: 1.85,
+      height: 0.18,
+      rootScale: 0.65,
       anim: { idle:/alert|idle/i, walk:/walk_forward|walking|walk/i, run:/run_and_shoot|running|run/i, attack:/boxing|shoot/i, hit:/hit|reaction/i, dead:/dead/i },
     },
     runner: {
       url: 'assets/models/enemies/musker-common.glb',
-      height: 1.9,
+      height: 0.19,
+      rootScale: 0.65,
       anim: { idle:/idle/i, walk:/walking|walk/i, run:/runfast|running|run_fast|run/i, attack:/kick|hook|punch|charge|lunge/i, hit:/knock|hit|shot/i, dead:/dead|fall/i },
     },
     broker: {
       url: 'assets/models/enemies/cryptid-common.glb',
-      height: 1.85,
+      height: 0.18,
+      rootScale: 0.65,
       anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
     },
   };
   const EXTERNAL_GUNS = {
     ar: {
       url: 'assets/models/weapons/ar.glb',
-      length: 0.78,
-      muzzleZ: -0.66,
-      centerY: 0.02,
-      centerZ: -0.18,
+      length: 0.72,
+      muzzleZ: -0.58,
+      centerY: -0.02,
+      centerZ: -0.2,
+      yaw: -Math.PI / 2,
     },
   };
 
@@ -374,6 +378,7 @@ const Assets = (() => {
     if (!def || !rec?.gltf || rec.error) return null;
     const rig = newRig();
     rig.external = true;
+    rig.rootScale = def.rootScale || 1;
     const model = cloneExternalScene(rec.gltf.scene);
     model.name = 'GLB_' + typeId;
     model.traverse(o => {
@@ -852,7 +857,7 @@ const Assets = (() => {
       case 'enforcer': rig = enforcerRig(); break;
       default: rig = humanoid('gigacorp', {});
     }
-    rig.root.scale.setScalar(t.size);
+    rig.root.scale.setScalar(t.size * (rig.rootScale || 1));
     rig.size = t.size;
     shadowBlob(rig, 1);
     rig.setFlash = f => setFlash(rig, f);
@@ -937,7 +942,9 @@ const Assets = (() => {
     const size = box.getSize(new THREE.Vector3());
     const longest = Math.max(size.x, size.y, size.z, 0.01);
     model.scale.setScalar(def.length / longest);
-    if (size.x >= size.z && size.x >= size.y) model.rotation.y = Math.PI / 2;
+    model.rotation.y = def.yaw ?? (size.x >= size.z && size.x >= size.y ? Math.PI / 2 : 0);
+    model.rotation.x = def.pitch || 0;
+    model.rotation.z = def.roll || 0;
     model.updateMatrixWorld(true);
     const fit = new THREE.Box3().setFromObject(model);
     model.position.x -= (fit.min.x + fit.max.x) / 2;
