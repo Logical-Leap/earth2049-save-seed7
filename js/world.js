@@ -104,17 +104,19 @@ const World = (() => {
   function mapMat(color, emissive, intensity) {
     return new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.18, emissive: emissive || 0x000000, emissiveIntensity: intensity || 0 });
   }
-  function registerCollider(name, x, y, z, sx, sy, sz, opts) {
+  function registerCollider(name, dims, opts) {
+    const [x, y, z, sx, sy, sz] = dims;
     const top = y + sy;
     colliders.push({ name, x, z, sx, sz, y0: y, h: top, climb: opts?.climb ?? (y <= 0.15 && top <= 1.25) });
   }
-  function mapBox(name, x, y, z, sx, sy, sz, mat, opts) {
+  function mapBox(name, dims, mat, opts) {
+    const [x, y, z, sx, sy, sz] = dims;
     const g = new THREE.BoxGeometry(sx, sy, sz);
     const m = new THREE.Mesh(g, mat);
     m.name = name;
     m.position.set(x, y + sy / 2, z);
     group.add(m);
-    if (!opts || opts.collide !== false) registerCollider(name, x, y, z, sx, sy, sz, opts);
+    if (opts?.collide !== false) registerCollider(name, dims, opts);
     return m;
   }
   function rectCircleHit(c, x, z, r) {
@@ -158,11 +160,11 @@ const World = (() => {
     mapPlane('ENGAGEMENT_SQUARE_MAIN_PLAZA_KILLZONE', 0, 0.045, 0, sc(72), sc(50), new THREE.MeshBasicMaterial({ color: 0x3b3400, transparent: true, opacity: 0.15, depthWrite: false }));
     mapPlane('ENGAGEMENT_SQUARE_OBJECTIVE_RING', 0, 0.06, sc(-4), sc(18), sc(18), new THREE.MeshBasicMaterial({ color: fac.neon, transparent: true, opacity: 0.18, depthWrite: false }));
 
-    mapBox('ENGAGEMENT_STAGE_platform_objective_control', 0, 0, sc(-32), sc(24), 1.4, sc(8), black);
-    mapBox('ENGAGEMENT_STAGE_back_wall_billboard_support', 0, 1.4, sc(-36.2), sc(29), 8.2, 0.8, metal);
+    mapBox('ENGAGEMENT_STAGE_platform_objective_control', [0, 0, sc(-32), sc(24), 1.4, sc(8)], black);
+    mapBox('ENGAGEMENT_STAGE_back_wall_billboard_support', [0, 1.4, sc(-36.2), sc(29), 8.2, 0.8], metal);
     mapSign('SHILLZ LIVE\nOBEY. REPEAT.', 0, 9.2, sc(-37), sc(24), 5.2, fac.neon, 0);
-    mapBox('speaker_tower_L', sc(-16.5), 0, sc(-33), 1.4, 7.8, 1.4, black);
-    mapBox('speaker_tower_R', sc(16.5), 0, sc(-33), 1.4, 7.8, 1.4, black);
+    mapBox('speaker_tower_L', [sc(-16.5), 0, sc(-33), 1.4, 7.8, 1.4], black);
+    mapBox('speaker_tower_R', [sc(16.5), 0, sc(-33), 1.4, 7.8, 1.4], black);
 
     const cover = [
       [-22,-6,5,2,'sponsor_barrier'],[-15,-3,4,2,'speaker_case'],[-7,-5,5,2,'media_riser'],[3,-7,5,2,'ad_block'],
@@ -174,37 +176,37 @@ const World = (() => {
       const [x, z, sx, sz, type] = c;
       const bx = sc(x), bz = sc(z), bsx = sc(sx), bsz = sc(sz);
       if (type === 'speaker_case') {
-        mapBox('SHILLZ_SPEAKER_CASE_collidable_' + i, bx, 0, bz, bsx, 0.95, bsz, black, { climb: true });
-        mapBox('SHILLZ_SPEAKER_STACK_visual_' + i, bx - bsx * 0.22, 0.95, bz, bsx * 0.28, 1.1, bsz * 0.75, yellow, { collide: false });
+        mapBox('SHILLZ_SPEAKER_CASE_collidable_' + i, [bx, 0, bz, bsx, 0.95, bsz], black, { climb: true });
+        mapBox('SHILLZ_SPEAKER_STACK_visual_' + i, [bx - bsx * 0.22, 0.95, bz, bsx * 0.28, 1.1, bsz * 0.75], yellow, { collide: false });
       } else if (type === 'merch_table') {
-        mapBox('SHILLZ_MERCH_TABLE_jumpable_' + i, bx, 0, bz, bsx, 0.82, bsz, yellow, { climb: true });
-        mapBox('SHILLZ_MERCH_CANOPY_visual_' + i, bx, 1.95, bz, bsx * 1.08, 0.22, bsz * 1.35, black, { collide: false });
+        mapBox('SHILLZ_MERCH_TABLE_jumpable_' + i, [bx, 0, bz, bsx, 0.82, bsz], yellow, { climb: true });
+        mapBox('SHILLZ_MERCH_CANOPY_visual_' + i, [bx, 1.95, bz, bsx * 1.08, 0.22, bsz * 1.35], black, { collide: false });
       } else if (type === 'newsstand') {
-        mapBox('SHILLZ_NEWSSTAND_blocker_' + i, bx, 0, bz, bsx, 1.65, bsz, metal, { climb: false });
+        mapBox('SHILLZ_NEWSSTAND_blocker_' + i, [bx, 0, bz, bsx, 1.65, bsz], metal, { climb: false });
         mapSign('BUY\nRISE', bx, 1.95, bz - bsz * 0.54, Math.max(2.2, bsx * 0.9), 1.2, fac.neon, 0);
       } else if (type === 'media_riser') {
-        mapBox('SHILLZ_MEDIA_RISER_jumpable_' + i, bx, 0, bz, bsx, 1.05, bsz, cyan, { climb: true });
-        mapBox('SHILLZ_MEDIA_RISER_trim_' + i, bx, 1.05, bz, bsx, 0.12, bsz, yellow, { collide: false });
+        mapBox('SHILLZ_MEDIA_RISER_jumpable_' + i, [bx, 0, bz, bsx, 1.05, bsz], cyan, { climb: true });
+        mapBox('SHILLZ_MEDIA_RISER_trim_' + i, [bx, 1.05, bz, bsx, 0.12, bsz], yellow, { collide: false });
       } else if (type === 'barricade') {
-        mapBox('SHILLZ_CROWD_BARRICADE_' + i, bx, 0, bz, bsx, 1.15, bsz, orange, { climb: true });
+        mapBox('SHILLZ_CROWD_BARRICADE_' + i, [bx, 0, bz, bsx, 1.15, bsz], orange, { climb: true });
       } else {
-        mapBox('SHILLZ_SPONSOR_BARRIER_' + i, bx, 0, bz, bsx, 0.92, bsz, i % 2 ? metal : yellow, { climb: true });
+        mapBox('SHILLZ_SPONSOR_BARRIER_' + i, [bx, 0, bz, bsx, 0.92, bsz], i % 2 ? metal : yellow, { climb: true });
       }
     }
-    cover.forEach(addCoverVariant);
-    mapBox('ENGAGEMENT_CHOKE_right_barricade_A', sc(26), 0, sc(-3), sc(13), 1.15, sc(2), orange, { climb: true });
-    mapBox('ENGAGEMENT_CHOKE_right_barricade_B', sc(32), 0, sc(5), sc(2), 1.15, sc(14), orange, { climb: true });
-    mapBox('ENGAGEMENT_CHOKE_mid_low_wall', 0, 0, sc(8), sc(16), 0.9, 0.8, metal, { climb: true });
+    cover.forEach((c, i) => addCoverVariant(c, i));
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_A', [sc(26), 0, sc(-3), sc(13), 1.15, sc(2)], orange, { climb: true });
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_B', [sc(32), 0, sc(5), sc(2), 1.15, sc(14)], orange, { climb: true });
+    mapBox('ENGAGEMENT_CHOKE_mid_low_wall', [0, 0, sc(8), sc(16), 0.9, 0.8], metal, { climb: true });
 
-    mapBox('MERCH_KIOSK_LOOT_counter', sc(-34), 0, sc(18), sc(13), 2.0, sc(7), black);
-    mapBox('MERCH_KIOSK_LOOT_awning', sc(-34), 2.0, sc(18), sc(15), 0.45, sc(8.5), yellow);
+    mapBox('MERCH_KIOSK_LOOT_counter', [sc(-34), 0, sc(18), sc(13), 2.0, sc(7)], black);
+    mapBox('MERCH_KIOSK_LOOT_awning', [sc(-34), 2.0, sc(18), sc(15), 0.45, sc(8.5)], yellow);
     mapSign('MERCH\nOBEY', sc(-34), 4.4, sc(13.4), sc(11), 2.8, fac.neon, 0);
-    mapBox('SUBWAY_ACCESS_stair_void', sc(28), -0.02, sc(22), sc(17), 0.12, sc(12), black);
+    mapBox('SUBWAY_ACCESS_stair_void', [sc(28), -0.02, sc(22), sc(17), 0.12, sc(12)], black);
     mapSign('SHILLZ TRANSIT\nOBEY ON TIME', sc(28), 3.5, sc(14.6), sc(12), 2.8, fac.neon, 0);
 
-    mapBox('UPPER_FLANK_left_bridge', sc(-33.5), 5.2, sc(-5), sc(5), 0.45, sc(32), cyan);
-    mapBox('UPPER_FLANK_crosscatwalk', sc(-14), 6.1, sc(-24), sc(34), 0.45, sc(4), cyan);
-    mapBox('REBEL_GRAFFITI_ALLEY_wall', sc(43), 0, sc(16), 0.8, 5.4, sc(24), purple);
+    mapBox('UPPER_FLANK_left_bridge', [sc(-33.5), 5.2, sc(-5), sc(5), 0.45, sc(32)], cyan);
+    mapBox('UPPER_FLANK_crosscatwalk', [sc(-14), 6.1, sc(-24), sc(34), 0.45, sc(4)], cyan);
+    mapBox('REBEL_GRAFFITI_ALLEY_wall', [sc(43), 0, sc(16), 0.8, 5.4, sc(24)], purple);
     mapSign('THE FEED\nIS A LIE', sc(42.5), 4.0, sc(16), 5.0, 3.4, 0x9b59ff, Math.PI / 2);
     mapPlane('REBEL_GRAFFITI_ALLEY_floor_route', sc(40), 0.07, sc(16), sc(7), sc(24), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
 
@@ -213,14 +215,14 @@ const World = (() => {
     mapPlane('right_flank_route_to_graffiti_alley', sc(38), 0.08, sc(10), sc(3), sc(28), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
     mapPlane('hazard_pressure_lane', sc(20), 0.09, sc(-6), sc(5), sc(18), new THREE.MeshBasicMaterial({ color: 0xff6a00, transparent: true, opacity: 0.16, depthWrite: false }));
 
-    mapBox('CONTAINMENT_SOUTH_main_shutter_wall', 0, 0, sc(31.5), sc(74), 5.4, 1.4, contain);
-    mapBox('CONTAINMENT_NORTH_stage_backstop_wall', 0, 0, sc(-42.5), sc(78), 8.6, 1.6, contain);
-    mapBox('CONTAINMENT_WEST_service_wall', sc(-52), 0, sc(1), 1.8, 8.2, sc(62), contain);
-    mapBox('CONTAINMENT_EAST_back_alley_wall', sc(52), 0, sc(1), 1.8, 8.2, sc(62), contain);
-    mapBox('CONTAINMENT_LOW_RAIL_south_left', sc(-20), 0, sc(24.7), sc(24), 0.9, 0.8, soft);
-    mapBox('CONTAINMENT_LOW_RAIL_south_right', sc(12), 0, sc(24.7), sc(18), 0.9, 0.8, soft);
-    mapBox('CONTAINMENT_LOW_RAIL_west_front', sc(-38.8), 0, sc(12), 0.8, 0.9, sc(18), soft);
-    mapBox('CONTAINMENT_LOW_RAIL_east_front', sc(38.8), 0, sc(4), 0.8, 0.9, sc(22), soft);
+    mapBox('CONTAINMENT_SOUTH_main_shutter_wall', [0, 0, sc(31.5), sc(74), 5.4, 1.4], contain);
+    mapBox('CONTAINMENT_NORTH_stage_backstop_wall', [0, 0, sc(-42.5), sc(78), 8.6, 1.6], contain);
+    mapBox('CONTAINMENT_WEST_service_wall', [sc(-52), 0, sc(1), 1.8, 8.2, sc(62)], contain);
+    mapBox('CONTAINMENT_EAST_back_alley_wall', [sc(52), 0, sc(1), 1.8, 8.2, sc(62)], contain);
+    mapBox('CONTAINMENT_LOW_RAIL_south_left', [sc(-20), 0, sc(24.7), sc(24), 0.9, 0.8], soft);
+    mapBox('CONTAINMENT_LOW_RAIL_south_right', [sc(12), 0, sc(24.7), sc(18), 0.9, 0.8], soft);
+    mapBox('CONTAINMENT_LOW_RAIL_west_front', [sc(-38.8), 0, sc(12), 0.8, 0.9, sc(18)], soft);
+    mapBox('CONTAINMENT_LOW_RAIL_east_front', [sc(38.8), 0, sc(4), 0.8, 0.9, sc(22)], soft);
 
     mapSign('EXTRACTION\nLOCKED UNTIL\nOBJECTIVE CLEAR', sc(28), 4.2, sc(29), sc(10), 2.4, fac.neon, 0);
     mapSign('TRUST\nTHE FEED', sc(-31), 10.5, sc(-25), sc(12), 5, fac.neon, 0.25);
@@ -508,25 +510,26 @@ const World = (() => {
     if (circleHits(nx, nz, r, y)) { nx = x; nz = z; }
     return { x: nx, z: nz };
   }
-  function circleHits(x, z, r, y) {
-    const yTop = y === undefined ? 0 : y + 0.18;
+  function gridCircleHits(x, z, r) {
     const minCx = Math.floor((x - r + HALF_W) / CELL), maxCx = Math.floor((x + r + HALF_W) / CELL);
     const minCy = Math.floor((z - r + HALF_H) / CELL), maxCy = Math.floor((z + r + HALF_H) / CELL);
     for (let cy = minCy; cy <= maxCy; cy++) for (let cx = minCx; cx <= maxCx; cx++) {
-      if (cellH(cx, cy) > 0.5) {
-        const x0 = cx * CELL - HALF_W, z0 = cy * CELL - HALF_H;
-        const px = Math.max(x0, Math.min(x, x0 + CELL)), pz = Math.max(z0, Math.min(z, z0 + CELL));
-        if ((px - x) * (px - x) + (pz - z) * (pz - z) < r * r) return true;
-      }
-    }
-    for (const c of colliders) {
-      if (!rectCircleHit(c, x, z, r)) continue;
-      if (y === undefined) return true;
-      if (c.y0 > y + CFG.PLAYER_H) continue;
-      if (c.climb && yTop >= c.h) continue;
-      return true;
+      if (cellH(cx, cy) <= 0.5) continue;
+      const x0 = cx * CELL - HALF_W, z0 = cy * CELL - HALF_H;
+      const px = Math.max(x0, Math.min(x, x0 + CELL)), pz = Math.max(z0, Math.min(z, z0 + CELL));
+      if ((px - x) * (px - x) + (pz - z) * (pz - z) < r * r) return true;
     }
     return false;
+  }
+  function colliderBlocks(c, x, z, r, y) {
+    if (!rectCircleHit(c, x, z, r)) return false;
+    if (y === undefined) return true;
+    if (c.y0 > y + CFG.PLAYER_H) return false;
+    return !(c.climb && y + 0.18 >= c.h);
+  }
+  function circleHits(x, z, r, y) {
+    if (gridCircleHits(x, z, r)) return true;
+    return colliders.some(c => colliderBlocks(c, x, z, r, y));
   }
   function groundHeight(x, z, r) {
     let h = 0;
