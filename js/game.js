@@ -56,7 +56,7 @@ function ensureAbilityUnlocks(){
 }
 
 /* ============ boot ============ */
-function boot() {
+async function boot() {
   loadSave();
   isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
   if (isTouch) document.body.classList.add('touch');
@@ -97,6 +97,10 @@ function boot() {
   onResize();
   addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run') setPaused(true); });
+
+  const loadScreen = el('loadScreen');
+  if (loadScreen) loadScreen.textContent = 'LOADING FACTION MODELS…';
+  await Assets.preloadExternalModels();
 
   // living city backdrop behind the title screen
   World.build(scene, 0);
@@ -640,9 +644,16 @@ function enemyTick(e, dt) {
   }
   if (e.state === 'dying') {
     e.dieT += dt;
-    rig.root.rotation.x = -Math.min(1.5, e.dieT * 4);
-    if (e.dieT > 0.3) e.rootY -= dt * 2.4;
-    rig.root.position.y = e.rootY;
+    if (rig.external) {
+      rig.update?.(dt, 'dead');
+      if (e.dieT > 0.3) e.rootY -= dt * 2.4;
+      rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
+      rig.root.rotation.y = e.yaw;
+    } else {
+      rig.root.rotation.x = -Math.min(1.5, e.dieT * 4);
+      if (e.dieT > 0.3) e.rootY -= dt * 2.4;
+      rig.root.position.y = e.rootY;
+    }
     if (e.dieT > 0.85) { despawnRig(e); e.dead = true; }
     return;
   }
@@ -717,6 +728,12 @@ function enemyTick(e, dt) {
   e.rootY = e.fly ? e.fly + Math.sin(G.time * 2 + e.flyP) * 0.25 : 0;
   rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
   rig.root.rotation.y = e.yaw;
+  if (rig.external) {
+    const anim = e.atkAnim > 0 || e.burstN > 0 ? 'attack' : ((mx || mz) ? (e.dashT > 0 ? 'run' : 'walk') : 'idle');
+    rig.update?.(dt, anim);
+    if (e.flash > 0) { e.flash = Math.max(0, e.flash - dt * 8); rig.setFlash(e.flash); }
+    return;
+  }
   const sw = (mx || mz) ? Math.sin(e.walkP) * 0.55 : 0;
   if (rig.legs.length === 2) { rig.legs[0].rotation.x = sw; rig.legs[1].rotation.x = -sw; }
   else if (rig.legs.length === 6) { for (let i = 0; i < 6; i++) rig.legs[i].rotation.x = Math.sin(e.walkP * 1.4 + i) * 0.18; }

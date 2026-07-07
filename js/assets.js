@@ -3,6 +3,28 @@
 
 const Assets = (() => {
   const texCache = {};
+  const modelCache = {};
+  const EXTERNAL_MODELS = {
+    // Use only finished biped "Common" drops for matching standard enemy roles.
+    // Cryptids also have a flying drone enemy; this biped is intentionally used
+    // only for the grounded Broker so the rig/animations stay coherent.
+    shill: {
+      url: 'assets/models/enemies/shillz-common.glb',
+      height: 1.85,
+      anim: { idle:/alert|idle/i, walk:/walk_forward|walking|walk/i, run:/run_and_shoot|running|run/i, attack:/boxing|shoot/i, hit:/hit|reaction/i, dead:/dead/i },
+    },
+    runner: {
+      url: 'assets/models/enemies/musker-common.glb',
+      height: 1.9,
+      anim: { idle:/idle/i, walk:/walking|walk/i, run:/runfast|running|run_fast|run/i, attack:/kick|hook|punch|charge|lunge/i, hit:/knock|hit|shot/i, dead:/dead|fall/i },
+    },
+    broker: {
+      url: 'assets/models/enemies/cryptid-common.glb',
+      height: 1.85,
+      anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
+    },
+  };
+
 
   function cv(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
   function ctex(canvas, repeat) {
@@ -308,6 +330,87 @@ const Assets = (() => {
     sp.scale.set(1.3 * size, 0.5 * size, 1);
     sp.position.y = 0.12;
     rig.root.add(sp);
+  }
+
+  function preloadExternalModels() {
+    if (!THREE.GLTFLoader) return Promise.resolve();
+    const loader = new THREE.GLTFLoader();
+    return Promise.all(Object.entries(EXTERNAL_MODELS).map(([id, def]) => {
+      if (modelCache[id]) return modelCache[id].promise;
+      const rec = { gltf:null, error:null };
+      rec.promise = new Promise(resolve => {
+        loader.load(def.url, gltf => { rec.gltf = gltf; resolve(); }, undefined, err => { rec.error = err; console.warn('GLB enemy model failed:', id, err); resolve(); });
+      });
+      modelCache[id] = rec;
+      return rec.promise;
+    })).then(() => undefined);
+  }
+
+  function cloneExternalScene(src) {
+    if (THREE.SkeletonUtils?.clone) return THREE.SkeletonUtils.clone(src);
+    return src.clone(true);
+  }
+
+  function pickClip(clips, rx) {
+    return clips.find(c => rx.test(c.name)) || null;
+  }
+
+  function makeExternalRig(typeId) {
+    const def = EXTERNAL_MODELS[typeId];
+    const rec = def && modelCache[typeId];
+    if (!def || !rec?.gltf || rec.error) return null;
+    const rig = newRig();
+    rig.external = true;
+    const model = cloneExternalScene(rec.gltf.scene);
+    model.name = 'GLB_' + typeId;
+    model.traverse(o => {
+      if (o.isMesh || o.isSkinnedMesh) {
+        o.castShadow = false;
+        o.receiveShadow = true;
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        for (const m of mats) if (m) {
+          if (m.map) { m.map.encoding = THREE.sRGBEncoding; m.map.anisotropy = 4; }
+          if (m.emissive) rig.flash.push({ m, e: m.emissive.clone(), i: m.emissiveIntensity || 0 });
+        }
+      }
+    });
+    rig.root.add(model);
+    model.updateMatrixWorld(true);
+    const box = new THREE.Box3().setFromObject(model);
+    const height = Math.max(0.01, box.max.y - box.min.y);
+    model.scale.setScalar(def.height / height);
+    model.updateMatrixWorld(true);
+    const fit = new THREE.Box3().setFromObject(model);
+    model.position.x -= (fit.min.x + fit.max.x) / 2;
+    model.position.y -= fit.min.y;
+    model.position.z -= (fit.min.z + fit.max.z) / 2;
+
+    rig.mixer = new THREE.AnimationMixer(model);
+    rig.actions = {};
+    const clips = rec.gltf.animations || [];
+    for (const [key, rx] of Object.entries(def.anim)) {
+      const clip = pickClip(clips, rx);
+      if (clip) {
+        const action = rig.mixer.clipAction(clip);
+        action.enabled = true;
+        action.clampWhenFinished = key === 'dead';
+        action.loop = key === 'dead' ? THREE.LoopOnce : THREE.LoopRepeat;
+        rig.actions[key] = action;
+      }
+    }
+    rig.play = (name, fade = 0.14) => {
+      const next = rig.actions[name] || rig.actions.run || rig.actions.walk || rig.actions.idle;
+      if (!next || rig.activeAction === next) return;
+      next.reset().fadeIn(fade).play();
+      if (rig.activeAction) rig.activeAction.fadeOut(fade);
+      rig.activeAction = next;
+    };
+    rig.update = (dt, mode) => {
+      rig.play(mode);
+      if (rig.mixer) rig.mixer.update(dt);
+    };
+    rig.play('idle', 0);
+    return rig;
   }
 
   /* ---------- generic humanoid chassis ---------- */
@@ -694,8 +797,8 @@ const Assets = (() => {
   /* ---------- enemy builder ---------- */
   function buildEnemy(typeId) {
     const t = ETYPES[typeId];
-    let rig;
-    switch (typeId) {
+    let rig = makeExternalRig(typeId);
+    if (!rig) switch (typeId) {
       case 'shill':
         rig = humanoid('shillz', { belly: true, bodyW: 1.25, suit: 0x17150e });
         dressShill(rig, false); attachPhone(rig);
@@ -951,5 +1054,5 @@ const Assets = (() => {
     return g;
   }
 
-  return { glowTex, starTex, beamTex, groundTex, wallTex, crateTex, windowTex, signTex, skyTex, texScreen, mat, emat, GEO, part, buildEnemy, buildBoss, buildGun, pickupMesh, projMesh };
+  return { glowTex, starTex, beamTex, groundTex, wallTex, crateTex, windowTex, signTex, skyTex, texScreen, mat, emat, GEO, part, preloadExternalModels, buildEnemy, buildBoss, buildGun, pickupMesh, projMesh };
 })();
