@@ -281,10 +281,10 @@ function despawnRig(e) {
 }
 
 function startMission(route, dist) {
-  const type = (route && route.mission) || 'kills';
+  const type = route?.mission || 'kills';
   const d = G.district + 1;
   const targets = { kills: 8 + d * 4, gt: 30 + d * 18, intel: 10 + d * 6, clean: 38 + d * 12, elite: 1 };
-  const reward = Math.round((18 + d * 12) * (1 + ((route && route.reward) || 0)));
+  const reward = Math.round((18 + d * 12) * (1 + (route?.reward || 0)));
   G.mission = {
     type,
     name: MISSION_COPY[type].n,
@@ -292,7 +292,7 @@ function startMission(route, dist) {
     progress: 0,
     target: targets[type] || 10,
     reward,
-    intel: (route && route.intel) || Math.round(6 + d * 2),
+    intel: route?.intel || Math.round(6 + d * 2),
     completed: false,
     failed: false,
     startTaken: G.p.stats.taken,
@@ -300,14 +300,14 @@ function startMission(route, dist) {
   updateMissionHud();
 }
 function progressMission(type, amount) {
-  const m = G && G.mission;
+  const m = G?.mission;
   if (!m || m.completed || m.failed || m.type !== type) return;
   m.progress = Math.min(m.target, m.progress + amount);
   if (m.progress >= m.target) completeMission();
   else updateMissionHud();
 }
 function completeMission() {
-  const m = G && G.mission;
+  const m = G?.mission;
   if (!m || m.completed || m.failed) return;
   m.completed = true;
   G.p.stats.missions++;
@@ -319,7 +319,7 @@ function completeMission() {
   updateMissionHud();
 }
 function finishCleanMission() {
-  const m = G && G.mission;
+  const m = G?.mission;
   if (!m || m.type !== 'clean' || m.completed || m.failed) return;
   const taken = Math.round(G.p.stats.taken - m.startTaken);
   if (taken <= m.target) completeMission();
@@ -327,10 +327,13 @@ function finishCleanMission() {
 }
 function updateMissionHud() {
   const box = el('missionBox');
-  if (!box || !G || !G.mission) return;
+  if (!box || !G?.mission) return;
   const m = G.mission;
   box.style.display = state === 'run' ? 'block' : 'none';
-  el('missionName').textContent = (m.completed ? 'MISSION COMPLETE: ' : (m.failed ? 'MISSION FAILED: ' : 'MISSION: ')) + m.name;
+  let prefix = 'MISSION: ';
+  if (m.completed) prefix = 'MISSION COMPLETE: ';
+  else if (m.failed) prefix = 'MISSION FAILED: ';
+  el('missionName').textContent = prefix + m.name;
   let prog = m.progress;
   if (m.type === 'clean') prog = Math.max(0, m.target - Math.round(G.p.stats.taken - m.startTaken));
   el('missionProg').textContent = m.desc + ' — ' + prog + ' / ' + m.target + ' ' + MISSION_COPY[m.type].unit;
@@ -347,7 +350,7 @@ function startWave() {
   G.wave++;
   const d = G.district, dist = DISTRICTS[d];
   G.phase = 'wave';
-  const routeEnemy = G.currentRoute && G.currentRoute.enemy ? G.currentRoute.enemy : 1;
+  const routeEnemy = G.currentRoute?.enemy || 1;
   const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy);
   G.pending = [];
   for (let i = 0; i < n; i++) G.pending.push(pickFromPool(dist.pool));
@@ -416,12 +419,12 @@ function waveTick(dt) {
         G.spawnT = 0.4;
         const t = G.pending.pop();
         const sp = World.randomSpawn(G.p.pos.x, G.p.pos.z, 12);
-        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + ((G.currentRoute && G.currentRoute.elite) || 0);
+        const eliteCh = 0.05 + G.district * 0.02 + G.director.threat * 0.06 + (G.currentRoute?.elite || 0);
         spawnEnemy(t, sp.x, sp.z, Math.random() < eliteCh);
       }
     }
     if (!G.pending.length && !G.enemies.length) {
-      const waveReward = Math.round(8 * (G.district + 1) * (1 + G.p.mods.gt) * (1 + ((G.currentRoute && G.currentRoute.reward) || 0)));
+      const waveReward = Math.round(8 * (G.district + 1) * (1 + G.p.mods.gt) * (1 + (G.currentRoute?.reward || 0)));
       G.p.gt += waveReward;
       progressMission('wave', 1);
       if (G.wave >= DISTRICTS[G.district].waves) { G.phase = 'preboss'; G.waveDelay = 2.2; banner('SECTOR SWEPT', 'FACTION LEADER INBOUND'); }
@@ -848,7 +851,9 @@ function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
   p.stats.kills++; SAVE.kills++;
-  const intelGain = e.boss ? 25 : (e.elite ? 3 : 1);
+  let intelGain = 1;
+  if (e.elite) intelGain = 3;
+  if (e.boss) intelGain = 25;
   p.intel[e.type.fac] = (p.intel[e.type.fac] || 0) + intelGain;
   progressMission('kills', 1);
   progressMission('intel', intelGain);
@@ -1207,7 +1212,7 @@ function openOG() {
   const rwrap = el('routeCards'); rwrap.innerHTML = '';
   const rpool = ROUTES.slice();
   const routes = [];
-  while (routes.length < 2 && rpool.length) routes.push(rpool.splice((Math.random() * rpool.length) | 0, 1)[0]);
+  while (routes.length < 2 && rpool.length) routes.push(rpool.splice(Math.trunc(Math.random() * rpool.length), 1)[0]); // NOSONAR - gameplay route variety, not security-sensitive
   for (const r of routes) {
     const c = document.createElement('div');
     c.className = 'ogcard route';
@@ -1434,18 +1439,25 @@ function updateTitle() {
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
+function factionIntelLevel(points) {
+  if (points >= 180) return 'COMPROMISED';
+  if (points >= 90) return 'MAPPED';
+  if (points >= 35) return 'PROFILED';
+  if (points > 0) return 'CONTACT';
+  return 'UNKNOWN';
+}
+function factionIntelRow(id, f) {
+  const data = SAVE.intel?.[id] || { points: 0, leaders: 0 };
+  const leader = data.leaders ? 'LEADER BROKEN' : 'LEADER ACTIVE';
+  return '<div class="intelrow"><b style="color:#' + f.neon.toString(16).padStart(6, '0') + '">' + f.name + '</b><span>' + factionIntelLevel(data.points) + ' — ' + data.points + ' INTEL — ' + leader + '</span></div>';
+}
 function renderBriefing() {
   const wrap = el('factionIntel');
   if (!wrap) return;
-  let html = '';
-  for (const [id, f] of Object.entries(FACTIONS)) {
-    if (id === 'rebels') continue;
-    const data = (SAVE.intel && SAVE.intel[id]) || { points: 0, leaders: 0 };
-    const level = data.points >= 180 ? 'COMPROMISED' : data.points >= 90 ? 'MAPPED' : data.points >= 35 ? 'PROFILED' : data.points > 0 ? 'CONTACT' : 'UNKNOWN';
-    const leader = data.leaders ? 'LEADER BROKEN' : 'LEADER ACTIVE';
-    html += '<div class="intelrow"><b style="color:#' + f.neon.toString(16).padStart(6, '0') + '">' + f.name + '</b><span>' + level + ' — ' + data.points + ' INTEL — ' + leader + '</span></div>';
-  }
-  wrap.innerHTML = html || '<p>No faction intelligence recovered yet.</p>';
+  const rows = Object.entries(FACTIONS)
+    .filter(([id]) => id !== 'rebels')
+    .map(([id, f]) => factionIntelRow(id, f));
+  wrap.innerHTML = rows.join('') || '<p>No faction intelligence recovered yet.</p>';
 }
 function renderArmory() {
   el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH';
@@ -1460,7 +1472,10 @@ function renderArmory() {
     const cost = maxed ? 0 : metaCost(u, lv);
     card.innerHTML = '<h3>' + u.n + '</h3>' + pips + '<p>' + u.d + '</p>';
     const btn = document.createElement('div');
-    btn.className = 'buybtn ' + (maxed ? 'max' : (SAVE.gt < cost ? 'cant' : ''));
+    let btnState = '';
+    if (maxed) btnState = 'max';
+    else if (SAVE.gt < cost) btnState = 'cant';
+    btn.className = 'buybtn ' + btnState;
     btn.innerHTML = maxed ? 'MAXED' : 'UPGRADE — ' + cost + ' &#11042;';
     if (!maxed && SAVE.gt >= cost) btn.onclick = () => {
       SAVE.gt -= cost; SAVE.up[u.id] = lv + 1; persist();
