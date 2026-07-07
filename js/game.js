@@ -23,6 +23,8 @@ function loadSave() {
   try { SAVE = JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch (e) { SAVE = null; }
   if (!SAVE) SAVE = { gt: 0, up: {}, runs: 0, bestD: 0, kills: 0, wins: 0, opts: { sens: 1, music: true, sfx: true, auto: true } };
   if (!SAVE.opts) SAVE.opts = { sens: 1, music: true, sfx: true, auto: true };
+  if (!SAVE.intel) SAVE.intel = {};
+  for (const id of Object.keys(FACTIONS)) if (id !== 'rebels' && !SAVE.intel[id]) SAVE.intel[id] = { points: 0, leaders: 0 };
 }
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {} }
 const upLv = id => SAVE.up[id] || 0;
@@ -224,7 +226,7 @@ function newRun() {
     fireT: 0, swapT: 0, adrenalT: 0, bobT: 0, recoil: 0,
     dashT: 0, dashCdT: 0, dashX: 0, dashZ: 0, iframesT: 0,
     combo: 0, comboT: 0, bestCombo: 0, gt: 0,
-    stats: { kills: 0, dmg: 0, taken: 0 }, reviveUsed: false,
+    stats: { kills: 0, dmg: 0, taken: 0 }, intel: {}, reviveUsed: false,
   };
   p.hp = p.maxHp;
   p.slideK = 0; p.swayX = 0; p.swayY = 0;
@@ -782,6 +784,7 @@ function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
   p.stats.kills++; SAVE.kills++;
+  p.intel[e.type.fac] = (p.intel[e.type.fac] || 0) + (e.boss ? 25 : (e.elite ? 3 : 1));
   p.combo++; p.comboT = 3; p.bestCombo = Math.max(p.bestCombo, p.combo);
   for (const [th, name] of COMBO_TIERS) if (p.combo === th) { banner(name, 'COMBO x' + th); AudioSys.sfx('combo'); }
   AudioSys.sfx('kill');
@@ -826,6 +829,7 @@ function bossKilled(e) {
   G.phase = 'bossdead'; G.waveDelay = 2.4;
   banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'DISTRICT LIBERATED');
   G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt));
+  if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
   AudioSys.sfx('expl'); AudioSys.setIntensity(0.4);
   // clear remaining enemies
   for (const e2 of G.enemies) if (e2 !== e && e2.state !== 'dying') { e2.hp = 0; e2.state = 'dying'; e2.dieT = 0; Particles.burst(e2.pos.x, 1, e2.pos.z, 0xffffff, 8, 3, 0.5); }
@@ -1124,6 +1128,16 @@ function openOG() {
 /* ============ death & victory ============ */
 function bankGT() {
   SAVE.gt += G.p.gt;
+  if (!SAVE.intel) SAVE.intel = {};
+  for (const [fac, pts] of Object.entries(G.p.intel || {})) {
+    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
+    SAVE.intel[fac].points += pts;
+  }
+  if ((G.phase === 'bossdead' || state === 'victory') && DISTRICTS[G.district]) {
+    const fac = DISTRICTS[G.district].fac;
+    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
+    SAVE.intel[fac].leaders = Math.max(SAVE.intel[fac].leaders || 0, 1);
+  }
   SAVE.bestD = Math.max(SAVE.bestD, G.district + (G.phase === 'bossdead' || state === 'victory' ? 1 : 0));
   persist();
 }
@@ -1148,9 +1162,11 @@ function doVictory() {
 }
 function statLines() {
   const p = G.p;
+  const intel = Object.values(p.intel || {}).reduce((a, b) => a + b, 0);
   return 'DISTRICTS CLEARED <b>' + (G.district + (state === 'victory' ? 1 : 0)) + ' / 5</b><br>' +
     'KILLS <b>' + p.stats.kills + '</b> &nbsp; BEST COMBO <b>x' + p.bestCombo + '</b><br>' +
     'DAMAGE DEALT <b>' + Math.round(p.stats.dmg) + '</b><br>' +
+    'FACTION INTEL RECOVERED <b>+' + intel + '</b><br>' +
     'GIGATECH BANKED <b>+' + p.gt + ' &#11042;</b>';
 }
 
@@ -1318,6 +1334,19 @@ function updateTitle() {
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
+function renderBriefing() {
+  const wrap = el('factionIntel');
+  if (!wrap) return;
+  let html = '';
+  for (const [id, f] of Object.entries(FACTIONS)) {
+    if (id === 'rebels') continue;
+    const data = (SAVE.intel && SAVE.intel[id]) || { points: 0, leaders: 0 };
+    const level = data.points >= 180 ? 'COMPROMISED' : data.points >= 90 ? 'MAPPED' : data.points >= 35 ? 'PROFILED' : data.points > 0 ? 'CONTACT' : 'UNKNOWN';
+    const leader = data.leaders ? 'LEADER BROKEN' : 'LEADER ACTIVE';
+    html += '<div class="intelrow"><b style="color:#' + f.neon.toString(16).padStart(6, '0') + '">' + f.name + '</b><span>' + level + ' — ' + data.points + ' INTEL — ' + leader + '</span></div>';
+  }
+  wrap.innerHTML = html || '<p>No faction intelligence recovered yet.</p>';
+}
 function renderArmory() {
   el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH';
   const grid = el('armoryGrid'); grid.innerHTML = '';
@@ -1347,7 +1376,7 @@ function wireMenus() {
   el('btnStart').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
   el('btnArmBack').onclick = () => { AudioSys.sfx('ui'); updateTitle(); show('ovTitle'); };
-  el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovHelp'); };
+  el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
   el('btnHelpBack').onclick = () => { AudioSys.sfx('ui'); show('ovTitle'); };
   el('btnRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun(); };
   el('btnDeathArmory').onclick = () => { AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };

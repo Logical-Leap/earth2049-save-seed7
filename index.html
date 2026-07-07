@@ -193,6 +193,9 @@ h2.ovtitle{font-size:clamp(20px,4.6vw,34px);font-weight:900;letter-spacing:.34em
 #helpCols h3{font-size:12px;letter-spacing:.3em;color:var(--cyan);text-transform:uppercase;margin-bottom:8px;}
 #helpCols p{font-size:12px;line-height:1.9;opacity:.75;}
 #helpCols b{color:#fff;}
+#factionIntel{display:flex;flex-direction:column;gap:6px;margin-top:3px;}
+.intelrow{display:flex;justify-content:space-between;gap:14px;border-bottom:1px solid rgba(120,150,255,.16);padding:4px 0;font-size:11px;line-height:1.35;}
+.intelrow span{text-align:right;opacity:.72;}
 kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:1px 6px;font-size:11px;border-radius:3px;font-family:Consolas,monospace;}
 
 /* pause */
@@ -297,6 +300,7 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
       <b style="color:#4caf50">Common</b> <b style="color:#42a5f5">Uncommon</b> <b style="color:#ab47bc">Rare</b>
       <b style="color:#ff9800">Epic</b> <b style="color:#ef5350">Legendary</b> <b style="color:#ffd54f">Mythic</b>
       <b style="color:#00e5ff">Relic</b>. Chain kills to build <b>combo</b> — more combo, more GigaTech.</p></div>
+    <div><h3>Faction Intel</h3><p>Enemy scans and leader kills now bank faction intelligence after extraction. Intel levels track how well Purple Team understands each hostile network.</p><div id="factionIntel"></div></div>
   </div>
   <div class="btnrow"><div class="btn" id="btnHelpBack">Back</div></div>
 </div>
