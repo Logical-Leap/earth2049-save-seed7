@@ -28,6 +28,7 @@ Implemented from GDD:
 - Turing director taunts, pressure adjustment, assassin spawns, resource manipulation.
 - Persistent save data in `localStorage`.
 - PR #1 adds persistent faction intel tracking and Briefing display.
+- PR #1 follow-up adds route choices on the OG Device and per-district mission objectives/rewards.
 
 Major GDD systems still missing or shallow:
 

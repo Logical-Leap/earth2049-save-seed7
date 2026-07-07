@@ -125,6 +125,23 @@ const AUGMENTS = [
   { id:'magfeed',   n:'Mag-Feed Printer',  t:'Economy',  d:'+50% ammo reserves. Refill primary.',    ap:p=>{p.mods.ammo+=0.5; if(p.weapons[1]){p.weapons[1].ammoMax=Math.round(p.weapons[1].ammoMax*1.5);p.weapons[1].ammo=p.weapons[1].ammoMax;}} },
 ];
 
+
+const ROUTES = [
+  { id:'raid', n:'Direct Raid', t:'Assault Route', d:'+20% hostiles. Bonus payout for clearing waves.', threat:0.18, enemy:1.20, reward:0.28, mission:'kills' },
+  { id:'salvage', n:'Salvage Sweep', t:'Economy Route', d:'More GigaTech pressure. Recover enough shards for a bonus.', threat:0.05, enemy:1.00, reward:0.45, mission:'gt' },
+  { id:'counterintel', n:'Counter-Intel Tap', t:'Intel Route', d:'Turing watches closer. Extract faction data from kills.', threat:0.12, enemy:1.08, reward:0.18, intel:18, mission:'intel' },
+  { id:'ghost', n:'Ghost Infiltration', t:'Precision Route', d:'Lower enemy density. Keep damage taken low for a clean-entry bonus.', threat:-0.08, enemy:0.82, reward:0.10, intel:10, mission:'clean' },
+  { id:'blackmarket', n:'Black-Market Detour', t:'Risk Route', d:'Elite odds increased. Elites pay better and drop stronger cores.', threat:0.24, enemy:1.05, elite:0.12, reward:0.35, mission:'elite' },
+];
+
+const MISSION_COPY = {
+  kills: { n:'Break the Cell', d:'Eliminate hostile network assets.', unit:'kills' },
+  gt: { n:'Recover GigaTech Cache', d:'Collect GigaTech shards before extraction.', unit:'GigaTech' },
+  intel: { n:'Extract Faction Intel', d:'Kill hostiles to map command signals.', unit:'intel' },
+  clean: { n:'Ghost Entry', d:'Clear the district while limiting damage taken.', unit:'damage cap' },
+  elite: { n:'Bag the Heavy', d:'Terminate elite units or the faction leader.', unit:'elite kills' },
+};
+
 const METAUP = [
   { id:'vitality', n:'Combat Stims',       d:'+20 Max HP per level',        max:5, base:60 },
   { id:'plating',  n:'Sub-dermal Plating', d:'+12 starting Armor per level',max:5, base:60 },
