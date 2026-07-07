@@ -411,7 +411,7 @@ function newRun() {
     director: { threat: 0.5, t: 4, msgT: 14, kills: [], taken: [] },
     augs: [], theme: null, autoFire: SAVE.opts.auto,
     currentRoute: null, nextRoute: ROUTES[0], mission: null, ammoPity: 0,
-    simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {},
+    simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {}, banked:false,
   };
   applyRunProgression(p);
   applyModifierData(G);
@@ -1444,6 +1444,8 @@ function openOG() {
 
 /* ============ death & victory ============ */
 function bankGT() {
+  if (!G || G.banked) return false;
+  G.banked = true;
   SAVE.gt += G.p.gt;
   if (!SAVE.intel) SAVE.intel = {};
   for (const [fac, pts] of Object.entries(G.p.intel || {})) {
@@ -1458,8 +1460,10 @@ function bankGT() {
   SAVE.bestD = Math.max(SAVE.bestD, G.district + (G.phase === 'bossdead' || state === 'victory' ? 1 : 0));
   ensureAbilityUnlocks();
   persist();
+  return true;
 }
 function doDeath() {
+  if (G?.banked) return;
   setState('dead');
   bankGT();
   AudioSys.musicStop();
@@ -1469,6 +1473,7 @@ function doDeath() {
   document.exitPointerLock && document.exitPointerLock();
 }
 function doVictory() {
+  if (G?.banked) return;
   setState('victory');
   SAVE.wins++;
   G.p.gt += Math.round(500 * G.tierData.reward);
