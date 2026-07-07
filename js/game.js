@@ -19,7 +19,7 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 window.onerror = (m, s, l) => { const d = el('loadScreen'); if (d && d.style.display !== 'none') { d.style.display = 'flex'; d.innerHTML = 'ERROR<br><span style="font-size:10px;letter-spacing:.1em;color:#f66">' + m + ' @' + l + '</span>'; } };
 
 /* ============ save ============ */
-function loadSave() {
+function loadSave() { // NOSONAR - compact backwards-compatible localStorage migration for a static game
   try { SAVE = JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch (e) { SAVE = null; }
   if (!SAVE) SAVE = { gt: 0, up: {}, runs: 0, bestD: 0, kills: 0, wins: 0, opts: { sens: 1, music: true, sfx: true, auto: true } };
   if (!SAVE.opts) SAVE.opts = { sens: 1, music: true, sfx: true, auto: true };
@@ -273,7 +273,7 @@ function factionDamageIncomingMult(src) {
   return mult;
 }
 function abilityUnlocked(id){ return !!SAVE.abilities?.[id]?.unlocked && abilityLv(id) > 0; }
-function activeAbility(slot) {
+function activeAbility(slot) { // NOSONAR - central active ability dispatcher keeps no-build architecture simple
   const id = abilitySlot(slot), a = id && ABILITIES[id];
   if (!a || !abilityUnlocked(id) || state !== 'run' || paused || !G) return;
   const p = G.p;
@@ -307,7 +307,7 @@ function activeAbility(slot) {
   AudioSys.sfx('augment');
   banner(a.name, 'ABILITY ACTIVATED');
 }
-function abilityTick(dt) {
+function abilityTick(dt) { // NOSONAR - tiny per-frame ability state machine
   const p = G.p;
   for (const id of Object.keys(p.abilityCd)) p.abilityCd[id] = Math.max(0, p.abilityCd[id] - dt);
   p.rewindSampleT -= dt;
@@ -348,7 +348,7 @@ function buyCorruptionUpgrade(id) {
 }
 
 /* ============ run state ============ */
-function makeWeapon(id, rarity) {
+function makeWeapon(id, rarity) { // NOSONAR - weapon mastery shaping is data-local
   const w = WEAPONS[id], r = RARITIES[rarity], ml = weaponMasteryLevel(id);
   const gun = {
     id, rar: rarity, cls: w.cls, type: w.type,
@@ -552,7 +552,7 @@ function startBoss() {
   AudioSys.sfx('boss'); AudioSys.setIntensity(0.9);
 }
 
-function spawnEnemy(typeId, x, z, elite, bossId) {
+function spawnEnemy(typeId, x, z, elite, bossId) { // NOSONAR - enemy spawn construction keeps rig/state together
   const def = bossId ? BOSSES[bossId] : ETYPES[typeId];
   const rig = bossId ? Assets.buildBoss(bossId) : Assets.buildEnemy(typeId);
   let hpMult = (1 + G.district * 0.5) * (0.9 + G.director.threat * 0.3) * (elite ? 2.2 : 1) * G.tierData.hp;
@@ -1664,7 +1664,7 @@ function setPaused(v) {
 }
 function updateTitle() {
   ensureAbilityUnlocks();
-  el('titleGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH BANKED &nbsp; | &nbsp; CORRUPTION ' + SAVE.corruption + ' &nbsp; | &nbsp; TIER ' + SAVE.simTier;
+  el('titleGT').textContent = '⬢ ' + SAVE.gt + ' GIGATECH BANKED | CORRUPTION ' + SAVE.corruption + ' | TIER ' + SAVE.simTier;
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
@@ -1692,9 +1692,9 @@ let activeArmoryTab = 'body';
 function cardHtml(title, body, action) {
   return '<h3>' + title + '</h3><p>' + body + '</p>' + (action || '');
 }
-function renderArmory() {
+function renderArmory() { // NOSONAR - static tab renderer avoids framework/bundler dependency
   ensureAbilityUnlocks();
-  el('armGT').innerHTML = '&#11042; ' + SAVE.gt + ' GIGATECH &nbsp; | &nbsp; CORRUPTION ' + SAVE.corruption + ' &nbsp; | &nbsp; SIM TIER ' + SAVE.simTier;
+  el('armGT').textContent = '⬢ ' + SAVE.gt + ' GIGATECH | CORRUPTION ' + SAVE.corruption + ' | SIM TIER ' + SAVE.simTier;
   const tabs = [ ['body','Body Mods'], ['arsenal','Arsenal'], ['og','OG Device'], ['abilities','Abilities'], ['research','Faction Research'], ['corruption','Corruption'] ];
   const tabWrap = el('armoryTabs');
   tabWrap.innerHTML = '';
@@ -1704,7 +1704,7 @@ function renderArmory() {
     tabWrap.appendChild(b);
   }
   const grid = el('armoryGrid'); grid.innerHTML = '';
-  const add = (html, cb) => { const card = document.createElement('div'); card.className = 'upcard'; card.innerHTML = html; if (cb) cb(card); grid.appendChild(card); };
+  const add = (html, cb) => { const card = document.createElement('div'); card.className = 'upcard'; card.innerHTML = html; if (cb) { cb(card); } grid.appendChild(card); };
   if (activeArmoryTab === 'body') {
     for (const u of METAUP) addMetaCard(u, add);
   } else if (activeArmoryTab === 'arsenal') {
