@@ -85,7 +85,7 @@ const BOSSES = {
 };
 
 const DISTRICTS = [
-  { name:'SHILLZ CENTRAL', fac:'shillz', waves:3, boss:'riya',
+  { name:'SHILLZ CENTRAL', fac:'shillz', waves:3, boss:'riya', map:'engagementSquare',
     fog:0x171006, sky:0x0d0a04, ground:0x17130a, rain:false,
     slogans:['RESIST™','CONSOOM','LIKE. SUBSCRIBE. OBEY.','TREND OR DIE','GO VIRAL','SPONSORED REVOLUTION','SMASH THAT BUTTON'],
     pool:[['shill',6],['streamer',3],['hypebeast',1.5]] },
