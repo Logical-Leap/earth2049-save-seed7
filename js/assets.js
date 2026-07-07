@@ -11,19 +11,19 @@ const Assets = (() => {
     shill: {
       url: 'assets/models/enemies/shillz-common.glb',
       height: 0.18,
-      rootScale: 0.65,
+      rootScale: 0.2,
       anim: { idle:/alert|idle/i, walk:/walk_forward|walking|walk/i, run:/run_and_shoot|running|run/i, attack:/boxing|shoot/i, hit:/hit|reaction/i, dead:/dead/i },
     },
     runner: {
       url: 'assets/models/enemies/musker-common.glb',
       height: 0.19,
-      rootScale: 0.65,
+      rootScale: 0.2,
       anim: { idle:/idle/i, walk:/walking|walk/i, run:/runfast|running|run_fast|run/i, attack:/kick|hook|punch|charge|lunge/i, hit:/knock|hit|shot/i, dead:/dead|fall/i },
     },
     broker: {
       url: 'assets/models/enemies/cryptid-common.glb',
       height: 0.18,
-      rootScale: 0.65,
+      rootScale: 0.2,
       anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
     },
   };
@@ -32,8 +32,9 @@ const Assets = (() => {
       url: 'assets/models/weapons/ar.glb',
       length: 0.72,
       muzzleZ: -0.58,
-      centerY: -0.02,
-      centerZ: -0.2,
+      centerX: 0.1,
+      centerY: -0.08,
+      centerZ: -0.14,
       yaw: -Math.PI / 2,
     },
   };
@@ -947,11 +948,11 @@ const Assets = (() => {
     model.rotation.z = def.roll || 0;
     model.updateMatrixWorld(true);
     const fit = new THREE.Box3().setFromObject(model);
-    model.position.x -= (fit.min.x + fit.max.x) / 2;
+    model.position.x += (def.centerX || 0) - (fit.min.x + fit.max.x) / 2;
     model.position.y += def.centerY - (fit.min.y + fit.max.y) / 2;
     model.position.z += def.centerZ - (fit.min.z + fit.max.z) / 2;
     const tip = new THREE.Object3D();
-    tip.position.set(0, def.centerY, def.muzzleZ);
+    tip.position.set(def.centerX || 0, def.centerY, def.muzzleZ);
     g.add(tip);
     const acc = emat(0x4caf50, 0.4);
     const slide = new THREE.Object3D();
