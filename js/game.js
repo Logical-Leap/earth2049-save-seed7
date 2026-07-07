@@ -245,7 +245,7 @@ function rollRunModifiers() {
   const count = clamp(Math.floor(tier.mods + Math.min(2, SAVE.corruption / 8) + corruptLv('reroll') * 0.34), 1, 4);
   const pool = MODIFIERS.filter(m => (m.tier || 1) <= SAVE.simTier + Math.floor(SAVE.corruption / 10));
   const picked = [];
-  while (picked.length < count && pool.length) picked.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+  while (picked.length < count && pool.length) picked.push(pool.splice(Math.trunc(Math.random() * pool.length), 1)[0]); // NOSONAR - gameplay RNG, not security-sensitive
   for (const m of picked) SAVE.modifiersSeen[m.id] = true;
   return picked;
 }
@@ -828,8 +828,8 @@ function bossTick(e, dt, dist, ux, uz, los) {
 const projPool = [];
 function spawnProj(o) {
   if (o.owner === 'e' && G?.p?.jammerT > 0) { Particles.burst(o.x, o.y, o.z, 0xffe600, 6, 2, 0.25); return; }
-  if (o.owner === 'e' && G?.modStats?.deleteProjectiles && Math.random() < G.modStats.deleteProjectiles) { Particles.burst(o.x, o.y, o.z, 0x00e5ff, 5, 2, 0.25); return; }
-  if (o.owner === 'e' && hasRelic('spyderRelic') && Math.random() < 0.08) { spawnPickup('gt', o.x, o.z, 2); return; }
+  if (o.owner === 'e' && G?.modStats?.deleteProjectiles && Math.random() < G.modStats.deleteProjectiles) { Particles.burst(o.x, o.y, o.z, 0x00e5ff, 5, 2, 0.25); return; } // NOSONAR - gameplay RNG, not security-sensitive
+  if (o.owner === 'e' && hasRelic('spyderRelic') && Math.random() < 0.08) { spawnPickup('gt', o.x, o.z, 2); return; } // NOSONAR - gameplay relic RNG
   let pr = projPool.pop();
   if (!pr) pr = { mesh: null };
   if (!pr.mesh) { pr.mesh = Assets.projMesh(0xffffff, 1); }
@@ -1072,10 +1072,10 @@ function killEnemy(e) {
   }
   // drops
   const gtv = Math.round(e.type.gt * (e.elite ? 3 : 1) * (1 + G.district * 0.15) * G.tierData.reward);
-  const nSh = e.boss ? 12 : (1 + (Math.random() * 2 | 0));
+  const nSh = e.boss ? 12 : (1 + Math.trunc(Math.random() * 2)); // NOSONAR - gameplay shard variance
   for (let i = 0; i < nSh; i++) spawnPickup('gt', e.pos.x + rnd(-0.8, 0.8), e.pos.z + rnd(-0.8, 0.8), Math.max(1, Math.round(gtv / nSh)));
   const r = Math.random();
-  if (!e.boss && G.modStats.botFragments && e.type.fac === 'bots' && Math.random() < 0.22) spawnPickup('gt', e.pos.x, e.pos.z, 3);
+  if (!e.boss && G.modStats.botFragments && e.type.fac === 'bots' && Math.random() < 0.22) spawnPickup('gt', e.pos.x, e.pos.z, 3); // NOSONAR - gameplay modifier RNG
   if (e.boss) {
     spawnPickup('weapon', e.pos.x + 1.2, e.pos.z, 0, rollWeapon(2));
     spawnPickup('weapon', e.pos.x - 1.2, e.pos.z, 0, rollWeapon(1));
@@ -1089,7 +1089,7 @@ function killEnemy(e) {
     else if (r < 0.10) spawnPickup('hp', e.pos.x, e.pos.z, 20);
     else if (r < 0.10 + ammoChance) { spawnPickup('ammo', e.pos.x, e.pos.z, 0); G.ammoPity = 0; }
     else if (r < 0.26 + ammoChance) spawnPickup('armor', e.pos.x, e.pos.z, 20);
-    if (e.elite && Math.random() < 0.35) spawnPickup('weapon', e.pos.x, e.pos.z, 0, rollWeapon(0));
+    if (e.elite && Math.random() < 0.35) spawnPickup('weapon', e.pos.x, e.pos.z, 0, rollWeapon(0)); // NOSONAR - gameplay loot RNG
   }
   G.director.kills.push(G.time);
 }
@@ -1123,12 +1123,12 @@ function rollWeapon(boost) {
   for (let i = 0; i < 7; i++) { r -= ws[i]; if (r <= 0) { rar = i; break; } }
   if (boost >= 2 && rar < 2) rar = 2;
   const pool = WPOOL[d];
-  return makeWeapon(pool[(Math.random() * pool.length) | 0], rar);
+  return makeWeapon(pool[Math.trunc(Math.random() * pool.length)], rar); // NOSONAR - gameplay loot RNG, not security-sensitive
 }
 const PICKUP_COLORS = { gt: 0x00e5ff, hp: 0xff2d55, ammo: 0xffe600, armor: 0x2979ff };
 function spawnPickup(kind, x, z, val, weapon) {
-  if (kind !== 'weapon' && G?.modStats?.lootbox && Math.random() < 0.12) kind = ['gt','hp','ammo','armor'][(Math.random() * 4) | 0];
-  if (kind === 'gt' && hasRelic('blitzRelic') && Math.random() < 0.12) { val *= 2; G.director.threat = Math.min(1.6, G.director.threat + 0.03); }
+  if (kind !== 'weapon' && G?.modStats?.lootbox && Math.random() < 0.12) kind = ['gt','hp','ammo','armor'][Math.trunc(Math.random() * 4)]; // NOSONAR - gameplay pickup mutation RNG
+  if (kind === 'gt' && hasRelic('blitzRelic') && Math.random() < 0.12) { val *= 2; G.director.threat = Math.min(1.6, G.director.threat + 0.03); } // NOSONAR - gameplay relic RNG
   const hex = kind === 'weapon' ? RARITIES[weapon.rar].hex : PICKUP_COLORS[kind];
   const mesh = Assets.pickupMesh(kind, hex);
   mesh.position.set(x, 0, z);
@@ -1408,7 +1408,7 @@ function openOG() {
   const opts = [];
   const pool = AUGMENTS.slice();
   const wantAug = 3 + (hasRelic('magnusRelic') ? 1 : 0) + Math.min(1, corruptLv('reroll'));
-  while (opts.length < wantAug && pool.length) opts.push(pool.splice((Math.random() * pool.length) | 0, 1)[0]);
+  while (opts.length < wantAug && pool.length) opts.push(pool.splice(Math.trunc(Math.random() * pool.length), 1)[0]); // NOSONAR - gameplay RNG, not security-sensitive
   const wrap = el('ogCards'); wrap.innerHTML = '';
   for (const a of opts) {
     const c = document.createElement('div');
