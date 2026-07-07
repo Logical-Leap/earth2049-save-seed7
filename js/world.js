@@ -12,7 +12,7 @@ const World = (() => {
   let rain = null, rainPos = null, rainVel = null;
   let embers = null, emberPos = null;
   let signMats = [], holos = [];
-  let themeRef = null;
+  let themeRef = null, spawnCell = null, bossCell = null;
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -22,7 +22,59 @@ const World = (() => {
   function solidAt(x, z, h) { const c = worldToCell(x, z); return cellH(c.cx, c.cy) > (h || 0.5); }
 
   /* ---------- layout generation ---------- */
-  function genLayout(rng) {
+  function rebuildFreeCells() {
+    freeCells = [];
+    for (let cy = 1; cy < H - 1; cy++) for (let cx = 1; cx < W - 1; cx++)
+      if (grid[idx(cx, cy)] === 0) freeCells.push({ cx, cy });
+  }
+
+  function cellFromWorld(x, z) {
+    return {
+      cx: clampInt(Math.floor((x + HALF_W) / CELL), 1, W - 2),
+      cy: clampInt(Math.floor((z + HALF_H) / CELL), 1, H - 2),
+    };
+  }
+  function clampInt(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function stampRect(cx, cy, sx, sy, h) {
+    const rx = Math.max(0, Math.ceil(sx / CELL / 2) - 1);
+    const ry = Math.max(0, Math.ceil(sy / CELL / 2) - 1);
+    for (let y = cy - ry; y <= cy + ry; y++) for (let x = cx - rx; x <= cx + rx; x++) {
+      if (inG(x, y) && x > 0 && y > 0 && x < W - 1 && y < H - 1) grid[idx(x, y)] = h;
+    }
+  }
+  function stampWorldRect(x, z, sx, sz, h) {
+    const c = cellFromWorld(x, z);
+    stampRect(c.cx, c.cy, sx, sz, h);
+  }
+
+  function genEngagementSquareLayout() {
+    grid.fill(0);
+    for (let i = 0; i < W; i++) { grid[idx(i, 0)] = CFG.WALL_H; grid[idx(i, H - 1)] = CFG.WALL_H; }
+    for (let j = 0; j < H; j++) { grid[idx(0, j)] = CFG.WALL_H; grid[idx(W - 1, j)] = CFG.WALL_H; }
+
+    const S = 0.62;
+    const cover = [
+      [-22,-6,5,2],[-15,-3,4,2],[-7,-5,5,2],[3,-7,5,2],[12,-5,5,2],
+      [21,-8,7,2],[27,-5,4,2],[32,-1,6,2],[-29,5,7,2],[-20,9,5,2],
+      [-9,8,6,2],[7,9,5,2],[18,8,8,2],[28,10,5,2],
+    ];
+    for (const [x, z, sx, sz] of cover) stampWorldRect(x * S, z * S, sx * S, sz * S, 2.3);
+    for (const [x, z, sx, sz] of [[26,-3,13,2],[32,5,2,14],[0,8,16,1.2],[-34,18,13,7],[28,22,17,12]]) {
+      stampWorldRect(x * S, z * S, sx * S, sz * S, 2.3);
+    }
+    for (const [x, z, sx, sz] of [[0,-36.2,29,1.2],[-52,1,2.8,62],[52,1,2.8,62],[0,31.5,74,2.4]]) {
+      stampWorldRect(x * S, z * S, sx * S, sz * S, CFG.WALL_H);
+    }
+    spawnCell = cellFromWorld(0, 22 * S);
+    bossCell = cellFromWorld(0, -28 * S);
+    grid[idx(spawnCell.cx, spawnCell.cy)] = 0;
+    grid[idx(bossCell.cx, bossCell.cy)] = 0;
+    rebuildFreeCells();
+  }
+
+  function genLayout() {
+    spawnCell = null; bossCell = null;
+    if (themeRef && themeRef.map === 'engagementSquare') { genEngagementSquareLayout(); return; }
     for (let attempt = 0; attempt < 30; attempt++) {
       grid.fill(0);
       for (let i = 0; i < W; i++) { grid[idx(i, 0)] = CFG.WALL_H; grid[idx(i, H - 1)] = CFG.WALL_H; }
@@ -50,9 +102,95 @@ const World = (() => {
       }
       if (cnt === total) break;
     }
-    freeCells = [];
-    for (let cy = 1; cy < H - 1; cy++) for (let cx = 1; cx < W - 1; cx++)
-      if (grid[idx(cx, cy)] === 0) freeCells.push({ cx, cy });
+    rebuildFreeCells();
+  }
+
+  function mapMat(color, emissive, intensity) {
+    return new THREE.MeshStandardMaterial({ color, roughness: 0.5, metalness: 0.18, emissive: emissive || 0x000000, emissiveIntensity: intensity || 0 });
+  }
+  function mapBox(name, x, y, z, sx, sy, sz, mat) {
+    const g = new THREE.BoxGeometry(sx, sy, sz);
+    const m = new THREE.Mesh(g, mat);
+    m.name = name;
+    m.position.set(x, y + sy / 2, z);
+    group.add(m);
+    return m;
+  }
+  function mapPlane(name, x, y, z, sx, sz, mat) {
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(sx, sz), mat);
+    m.name = name;
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(x, y, z);
+    group.add(m);
+    return m;
+  }
+  function mapSign(text, x, y, z, w, h, color, rotY) {
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+      new THREE.MeshBasicMaterial({ map: Assets.signTex(text, color), transparent: true, side: THREE.DoubleSide }));
+    mesh.position.set(x, y, z);
+    mesh.rotation.y = rotY || 0;
+    group.add(mesh);
+    return mesh;
+  }
+  function buildEngagementSquareBlockout(fac) {
+    const S = 0.62;
+    const sc = (v) => v * S;
+    const yellow = mapMat(fac.neon, fac.neon, 0.1);
+    const orange = mapMat(0xff6a00, 0xff6a00, 0.05);
+    const purple = mapMat(0x9b59ff, 0x9b59ff, 0.14);
+    const cyan = mapMat(0x00e5ff, 0x00e5ff, 0.18);
+    const black = mapMat(0x06070a, 0x000000, 0);
+    const metal = mapMat(0x30343b, 0x000000, 0);
+    const contain = mapMat(0x15171d, 0x000000, 0);
+    const soft = mapMat(0xff3158, 0xff3158, 0.08);
+
+    mapPlane('ENGAGEMENT_SQUARE_MAIN_PLAZA_KILLZONE', 0, 0.045, 0, sc(72), sc(50), new THREE.MeshBasicMaterial({ color: 0x3b3400, transparent: true, opacity: 0.15, depthWrite: false }));
+    mapPlane('ENGAGEMENT_SQUARE_OBJECTIVE_RING', 0, 0.06, sc(-4), sc(18), sc(18), new THREE.MeshBasicMaterial({ color: fac.neon, transparent: true, opacity: 0.18, depthWrite: false }));
+
+    mapBox('ENGAGEMENT_STAGE_platform_objective_control', 0, 0, sc(-32), sc(24), 1.4, sc(8), black);
+    mapBox('ENGAGEMENT_STAGE_back_wall_billboard_support', 0, 1.4, sc(-36.2), sc(29), 8.2, 0.8, metal);
+    mapSign('SHILLZ LIVE\nOBEY. REPEAT.', 0, 9.2, sc(-37), sc(24), 5.2, fac.neon, 0);
+    mapBox('speaker_tower_L', sc(-16.5), 0, sc(-33), 1.4, 7.8, 1.4, black);
+    mapBox('speaker_tower_R', sc(16.5), 0, sc(-33), 1.4, 7.8, 1.4, black);
+
+    const cover = [
+      [-22,-6,5,2],[-15,-3,4,2],[-7,-5,5,2],[3,-7,5,2],[12,-5,5,2],[21,-8,7,2],[27,-5,4,2],[32,-1,6,2],
+      [-29,5,7,2],[-20,9,5,2],[-9,8,6,2],[7,9,5,2],[18,8,8,2],[28,10,5,2],
+    ];
+    cover.forEach((c, i) => mapBox('ENGAGEMENT_COVER_CRATE_' + i, sc(c[0]), 0, sc(c[1]), sc(c[2]), 1.45, sc(c[3]), i % 3 === 0 ? yellow : metal));
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_A', sc(26), 0, sc(-3), sc(13), 1.55, sc(2), orange);
+    mapBox('ENGAGEMENT_CHOKE_right_barricade_B', sc(32), 0, sc(5), sc(2), 1.55, sc(14), orange);
+    mapBox('ENGAGEMENT_CHOKE_mid_low_wall', 0, 0, sc(8), sc(16), 1.0, 0.8, metal);
+
+    mapBox('MERCH_KIOSK_LOOT_counter', sc(-34), 0, sc(18), sc(13), 2.0, sc(7), black);
+    mapBox('MERCH_KIOSK_LOOT_awning', sc(-34), 2.0, sc(18), sc(15), 0.45, sc(8.5), yellow);
+    mapSign('MERCH\nOBEY', sc(-34), 4.4, sc(13.4), sc(11), 2.8, fac.neon, 0);
+    mapBox('SUBWAY_ACCESS_stair_void', sc(28), -0.02, sc(22), sc(17), 0.12, sc(12), black);
+    mapSign('SHILLZ TRANSIT\nOBEY ON TIME', sc(28), 3.5, sc(14.6), sc(12), 2.8, fac.neon, 0);
+
+    mapBox('UPPER_FLANK_left_bridge', sc(-33.5), 5.2, sc(-5), sc(5), 0.45, sc(32), cyan);
+    mapBox('UPPER_FLANK_crosscatwalk', sc(-14), 6.1, sc(-24), sc(34), 0.45, sc(4), cyan);
+    mapBox('REBEL_GRAFFITI_ALLEY_wall', sc(43), 0, sc(16), 0.8, 5.4, sc(24), purple);
+    mapSign('THE FEED\nIS A LIE', sc(42.5), 4.0, sc(16), 5.0, 3.4, 0x9b59ff, Math.PI / 2);
+    mapPlane('REBEL_GRAFFITI_ALLEY_floor_route', sc(40), 0.07, sc(16), sc(7), sc(24), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
+
+    mapPlane('main_route_forward', 0, 0.08, sc(13), sc(4), sc(34), new THREE.MeshBasicMaterial({ color: fac.neon, transparent: true, opacity: 0.18, depthWrite: false }));
+    mapPlane('left_flank_route', sc(-30), 0.08, sc(3), sc(4), sc(34), new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.16, depthWrite: false }));
+    mapPlane('right_flank_route_to_graffiti_alley', sc(38), 0.08, sc(10), sc(3), sc(28), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
+    mapPlane('hazard_pressure_lane', sc(20), 0.09, sc(-6), sc(5), sc(18), new THREE.MeshBasicMaterial({ color: 0xff6a00, transparent: true, opacity: 0.16, depthWrite: false }));
+
+    mapBox('CONTAINMENT_SOUTH_main_shutter_wall', 0, 0, sc(31.5), sc(74), 5.4, 1.4, contain);
+    mapBox('CONTAINMENT_NORTH_stage_backstop_wall', 0, 0, sc(-42.5), sc(78), 8.6, 1.6, contain);
+    mapBox('CONTAINMENT_WEST_service_wall', sc(-52), 0, sc(1), 1.8, 8.2, sc(62), contain);
+    mapBox('CONTAINMENT_EAST_back_alley_wall', sc(52), 0, sc(1), 1.8, 8.2, sc(62), contain);
+    mapBox('CONTAINMENT_LOW_RAIL_south_left', sc(-20), 0, sc(24.7), sc(24), 0.9, 0.8, soft);
+    mapBox('CONTAINMENT_LOW_RAIL_south_right', sc(12), 0, sc(24.7), sc(18), 0.9, 0.8, soft);
+    mapBox('CONTAINMENT_LOW_RAIL_west_front', sc(-38.8), 0, sc(12), 0.8, 0.9, sc(18), soft);
+    mapBox('CONTAINMENT_LOW_RAIL_east_front', sc(38.8), 0, sc(4), 0.8, 0.9, sc(22), soft);
+
+    mapSign('EXTRACTION\nLOCKED UNTIL\nOBJECTIVE CLEAR', sc(28), 4.2, sc(29), sc(10), 2.4, fac.neon, 0);
+    mapSign('TRUST\nTHE FEED', sc(-31), 10.5, sc(-25), sc(12), 5, fac.neon, 0.25);
+    mapSign('RESIST? LOL.\nCONSUME.', sc(31), 10.5, sc(-18), sc(12), 5, fac.neon, -0.25);
   }
 
   /* ---------- build scenery ---------- */
@@ -176,6 +314,8 @@ const World = (() => {
       holo.position.set(Math.cos(a) * 22, 13 + i * 2.5, Math.sin(a) * 22);
       group.add(holo); holos.push(holo);
     }
+
+    if (theme.map === 'engagementSquare') buildEngagementSquareBlockout(fac);
 
     // pillar cell neon rings
     for (let cy = 1; cy < H - 1; cy++) for (let cx = 1; cx < W - 1; cx++) {
@@ -376,11 +516,15 @@ const World = (() => {
   }
 
   function playerStart() {
+    if (spawnCell) return cellCenter(spawnCell.cx, spawnCell.cy);
     // clear corner near (2,2)
     for (const c of freeCells) if (c.cx <= 3 && c.cy <= 3) return cellCenter(c.cx, c.cy);
     return cellCenter(freeCells[0].cx, freeCells[0].cy);
   }
-  function bossArena() { return cellCenter((W - 1) / 2, (H - 1) / 2); }
+  function bossArena() {
+    if (bossCell) return cellCenter(bossCell.cx, bossCell.cy);
+    return cellCenter((W - 1) / 2, (H - 1) / 2);
+  }
 
   return { build, tick, raycast, losClear, moveCircle, circleHits, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; } };
 })();
