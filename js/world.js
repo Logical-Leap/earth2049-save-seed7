@@ -614,8 +614,11 @@ const World = (() => {
       const { x, z } = cellCenter(c.cx, c.cy);
       return spawnZoneAllows(x, z) && !circleHits(x, z, 0.8) && !spawnBlockedByProp(x, z, 0.8);
     });
-    const fallbackCells = inMapCells.length ? inMapCells : freeCells;
-    const c = fallbackCells[spawnCursor % fallbackCells.length];
+    if (!inMapCells.length) {
+      const c = bossCell || spawnCell || freeCells[0];
+      return cellCenter(c.cx, c.cy);
+    }
+    const c = inMapCells[spawnCursor % inMapCells.length];
     spawnCursor += 7;
     return cellCenter(c.cx, c.cy);
   }
