@@ -1,0 +1,2346 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - CRYPTIDS DOMAIN - PRIVATE BANKING SUITES"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-floor-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2763303,
+      "roughness": 0.72,
+      "metalness": 0.05
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1382165,
+      "roughness": 0.68,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-vault",
+      "type": "MeshStandardMaterial",
+      "color": 1842458,
+      "roughness": 0.64,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-wall-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2369056,
+      "roughness": 0.78,
+      "metalness": 0.08
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 789771,
+      "roughness": 0.7,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3158831,
+      "roughness": 0.58,
+      "metalness": 0.36
+    },
+    {
+      "uuid": "mat-metal-muted-gold",
+      "type": "MeshStandardMaterial",
+      "color": 10189355,
+      "roughness": 0.48,
+      "metalness": 0.52,
+      "emissive": 2759936,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-emerald-dim",
+      "type": "MeshStandardMaterial",
+      "color": 473124,
+      "roughness": 0.42,
+      "metalness": 0.22,
+      "emissive": 51320,
+      "emissiveIntensity": 0.16
+    },
+    {
+      "uuid": "mat-vr-cyan-dim",
+      "type": "MeshStandardMaterial",
+      "color": 601140,
+      "roughness": 0.36,
+      "metalness": 0.18,
+      "emissive": 3134463,
+      "emissiveIntensity": 0.13
+    },
+    {
+      "uuid": "mat-vr-purple-dim",
+      "type": "MeshStandardMaterial",
+      "color": 2102835,
+      "roughness": 0.42,
+      "metalness": 0.16,
+      "emissive": 8543487,
+      "emissiveIntensity": 0.18
+    },
+    {
+      "uuid": "mat-glass-dim",
+      "type": "MeshStandardMaterial",
+      "color": 1716534,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.46,
+      "emissive": 2382691,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-vault-steel",
+      "type": "MeshStandardMaterial",
+      "color": 5396559,
+      "roughness": 0.46,
+      "metalness": 0.58
+    },
+    {
+      "uuid": "mat-route-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-screen-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674
+    },
+    {
+      "uuid": "mat-screen-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795
+    }
+  ],
+  "object": {
+    "uuid": "scene-private-banking-suites",
+    "type": "Scene",
+    "name": "CRYPTIDS DOMAIN - PRIVATE BANKING SUITES",
+    "userData": {
+      "district": "cryptids-domain",
+      "area": "private-banking-suites",
+      "format": "threejs-editor-object-json",
+      "faction": "cryptids",
+      "sourceArea": "liquidity-exchange-atrium",
+      "targetArea": "crypto-vault",
+      "version": "v2-layout-faithful",
+      "layoutNotes": [
+        "Concept panel 2: tight corridor-and-room layout, glass suites that can be shot out, ambush pockets, upper balcony side channel."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "No ShillZ smile logo. Cryptids use abstract cube/ledger/vault motifs, muted gold, emerald, cyan/purple Gigaverse accents.",
+      "containmentRule": "fully sealed arena; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-private-banking-suites-base-floor",
+        "type": "Mesh",
+        "name": "E2049_PROP_PRIVATE-BANKING-SUITES_BASE_FLOOR",
+        "geometry": "geo-unit",
+        "material": "mat-floor-dark",
+        "position": [
+          0,
+          -0.04,
+          0
+        ],
+        "scale": [
+          92,
+          0.08,
+          54
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "district": "cryptids-domain",
+          "area": "private-banking-suites"
+        }
+      },
+      {
+        "uuid": "e2049-blocker-private-banking-suites-north-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_PRIVATE-BANKING-SUITES_NORTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          6.5,
+          -28.5
+        ],
+        "scale": [
+          98,
+          13,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-private-banking-suites-south-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_PRIVATE-BANKING-SUITES_SOUTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          5.5,
+          28.5
+        ],
+        "scale": [
+          98,
+          11,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-private-banking-suites-west-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_PRIVATE-BANKING-SUITES_WEST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -47.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          60
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-private-banking-suites-east-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_PRIVATE-BANKING-SUITES_EAST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          47.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          60
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-back-wall-0",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_BACK_WALL_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -33,
+          3.0,
+          -20
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-side-wall-0-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_SIDE_WALL_0_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -39,
+          3.0,
+          -17
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-left-suite-front-0",
+        "type": "Mesh",
+        "name": "E2049_GLASS_LEFT_SUITE_FRONT_0",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -26.5,
+          2.1,
+          -20
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-back-wall-0",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_BACK_WALL_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          33,
+          3.0,
+          -20
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-side-wall-0-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_SIDE_WALL_0_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          39,
+          3.0,
+          -23
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-right-suite-front-0",
+        "type": "Mesh",
+        "name": "E2049_GLASS_RIGHT_SUITE_FRONT_0",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          26.5,
+          2.1,
+          -20
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-left-suite-negotiation-table-0",
+        "type": "Mesh",
+        "name": "E2049_COVER_LEFT_SUITE_NEGOTIATION_TABLE_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -33,
+          0.675,
+          -20
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-right-suite-negotiation-table-0",
+        "type": "Mesh",
+        "name": "E2049_COVER_RIGHT_SUITE_NEGOTIATION_TABLE_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          33,
+          0.675,
+          -20
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-back-wall-1",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_BACK_WALL_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -33,
+          3.0,
+          -10
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-side-wall-1-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_SIDE_WALL_1_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -39,
+          3.0,
+          -7
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-left-suite-front-1",
+        "type": "Mesh",
+        "name": "E2049_GLASS_LEFT_SUITE_FRONT_1",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -26.5,
+          2.1,
+          -10
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-back-wall-1",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_BACK_WALL_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          33,
+          3.0,
+          -10
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-side-wall-1-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_SIDE_WALL_1_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          39,
+          3.0,
+          -13
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-right-suite-front-1",
+        "type": "Mesh",
+        "name": "E2049_GLASS_RIGHT_SUITE_FRONT_1",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          26.5,
+          2.1,
+          -10
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-left-suite-negotiation-table-1",
+        "type": "Mesh",
+        "name": "E2049_COVER_LEFT_SUITE_NEGOTIATION_TABLE_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -33,
+          0.675,
+          -10
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-right-suite-negotiation-table-1",
+        "type": "Mesh",
+        "name": "E2049_COVER_RIGHT_SUITE_NEGOTIATION_TABLE_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          33,
+          0.675,
+          -10
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-back-wall-2",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_BACK_WALL_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -33,
+          3.0,
+          0
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-side-wall-2-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_SIDE_WALL_2_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -39,
+          3.0,
+          3
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-left-suite-front-2",
+        "type": "Mesh",
+        "name": "E2049_GLASS_LEFT_SUITE_FRONT_2",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -26.5,
+          2.1,
+          0
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-back-wall-2",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_BACK_WALL_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          33,
+          3.0,
+          0
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-side-wall-2-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_SIDE_WALL_2_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          39,
+          3.0,
+          -3
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-right-suite-front-2",
+        "type": "Mesh",
+        "name": "E2049_GLASS_RIGHT_SUITE_FRONT_2",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          26.5,
+          2.1,
+          0
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-left-suite-negotiation-table-2",
+        "type": "Mesh",
+        "name": "E2049_COVER_LEFT_SUITE_NEGOTIATION_TABLE_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -33,
+          0.675,
+          0
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-right-suite-negotiation-table-2",
+        "type": "Mesh",
+        "name": "E2049_COVER_RIGHT_SUITE_NEGOTIATION_TABLE_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          33,
+          0.675,
+          0
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-back-wall-3",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_BACK_WALL_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -33,
+          3.0,
+          10
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-side-wall-3-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_SIDE_WALL_3_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -39,
+          3.0,
+          13
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-left-suite-front-3",
+        "type": "Mesh",
+        "name": "E2049_GLASS_LEFT_SUITE_FRONT_3",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -26.5,
+          2.1,
+          10
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-back-wall-3",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_BACK_WALL_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          33,
+          3.0,
+          10
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-side-wall-3-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_SIDE_WALL_3_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          39,
+          3.0,
+          7
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-right-suite-front-3",
+        "type": "Mesh",
+        "name": "E2049_GLASS_RIGHT_SUITE_FRONT_3",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          26.5,
+          2.1,
+          10
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-left-suite-negotiation-table-3",
+        "type": "Mesh",
+        "name": "E2049_COVER_LEFT_SUITE_NEGOTIATION_TABLE_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -33,
+          0.675,
+          10
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-right-suite-negotiation-table-3",
+        "type": "Mesh",
+        "name": "E2049_COVER_RIGHT_SUITE_NEGOTIATION_TABLE_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          33,
+          0.675,
+          10
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-back-wall-4",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_BACK_WALL_4",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -33,
+          3.0,
+          20
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-left-suite-side-wall-4-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LEFT_SUITE_SIDE_WALL_4_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -39,
+          3.0,
+          23
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-left-suite-front-4",
+        "type": "Mesh",
+        "name": "E2049_GLASS_LEFT_SUITE_FRONT_4",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -26.5,
+          2.1,
+          20
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-back-wall-4",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_BACK_WALL_4",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          33,
+          3.0,
+          20
+        ],
+        "scale": [
+          12,
+          6,
+          2
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-right-suite-side-wall-4-a",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_RIGHT_SUITE_SIDE_WALL_4_A",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          39,
+          3.0,
+          17
+        ],
+        "scale": [
+          2,
+          6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-glass-right-suite-front-4",
+        "type": "Mesh",
+        "name": "E2049_GLASS_RIGHT_SUITE_FRONT_4",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          26.5,
+          2.1,
+          20
+        ],
+        "scale": [
+          0.18,
+          4.2,
+          8
+        ],
+        "userData": {
+          "gameplayType": "breakableGlass",
+          "breakable": true,
+          "shootThrough": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-left-suite-negotiation-table-4",
+        "type": "Mesh",
+        "name": "E2049_COVER_LEFT_SUITE_NEGOTIATION_TABLE_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -33,
+          0.675,
+          20
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-right-suite-negotiation-table-4",
+        "type": "Mesh",
+        "name": "E2049_COVER_RIGHT_SUITE_NEGOTIATION_TABLE_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          33,
+          0.675,
+          20
+        ],
+        "scale": [
+          5.5,
+          1.35,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "suiteTable",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-main-hall-zigzag-divider-0",
+        "type": "Mesh",
+        "name": "E2049_COVER_MAIN_HALL_ZIGZAG_DIVIDER_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -8,
+          0.85,
+          17
+        ],
+        "scale": [
+          8,
+          1.7,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "hallDivider",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-main-hall-zigzag-divider-1",
+        "type": "Mesh",
+        "name": "E2049_COVER_MAIN_HALL_ZIGZAG_DIVIDER_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          8,
+          0.85,
+          9
+        ],
+        "scale": [
+          8,
+          1.7,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "hallDivider",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-main-hall-zigzag-divider-2",
+        "type": "Mesh",
+        "name": "E2049_COVER_MAIN_HALL_ZIGZAG_DIVIDER_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -8,
+          0.85,
+          1
+        ],
+        "scale": [
+          8,
+          1.7,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "hallDivider",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-main-hall-zigzag-divider-3",
+        "type": "Mesh",
+        "name": "E2049_COVER_MAIN_HALL_ZIGZAG_DIVIDER_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          8,
+          0.85,
+          -9
+        ],
+        "scale": [
+          8,
+          1.7,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "hallDivider",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-main-hall-zigzag-divider-4",
+        "type": "Mesh",
+        "name": "E2049_COVER_MAIN_HALL_ZIGZAG_DIVIDER_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -8,
+          0.85,
+          -17
+        ],
+        "scale": [
+          8,
+          1.7,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "hallDivider",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-liquidity-exchange-atrium",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_LIQUIDITY-EXCHANGE-ATRIUM",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          0,
+          2.75,
+          24
+        ],
+        "scale": [
+          16,
+          5.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "liquidity-exchange-atrium"
+        }
+      },
+      {
+        "uuid": "e2049-player-start",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          0,
+          0.5,
+          20
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "liquidity-exchange-atrium"
+        }
+      },
+      {
+        "uuid": "e2049-prop-exit-gate-to-crypto-vault-visual",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXIT_GATE_TO_CRYPTO-VAULT_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          0,
+          3.25,
+          -24
+        ],
+        "scale": [
+          18,
+          6.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "crypto-vault"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-crypto-vault",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_CRYPTO-VAULT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          -20
+        ],
+        "scale": [
+          4,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "crypto-vault",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-exit-to-crypto-vault",
+        "type": "Mesh",
+        "name": "E2049_SIGN_EXIT_TO_CRYPTO-VAULT",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          0,
+          7.2,
+          -23.1
+        ],
+        "scale": [
+          16,
+          3.6,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "VAULT ACCESS / COLLATERAL REQUIRED",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-route-tight-main-corridor",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_TIGHT_MAIN_CORRIDOR",
+        "geometry": "geo-unit",
+        "material": "mat-route-gold",
+        "position": [
+          0,
+          0.035,
+          0
+        ],
+        "scale": [
+          13,
+          0.03,
+          46
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "tightMainCorridor"
+        }
+      },
+      {
+        "uuid": "e2049-route-left-suite-flank",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_LEFT_SUITE_FLANK",
+        "geometry": "geo-unit",
+        "material": "mat-route-emerald",
+        "position": [
+          -33,
+          0.035,
+          0
+        ],
+        "scale": [
+          11,
+          0.03,
+          44
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "leftSuiteFlank"
+        }
+      },
+      {
+        "uuid": "e2049-route-right-suite-flank",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_RIGHT_SUITE_FLANK",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          33,
+          0.035,
+          0
+        ],
+        "scale": [
+          11,
+          0.03,
+          44
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "rightSuiteFlank"
+        }
+      },
+      {
+        "uuid": "e2049-route-glass-ambush-zone",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_GLASS_AMBUSH_ZONE",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0,
+          0.035,
+          0
+        ],
+        "scale": [
+          48,
+          0.03,
+          10
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "suiteAmbushCrossfire"
+        }
+      },
+      {
+        "uuid": "e2049-objective-collateral-key-terminal",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_COLLATERAL_KEY_TERMINAL",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          -17
+        ],
+        "scale": [
+          5,
+          0.18,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "collateral_key_terminal"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-collateral-key-terminal",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_COLLATERAL_KEY_TERMINAL",
+        "geometry": "geo-unit",
+        "material": "mat-emerald-dim",
+        "position": [
+          0,
+          1.3,
+          -17
+        ],
+        "scale": [
+          5,
+          2.6,
+          1.786
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "collateral_key_terminal"
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-banking-balcony-left-channel",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_BANKING_BALCONY_LEFT_CHANNEL",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -18,
+          8.35,
+          -2
+        ],
+        "scale": [
+          4.5,
+          0.7,
+          42
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBankingBalcony",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-banking-balcony-crossover",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_BANKING_BALCONY_CROSSOVER",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          9.45,
+          -21
+        ],
+        "scale": [
+          40,
+          0.7,
+          3.6
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBankingBalcony",
+          "heightTier": "upper",
+          "floorY": 9.1
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-banking-left-outer",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_BANKING_LEFT_OUTER",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -21,
+          8.9,
+          -2
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          42
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-banking-left-inner",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_BANKING_LEFT_INNER",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -15,
+          8.9,
+          -2
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          42
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-banking-cross-n",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_BANKING_CROSS_N",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          10.0,
+          -18.8
+        ],
+        "scale": [
+          40,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-banking-cross-s",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_BANKING_CROSS_S",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          10.0,
+          -23.2
+        ],
+        "scale": [
+          40,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-left-0",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_LEFT_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -40.5,
+          5,
+          -20
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "TRUST IS COLLATERAL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-right-0",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_RIGHT_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40.5,
+          5,
+          -20
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE MARKET",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-left-1",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_LEFT_1",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -40.5,
+          5,
+          -10
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "TRUST IS COLLATERAL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-right-1",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_RIGHT_1",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40.5,
+          5,
+          -10
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE MARKET",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-left-2",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_LEFT_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -40.5,
+          5,
+          0
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "TRUST IS COLLATERAL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-right-2",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_RIGHT_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40.5,
+          5,
+          0
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE MARKET",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-left-3",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_LEFT_3",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -40.5,
+          5,
+          10
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "TRUST IS COLLATERAL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-right-3",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_RIGHT_3",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40.5,
+          5,
+          10
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE MARKET",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-left-4",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_LEFT_4",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -40.5,
+          5,
+          20
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "TRUST IS COLLATERAL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-suite-right-4",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SUITE_RIGHT_4",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40.5,
+          5,
+          20
+        ],
+        "scale": [
+          0.12,
+          2.6,
+          6
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE MARKET",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-lobby-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_LOBBY_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -8,
+          0.5,
+          19
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "entryAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-lobby-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_LOBBY_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          8,
+          0.5,
+          19
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "entryAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-left-room-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_LEFT_ROOM_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -33,
+          0.5,
+          10
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "suiteAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-right-room-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_RIGHT_ROOM_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          33,
+          0.5,
+          10
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "suiteAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-left-room-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_LEFT_ROOM_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -33,
+          0.5,
+          -10
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "suiteAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-right-room-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_RIGHT_ROOM_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          33,
+          0.5,
+          -10
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "suiteAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-elite-clerk",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_ELITE_CLERK",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          0.5,
+          -20
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "eliteWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-suite-guard-0",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SUITE_GUARD_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -18,
+          9.0,
+          4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-suite-guard-1",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SUITE_GUARD_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -18,
+          9.0,
+          -14
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-suite-guard-2",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SUITE_GUARD_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          9.0,
+          -21
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-0",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -33,
+          0.5,
+          20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-1",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          33,
+          0.5,
+          20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-2",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -33,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-3",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          33,
+          0.5,
+          0
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-4",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -33,
+          0.5,
+          -20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-5",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          33,
+          0.5,
+          -20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-private-banking-6",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_PRIVATE_BANKING_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          -10
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidPrivateBankingCommon"
+        }
+      },
+      {
+        "uuid": "e2049-light-private-banking-warm",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_PRIVATE_BANKING_WARM",
+        "color": 13017674,
+        "intensity": 1.8,
+        "distance": 60,
+        "decay": 2,
+        "position": [
+          0,
+          11,
+          4
+        ]
+      },
+      {
+        "uuid": "e2049-light-private-banking-objective",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_PRIVATE_BANKING_OBJECTIVE",
+        "color": 51320,
+        "intensity": 1.7,
+        "distance": 36,
+        "decay": 2,
+        "position": [
+          0,
+          7,
+          -17
+        ]
+      }
+    ]
+  }
+}

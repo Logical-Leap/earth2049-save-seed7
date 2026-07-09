@@ -30,11 +30,11 @@ const Assets = (() => {
   const EXTERNAL_GUNS = {
     ar: {
       url: 'assets/models/weapons/ar.glb',
-      length: 0.72,
+      length: 2.0,
       muzzleZ: -0.58,
       centerX: 0.1,
-      centerY: -0.08,
-      centerZ: -0.14,
+      centerY: 0.1,
+      centerZ: 0.1,
       yaw: -Math.PI / 2,
     },
   };

@@ -149,14 +149,52 @@ const World = (() => {
       gameplayType: obj.userData?.gameplayType || null,
     });
   }
+  const HIDDEN_GAMEPLAY_TYPES = new Set([
+    'playerStart', 'enemySpawn', 'pickupSpawn', 'bossArena', 'objective',
+    'extractionGate', 'dronePatrolWaypoint', 'droneSpawn', 'routeHint',
+    'combatZone', 'hazardZone',
+  ]);
+  const VISIBLE_GAMEPLAY_TYPES = new Set([
+    'floor', 'arenaWall', 'softLock', 'cover', 'traversal', 'railing',
+    'setpiece', 'billboard', 'objectiveProp', 'extractionGateVisual', 'entryGate',
+    'hazard', 'elevatedPosition',
+  ]);
+
+  function shouldHideEditorObject(obj, bare) {
+    if (obj.userData?.visibleMarker === true) return false;
+    if (obj.userData?.visibleMarker === false) return true;
+    const gt = obj.userData?.gameplayType;
+    if (gt) {
+      if (VISIBLE_GAMEPLAY_TYPES.has(gt)) return false;
+      if (HIDDEN_GAMEPLAY_TYPES.has(gt)) return true;
+    }
+    if (bare.startsWith('PLAYER_START')) return true;
+    if (bare.startsWith('BOSS_ARENA')) return true;
+    if (bare.startsWith('ENEMY_SPAWN')) return true;
+    if (bare.startsWith('PICKUP_SPAWN')) return true;
+    if (bare.startsWith('COLLIDER')) return true;
+    if (bare.startsWith('ROUTE_')) return true;
+    if (bare.startsWith('OBJECTIVE_') && !bare.startsWith('OBJECTIVEPROP_')) return true;
+    if (bare.startsWith('EXTRACTION_GATE_') && !bare.includes('VISUAL')) return true;
+    if (bare.startsWith('DRONE_ROUTE_WAYPOINT_')) return true;
+    return false;
+  }
+
+  function shouldRegisterEditorCollider(obj, bare) {
+    if (bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER')) return true;
+    if (bare.startsWith('TRAVERSAL') || bare.startsWith('SOFTLOCK')) return true;
+    if (obj.userData?.collider === true || obj.userData?.blocksPlayer === true) return true;
+    const gt = obj.userData?.gameplayType;
+    return gt === 'cover' || gt === 'arenaWall' || gt === 'softLock' || gt === 'traversal' || gt === 'railing';
+  }
+
   function parseEditorScene(root) {
-    const markers = { player:0, boss:0, enemy:0, pickup:0, collider:0 };
+    const markers = { player:0, boss:0, enemy:0, pickup:0, collider:0, visible:0, hidden:0 };
     root.updateMatrixWorld(true);
     root.traverse(obj => {
-      if (!obj.name) return;
+      if (!obj.isMesh || !obj.name) return;
       const name = obj.name.toUpperCase();
       const bare = name.replace(/^E2049_/, '');
-      const isMarker = name.startsWith('E2049_') || bare.startsWith('PLAYER_START') || bare.startsWith('BOSS_ARENA') || bare.startsWith('ENEMY_SPAWN') || bare.startsWith('PICKUP_SPAWN') || bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER');
       if (bare.startsWith('PLAYER_START')) {
         const p = markerWorldPosition(obj); playerStartPos = { x:p.x, z:p.z }; spawnCell = cellFromWorld(p.x, p.z); markers.player++;
       } else if (bare.startsWith('BOSS_ARENA')) {
@@ -165,11 +203,14 @@ const World = (() => {
         const p = markerWorldPosition(obj); editorSpawnPoints.push({ x:p.x, z:p.z, fac:markerFaction(name), name:obj.name }); markers.enemy++;
       } else if (bare.startsWith('PICKUP_SPAWN')) {
         const p = markerWorldPosition(obj); pickupSpawnPoints.push({ x:p.x, z:p.z, name:obj.name }); markers.pickup++;
-      } else if (bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER')) {
+      }
+      if (shouldRegisterEditorCollider(obj, bare)) {
         if (bare.startsWith('COVER') && obj.userData && obj.userData.climb === undefined) obj.userData.climb = true;
         registerEditorCollider(obj); markers.collider++;
       }
-      if (isMarker && obj.userData?.visibleMarker !== true) obj.visible = false;
+      const hide = shouldHideEditorObject(obj, bare);
+      obj.visible = !hide;
+      if (hide) markers.hidden++; else markers.visible++;
     });
     console.info('[E2049] Editor scene markers:', markers);
   }
@@ -294,14 +335,20 @@ const World = (() => {
   }
 
   /* ---------- build scenery ---------- */
-  async function build(scene, dIdx) {
+  async function build(scene, dIdx, opts = {}) {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
     signMats = []; holos = []; colliders = []; spawnCursor = 0;
     playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false;
-    const theme = DISTRICTS[dIdx]; themeRef = theme;
+    const base = DISTRICTS[dIdx] || DISTRICTS[0];
+    const theme = { ...base };
+    if (opts.sceneUrl !== undefined) theme.sceneUrl = opts.sceneUrl;
+    if (opts.faction) theme.fac = opts.faction;
+    themeRef = theme;
     const fac = FACTIONS[theme.fac];
-    const editorScene = theme.sceneUrl && AssetLoader ? await AssetLoader.loadScene(theme.sceneUrl) : null;
+    const editorScene = theme.sceneUrl && AssetLoader
+      ? await AssetLoader.loadScene(theme.sceneUrl, { faction: theme.fac })
+      : null;
     usingExternalScene = !!editorScene;
     if (editorScene) genOpenLayout(); else genLayout();
 

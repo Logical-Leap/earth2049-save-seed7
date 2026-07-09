@@ -1,0 +1,4308 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - BOTS DISTRICT - CORRUPTION CORE"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-green",
+      "type": "MeshBasicMaterial",
+      "color": 3407718,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-yellow",
+      "type": "MeshBasicMaterial",
+      "color": 12255083,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-orange",
+      "type": "MeshBasicMaterial",
+      "color": 16757306,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-route-green",
+      "type": "MeshBasicMaterial",
+      "color": 3407718,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-route-yellow",
+      "type": "MeshBasicMaterial",
+      "color": 12255083,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-orange",
+      "type": "MeshBasicMaterial",
+      "color": 16757306,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 9657599,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1383448,
+      "roughness": 0.7,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-metal",
+      "type": "MeshStandardMaterial",
+      "color": 2370858,
+      "roughness": 0.54,
+      "metalness": 0.4
+    },
+    {
+      "uuid": "mat-wall-metal",
+      "type": "MeshStandardMaterial",
+      "color": 1712158,
+      "roughness": 0.68,
+      "metalness": 0.26
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 527626,
+      "roughness": 0.72,
+      "metalness": 0.18
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3160629,
+      "roughness": 0.58,
+      "metalness": 0.48
+    },
+    {
+      "uuid": "mat-bot-gunmetal",
+      "type": "MeshStandardMaterial",
+      "color": 2832692,
+      "roughness": 0.5,
+      "metalness": 0.62
+    },
+    {
+      "uuid": "mat-bot-green-dim",
+      "type": "MeshStandardMaterial",
+      "color": 879405,
+      "roughness": 0.4,
+      "metalness": 0.24,
+      "emissive": 2031463,
+      "emissiveIntensity": 0.22
+    },
+    {
+      "uuid": "mat-bot-green-bright",
+      "type": "MeshBasicMaterial",
+      "color": 8191880
+    },
+    {
+      "uuid": "mat-screen-green",
+      "type": "MeshBasicMaterial",
+      "color": 6487922
+    },
+    {
+      "uuid": "mat-screen-darkgreen",
+      "type": "MeshBasicMaterial",
+      "color": 737056
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 9657599
+    },
+    {
+      "uuid": "mat-hazard-core",
+      "type": "MeshBasicMaterial",
+      "color": 65382,
+      "transparent": true,
+      "opacity": 0.48
+    },
+    {
+      "uuid": "mat-hazard-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-conveyor",
+      "type": "MeshStandardMaterial",
+      "color": 1911586,
+      "roughness": 0.45,
+      "metalness": 0.5,
+      "emissive": 813869,
+      "emissiveIntensity": 0.1
+    },
+    {
+      "uuid": "mat-cable",
+      "type": "MeshStandardMaterial",
+      "color": 329734,
+      "roughness": 0.8,
+      "metalness": 0.24
+    },
+    {
+      "uuid": "mat-glass-green",
+      "type": "MeshStandardMaterial",
+      "color": 1326378,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.48,
+      "emissive": 682799,
+      "emissiveIntensity": 0.08
+    },
+    {
+      "uuid": "mat-warning-orange",
+      "type": "MeshStandardMaterial",
+      "color": 9067041,
+      "roughness": 0.48,
+      "metalness": 0.36,
+      "emissive": 4464640,
+      "emissiveIntensity": 0.05
+    }
+  ],
+  "object": {
+    "uuid": "scene-corruption-core",
+    "type": "Scene",
+    "name": "BOTS DISTRICT - CORRUPTION CORE",
+    "userData": {
+      "district": "bots-district",
+      "area": "corruption-core",
+      "format": "threejs-editor-object-json",
+      "faction": "bots",
+      "sourceArea": "assembly-crucible",
+      "targetArea": "bots-district-exit",
+      "version": "v1-layout-faithful-bots-concept",
+      "layoutNotes": [
+        "Concept map: triangular spiral arena around a corrupted AI kernel, with upper platform, side loops, inner ring platforms, ramps, lifts, jump pads, containment monoliths, and risk/reward shortcuts.",
+        "Retains the triangular/spiral layout: three approach arms, stacked circular/triangular rings, high-risk inner shortcuts, vertical drops and upper overwatch around the core."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "Bots use monochrome green, industrial metal, SPYD3R network screens, data extractors, conveyors, server racks, drones, and corrupted automation motifs.",
+      "containmentRule": "fully sealed contained FPS arena; void/drop areas are fenced or marked; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground route overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-corruption-core-void-floor-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_CORE_VOID_FLOOR",
+        "geometry": "geo-unit",
+        "material": "mat-floor-dark",
+        "position": [
+          0.0,
+          -0.04,
+          0.0
+        ],
+        "scale": [
+          96.0,
+          0.08,
+          96.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "area": "corruption-core"
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-triangle-outer-wall-0-1",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_TRIANGLE_OUTER_WALL_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-metal",
+        "position": [
+          41.5692,
+          8.0,
+          24.0
+        ],
+        "scale": [
+          72.0,
+          16.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          1.0472,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "segment": 0
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-triangle-outer-wall-1-2",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_TRIANGLE_OUTER_WALL_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-metal",
+        "position": [
+          -41.5692,
+          8.0,
+          24.0
+        ],
+        "scale": [
+          72.0,
+          16.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          -1.0472,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "segment": 1
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-triangle-outer-wall-2-3",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_TRIANGLE_OUTER_WALL_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-metal",
+        "position": [
+          -0.0,
+          8.0,
+          -48.0
+        ],
+        "scale": [
+          72.0,
+          16.0,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          -3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "segment": 2
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-0-4",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          46.0,
+          7.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-1-5",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          23.0,
+          7.0,
+          39.8372
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          1.0472,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-2-6",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -23.0,
+          7.0,
+          39.8372
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          2.0944,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-3-7",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -46.0,
+          7.0,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-4-8",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_4",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -23.0,
+          7.0,
+          -39.8372
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          4.1888,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-corruption-containment-monolith-5-9",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_CORRUPTION_CONTAINMENT_MONOLITH_5",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          23.0,
+          7.0,
+          -39.8372
+        ],
+        "scale": [
+          5.0,
+          14.0,
+          5.0
+        ],
+        "rotation": [
+          0.0,
+          5.236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true,
+          "setpieceType": "containmentMonolith",
+          "leaksData": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-assembly-crucible-10",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_ASSEMBLY_CRUCIBLE",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          3.25,
+          42.0
+        ],
+        "scale": [
+          16.0,
+          6.5,
+          1.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "assembly-crucible"
+        }
+      },
+      {
+        "uuid": "e2049-player-start-11",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          0.0,
+          0.5,
+          38.0
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "assembly-crucible"
+        }
+      },
+      {
+        "uuid": "e2049-prop-extraction-gate-to-bots-district-exit-visual-12",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXTRACTION_GATE_TO_BOTS_DISTRICT_EXIT_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          3.25,
+          -42.0
+        ],
+        "scale": [
+          16.0,
+          6.5,
+          1.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "bots-district-exit"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-bots-district-exit-13",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_BOTS_DISTRICT_EXIT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          0.5,
+          -38.0
+        ],
+        "scale": [
+          4.0,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "bots-district-exit",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-boss-arena-corruption-core-inner-ring-14",
+        "type": "Mesh",
+        "name": "E2049_BOSS_ARENA_CORRUPTION_CORE_INNER_RING",
+        "geometry": "geo-marker",
+        "material": "mat-marker-red",
+        "position": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          30.0,
+          0.18,
+          30.0
+        ],
+        "userData": {
+          "gameplayType": "bossArena",
+          "bossArenaType": "spyd3rCorruptionCore"
+        }
+      },
+      {
+        "uuid": "e2049-objective-corrupted-ai-kernel-15",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_CORRUPTED_AI_KERNEL",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          7.0,
+          0.18,
+          7.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "overloadCorruptedKernel"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-corrupted-kernel-platform-16",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_CORRUPTED_KERNEL_PLATFORM",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          1.0,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          2.0,
+          12.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "corruptedKernel"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-corrupted-kernel-beam-17",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_CORRUPTED_KERNEL_BEAM",
+        "geometry": "geo-unit",
+        "material": "mat-hazard-core",
+        "position": [
+          0.0,
+          9.0,
+          0.0
+        ],
+        "scale": [
+          3.0,
+          18.0,
+          3.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "corruptedKernelBeam",
+          "hazardWhenUnstable": true
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-corrupted-kernel-triangle-18",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_CORRUPTED_KERNEL_TRIANGLE",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "scale": [
+          7.0,
+          5.0,
+          0.2
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "triangularKernelGlyph"
+        }
+      },
+      {
+        "uuid": "e2049-hazard-corruption-core-leak-19",
+        "type": "Mesh",
+        "name": "E2049_HAZARD_CORRUPTION_CORE_LEAK",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0.0,
+          0.06,
+          0.0
+        ],
+        "scale": [
+          22.0,
+          0.04,
+          22.0
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "dataLeakRadiation",
+          "riskReward": "inner ring grants shortest route but exposes player"
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-lower-approach-arm-0-20",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_LOWER_APPROACH_ARM_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          -0.03,
+          20.0
+        ],
+        "scale": [
+          10.0,
+          0.08,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "armIndex": 0,
+          "tier": "lower"
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-main-arm-0-21",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_MAIN_ARM_0",
+        "geometry": "geo-unit",
+        "material": "mat-route-green",
+        "position": [
+          0.0,
+          0.035,
+          20.0
+        ],
+        "scale": [
+          8.0,
+          0.03,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "triangularSpiralArm",
+          "armIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-side-loop-floor-0-22",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_SIDE_LOOP_FLOOR_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -11.7441,
+          -0.03,
+          24.3121
+        ],
+        "scale": [
+          8.0,
+          0.08,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -0.7708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "route": "sideLoop",
+          "armIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-side-loop-0-23",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_SIDE_LOOP_0",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          -11.7441,
+          0.035,
+          24.3121
+        ],
+        "scale": [
+          6.0,
+          0.03,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -0.7708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "sideLoop",
+          "armIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-ramp-to-upper-0-24",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_RAMP_TO_UPPER_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          4.2,
+          31.0
+        ],
+        "scale": [
+          5.0,
+          0.7,
+          20.0
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "rampToUpperPlatform",
+          "floorYStart": 0,
+          "floorYEnd": 8.0,
+          "armIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-jumppad-corruption-vertical-shortcut-0-25",
+        "type": "Mesh",
+        "name": "E2049_JUMPPAD_CORRUPTION_VERTICAL_SHORTCUT_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          6.1722,
+          0.5,
+          16.9087
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "jumpPadShortcut",
+          "targetFloorY": 8.0,
+          "riskReward": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-lower-approach-arm-1-26",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_LOWER_APPROACH_ARM_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -17.3205,
+          -0.03,
+          -10.0
+        ],
+        "scale": [
+          10.0,
+          0.08,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "armIndex": 1,
+          "tier": "lower"
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-main-arm-1-27",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_MAIN_ARM_1",
+        "geometry": "geo-unit",
+        "material": "mat-route-green",
+        "position": [
+          -17.3205,
+          0.035,
+          -10.0
+        ],
+        "scale": [
+          8.0,
+          0.03,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "triangularSpiralArm",
+          "armIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-side-loop-floor-1-28",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_SIDE_LOOP_FLOOR_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -15.1828,
+          -0.03,
+          -22.3267
+        ],
+        "scale": [
+          8.0,
+          0.08,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -2.8652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "route": "sideLoop",
+          "armIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-side-loop-1-29",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_SIDE_LOOP_1",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          -15.1828,
+          0.035,
+          -22.3267
+        ],
+        "scale": [
+          6.0,
+          0.03,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -2.8652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "sideLoop",
+          "armIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-ramp-to-upper-1-30",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_RAMP_TO_UPPER_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -26.8468,
+          4.2,
+          -15.5
+        ],
+        "scale": [
+          5.0,
+          0.7,
+          20.0
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "rampToUpperPlatform",
+          "floorYStart": 0,
+          "floorYEnd": 8.0,
+          "armIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-jumppad-corruption-vertical-shortcut-1-31",
+        "type": "Mesh",
+        "name": "E2049_JUMPPAD_CORRUPTION_VERTICAL_SHORTCUT_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -17.7295,
+          0.5,
+          -3.1091
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "jumpPadShortcut",
+          "targetFloorY": 8.0,
+          "riskReward": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-lower-approach-arm-2-32",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_LOWER_APPROACH_ARM_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          17.3205,
+          -0.03,
+          -10.0
+        ],
+        "scale": [
+          10.0,
+          0.08,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -5.7596,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "armIndex": 2,
+          "tier": "lower"
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-main-arm-2-33",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_MAIN_ARM_2",
+        "geometry": "geo-unit",
+        "material": "mat-route-green",
+        "position": [
+          17.3205,
+          0.035,
+          -10.0
+        ],
+        "scale": [
+          8.0,
+          0.03,
+          44.0
+        ],
+        "rotation": [
+          0.0,
+          -5.7596,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "triangularSpiralArm",
+          "armIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-side-loop-floor-2-34",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_SIDE_LOOP_FLOOR_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          26.9269,
+          -0.03,
+          -1.9854
+        ],
+        "scale": [
+          8.0,
+          0.08,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -4.9596,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "route": "sideLoop",
+          "armIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-side-loop-2-35",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_SIDE_LOOP_2",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          26.9269,
+          0.035,
+          -1.9854
+        ],
+        "scale": [
+          6.0,
+          0.03,
+          30.0
+        ],
+        "rotation": [
+          0.0,
+          -4.9596,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "sideLoop",
+          "armIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-ramp-to-upper-2-36",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_RAMP_TO_UPPER_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          26.8468,
+          4.2,
+          -15.5
+        ],
+        "scale": [
+          5.0,
+          0.7,
+          20.0
+        ],
+        "rotation": [
+          0.0,
+          -5.7596,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "rampToUpperPlatform",
+          "floorYStart": 0,
+          "floorYEnd": 8.0,
+          "armIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-jumppad-corruption-vertical-shortcut-2-37",
+        "type": "Mesh",
+        "name": "E2049_JUMPPAD_CORRUPTION_VERTICAL_SHORTCUT_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          11.5573,
+          0.5,
+          -13.7996
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "jumpPadShortcut",
+          "targetFloorY": 8.0,
+          "riskReward": true
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-0-38",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          18.0,
+          4.35,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 0,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-1-39",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          13.7888,
+          4.35,
+          11.5702
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.8727,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 1,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-2-40",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          3.1257,
+          4.35,
+          17.7265
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.1745,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 2,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-3-41",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -9.0,
+          4.35,
+          15.5885
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 3,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-4-42",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -16.9145,
+          4.35,
+          6.1564
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.2217,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 4,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-5-43",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -16.9145,
+          4.35,
+          -6.1564
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.9199,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 5,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-6-44",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -9.0,
+          4.35,
+          -15.5885
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 6,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-7-45",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          3.1257,
+          4.35,
+          -17.7265
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.3161,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 7,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-inner-ring-seg-8-46",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_INNER_RING_SEG_8",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          13.7888,
+          4.35,
+          -11.5702
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -4.0143,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_INNER_RING",
+          "segment": 8,
+          "heightTier": "mid",
+          "route": "innerRing",
+          "floorY": 4.0
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-0-47",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          20.5,
+          5.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-1-48",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          15.7039,
+          5.25,
+          13.1771
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.8727,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-2-49",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          3.5598,
+          5.25,
+          20.1886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.1745,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-3-50",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -10.25,
+          5.25,
+          17.7535
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-4-51",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -19.2637,
+          5.25,
+          7.0114
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.2217,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-5-52",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -19.2637,
+          5.25,
+          -7.0114
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.9199,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-6-53",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -10.25,
+          5.25,
+          -17.7535
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 6,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-7-54",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          3.5598,
+          5.25,
+          -20.1886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.3161,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 7,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-outer-seg-8-55",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_OUTER_SEG_8",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          15.7039,
+          5.25,
+          -13.1771
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -4.0143,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_OUTER",
+          "segment": 8,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-0-56",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          15.5,
+          5.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-1-57",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          11.8737,
+          5.25,
+          9.9632
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.8727,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-2-58",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          2.6915,
+          5.25,
+          15.2645
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.1745,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-3-59",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -7.75,
+          5.25,
+          13.4234
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-4-60",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14.5652,
+          5.25,
+          5.3013
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.2217,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-5-61",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14.5652,
+          5.25,
+          -5.3013
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.9199,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-6-62",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -7.75,
+          5.25,
+          -13.4234
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 6,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-7-63",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          2.6915,
+          5.25,
+          -15.2645
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.3161,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 7,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-inner-ring-inner-seg-8-64",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_INNER_RING_INNER_SEG_8",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          11.8737,
+          5.25,
+          -9.9632
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -4.0143,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_INNER_RING_INNER",
+          "segment": 8,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-0-65",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          31.0,
+          8.35,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 0,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-1-66",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          15.5,
+          8.35,
+          26.8468
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 1,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-2-67",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -15.5,
+          8.35,
+          26.8468
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 2,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-3-68",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -31.0,
+          8.35,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 3,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-4-69",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -15.5,
+          8.35,
+          -26.8468
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 4,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-upper-platform-seg-5-70",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_UPPER_PLATFORM_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          15.5,
+          8.35,
+          -26.8468
+        ],
+        "scale": [
+          20.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_UPPER_PLATFORM",
+          "segment": 5,
+          "heightTier": "upper",
+          "route": "upperPlatform",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-0-71",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          33.5,
+          9.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-1-72",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          16.75,
+          9.25,
+          29.0119
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-2-73",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -16.75,
+          9.25,
+          29.0119
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-3-74",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -33.5,
+          9.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-4-75",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -16.75,
+          9.25,
+          -29.0119
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-outer-seg-5-76",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_OUTER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          16.75,
+          9.25,
+          -29.0119
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_OUTER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-0-77",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          28.5,
+          9.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-1-78",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          14.25,
+          9.25,
+          24.6817
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-2-79",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14.25,
+          9.25,
+          24.6817
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-3-80",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -28.5,
+          9.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-4-81",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14.25,
+          9.25,
+          -24.6817
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-corruption-upper-platform-inner-seg-5-82",
+        "type": "Mesh",
+        "name": "E2049_RAIL_CORRUPTION_UPPER_PLATFORM_INNER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          14.25,
+          9.25,
+          -24.6817
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_CORRUPTION_UPPER_PLATFORM_INNER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-0-83",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          12.0,
+          12.35,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 0,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-1-84",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          6.0,
+          12.35,
+          10.3923
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 1,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-2-85",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -6.0,
+          12.35,
+          10.3923
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.5236,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 2,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-3-86",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -12.0,
+          12.35,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 3,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-4-87",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -6.0,
+          12.35,
+          -10.3923
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.618,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 4,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-corruption-top-monitoring-ring-seg-5-88",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_CORRUPTION_TOP_MONITORING_RING_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          6.0,
+          12.35,
+          -10.3923
+        ],
+        "scale": [
+          10.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.6652,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_CORRUPTION_TOP_MONITORING_RING",
+          "segment": 5,
+          "heightTier": "high",
+          "route": "topMonitoringRing",
+          "floorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-lift-corruption-core-0-101",
+        "type": "Mesh",
+        "name": "E2049_LIFT_CORRUPTION_CORE_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          35.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          2.6,
+          0.18,
+          2.6
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "targetFloorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-lift-shaft-corruption-0-102",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_LIFT_SHAFT_CORRUPTION_0",
+        "geometry": "geo-unit",
+        "material": "mat-glass-green",
+        "position": [
+          35.0,
+          6.0,
+          0.0
+        ],
+        "scale": [
+          3.5,
+          12.0,
+          3.5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "verticalConnector": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-data-leak-column-0-103",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_DATA_LEAK_COLUMN_0",
+        "geometry": "geo-unit",
+        "material": "mat-hazard-core",
+        "position": [
+          24.5,
+          7.0,
+          0.0
+        ],
+        "scale": [
+          1.5,
+          14.0,
+          1.5
+        ],
+        "userData": {
+          "gameplayType": "hazard",
+          "hazardType": "dataLeakColumn",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-lift-corruption-core-1-104",
+        "type": "Mesh",
+        "name": "E2049_LIFT_CORRUPTION_CORE_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -17.5,
+          0.5,
+          30.3109
+        ],
+        "scale": [
+          2.6,
+          0.18,
+          2.6
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "targetFloorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-lift-shaft-corruption-1-105",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_LIFT_SHAFT_CORRUPTION_1",
+        "geometry": "geo-unit",
+        "material": "mat-glass-green",
+        "position": [
+          -17.5,
+          6.0,
+          30.3109
+        ],
+        "scale": [
+          3.5,
+          12.0,
+          3.5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "verticalConnector": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-data-leak-column-1-106",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_DATA_LEAK_COLUMN_1",
+        "geometry": "geo-unit",
+        "material": "mat-hazard-core",
+        "position": [
+          -12.25,
+          7.0,
+          21.2176
+        ],
+        "scale": [
+          1.5,
+          14.0,
+          1.5
+        ],
+        "userData": {
+          "gameplayType": "hazard",
+          "hazardType": "dataLeakColumn",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-lift-corruption-core-2-107",
+        "type": "Mesh",
+        "name": "E2049_LIFT_CORRUPTION_CORE_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -17.5,
+          0.5,
+          -30.3109
+        ],
+        "scale": [
+          2.6,
+          0.18,
+          2.6
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "targetFloorY": 12.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-lift-shaft-corruption-2-108",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_LIFT_SHAFT_CORRUPTION_2",
+        "geometry": "geo-unit",
+        "material": "mat-glass-green",
+        "position": [
+          -17.5,
+          6.0,
+          -30.3109
+        ],
+        "scale": [
+          3.5,
+          12.0,
+          3.5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "coreLift",
+          "verticalConnector": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-corruption-data-leak-column-2-109",
+        "type": "Mesh",
+        "name": "E2049_PROP_CORRUPTION_DATA_LEAK_COLUMN_2",
+        "geometry": "geo-unit",
+        "material": "mat-hazard-core",
+        "position": [
+          -12.25,
+          7.0,
+          -21.2176
+        ],
+        "scale": [
+          1.5,
+          14.0,
+          1.5
+        ],
+        "userData": {
+          "gameplayType": "hazard",
+          "hazardType": "dataLeakColumn",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-0-110",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          24.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          0.4,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-1-111",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          30.0702,
+          0.85,
+          10.9446
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          0.0509,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-2-112",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          18.3851,
+          0.85,
+          15.4269
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -0.2981,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-3-113",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          16.0,
+          0.85,
+          27.7128
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -0.6472,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-4-114",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_4",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          4.1676,
+          0.85,
+          23.6354
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -0.9963,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-5-115",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_5",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -5.5567,
+          0.85,
+          31.5138
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -1.3453,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-6-116",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_6",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -12.0,
+          0.85,
+          20.7846
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -1.6944,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-7-117",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_7",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -24.5134,
+          0.85,
+          20.5692
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -2.0435,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-8-118",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_8",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -22.5526,
+          0.85,
+          8.2085
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -2.3925,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-9-119",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_9",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -32.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -2.7416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-10-120",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_10",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -22.5526,
+          0.85,
+          -8.2085
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -3.0907,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-cover-corruption-containment-block-11-121",
+        "type": "Mesh",
+        "name": "E2049_COVER_CORRUPTION_CONTAINMENT_BLOCK_11",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -24.5134,
+          0.85,
+          -20.5692
+        ],
+        "scale": [
+          4.2,
+          1.7,
+          2.6
+        ],
+        "rotation": [
+          0.0,
+          -3.4397,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "containmentBlock",
+          "collider": true,
+          "climb": true,
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-high-risk-shortcut-to-core-128",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_HIGH_RISK_SHORTCUT_TO_CORE",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0.0,
+          0.035,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          0.03,
+          34.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "highRiskShortcut",
+          "riskReward": true
+        }
+      },
+      {
+        "uuid": "e2049-route-corruption-flank-side-loops-129",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_CORRUPTION_FLANK_SIDE_LOOPS",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          0.0,
+          0.035,
+          0.0
+        ],
+        "scale": [
+          66.0,
+          0.03,
+          66.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "sideLoopsProjection",
+          "projectionOnly": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-0-130",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          -42.0,
+          7.0,
+          0.0
+        ],
+        "scale": [
+          0.12,
+          4.0,
+          18.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "CORRUPTION CORE // ALWAYS ON. ALWAYS WATCHING.",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-1-131",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_1",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          42.0,
+          7.0,
+          0.0
+        ],
+        "scale": [
+          0.12,
+          4.0,
+          18.0
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "SPYD3R.exe RESIDES WITHIN THE CORE",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-2-132",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          7.0,
+          -43.0
+        ],
+        "scale": [
+          20.0,
+          4.0,
+          0.12
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "CONTAINMENT FAILURE IS A FEATURE",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-3-133",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_3",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          7.0,
+          43.0
+        ],
+        "scale": [
+          22.0,
+          4.0,
+          0.12
+        ],
+        "rotation": [
+          0.0,
+          3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "RISK VS REWARD // CLOSER TO CORE = CLOSER TO TRUTH",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-0-134",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -8.0,
+          0.5,
+          34.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-1-135",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          8.0,
+          0.5,
+          34.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-2-136",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -34.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-3-137",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          34.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-4-138",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          0.0,
+          0.5,
+          -34.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-5-139",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -20.0,
+          4.9,
+          20.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-6-140",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          20.0,
+          4.9,
+          20.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-7-141",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_7",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -20.0,
+          4.9,
+          -20.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-8-142",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_8",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          20.0,
+          4.9,
+          -20.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-9-143",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_9",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          0.0,
+          8.9,
+          -31.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-10-144",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_10",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -31.0,
+          8.9,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-11-145",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_11",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          31.0,
+          8.9,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-12-146",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_12",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          0.0,
+          12.9,
+          12.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-0-147",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          0.5,
+          28.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-1-148",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -28.0,
+          0.5,
+          10.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-2-149",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          28.0,
+          0.5,
+          10.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-3-150",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -18.0,
+          0.5,
+          -24.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-4-151",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          18.0,
+          0.5,
+          -24.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-5-152",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          4.9,
+          18.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-6-153",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -18.0,
+          4.9,
+          0.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-7-154",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_7",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          18.0,
+          4.9,
+          0.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-8-155",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_8",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          8.9,
+          -28.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-9-156",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_9",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          24.0,
+          8.9,
+          0.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botscorruptioncorecommon-10-157",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSCORRUPTIONCORECOMMON_10",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -24.0,
+          8.9,
+          0.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsCorruptionCoreCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-0-158",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          15.0,
+          28.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 0
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-1-159",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          24.0,
+          15.0,
+          14.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 1
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-2-160",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          24.0,
+          15.0,
+          -14.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 2
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-3-161",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          15.0,
+          -28.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 3
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-4-162",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -24.0,
+          15.0,
+          -14.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 4
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-corruptioncoredroneloop-5-163",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_CORRUPTIONCOREDRONELOOP_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -24.0,
+          15.0,
+          14.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "corruptionCoreDroneLoop",
+          "sequence": 5
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-0-164",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          16.5,
+          28.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-1-165",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          24.0,
+          16.5,
+          14.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-2-166",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          24.0,
+          16.5,
+          -14.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-3-167",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          16.5,
+          -28.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-4-168",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_4",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          -24.0,
+          16.5,
+          -14.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-corruptioncoredroneloop-5-169",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_CORRUPTIONCOREDRONELOOP_5",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          -24.0,
+          16.5,
+          14.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "corruptionCoreDroneLoop",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-corruption-core-key-170",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_CORE_KEY",
+        "color": 3407718,
+        "intensity": 2.2,
+        "distance": 95,
+        "decay": 2,
+        "position": [
+          0.0,
+          18.0,
+          0.0
+        ]
+      },
+      {
+        "uuid": "e2049-corruption-entry-171",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_ENTRY",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 36,
+        "decay": 2,
+        "position": [
+          0.0,
+          6.0,
+          38.0
+        ]
+      },
+      {
+        "uuid": "e2049-corruption-exit-172",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_EXIT",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 36,
+        "decay": 2,
+        "position": [
+          0.0,
+          6.0,
+          -38.0
+        ]
+      },
+      {
+        "uuid": "e2049-corruption-side-a-173",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_SIDE_A",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 45,
+        "decay": 2,
+        "position": [
+          34.0,
+          9.0,
+          0.0
+        ]
+      },
+      {
+        "uuid": "e2049-corruption-side-b-174",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_SIDE_B",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 45,
+        "decay": 2,
+        "position": [
+          -34.0,
+          9.0,
+          0.0
+        ]
+      },
+      {
+        "uuid": "e2049-corruption-top-175",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_CORRUPTION_TOP",
+        "color": 3407718,
+        "intensity": 1.4,
+        "distance": 60,
+        "decay": 2,
+        "position": [
+          0.0,
+          15.0,
+          0.0
+        ]
+      }
+    ]
+  }
+}

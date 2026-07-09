@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-07-08T06:17:32.487Z",
+  "scenes": [
+    {
+      "id": "bots-assembly-crucible",
+      "label": "Scene — BOTS DISTRICT - ASSEMBLY CRUCIBLE",
+      "sceneUrl": "assets/scenes/districts/bots-assembly-crucible.scene.json",
+      "faction": "bots",
+      "district": 2
+    },
+    {
+      "id": "bots-broadcast-nexus",
+      "label": "Scene — BOTS DISTRICT - BROADCAST NEXUS",
+      "sceneUrl": "assets/scenes/districts/bots-broadcast-nexus.scene.json",
+      "faction": "bots",
+      "district": 2
+    },
+    {
+      "id": "bots-corruption-core",
+      "label": "Scene — BOTS DISTRICT - CORRUPTION CORE",
+      "sceneUrl": "assets/scenes/districts/bots-corruption-core.scene.json",
+      "faction": "bots",
+      "district": 2
+    },
+    {
+      "id": "bots-data-harvest-plaza",
+      "label": "Scene — BOTS DISTRICT - DATA HARVEST PLAZA",
+      "sceneUrl": "assets/scenes/districts/bots-data-harvest-plaza.scene.json",
+      "faction": "bots",
+      "district": 2
+    },
+    {
+      "id": "cryptids-crypto-vault.v2",
+      "label": "Scene — CRYPTIDS DOMAIN - CRYPTO VAULT",
+      "sceneUrl": "assets/scenes/districts/cryptids-crypto-vault.v2.scene.json",
+      "faction": "cryptids",
+      "district": 3
+    },
+    {
+      "id": "cryptids-executive-skybridge.v2",
+      "label": "Scene — CRYPTIDS DOMAIN - EXECUTIVE SKYBRIDGE",
+      "sceneUrl": "assets/scenes/districts/cryptids-executive-skybridge.v2.scene.json",
+      "faction": "cryptids",
+      "district": 3
+    },
+    {
+      "id": "cryptids-gigaverse-access-node.v2",
+      "label": "Scene — CRYPTIDS DOMAIN - GIGAVERSE ACCESS NODE",
+      "sceneUrl": "assets/scenes/districts/cryptids-gigaverse-access-node.v2.scene.json",
+      "faction": "cryptids",
+      "district": 3
+    },
+    {
+      "id": "cryptids-liquidity-exchange-atrium.v2",
+      "label": "Scene — CRYPTIDS DOMAIN - LIQUIDITY EXCHANGE ATRIUM",
+      "sceneUrl": "assets/scenes/districts/cryptids-liquidity-exchange-atrium.v2.scene.json",
+      "faction": "cryptids",
+      "district": 3
+    },
+    {
+      "id": "cryptids-private-banking-suites.v2",
+      "label": "Scene — CRYPTIDS DOMAIN - PRIVATE BANKING SUITES",
+      "sceneUrl": "assets/scenes/districts/cryptids-private-banking-suites.v2.scene.json",
+      "faction": "cryptids",
+      "district": 3
+    },
+    {
+      "id": "shillz-central",
+      "label": "Scene — SHILLZ CENTRAL EDITOR SAMPLE",
+      "sceneUrl": "assets/scenes/districts/shillz-central.scene.json",
+      "faction": "shillz",
+      "district": 0
+    }
+  ]
+}

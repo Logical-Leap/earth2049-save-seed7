@@ -1,0 +1,87 @@
+{
+  "district": "cryptids-domain",
+  "version": "v2-layout-faithful",
+  "reasonForRevision": "v1 maps were too similar. v2 follows the concept sheet map silhouettes: atrium, suite corridors, compact vault, asymmetric node room, and long skybridge.",
+  "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi",
+  "factionIdentity": {
+    "name": "Cryptids",
+    "use": [
+      "abstract cube/ledger/vault motifs",
+      "muted gold",
+      "dark concrete",
+      "emerald terminal glow",
+      "cyan/purple Gigaverse accents",
+      "financial signage",
+      "vault/security architecture"
+    ],
+    "avoid": [
+      "ShillZ smile logo",
+      "bright ShillZ branding",
+      "ornate photoreal cyberpunk luxury overload"
+    ]
+  },
+  "flow": [
+    "liquidity-exchange-atrium",
+    "private-banking-suites",
+    "crypto-vault",
+    "gigaverse-access-node",
+    "executive-skybridge"
+  ],
+  "maps": [
+    {
+      "sequence": 1,
+      "area": "liquidity-exchange-atrium",
+      "sceneFile": "cryptids-liquidity-exchange-atrium.v2.scene.json",
+      "sourceArea": "entry-gate",
+      "targetArea": "private-banking-suites",
+      "childrenCount": 93,
+      "layoutNotes": [
+        "Concept panel 1: large atrium, central trading pit, multiple cover islands, full upper balcony loop, drone route over floor."
+      ]
+    },
+    {
+      "sequence": 2,
+      "area": "private-banking-suites",
+      "sceneFile": "cryptids-private-banking-suites.v2.scene.json",
+      "sourceArea": "liquidity-exchange-atrium",
+      "targetArea": "crypto-vault",
+      "childrenCount": 96,
+      "layoutNotes": [
+        "Concept panel 2: tight corridor-and-room layout, glass suites that can be shot out, ambush pockets, upper balcony side channel."
+      ]
+    },
+    {
+      "sequence": 3,
+      "area": "crypto-vault",
+      "sceneFile": "cryptids-crypto-vault.v2.scene.json",
+      "sourceArea": "private-banking-suites",
+      "targetArea": "gigaverse-access-node",
+      "childrenCount": 65,
+      "layoutNotes": [
+        "Concept panel 3: compact high-value loot chamber, central vault door, reinforced cover, alarm grid, elite defenders."
+      ]
+    },
+    {
+      "sequence": 4,
+      "area": "gigaverse-access-node",
+      "sceneFile": "cryptids-gigaverse-access-node.v2.scene.json",
+      "sourceArea": "crypto-vault",
+      "targetArea": "executive-skybridge",
+      "childrenCount": 77,
+      "layoutNotes": [
+        "Concept panel 4: asymmetrical server-node room, Gigaverse portal side route, risk/reward cache, hack objective."
+      ]
+    },
+    {
+      "sequence": 5,
+      "area": "executive-skybridge",
+      "sceneFile": "cryptids-executive-skybridge.v2.scene.json",
+      "sourceArea": "gigaverse-access-node",
+      "targetArea": "district-extraction-gate",
+      "childrenCount": 87,
+      "layoutNotes": [
+        "Concept panel 5: elevated long-lane skybridge, sniper positions, vulnerable to drones/crossfire, connection from atrium to vault/district exit."
+      ]
+    }
+  ]
+}

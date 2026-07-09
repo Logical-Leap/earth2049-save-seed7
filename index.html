@@ -228,6 +228,36 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
 
 #loadScreen{position:fixed;inset:0;z-index:70;background:#04050a;display:flex;align-items:center;justify-content:center;
   flex-direction:column;letter-spacing:.4em;font-size:12px;text-transform:uppercase;color:var(--cyan);}
+
+/* dev console */
+#devConsole{position:fixed;top:0;right:0;z-index:80;width:min(420px,96vw);max-height:100vh;pointer-events:none;
+  transform:translateX(105%);transition:transform .2s ease;font-size:11px;letter-spacing:.08em;}
+#devConsole.open{transform:translateX(0);pointer-events:auto;}
+.dev-panel{background:rgba(6,8,16,.94);border-left:1px solid rgba(0,229,255,.35);box-shadow:-8px 0 40px rgba(0,0,0,.55);
+  max-height:100vh;overflow:auto;padding:12px 14px 18px;}
+.dev-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;
+  font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--cyan);}
+#devStatus{color:var(--green);font-weight:700;}
+.dev-close{pointer-events:auto;cursor:pointer;border:1px solid rgba(255,45,85,.5);background:rgba(40,8,16,.5);
+  color:#ffb0c0;padding:2px 8px;font-size:14px;line-height:1;}
+.dev-sec{border:1px solid rgba(120,150,255,.22);background:rgba(10,14,28,.65);padding:10px;margin-bottom:10px;}
+.dev-sec label{display:block;font-size:9px;letter-spacing:.22em;text-transform:uppercase;opacity:.7;margin-bottom:6px;}
+.dev-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:6px;}
+.dev-row select,.dev-row input[type=text]{flex:1;min-width:120px;pointer-events:auto;background:#0a0e18;color:#dfe8ff;
+  border:1px solid rgba(120,150,255,.35);padding:6px 8px;font-size:11px;}
+.dev-btn{pointer-events:auto;cursor:pointer;border:1px solid rgba(0,229,255,.45);background:rgba(0,40,60,.35);
+  color:var(--cyan);padding:6px 10px;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.dev-btn:hover{background:rgba(0,229,255,.18);}
+.dev-check{pointer-events:auto;display:flex;align-items:center;gap:6px;font-size:11px;text-transform:uppercase;}
+#devLog{margin-top:8px;max-height:120px;overflow:auto;background:#05070f;border:1px solid rgba(120,150,255,.2);
+  padding:6px;font-family:Consolas,monospace;font-size:10px;line-height:1.45;white-space:pre-wrap;color:#9eb4ff;}
+.dev-hint{position:fixed;bottom:8px;right:10px;z-index:75;font-size:9px;letter-spacing:.18em;opacity:.35;
+  text-transform:uppercase;pointer-events:none;}
+#devToggleBtn{position:fixed;bottom:8px;right:10px;z-index:76;pointer-events:auto;cursor:pointer;
+  border:1px solid rgba(0,229,255,.35);background:rgba(6,10,20,.82);color:var(--cyan);
+  font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;}
+#devToggleBtn:hover{background:rgba(0,229,255,.15);}
+body.dev-open #devToggleBtn{opacity:.55;}
 </style>
 </head>
 <body>
@@ -373,6 +403,53 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
 <div id="rotateHint"><div class="ph">&#128241;</div>ROTATE DEVICE<br>LANDSCAPE RECOMMENDED<div class="btn" id="btnRotateSkip" style="margin-top:22px;">Play Anyway</div></div>
 <div id="loadScreen">INITIALIZING OG DEVICE…</div>
 
+<div id="devConsole" aria-hidden="true">
+  <div class="dev-panel">
+    <div class="dev-head">
+      <span>Dev Console</span>
+      <span id="devStatus"></span>
+      <button type="button" class="dev-close" id="devClose" title="Close (`)">×</button>
+    </div>
+    <div class="dev-sec">
+      <label>Map</label>
+      <select id="devMapSelect"></select>
+      <div class="dev-row">
+        <button type="button" class="dev-btn" id="devLoadMap">Load Map</button>
+        <button type="button" class="dev-btn" id="devRefreshMaps">Refresh List</button>
+      </div>
+    </div>
+    <div class="dev-sec">
+      <label>Weapon</label>
+      <div class="dev-row">
+        <select id="devWeaponSelect"></select>
+        <select id="devRaritySelect"></select>
+      </div>
+      <div class="dev-row"><button type="button" class="dev-btn" id="devGiveGun">Give Gun</button></div>
+    </div>
+    <div class="dev-sec">
+      <label>Enemy</label>
+      <div class="dev-row">
+        <select id="devEnemySelect"></select>
+        <label class="dev-check"><input type="checkbox" id="devEnemyElite"> Elite</label>
+      </div>
+      <div class="dev-row">
+        <button type="button" class="dev-btn" id="devSpawnEnemy">Spawn</button>
+        <button type="button" class="dev-btn" id="devKillAll">Clear</button>
+        <button type="button" class="dev-btn" id="devStartWaves">Waves</button>
+      </div>
+    </div>
+    <div class="dev-sec">
+      <label class="dev-check"><input type="checkbox" id="devGodMode"> God Mode (no damage)</label>
+    </div>
+    <div class="dev-sec">
+      <label>Command Line</label>
+      <input type="text" id="devCmd" placeholder="help | map cryptids-vault | gun rocket 6 | spawn broker elite | god on">
+      <div id="devLog"></div>
+    </div>
+  </div>
+</div>
+<button type="button" id="devToggleBtn" title="Dev console (F1 or `)">DEV</button>
+
 <script src="lib/three.min.js?v=20260707-editor-workflow"></script>
 <script src="lib/CopyShader.js?v=20260707-editor-workflow"></script>
 <script src="lib/LuminosityHighPassShader.js?v=20260707-editor-workflow"></script>
@@ -386,10 +463,11 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
 <script src="lib/GLTFLoader.js?v=20260707-editor-workflow"></script>
 <script src="lib/SkeletonUtils.js?v=20260707-editor-workflow"></script>
 <script src="js/config.js?v=20260707-editor-workflow"></script>
-<script src="js/loader.js?v=20260707-editor-workflow"></script>
+<script src="js/loader.js?v=20260708-district-textures"></script>
 <script src="js/audio.js?v=20260707-editor-workflow"></script>
 <script src="js/assets.js?v=20260707-editor-workflow"></script>
-<script src="js/world.js?v=20260707-editor-workflow"></script>
-<script src="js/game.js?v=20260707-editor-workflow"></script>
+<script src="js/world.js?v=20260708-scene-visibility"></script>
+<script src="js/devconsole.js?v=20260708-scene-manifest"></script>
+<script src="js/game.js?v=20260708-scene-manifest"></script>
 </body>
 </html>

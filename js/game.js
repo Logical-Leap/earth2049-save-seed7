@@ -8,6 +8,7 @@ let SAVE, G = null;
 let isTouch = false;
 let state = 'title';            // title | run | og | dead | victory
 let paused = false;
+let devGodMode = false;
 let quality = 3;                // 3 high .. 0 low
 let fpsEma = 60, fpsCheck = 0;
 const V3 = () => new THREE.Vector3();
@@ -100,6 +101,7 @@ async function boot() {
   DmgNums.init();
   initInput();
   wireMenus();
+  if (typeof DevConsole !== 'undefined') await DevConsole.init();
   onResize();
   addEventListener('resize', onResize);
   document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run') setPaused(true); });
@@ -1223,6 +1225,7 @@ function takeCrate() {
 /* ============ player ============ */
 function damagePlayer(dmg, src) {
   const p = G.p;
+  if (devGodMode) return;
   if (state !== 'run' || p.iframesT > 0 || p.dashT > 0) return;
   dmg *= factionDamageIncomingMult(src);
   const absorbed = Math.min(p.armor, dmg * 0.65);
@@ -1824,6 +1827,110 @@ function wireMenus() {
   el('btnAuto').classList.toggle('on', SAVE.opts.auto);
 }
 
+/* ============ dev console API ============ */
+async function devEnsureRun() {
+  document.querySelectorAll('.ov').forEach(o => o.classList.remove('show'));
+  if (state === 'run' && G) return;
+  if (!G) await newRun();
+  else setState('run');
+}
+
+async function devLoadMap(entry) {
+  await devEnsureRun();
+  clearEntities();
+  G.boss = null;
+  G.wave = 0;
+  G.phase = 'intro';
+  G.waveDelay = 9999;
+  G.pending = [];
+  G.spawnT = 0;
+  el('bossBar').style.display = 'none';
+
+  const dIdx = entry.district ?? 0;
+  G.district = dIdx;
+  const buildOpts = {};
+  if (entry.sceneUrl !== undefined) buildOpts.sceneUrl = entry.sceneUrl;
+  if (entry.faction) buildOpts.faction = entry.faction;
+  G.theme = await World.build(scene, dIdx, buildOpts);
+
+  const s = World.playerStart();
+  G.p.pos.set(s.x, 0, s.z);
+  G.p.velY = 0;
+  G.p.yaw = s.yaw !== undefined ? s.yaw : Math.atan2(s.x, s.z);
+  if (devGodMode) G.p.hp = G.p.maxHp;
+  banner('DEV MAP', entry.label || 'LOADED');
+  AudioSys.setIntensity(0.35 + dIdx * 0.1);
+  return true;
+}
+
+function devGiveGun(id, rarity, slot) {
+  if (!G) return false;
+  if (!WEAPONS[id]) return false;
+  const r = rarity == null ? 6 : clamp(Math.round(rarity), 0, RARITIES.length - 1);
+  const s = slot == null ? 1 : clamp(Math.round(slot), 0, 1);
+  G.p.weapons[s] = makeWeapon(id, r);
+  G.p.cur = s;
+  equipGun();
+  AudioSys.sfx('wpickup');
+  return true;
+}
+
+function devSpawnEnemy(typeId, elite, bossId) {
+  if (!G || state !== 'run') return null;
+  const p = G.p;
+  const dist = 5;
+  let x = p.pos.x + Math.sin(p.yaw) * dist;
+  let z = p.pos.z + Math.cos(p.yaw) * dist;
+  if (!bossId) {
+    const sp = World.randomSpawn(p.pos.x, p.pos.z, 2, typeId);
+    x = sp.x;
+    z = sp.z;
+  }
+  return spawnEnemy(bossId ? null : typeId, x, z, !!elite, bossId || null);
+}
+
+function devClearEnemies() {
+  if (!G) return 0;
+  const n = G.enemies.length;
+  for (const e of G.enemies) despawnRig(e);
+  G.enemies = [];
+  G.boss = null;
+  el('bossBar').style.display = 'none';
+  return n;
+}
+
+function devStartWaves() {
+  if (!G) return;
+  G.wave = 0;
+  G.phase = 'intro';
+  G.waveDelay = 0.5;
+}
+
+function devSetGodMode(on) {
+  devGodMode = !!on;
+  if (devGodMode && G?.p) {
+    G.p.hp = G.p.maxHp;
+    G.p.armor = G.p.maxArmor;
+  }
+  return devGodMode;
+}
+
+const DevAPI = {
+  get state() { return state; },
+  get godMode() { return devGodMode; },
+  ensureRun: devEnsureRun,
+  loadMap: devLoadMap,
+  giveGun: devGiveGun,
+  spawnEnemy: devSpawnEnemy,
+  clearEnemies: devClearEnemies,
+  startWaves: devStartWaves,
+  setGodMode: devSetGodMode,
+  maps: () => DevConsole?.MAPS || [],
+  weapons: () => Object.keys(WEAPONS),
+  enemies: () => Object.keys(ETYPES),
+  bosses: () => Object.keys(BOSSES),
+};
+
 /* ============ adaptive quality ============ */
 function adaptQuality(dt) {
   fpsEma = fpsEma * 0.95 + (1 / Math.max(dt, 0.001)) * 0.05;
@@ -1910,5 +2017,6 @@ function frame(t) {
 }
 
 /* go */
+window.DevAPI = DevAPI;
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
 else boot();

@@ -1,0 +1,1921 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - CRYPTIDS DOMAIN - GIGAVERSE ACCESS NODE"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-floor-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2763303,
+      "roughness": 0.72,
+      "metalness": 0.05
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1382165,
+      "roughness": 0.68,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-vault",
+      "type": "MeshStandardMaterial",
+      "color": 1842458,
+      "roughness": 0.64,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-wall-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2369056,
+      "roughness": 0.78,
+      "metalness": 0.08
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 789771,
+      "roughness": 0.7,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3158831,
+      "roughness": 0.58,
+      "metalness": 0.36
+    },
+    {
+      "uuid": "mat-metal-muted-gold",
+      "type": "MeshStandardMaterial",
+      "color": 10189355,
+      "roughness": 0.48,
+      "metalness": 0.52,
+      "emissive": 2759936,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-emerald-dim",
+      "type": "MeshStandardMaterial",
+      "color": 473124,
+      "roughness": 0.42,
+      "metalness": 0.22,
+      "emissive": 51320,
+      "emissiveIntensity": 0.16
+    },
+    {
+      "uuid": "mat-vr-cyan-dim",
+      "type": "MeshStandardMaterial",
+      "color": 601140,
+      "roughness": 0.36,
+      "metalness": 0.18,
+      "emissive": 3134463,
+      "emissiveIntensity": 0.13
+    },
+    {
+      "uuid": "mat-vr-purple-dim",
+      "type": "MeshStandardMaterial",
+      "color": 2102835,
+      "roughness": 0.42,
+      "metalness": 0.16,
+      "emissive": 8543487,
+      "emissiveIntensity": 0.18
+    },
+    {
+      "uuid": "mat-glass-dim",
+      "type": "MeshStandardMaterial",
+      "color": 1716534,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.46,
+      "emissive": 2382691,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-vault-steel",
+      "type": "MeshStandardMaterial",
+      "color": 5396559,
+      "roughness": 0.46,
+      "metalness": 0.58
+    },
+    {
+      "uuid": "mat-route-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-screen-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674
+    },
+    {
+      "uuid": "mat-screen-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795
+    }
+  ],
+  "object": {
+    "uuid": "scene-gigaverse-access-node",
+    "type": "Scene",
+    "name": "CRYPTIDS DOMAIN - GIGAVERSE ACCESS NODE",
+    "userData": {
+      "district": "cryptids-domain",
+      "area": "gigaverse-access-node",
+      "format": "threejs-editor-object-json",
+      "faction": "cryptids",
+      "sourceArea": "crypto-vault",
+      "targetArea": "executive-skybridge",
+      "version": "v2-layout-faithful",
+      "layoutNotes": [
+        "Concept panel 4: asymmetrical server-node room, Gigaverse portal side route, risk/reward cache, hack objective."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "No ShillZ smile logo. Cryptids use abstract cube/ledger/vault motifs, muted gold, emerald, cyan/purple Gigaverse accents.",
+      "containmentRule": "fully sealed arena; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-gigaverse-access-node-base-floor",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE-ACCESS-NODE_BASE_FLOOR",
+        "geometry": "geo-unit",
+        "material": "mat-floor-dark",
+        "position": [
+          0,
+          -0.04,
+          0
+        ],
+        "scale": [
+          82,
+          0.08,
+          56
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "district": "cryptids-domain",
+          "area": "gigaverse-access-node"
+        }
+      },
+      {
+        "uuid": "e2049-blocker-gigaverse-access-node-north-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_GIGAVERSE-ACCESS-NODE_NORTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          6.5,
+          -29.5
+        ],
+        "scale": [
+          88,
+          13,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-gigaverse-access-node-south-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_GIGAVERSE-ACCESS-NODE_SOUTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          5.5,
+          29.5
+        ],
+        "scale": [
+          88,
+          11,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-gigaverse-access-node-west-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_GIGAVERSE-ACCESS-NODE_WEST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -42.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          62
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-gigaverse-access-node-east-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_GIGAVERSE-ACCESS-NODE_EAST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          42.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          62
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-crypto-vault",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_CRYPTO-VAULT",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          -22,
+          2.75,
+          24
+        ],
+        "scale": [
+          16,
+          5.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "crypto-vault"
+        }
+      },
+      {
+        "uuid": "e2049-player-start",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          -22,
+          0.5,
+          20
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "crypto-vault"
+        }
+      },
+      {
+        "uuid": "e2049-prop-exit-gate-to-executive-skybridge-visual",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXIT_GATE_TO_EXECUTIVE-SKYBRIDGE_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          22,
+          3.25,
+          -24
+        ],
+        "scale": [
+          18,
+          6.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "executive-skybridge"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-executive-skybridge",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_EXECUTIVE-SKYBRIDGE",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          22,
+          0.5,
+          -20
+        ],
+        "scale": [
+          4,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "executive-skybridge",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-exit-to-executive-skybridge",
+        "type": "Mesh",
+        "name": "E2049_SIGN_EXIT_TO_EXECUTIVE-SKYBRIDGE",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          22,
+          7.2,
+          -23.1
+        ],
+        "scale": [
+          16,
+          3.6,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "EXECUTIVE SKYBRIDGE / REALITY EXIT",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-route-angled-main-server-path",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_ANGLED_MAIN_SERVER_PATH",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          -6,
+          0.035,
+          2
+        ],
+        "scale": [
+          42,
+          0.03,
+          10
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "angledServerPath"
+        }
+      },
+      {
+        "uuid": "e2049-route-gigaverse-reward-side-path",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_GIGAVERSE_REWARD_SIDE_PATH",
+        "geometry": "geo-unit",
+        "material": "mat-route-purple",
+        "position": [
+          27,
+          0.035,
+          -3
+        ],
+        "scale": [
+          12,
+          0.03,
+          42
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "gigaverseRewardSidePath"
+        }
+      },
+      {
+        "uuid": "e2049-route-reality-tear-hazard",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_REALITY_TEAR_HAZARD",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          2,
+          0.035,
+          -7
+        ],
+        "scale": [
+          26,
+          0.03,
+          18
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "realityTear"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -30,
+          3.0,
+          16
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-0",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          -30,
+          4.6,
+          12.4
+        ],
+        "scale": [
+          4,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -30,
+          3.0,
+          7
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -30,
+          3.0,
+          -4
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-2",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          -30,
+          4.6,
+          -7.6
+        ],
+        "scale": [
+          4,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -30,
+          3.0,
+          -16
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -18,
+          3.0,
+          20
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-4",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_4",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          -18,
+          4.6,
+          18.4
+        ],
+        "scale": [
+          5,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -10,
+          3.0,
+          10
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -18,
+          3.0,
+          -4
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-6",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_6",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          -18,
+          4.6,
+          -5.6
+        ],
+        "scale": [
+          5,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-7",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -10,
+          3.0,
+          -18
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-8",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_8",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          8,
+          3.0,
+          18
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-8",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_8",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          8,
+          4.6,
+          16.4
+        ],
+        "scale": [
+          5,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-9",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_9",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          16,
+          3.0,
+          7
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-10",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_10",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          8,
+          3.0,
+          -6
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-10",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_10",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          8,
+          4.6,
+          -7.6
+        ],
+        "scale": [
+          5,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-11",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_11",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          16,
+          3.0,
+          -18
+        ],
+        "scale": [
+          12,
+          6,
+          3
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-12",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_12",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          32,
+          3.0,
+          16
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-12",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_12",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          32,
+          4.6,
+          12.4
+        ],
+        "scale": [
+          4,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-13",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_13",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          32,
+          3.0,
+          4
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-14",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_14",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          32,
+          3.0,
+          -8
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-server-rack-14",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SERVER_RACK_14",
+        "geometry": "geo-unit",
+        "material": "mat-screen-blue",
+        "position": [
+          32,
+          4.6,
+          -11.6
+        ],
+        "scale": [
+          4,
+          2,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BLOCKEDCHAIN NODE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-prop-server-rack-maze-15",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVER_RACK_MAZE_15",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          32,
+          3.0,
+          -20
+        ],
+        "scale": [
+          3,
+          6,
+          7
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "serverRack",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-portal-frame",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_PORTAL_FRAME",
+        "geometry": "geo-unit",
+        "material": "mat-vr-purple-dim",
+        "position": [
+          24,
+          4.0,
+          -4
+        ],
+        "scale": [
+          9,
+          8,
+          3
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "gigaversePortal"
+        }
+      },
+      {
+        "uuid": "e2049-hazard-gigaverse-portal-core",
+        "type": "Mesh",
+        "name": "E2049_HAZARD_GIGAVERSE_PORTAL_CORE",
+        "geometry": "geo-unit",
+        "material": "mat-vr-cyan-dim",
+        "position": [
+          24,
+          3.0,
+          -4
+        ],
+        "scale": [
+          5.5,
+          6,
+          1.3
+        ],
+        "userData": {
+          "gameplayType": "hazard",
+          "hazardType": "realityTear"
+        }
+      },
+      {
+        "uuid": "e2049-objective-hack-gigaverse-node",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_HACK_GIGAVERSE_NODE",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -2,
+          0.5,
+          -11
+        ],
+        "scale": [
+          5,
+          0.18,
+          3
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "hack_gigaverse_node"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-hack-gigaverse-node",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_HACK_GIGAVERSE_NODE",
+        "geometry": "geo-unit",
+        "material": "mat-vr-cyan-dim",
+        "position": [
+          -2,
+          1.3,
+          -11
+        ],
+        "scale": [
+          5,
+          2.6,
+          2.143
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "hack_gigaverse_node"
+        }
+      },
+      {
+        "uuid": "e2049-prop-side-reward-cache-room",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIDE_REWARD_CACHE_ROOM",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          32,
+          2.75,
+          -20
+        ],
+        "scale": [
+          12,
+          5.5,
+          8
+        ],
+        "userData": {
+          "gameplayType": "lootArea",
+          "riskReward": "gigaverseSideCache"
+        }
+      },
+      {
+        "uuid": "e2049-prop-side-reward-cache-chest",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIDE_REWARD_CACHE_CHEST",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          32,
+          0.75,
+          -20
+        ],
+        "scale": [
+          4,
+          1.5,
+          2.6
+        ],
+        "userData": {
+          "gameplayType": "lootProp",
+          "lootTier": "rare"
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-server-catwalk-diagonal-proxy-a",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_SERVER_CATWALK_DIAGONAL_PROXY_A",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -12,
+          8.15,
+          12
+        ],
+        "scale": [
+          34,
+          0.7,
+          3.5
+        ],
+        "rotation": [
+          0,
+          0.25,
+          0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperServerCatwalk",
+          "heightTier": "upper",
+          "floorY": 7.8
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-server-catwalk-diagonal-proxy-b",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_SERVER_CATWALK_DIAGONAL_PROXY_B",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          12,
+          9.15,
+          -12
+        ],
+        "scale": [
+          34,
+          0.7,
+          3.5
+        ],
+        "rotation": [
+          0,
+          0.25,
+          0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperServerCatwalk",
+          "heightTier": "upper",
+          "floorY": 8.8
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-node-guard-0",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_NODE_GUARD_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -20,
+          8.8,
+          14
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperServerCatwalk",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-node-guard-1",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_NODE_GUARD_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          8.8,
+          4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperServerCatwalk",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-node-guard-2",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_NODE_GUARD_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          18,
+          8.8,
+          -8
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperServerCatwalk",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-cover-node-entry-crate-a",
+        "type": "Mesh",
+        "name": "E2049_COVER_NODE_ENTRY_CRATE_A",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -18,
+          0.75,
+          18
+        ],
+        "scale": [
+          7,
+          1.5,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "serverCrate",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-node-portal-crate-b",
+        "type": "Mesh",
+        "name": "E2049_COVER_NODE_PORTAL_CRATE_B",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          14,
+          0.75,
+          -12
+        ],
+        "scale": [
+          7,
+          1.5,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "serverCrate",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-node-cache-crate-c",
+        "type": "Mesh",
+        "name": "E2049_COVER_NODE_CACHE_CRATE_C",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          30,
+          0.75,
+          -14
+        ],
+        "scale": [
+          6,
+          1.5,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "rewardCache",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-server-entry",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_SERVER_ENTRY",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -24,
+          0.5,
+          18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "entryWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-server-left",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_SERVER_LEFT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -18,
+          0.5,
+          -2
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "serverWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-portal-guard-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_PORTAL_GUARD_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          18,
+          0.5,
+          -4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "portalWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-portal-guard-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_PORTAL_GUARD_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          30,
+          0.5,
+          -4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "portalWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-cache-ambush",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_CACHE_AMBUSH",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          32,
+          0.5,
+          -18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "sideCacheAmbush"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-hack-node-left",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_HACK_NODE_LEFT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -10,
+          0.5,
+          -15
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "hackWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-hack-node-right",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_HACK_NODE_RIGHT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          8,
+          0.5,
+          -16
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "hackWave"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-0",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -31,
+          0.5,
+          18
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-1",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -28,
+          0.5,
+          -18
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-2",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          30,
+          0.5,
+          -20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-3",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          16,
+          0.5,
+          14
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-4",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          19
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-gigaverse-node-5",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_GIGAVERSE_NODE_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -4,
+          0.5,
+          -20
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidGigaverseNodeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-gigaverse-node-waypoint-0",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_GIGAVERSE_NODE_WAYPOINT_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -26,
+          0.5,
+          18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "gigaverseRealityDroneLoop",
+          "index": 0,
+          "height": 16
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-node-ticker-drone-static-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_NODE_TICKER_DRONE_STATIC_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -26,
+          0.225,
+          18
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "gigaverseRealityDroneLoop",
+          "hoverHeight": 16
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-gigaverse-node-waypoint-1",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_GIGAVERSE_NODE_WAYPOINT_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          0,
+          0.5,
+          9
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "gigaverseRealityDroneLoop",
+          "index": 1,
+          "height": 19
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-node-ticker-drone-static-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_NODE_TICKER_DRONE_STATIC_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          0,
+          0.225,
+          9
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "gigaverseRealityDroneLoop",
+          "hoverHeight": 19
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-gigaverse-node-waypoint-2",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_GIGAVERSE_NODE_WAYPOINT_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          24,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "gigaverseRealityDroneLoop",
+          "index": 2,
+          "height": 18
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-node-ticker-drone-static-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_NODE_TICKER_DRONE_STATIC_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          24,
+          0.225,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "gigaverseRealityDroneLoop",
+          "hoverHeight": 18
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-gigaverse-node-waypoint-3",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_GIGAVERSE_NODE_WAYPOINT_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          20,
+          0.5,
+          -18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "gigaverseRealityDroneLoop",
+          "index": 3,
+          "height": 19
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-node-ticker-drone-static-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_NODE_TICKER_DRONE_STATIC_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          20,
+          0.225,
+          -18
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "gigaverseRealityDroneLoop",
+          "hoverHeight": 19
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-gigaverse-node-waypoint-4",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_GIGAVERSE_NODE_WAYPOINT_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -20,
+          0.5,
+          -16
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "gigaverseRealityDroneLoop",
+          "index": 4,
+          "height": 17
+        }
+      },
+      {
+        "uuid": "e2049-prop-gigaverse-node-ticker-drone-static-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_GIGAVERSE_NODE_TICKER_DRONE_STATIC_4",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -20,
+          0.225,
+          -16
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "gigaverseRealityDroneLoop",
+          "hoverHeight": 17
+        }
+      },
+      {
+        "uuid": "e2049-light-node-blue",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_NODE_BLUE",
+        "color": 3844351,
+        "intensity": 1.8,
+        "distance": 58,
+        "decay": 2,
+        "position": [
+          0,
+          12,
+          5
+        ]
+      },
+      {
+        "uuid": "e2049-light-portal-purple",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_PORTAL_PURPLE",
+        "color": 8543487,
+        "intensity": 2.7,
+        "distance": 46,
+        "decay": 2,
+        "position": [
+          24,
+          9,
+          -4
+        ]
+      },
+      {
+        "uuid": "e2049-light-hack-node-emerald",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_HACK_NODE_EMERALD",
+        "color": 51320,
+        "intensity": 1.7,
+        "distance": 36,
+        "decay": 2,
+        "position": [
+          -2,
+          6,
+          -11
+        ]
+      }
+    ]
+  }
+}

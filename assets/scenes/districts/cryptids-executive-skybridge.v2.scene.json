@@ -1,0 +1,2108 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - CRYPTIDS DOMAIN - EXECUTIVE SKYBRIDGE"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-floor-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2763303,
+      "roughness": 0.72,
+      "metalness": 0.05
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1382165,
+      "roughness": 0.68,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-vault",
+      "type": "MeshStandardMaterial",
+      "color": 1842458,
+      "roughness": 0.64,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-wall-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2369056,
+      "roughness": 0.78,
+      "metalness": 0.08
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 789771,
+      "roughness": 0.7,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3158831,
+      "roughness": 0.58,
+      "metalness": 0.36
+    },
+    {
+      "uuid": "mat-metal-muted-gold",
+      "type": "MeshStandardMaterial",
+      "color": 10189355,
+      "roughness": 0.48,
+      "metalness": 0.52,
+      "emissive": 2759936,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-emerald-dim",
+      "type": "MeshStandardMaterial",
+      "color": 473124,
+      "roughness": 0.42,
+      "metalness": 0.22,
+      "emissive": 51320,
+      "emissiveIntensity": 0.16
+    },
+    {
+      "uuid": "mat-vr-cyan-dim",
+      "type": "MeshStandardMaterial",
+      "color": 601140,
+      "roughness": 0.36,
+      "metalness": 0.18,
+      "emissive": 3134463,
+      "emissiveIntensity": 0.13
+    },
+    {
+      "uuid": "mat-vr-purple-dim",
+      "type": "MeshStandardMaterial",
+      "color": 2102835,
+      "roughness": 0.42,
+      "metalness": 0.16,
+      "emissive": 8543487,
+      "emissiveIntensity": 0.18
+    },
+    {
+      "uuid": "mat-glass-dim",
+      "type": "MeshStandardMaterial",
+      "color": 1716534,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.46,
+      "emissive": 2382691,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-vault-steel",
+      "type": "MeshStandardMaterial",
+      "color": 5396559,
+      "roughness": 0.46,
+      "metalness": 0.58
+    },
+    {
+      "uuid": "mat-route-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-screen-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674
+    },
+    {
+      "uuid": "mat-screen-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795
+    }
+  ],
+  "object": {
+    "uuid": "scene-executive-skybridge",
+    "type": "Scene",
+    "name": "CRYPTIDS DOMAIN - EXECUTIVE SKYBRIDGE",
+    "userData": {
+      "district": "cryptids-domain",
+      "area": "executive-skybridge",
+      "format": "threejs-editor-object-json",
+      "faction": "cryptids",
+      "sourceArea": "gigaverse-access-node",
+      "targetArea": "district-extraction-gate",
+      "version": "v2-layout-faithful",
+      "layoutNotes": [
+        "Concept panel 5: elevated long-lane skybridge, sniper positions, vulnerable to drones/crossfire, connection from atrium to vault/district exit."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "No ShillZ smile logo. Cryptids use abstract cube/ledger/vault motifs, muted gold, emerald, cyan/purple Gigaverse accents.",
+      "containmentRule": "fully sealed arena; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-executive-skybridge-base-floor",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXECUTIVE-SKYBRIDGE_BASE_FLOOR",
+        "geometry": "geo-unit",
+        "material": "mat-floor-concrete",
+        "position": [
+          0,
+          -0.04,
+          0
+        ],
+        "scale": [
+          104,
+          0.08,
+          34
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "district": "cryptids-domain",
+          "area": "executive-skybridge"
+        }
+      },
+      {
+        "uuid": "e2049-blocker-executive-skybridge-north-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_EXECUTIVE-SKYBRIDGE_NORTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          6.5,
+          -18.5
+        ],
+        "scale": [
+          110,
+          13,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-executive-skybridge-south-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_EXECUTIVE-SKYBRIDGE_SOUTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          5.5,
+          18.5
+        ],
+        "scale": [
+          110,
+          11,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-executive-skybridge-west-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_EXECUTIVE-SKYBRIDGE_WEST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -53.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          40
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-executive-skybridge-east-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_EXECUTIVE-SKYBRIDGE_EAST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          53.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          40
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-gigaverse-access-node",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_GIGAVERSE-ACCESS-NODE",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          -42,
+          2.75,
+          0
+        ],
+        "scale": [
+          16,
+          5.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "gigaverse-access-node"
+        }
+      },
+      {
+        "uuid": "e2049-player-start",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          -42,
+          0.5,
+          4
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "gigaverse-access-node"
+        }
+      },
+      {
+        "uuid": "e2049-prop-exit-gate-to-district-extraction-gate-visual",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXIT_GATE_TO_DISTRICT-EXTRACTION-GATE_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          42,
+          3.25,
+          0
+        ],
+        "scale": [
+          18,
+          6.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "district-extraction-gate"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-district-extraction-gate",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_DISTRICT-EXTRACTION-GATE",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          42,
+          0.5,
+          -4
+        ],
+        "scale": [
+          4,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "district-extraction-gate",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-exit-to-district-extraction-gate",
+        "type": "Mesh",
+        "name": "E2049_SIGN_EXIT_TO_DISTRICT-EXTRACTION-GATE",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          42,
+          7.2,
+          -0.9
+        ],
+        "scale": [
+          16,
+          3.6,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "DISTRICT EXTRACTION / NEXT TERRITORY",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-route-main-skybridge-long-lane",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_MAIN_SKYBRIDGE_LONG_LANE",
+        "geometry": "geo-unit",
+        "material": "mat-route-gold",
+        "position": [
+          0,
+          0.035,
+          0
+        ],
+        "scale": [
+          88,
+          0.03,
+          8
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "mainSkybridgeLongLane"
+        }
+      },
+      {
+        "uuid": "e2049-route-window-crossfire-zone",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_WINDOW_CROSSFIRE_ZONE",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0,
+          0.035,
+          0
+        ],
+        "scale": [
+          88,
+          0.03,
+          24
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "droneWindowCrossfire"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_0",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -42,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -42,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_1",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -28,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -28,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_2",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -14,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_3",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_4",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          14,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          14,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_5",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          28,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          28,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-skybridge-window-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_SKYBRIDGE_WINDOW_6",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          42,
+          3.2,
+          -16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-north-truss-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_NORTH_TRUSS_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          42,
+          4.1,
+          -16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_0",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -42,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -42,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_1",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -28,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -28,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_2",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -14,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -14,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_3",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_4",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          14,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          14,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_5",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          28,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          28,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-skybridge-window-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_SKYBRIDGE_WINDOW_6",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          42,
+          3.2,
+          16
+        ],
+        "scale": [
+          10,
+          6.2,
+          0.22
+        ],
+        "userData": {
+          "gameplayType": "window",
+          "viewToCity": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-south-truss-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOUTH_TRUSS_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          42,
+          4.1,
+          16
+        ],
+        "scale": [
+          1.1,
+          8.2,
+          1.1
+        ],
+        "userData": {
+          "gameplayType": "scenery",
+          "propType": "skybridgeTruss"
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-0",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -35,
+          0.8,
+          4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-1",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -22,
+          0.8,
+          -4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-2",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -8,
+          0.8,
+          4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-3",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          8,
+          0.8,
+          -4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-4",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          22,
+          0.8,
+          4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-skybridge-barricade-5",
+        "type": "Mesh",
+        "name": "E2049_COVER_SKYBRIDGE_BARRICADE_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          35,
+          0.8,
+          -4
+        ],
+        "scale": [
+          7,
+          1.6,
+          2.4
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "executiveBarricade",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-objective-market-relay",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_MARKET_RELAY",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          0
+        ],
+        "scale": [
+          5,
+          0.18,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "market_relay"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-market-relay",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_MARKET_RELAY",
+        "geometry": "geo-unit",
+        "material": "mat-emerald-dim",
+        "position": [
+          0,
+          1.3,
+          0
+        ],
+        "scale": [
+          5,
+          2.6,
+          1.786
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "market_relay"
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-skybridge-service-catwalk",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_SKYBRIDGE_SERVICE_CATWALK",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          8.35,
+          -11
+        ],
+        "scale": [
+          82,
+          0.7,
+          3.8
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperServiceCatwalk",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-skybridge-north-rail",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_SKYBRIDGE_NORTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          -8.7
+        ],
+        "scale": [
+          82,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-skybridge-south-rail",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_SKYBRIDGE_SOUTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          -13.3
+        ],
+        "scale": [
+          82,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-upper-skybridge-sniper-nook-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_UPPER_SKYBRIDGE_SNIPER_NOOK_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -34,
+          8.5,
+          -11
+        ],
+        "scale": [
+          5,
+          1,
+          3.8
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-skybridge-sniper-0",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SKYBRIDGE_SNIPER_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -34,
+          9.0,
+          -11
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperSnipers",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-upper-skybridge-sniper-nook-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_UPPER_SKYBRIDGE_SNIPER_NOOK_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -10,
+          8.5,
+          -11
+        ],
+        "scale": [
+          5,
+          1,
+          3.8
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-skybridge-sniper-1",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SKYBRIDGE_SNIPER_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -10,
+          9.0,
+          -11
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperSnipers",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-upper-skybridge-sniper-nook-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_UPPER_SKYBRIDGE_SNIPER_NOOK_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          16,
+          8.5,
+          -11
+        ],
+        "scale": [
+          5,
+          1,
+          3.8
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-skybridge-sniper-2",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SKYBRIDGE_SNIPER_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          16,
+          9.0,
+          -11
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperSnipers",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-upper-skybridge-sniper-nook-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_UPPER_SKYBRIDGE_SNIPER_NOOK_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          36,
+          8.5,
+          -11
+        ],
+        "scale": [
+          5,
+          1,
+          3.8
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-skybridge-sniper-3",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_SKYBRIDGE_SNIPER_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          36,
+          9.0,
+          -11
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperSnipers",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-entry-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_ENTRY_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -36,
+          0.5,
+          4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "entryWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-entry-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_ENTRY_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -28,
+          0.5,
+          -5
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "entryWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-mid-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_MID_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -8,
+          0.5,
+          5
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "midWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-mid-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_MID_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          12,
+          0.5,
+          -5
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "midWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-exit-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_EXIT_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          32,
+          0.5,
+          5
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "exitWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-exit-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_EXIT_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          38,
+          0.5,
+          -5
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "exitWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-elite-broker",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_ELITE_BROKER",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          0.5,
+          -2
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "eliteWave"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-skybridge-0",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_SKYBRIDGE_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -38,
+          0.5,
+          6
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidSkybridgeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-skybridge-1",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_SKYBRIDGE_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -18,
+          0.5,
+          -6
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidSkybridgeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-skybridge-2",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_SKYBRIDGE_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          4,
+          0.5,
+          6
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidSkybridgeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-skybridge-3",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_SKYBRIDGE_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          26,
+          0.5,
+          -6
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidSkybridgeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-skybridge-4",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_SKYBRIDGE_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          40,
+          0.5,
+          6
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidSkybridgeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-skybridge-waypoint-0",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_SKYBRIDGE_WAYPOINT_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -36,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "index": 0,
+          "height": 18
+        }
+      },
+      {
+        "uuid": "e2049-prop-skybridge-ticker-drone-static-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_SKYBRIDGE_TICKER_DRONE_STATIC_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -36,
+          0.225,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "hoverHeight": 18
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-skybridge-waypoint-1",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_SKYBRIDGE_WAYPOINT_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -12,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "index": 1,
+          "height": 19
+        }
+      },
+      {
+        "uuid": "e2049-prop-skybridge-ticker-drone-static-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_SKYBRIDGE_TICKER_DRONE_STATIC_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -12,
+          0.225,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "hoverHeight": 19
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-skybridge-waypoint-2",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_SKYBRIDGE_WAYPOINT_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          12,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "index": 2,
+          "height": 19
+        }
+      },
+      {
+        "uuid": "e2049-prop-skybridge-ticker-drone-static-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_SKYBRIDGE_TICKER_DRONE_STATIC_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          12,
+          0.225,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "hoverHeight": 19
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-skybridge-waypoint-3",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_SKYBRIDGE_WAYPOINT_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          36,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "index": 3,
+          "height": 18
+        }
+      },
+      {
+        "uuid": "e2049-prop-skybridge-ticker-drone-static-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_SKYBRIDGE_TICKER_DRONE_STATIC_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          36,
+          0.225,
+          0
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "hoverHeight": 18
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-skybridge-waypoint-4",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_SKYBRIDGE_WAYPOINT_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          0,
+          0.5,
+          -12
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "index": 4,
+          "height": 20
+        }
+      },
+      {
+        "uuid": "e2049-prop-skybridge-ticker-drone-static-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_SKYBRIDGE_TICKER_DRONE_STATIC_4",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          0,
+          0.225,
+          -12
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "skybridgeDroneCrossfireLoop",
+          "hoverHeight": 20
+        }
+      },
+      {
+        "uuid": "e2049-sign-skybridge-debt",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SKYBRIDGE_DEBT",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -30,
+          7,
+          -15.2
+        ],
+        "scale": [
+          10,
+          2.8,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "DEBT IS DESTINY",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-skybridge-ownership",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SKYBRIDGE_OWNERSHIP",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          0,
+          7,
+          15.2
+        ],
+        "scale": [
+          10,
+          2.8,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "OWNERSHIP IS POWER",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-skybridge-no-refunds",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SKYBRIDGE_NO_REFUNDS",
+        "geometry": "geo-unit",
+        "material": "mat-screen-red",
+        "position": [
+          30,
+          7,
+          -15.2
+        ],
+        "scale": [
+          10,
+          2.8,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "NO REFUNDS / NO MERCY",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-light-skybridge-gold-strip",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_SKYBRIDGE_GOLD_STRIP",
+        "color": 13017674,
+        "intensity": 2.0,
+        "distance": 80,
+        "decay": 2,
+        "position": [
+          0,
+          9,
+          0
+        ]
+      },
+      {
+        "uuid": "e2049-light-skybridge-city-blue",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_SKYBRIDGE_CITY_BLUE",
+        "color": 3844351,
+        "intensity": 1.5,
+        "distance": 60,
+        "decay": 2,
+        "position": [
+          22,
+          6,
+          12
+        ]
+      },
+      {
+        "uuid": "e2049-light-skybridge-objective",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_SKYBRIDGE_OBJECTIVE",
+        "color": 51320,
+        "intensity": 1.7,
+        "distance": 34,
+        "decay": 2,
+        "position": [
+          0,
+          5,
+          0
+        ]
+      }
+    ]
+  }
+}

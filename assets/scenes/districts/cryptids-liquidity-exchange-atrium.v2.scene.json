@@ -1,0 +1,2310 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - CRYPTIDS DOMAIN - LIQUIDITY EXCHANGE ATRIUM"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-floor-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2763303,
+      "roughness": 0.72,
+      "metalness": 0.05
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1382165,
+      "roughness": 0.68,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-vault",
+      "type": "MeshStandardMaterial",
+      "color": 1842458,
+      "roughness": 0.64,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-wall-concrete",
+      "type": "MeshStandardMaterial",
+      "color": 2369056,
+      "roughness": 0.78,
+      "metalness": 0.08
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 789771,
+      "roughness": 0.7,
+      "metalness": 0.16
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3158831,
+      "roughness": 0.58,
+      "metalness": 0.36
+    },
+    {
+      "uuid": "mat-metal-muted-gold",
+      "type": "MeshStandardMaterial",
+      "color": 10189355,
+      "roughness": 0.48,
+      "metalness": 0.52,
+      "emissive": 2759936,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-emerald-dim",
+      "type": "MeshStandardMaterial",
+      "color": 473124,
+      "roughness": 0.42,
+      "metalness": 0.22,
+      "emissive": 51320,
+      "emissiveIntensity": 0.16
+    },
+    {
+      "uuid": "mat-vr-cyan-dim",
+      "type": "MeshStandardMaterial",
+      "color": 601140,
+      "roughness": 0.36,
+      "metalness": 0.18,
+      "emissive": 3134463,
+      "emissiveIntensity": 0.13
+    },
+    {
+      "uuid": "mat-vr-purple-dim",
+      "type": "MeshStandardMaterial",
+      "color": 2102835,
+      "roughness": 0.42,
+      "metalness": 0.16,
+      "emissive": 8543487,
+      "emissiveIntensity": 0.18
+    },
+    {
+      "uuid": "mat-glass-dim",
+      "type": "MeshStandardMaterial",
+      "color": 1716534,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.46,
+      "emissive": 2382691,
+      "emissiveIntensity": 0.05
+    },
+    {
+      "uuid": "mat-vault-steel",
+      "type": "MeshStandardMaterial",
+      "color": 5396559,
+      "roughness": 0.46,
+      "metalness": 0.58
+    },
+    {
+      "uuid": "mat-route-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-screen-gold",
+      "type": "MeshBasicMaterial",
+      "color": 13017674
+    },
+    {
+      "uuid": "mat-screen-emerald",
+      "type": "MeshBasicMaterial",
+      "color": 51320
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3844351
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 8543487
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 13908795
+    }
+  ],
+  "object": {
+    "uuid": "scene-liquidity-exchange-atrium",
+    "type": "Scene",
+    "name": "CRYPTIDS DOMAIN - LIQUIDITY EXCHANGE ATRIUM",
+    "userData": {
+      "district": "cryptids-domain",
+      "area": "liquidity-exchange-atrium",
+      "format": "threejs-editor-object-json",
+      "faction": "cryptids",
+      "sourceArea": "entry-gate",
+      "targetArea": "private-banking-suites",
+      "version": "v2-layout-faithful",
+      "layoutNotes": [
+        "Concept panel 1: large atrium, central trading pit, multiple cover islands, full upper balcony loop, drone route over floor."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "No ShillZ smile logo. Cryptids use abstract cube/ledger/vault motifs, muted gold, emerald, cyan/purple Gigaverse accents.",
+      "containmentRule": "fully sealed arena; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-liquidity-exchange-atrium-base-floor",
+        "type": "Mesh",
+        "name": "E2049_PROP_LIQUIDITY-EXCHANGE-ATRIUM_BASE_FLOOR",
+        "geometry": "geo-unit",
+        "material": "mat-floor-concrete",
+        "position": [
+          0,
+          -0.04,
+          0
+        ],
+        "scale": [
+          94,
+          0.08,
+          74
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "district": "cryptids-domain",
+          "area": "liquidity-exchange-atrium"
+        }
+      },
+      {
+        "uuid": "e2049-blocker-liquidity-exchange-atrium-north-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LIQUIDITY-EXCHANGE-ATRIUM_NORTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          6.5,
+          -38.5
+        ],
+        "scale": [
+          100,
+          13,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-liquidity-exchange-atrium-south-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LIQUIDITY-EXCHANGE-ATRIUM_SOUTH_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          0,
+          5.5,
+          38.5
+        ],
+        "scale": [
+          100,
+          11,
+          3
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-liquidity-exchange-atrium-west-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LIQUIDITY-EXCHANGE-ATRIUM_WEST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          -48.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          80
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-liquidity-exchange-atrium-east-wall",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_LIQUIDITY-EXCHANGE-ATRIUM_EAST_WALL",
+        "geometry": "geo-unit",
+        "material": "mat-wall-concrete",
+        "position": [
+          48.5,
+          6.5,
+          0
+        ],
+        "scale": [
+          3,
+          13,
+          80
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-atrium-corner-mass-0",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_ATRIUM_CORNER_MASS_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -38,
+          8.0,
+          -28
+        ],
+        "scale": [
+          12,
+          16,
+          10
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-atrium-corner-mass-1",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_ATRIUM_CORNER_MASS_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          38,
+          8.0,
+          -28
+        ],
+        "scale": [
+          12,
+          16,
+          10
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-atrium-corner-mass-2",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_ATRIUM_CORNER_MASS_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -38,
+          8.0,
+          28
+        ],
+        "scale": [
+          12,
+          16,
+          10
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-blocker-atrium-corner-mass-3",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_ATRIUM_CORNER_MASS_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          38,
+          8.0,
+          28
+        ],
+        "scale": [
+          12,
+          16,
+          10
+        ],
+        "userData": {
+          "gameplayType": "arenaWall",
+          "collider": true,
+          "blocksPlayer": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-entry-gate",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_ENTRY-GATE",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          0,
+          2.75,
+          33
+        ],
+        "scale": [
+          16,
+          5.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "entry-gate"
+        }
+      },
+      {
+        "uuid": "e2049-player-start",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          0,
+          0.5,
+          29
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "entry-gate"
+        }
+      },
+      {
+        "uuid": "e2049-prop-exit-gate-to-private-banking-suites-visual",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXIT_GATE_TO_PRIVATE-BANKING-SUITES_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-vault-steel",
+        "position": [
+          0,
+          3.25,
+          -33
+        ],
+        "scale": [
+          18,
+          6.5,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "private-banking-suites"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-private-banking-suites",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_PRIVATE-BANKING-SUITES",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          -29
+        ],
+        "scale": [
+          4,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "private-banking-suites",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-sign-exit-to-private-banking-suites",
+        "type": "Mesh",
+        "name": "E2049_SIGN_EXIT_TO_PRIVATE-BANKING-SUITES",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          0,
+          7.2,
+          -32.1
+        ],
+        "scale": [
+          16,
+          3.6,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "PRIVATE BANKING / MEMBERS ONLY",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-route-main-atrium-bowl",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_MAIN_ATRIUM_BOWL",
+        "geometry": "geo-unit",
+        "material": "mat-route-gold",
+        "position": [
+          0,
+          0.035,
+          3
+        ],
+        "scale": [
+          46,
+          0.03,
+          36
+        ],
+        "userData": {
+          "gameplayType": "combatZone",
+          "encounterRole": "centralTradingPit"
+        }
+      },
+      {
+        "uuid": "e2049-route-side-gigaverse-left",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_SIDE_GIGAVERSE_LEFT",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          -34,
+          0.035,
+          0
+        ],
+        "scale": [
+          6,
+          0.03,
+          50
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "leftOuterBalconyAccess"
+        }
+      },
+      {
+        "uuid": "e2049-route-side-gigaverse-right",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_SIDE_GIGAVERSE_RIGHT",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          34,
+          0.035,
+          0
+        ],
+        "scale": [
+          6,
+          0.03,
+          50
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "rightOuterBalconyAccess"
+        }
+      },
+      {
+        "uuid": "e2049-route-pit-hazard-ring",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_PIT_HAZARD_RING",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0,
+          0.035,
+          3
+        ],
+        "scale": [
+          28,
+          0.03,
+          20
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "tradingPitFall"
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          10.0,
+          0.6,
+          3.0
+        ],
+        "scale": [
+          8,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          7.071,
+          0.6,
+          8.657
+        ],
+        "scale": [
+          7,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -0.785398,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          0.0,
+          0.6,
+          11.0
+        ],
+        "scale": [
+          8,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -1.570796,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -7.071,
+          0.6,
+          8.657
+        ],
+        "scale": [
+          7,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -2.356194,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -10.0,
+          0.6,
+          3.0
+        ],
+        "scale": [
+          8,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -3.141593,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -7.071,
+          0.6,
+          -2.657
+        ],
+        "scale": [
+          7,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -3.926991,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -0.0,
+          0.6,
+          -5.0
+        ],
+        "scale": [
+          8,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -4.712389,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-prop-octagon-trading-pit-ring-segment-7",
+        "type": "Mesh",
+        "name": "E2049_PROP_OCTAGON_TRADING_PIT_RING_SEGMENT_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          7.071,
+          0.6,
+          -2.657
+        ],
+        "scale": [
+          7,
+          1.2,
+          1.3
+        ],
+        "rotation": [
+          0,
+          -5.497787,
+          0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpiece": "centralTradingPitRing",
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-hazard-central-trading-pit-void",
+        "type": "Mesh",
+        "name": "E2049_HAZARD_CENTRAL_TRADING_PIT_VOID",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0,
+          0.075,
+          3
+        ],
+        "scale": [
+          14,
+          0.15,
+          10
+        ],
+        "userData": {
+          "gameplayType": "hazard",
+          "hazardType": "fallPit_marginCall"
+        }
+      },
+      {
+        "uuid": "e2049-objective-liquidity-terminal",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_LIQUIDITY_TERMINAL",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          -8
+        ],
+        "scale": [
+          5,
+          0.18,
+          2.5
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "liquidity_terminal"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-liquidity-terminal",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_LIQUIDITY_TERMINAL",
+        "geometry": "geo-unit",
+        "material": "mat-emerald-dim",
+        "position": [
+          0,
+          1.3,
+          -8
+        ],
+        "scale": [
+          5,
+          2.6,
+          1.786
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "liquidity_terminal"
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-0",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -25,
+          0.75,
+          18
+        ],
+        "scale": [
+          8,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-1",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -12,
+          0.75,
+          21
+        ],
+        "scale": [
+          6,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-2",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          12,
+          0.75,
+          21
+        ],
+        "scale": [
+          6,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-3",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          25,
+          0.75,
+          18
+        ],
+        "scale": [
+          8,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-4",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -26,
+          0.75,
+          2
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-5",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          26,
+          0.75,
+          2
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-6",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -20,
+          0.75,
+          -17
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-7",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          20,
+          0.75,
+          -17
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-8",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_8",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -8,
+          0.75,
+          -24
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-cover-atrium-trading-island-9",
+        "type": "Mesh",
+        "name": "E2049_COVER_ATRIUM_TRADING_ISLAND_9",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          8,
+          0.75,
+          -24
+        ],
+        "scale": [
+          7,
+          1.5,
+          3
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "coverType": "tradingDeskIsland",
+          "collider": true,
+          "climb": true
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-atrium-balcony-west",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_ATRIUM_BALCONY_WEST",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          -36,
+          8.35,
+          0
+        ],
+        "scale": [
+          5,
+          0.7,
+          56
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBalconyLoop",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-atrium-balcony-east",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_ATRIUM_BALCONY_EAST",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          36,
+          8.35,
+          0
+        ],
+        "scale": [
+          5,
+          0.7,
+          56
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBalconyLoop",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-atrium-balcony-north",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_ATRIUM_BALCONY_NORTH",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          8.35,
+          -27
+        ],
+        "scale": [
+          70,
+          0.7,
+          5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBalconyLoop",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-upper-atrium-balcony-south",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_ATRIUM_BALCONY_SOUTH",
+        "geometry": "geo-unit",
+        "material": "mat-glass-dim",
+        "position": [
+          0,
+          8.35,
+          27
+        ],
+        "scale": [
+          70,
+          0.7,
+          5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "upperBalconyLoop",
+          "heightTier": "upper",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-west-out",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_WEST_OUT",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -39,
+          8.9,
+          0
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          56
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-west-in",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_WEST_IN",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -32,
+          8.9,
+          0
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          56
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-east-in",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_EAST_IN",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          32,
+          8.9,
+          0
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          56
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-east-out",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_EAST_OUT",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          39,
+          8.9,
+          0
+        ],
+        "scale": [
+          0.35,
+          1.4,
+          56
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-north-out",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_NORTH_OUT",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          -30
+        ],
+        "scale": [
+          70,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-north-in",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_NORTH_IN",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          -24
+        ],
+        "scale": [
+          70,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-south-in",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_SOUTH_IN",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          24
+        ],
+        "scale": [
+          70,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-rail-upper-atrium-south-out",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_ATRIUM_SOUTH_OUT",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0,
+          8.9,
+          30
+        ],
+        "scale": [
+          70,
+          1.4,
+          0.35
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-upper-broker-perch-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_UPPER_BROKER_PERCH_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -36,
+          8.5,
+          -20
+        ],
+        "scale": [
+          5,
+          1,
+          4
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-broker-0",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_BROKER_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -36,
+          9.0,
+          -20
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-upper-broker-perch-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_UPPER_BROKER_PERCH_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          -36,
+          8.5,
+          18
+        ],
+        "scale": [
+          5,
+          1,
+          4
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-broker-1",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_BROKER_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -36,
+          9.0,
+          18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-upper-broker-perch-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_UPPER_BROKER_PERCH_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          36,
+          8.5,
+          -20
+        ],
+        "scale": [
+          5,
+          1,
+          4
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-broker-2",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_BROKER_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          36,
+          9.0,
+          -20
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-upper-broker-perch-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_UPPER_BROKER_PERCH_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          36,
+          8.5,
+          18
+        ],
+        "scale": [
+          5,
+          1,
+          4
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-broker-3",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_BROKER_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          36,
+          9.0,
+          18
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-upper-broker-perch-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_UPPER_BROKER_PERCH_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-muted-gold",
+        "position": [
+          0,
+          8.5,
+          -27
+        ],
+        "scale": [
+          5,
+          1,
+          4
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptid-upper-broker-4",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTID_UPPER_BROKER_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          9.0,
+          -27
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "upperBalcony",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-sign-atrium-ticker-0",
+        "type": "Mesh",
+        "name": "E2049_SIGN_ATRIUM_TICKER_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          -26,
+          8,
+          -31
+        ],
+        "scale": [
+          12,
+          4,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "CRYPTO EXCHANGE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-atrium-ticker-1",
+        "type": "Mesh",
+        "name": "E2049_SIGN_ATRIUM_TICKER_1",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          26,
+          8,
+          -31
+        ],
+        "scale": [
+          12,
+          4,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "LIQUIDITY ABOVE ALL",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-atrium-ticker-2",
+        "type": "Mesh",
+        "name": "E2049_SIGN_ATRIUM_TICKER_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          -40,
+          8,
+          4
+        ],
+        "scale": [
+          0.12,
+          6,
+          8
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "XCR +2.34",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-atrium-ticker-3",
+        "type": "Mesh",
+        "name": "E2049_SIGN_ATRIUM_TICKER_3",
+        "geometry": "geo-unit",
+        "material": "mat-screen-emerald",
+        "position": [
+          40,
+          8,
+          4
+        ],
+        "scale": [
+          0.12,
+          6,
+          8
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "DEBT MARKET LIVE",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-sign-atrium-ticker-4",
+        "type": "Mesh",
+        "name": "E2049_SIGN_ATRIUM_TICKER_4",
+        "geometry": "geo-unit",
+        "material": "mat-screen-gold",
+        "position": [
+          0,
+          8,
+          31
+        ],
+        "scale": [
+          12,
+          4,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "CONFIDENCE IS CURRENCY",
+          "faction": "cryptids"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-front-a",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_FRONT_A",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -22,
+          0.5,
+          23
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "frontWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-front-b",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_FRONT_B",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          22,
+          0.5,
+          23
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "frontWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-pit-left",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_PIT_LEFT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -20,
+          0.5,
+          1
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "pitWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-pit-right",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_PIT_RIGHT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          20,
+          0.5,
+          1
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "pitWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-back-left",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_BACK_LEFT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          -20,
+          0.5,
+          -19
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "objectiveWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-back-right",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_BACK_RIGHT",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          20,
+          0.5,
+          -19
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "objectiveWave"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-cryptids-elite-market-maker",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_CRYPTIDS_ELITE_MARKET_MAKER",
+        "geometry": "geo-marker",
+        "material": "mat-marker-gold",
+        "position": [
+          0,
+          0.5,
+          -22
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "cryptids",
+          "spawnGroup": "eliteWave"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-0",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -35,
+          0.5,
+          22
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-1",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          35,
+          0.5,
+          22
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-2",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -30,
+          0.5,
+          -2
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-3",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          30,
+          0.5,
+          -2
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-4",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -12,
+          0.5,
+          -28
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-5",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          12,
+          0.5,
+          -28
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-liquidity-exchange-6",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_LIQUIDITY_EXCHANGE_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0,
+          0.5,
+          12
+        ],
+        "scale": [
+          0.8,
+          0.18,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "cryptidExchangeCommon"
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-atrium-waypoint-0",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_ATRIUM_WAYPOINT_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -30,
+          0.5,
+          20
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "liquidityAtriumDroneLoop",
+          "index": 0,
+          "height": 18
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-ticker-drone-static-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_TICKER_DRONE_STATIC_0",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -30,
+          0.225,
+          20
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "liquidityAtriumDroneLoop",
+          "hoverHeight": 18
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-atrium-waypoint-1",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_ATRIUM_WAYPOINT_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          0,
+          0.5,
+          8
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "liquidityAtriumDroneLoop",
+          "index": 1,
+          "height": 21
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-ticker-drone-static-1",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_TICKER_DRONE_STATIC_1",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          0,
+          0.225,
+          8
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "liquidityAtriumDroneLoop",
+          "hoverHeight": 21
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-atrium-waypoint-2",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_ATRIUM_WAYPOINT_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          30,
+          0.5,
+          4
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "liquidityAtriumDroneLoop",
+          "index": 2,
+          "height": 18
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-ticker-drone-static-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_TICKER_DRONE_STATIC_2",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          30,
+          0.225,
+          4
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "liquidityAtriumDroneLoop",
+          "hoverHeight": 18
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-atrium-waypoint-3",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_ATRIUM_WAYPOINT_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          16,
+          0.5,
+          -22
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "liquidityAtriumDroneLoop",
+          "index": 3,
+          "height": 20
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-ticker-drone-static-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_TICKER_DRONE_STATIC_3",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          16,
+          0.225,
+          -22
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "liquidityAtriumDroneLoop",
+          "hoverHeight": 20
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-atrium-waypoint-4",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_ATRIUM_WAYPOINT_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-emerald",
+        "position": [
+          -18,
+          0.5,
+          -20
+        ],
+        "scale": [
+          1,
+          0.18,
+          1
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "routeId": "liquidityAtriumDroneLoop",
+          "index": 4,
+          "height": 20
+        }
+      },
+      {
+        "uuid": "e2049-prop-atrium-ticker-drone-static-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_ATRIUM_TICKER_DRONE_STATIC_4",
+        "geometry": "geo-unit",
+        "material": "mat-wall-black",
+        "position": [
+          -18,
+          0.225,
+          -20
+        ],
+        "scale": [
+          1.4,
+          0.45,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "routeId": "liquidityAtriumDroneLoop",
+          "hoverHeight": 20
+        }
+      },
+      {
+        "uuid": "e2049-light-atrium-gold-key",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_ATRIUM_GOLD_KEY",
+        "color": 13017674,
+        "intensity": 2.4,
+        "distance": 80,
+        "decay": 2,
+        "position": [
+          0,
+          17,
+          4
+        ]
+      },
+      {
+        "uuid": "e2049-light-atrium-pit-emerald",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_ATRIUM_PIT_EMERALD",
+        "color": 51320,
+        "intensity": 2.0,
+        "distance": 54,
+        "decay": 2,
+        "position": [
+          0,
+          9,
+          3
+        ]
+      },
+      {
+        "uuid": "e2049-light-atrium-upper-blue",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_ATRIUM_UPPER_BLUE",
+        "color": 3844351,
+        "intensity": 1.2,
+        "distance": 54,
+        "decay": 2,
+        "position": [
+          -34,
+          12,
+          0
+        ]
+      }
+    ]
+  }
+}

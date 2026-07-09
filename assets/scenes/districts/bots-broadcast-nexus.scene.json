@@ -1,0 +1,3889 @@
+{
+  "metadata": {
+    "version": 4.5,
+    "type": "Object",
+    "generator": "E2049 Three.js Editor scene - BOTS DISTRICT - BROADCAST NEXUS"
+  },
+  "geometries": [
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-marker",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    }
+  ],
+  "materials": [
+    {
+      "uuid": "mat-marker-green",
+      "type": "MeshBasicMaterial",
+      "color": 3407718,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623,
+      "transparent": true,
+      "opacity": 0.32
+    },
+    {
+      "uuid": "mat-marker-white",
+      "type": "MeshBasicMaterial",
+      "color": 16777215,
+      "transparent": true,
+      "opacity": 0.38
+    },
+    {
+      "uuid": "mat-marker-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-yellow",
+      "type": "MeshBasicMaterial",
+      "color": 12255083,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-marker-orange",
+      "type": "MeshBasicMaterial",
+      "color": 16757306,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-route-green",
+      "type": "MeshBasicMaterial",
+      "color": 3407718,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.2
+    },
+    {
+      "uuid": "mat-route-yellow",
+      "type": "MeshBasicMaterial",
+      "color": 12255083,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-route-orange",
+      "type": "MeshBasicMaterial",
+      "color": 16757306,
+      "transparent": true,
+      "opacity": 0.18
+    },
+    {
+      "uuid": "mat-route-purple",
+      "type": "MeshBasicMaterial",
+      "color": 9657599,
+      "transparent": true,
+      "opacity": 0.16
+    },
+    {
+      "uuid": "mat-floor-dark",
+      "type": "MeshStandardMaterial",
+      "color": 1383448,
+      "roughness": 0.7,
+      "metalness": 0.12
+    },
+    {
+      "uuid": "mat-floor-metal",
+      "type": "MeshStandardMaterial",
+      "color": 2370858,
+      "roughness": 0.54,
+      "metalness": 0.4
+    },
+    {
+      "uuid": "mat-wall-metal",
+      "type": "MeshStandardMaterial",
+      "color": 1712158,
+      "roughness": 0.68,
+      "metalness": 0.26
+    },
+    {
+      "uuid": "mat-wall-black",
+      "type": "MeshStandardMaterial",
+      "color": 527626,
+      "roughness": 0.72,
+      "metalness": 0.18
+    },
+    {
+      "uuid": "mat-metal-dark",
+      "type": "MeshStandardMaterial",
+      "color": 3160629,
+      "roughness": 0.58,
+      "metalness": 0.48
+    },
+    {
+      "uuid": "mat-bot-gunmetal",
+      "type": "MeshStandardMaterial",
+      "color": 2832692,
+      "roughness": 0.5,
+      "metalness": 0.62
+    },
+    {
+      "uuid": "mat-bot-green-dim",
+      "type": "MeshStandardMaterial",
+      "color": 879405,
+      "roughness": 0.4,
+      "metalness": 0.24,
+      "emissive": 2031463,
+      "emissiveIntensity": 0.22
+    },
+    {
+      "uuid": "mat-bot-green-bright",
+      "type": "MeshBasicMaterial",
+      "color": 8191880
+    },
+    {
+      "uuid": "mat-screen-green",
+      "type": "MeshBasicMaterial",
+      "color": 6487922
+    },
+    {
+      "uuid": "mat-screen-darkgreen",
+      "type": "MeshBasicMaterial",
+      "color": 737056
+    },
+    {
+      "uuid": "mat-screen-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804
+    },
+    {
+      "uuid": "mat-screen-blue",
+      "type": "MeshBasicMaterial",
+      "color": 3450623
+    },
+    {
+      "uuid": "mat-screen-purple",
+      "type": "MeshBasicMaterial",
+      "color": 9657599
+    },
+    {
+      "uuid": "mat-hazard-core",
+      "type": "MeshBasicMaterial",
+      "color": 65382,
+      "transparent": true,
+      "opacity": 0.48
+    },
+    {
+      "uuid": "mat-hazard-red",
+      "type": "MeshBasicMaterial",
+      "color": 16724804,
+      "transparent": true,
+      "opacity": 0.34
+    },
+    {
+      "uuid": "mat-conveyor",
+      "type": "MeshStandardMaterial",
+      "color": 1911586,
+      "roughness": 0.45,
+      "metalness": 0.5,
+      "emissive": 813869,
+      "emissiveIntensity": 0.1
+    },
+    {
+      "uuid": "mat-cable",
+      "type": "MeshStandardMaterial",
+      "color": 329734,
+      "roughness": 0.8,
+      "metalness": 0.24
+    },
+    {
+      "uuid": "mat-glass-green",
+      "type": "MeshStandardMaterial",
+      "color": 1326378,
+      "roughness": 0.12,
+      "metalness": 0.02,
+      "transparent": true,
+      "opacity": 0.48,
+      "emissive": 682799,
+      "emissiveIntensity": 0.08
+    },
+    {
+      "uuid": "mat-warning-orange",
+      "type": "MeshStandardMaterial",
+      "color": 9067041,
+      "roughness": 0.48,
+      "metalness": 0.36,
+      "emissive": 4464640,
+      "emissiveIntensity": 0.05
+    }
+  ],
+  "object": {
+    "uuid": "scene-broadcast-nexus",
+    "type": "Scene",
+    "name": "BOTS DISTRICT - BROADCAST NEXUS",
+    "userData": {
+      "district": "bots-district",
+      "area": "broadcast-nexus",
+      "format": "threejs-editor-object-json",
+      "faction": "bots",
+      "sourceArea": "data-harvest-plaza",
+      "targetArea": "assembly-crucible",
+      "version": "v1-layout-faithful-bots-concept",
+      "layoutNotes": [
+        "Concept map: exposed elevated broadcast platform with central spire, four bridge lanes, offset signal platforms, power nodes, sniper perches, lifts, and strong drop hazard containment.",
+        "Retains the cross / radial map layout: south entry, central spire objective, four primary bridge lanes, side platforms, upper ring and tower control."
+      ],
+      "artStyle": "Halo Combat Evolved / Half-Life 2 era low-poly industrial sci-fi blockout",
+      "identityWarning": "Bots use monochrome green, industrial metal, SPYD3R network screens, data extractors, conveyors, server racks, drones, and corrupted automation motifs.",
+      "containmentRule": "fully sealed contained FPS arena; void/drop areas are fenced or marked; only authored gates connect rooms",
+      "coordinateNote": "position.y is object center; scale.y is height. Upper walkways use elevated center-Y. Ground route overlays are path/debug indicators."
+    },
+    "children": [
+      {
+        "uuid": "e2049-prop-broadcast-nexus-central-platform-0",
+        "type": "Mesh",
+        "name": "E2049_PROP_BROADCAST_NEXUS_CENTRAL_PLATFORM",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          -0.04,
+          0.0
+        ],
+        "scale": [
+          44.0,
+          0.08,
+          44.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "area": "broadcast-nexus",
+          "platform": "central"
+        }
+      },
+      {
+        "uuid": "e2049-hazardzone-broadcast-void-drop-1",
+        "type": "Mesh",
+        "name": "E2049_HAZARDZONE_BROADCAST_VOID_DROP",
+        "geometry": "geo-marker",
+        "material": "mat-marker-red",
+        "position": [
+          0.0,
+          0.03,
+          0.0
+        ],
+        "scale": [
+          110.0,
+          0.03,
+          110.0
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "voidDropBeyondRails",
+          "note": "outer void visible; playable edges protected by railings/softlocks"
+        }
+      },
+      {
+        "uuid": "e2049-prop-broadcast-north-bridge-lane-2",
+        "type": "Mesh",
+        "name": "E2049_PROP_BROADCAST_NORTH_BRIDGE_LANE",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          -0.04,
+          -38.0
+        ],
+        "scale": [
+          12.0,
+          0.08,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "bridgeLane": "NORTH_BRIDGE_LANE"
+        }
+      },
+      {
+        "uuid": "e2049-prop-broadcast-south-bridge-lane-3",
+        "type": "Mesh",
+        "name": "E2049_PROP_BROADCAST_SOUTH_BRIDGE_LANE",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          -0.04,
+          38.0
+        ],
+        "scale": [
+          12.0,
+          0.08,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "bridgeLane": "SOUTH_BRIDGE_LANE"
+        }
+      },
+      {
+        "uuid": "e2049-prop-broadcast-east-bridge-lane-4",
+        "type": "Mesh",
+        "name": "E2049_PROP_BROADCAST_EAST_BRIDGE_LANE",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          38.0,
+          -0.04,
+          0.0
+        ],
+        "scale": [
+          48.0,
+          0.08,
+          12.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "bridgeLane": "EAST_BRIDGE_LANE"
+        }
+      },
+      {
+        "uuid": "e2049-prop-broadcast-west-bridge-lane-5",
+        "type": "Mesh",
+        "name": "E2049_PROP_BROADCAST_WEST_BRIDGE_LANE",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -38.0,
+          -0.04,
+          0.0
+        ],
+        "scale": [
+          48.0,
+          0.08,
+          12.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "bridgeLane": "WEST_BRIDGE_LANE"
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-platform-0-6",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_PLATFORM_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          31.1127,
+          -0.04,
+          31.1127
+        ],
+        "scale": [
+          22.0,
+          0.08,
+          22.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "platform": "signalPlatform",
+          "signalIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-power-node-0-7",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_POWER_NODE_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          31.1127,
+          2.0,
+          31.1127
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "powerNode",
+          "nodeIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-objective-power-node-0-8",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_POWER_NODE_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          31.1127,
+          0.5,
+          31.1127
+        ],
+        "scale": [
+          3.0,
+          0.18,
+          3.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "sidePowerNode",
+          "nodeIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-platform-1-9",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_PLATFORM_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -31.1127,
+          -0.04,
+          31.1127
+        ],
+        "scale": [
+          22.0,
+          0.08,
+          22.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "platform": "signalPlatform",
+          "signalIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-power-node-1-10",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_POWER_NODE_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          -31.1127,
+          2.0,
+          31.1127
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "powerNode",
+          "nodeIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-objective-power-node-1-11",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_POWER_NODE_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -31.1127,
+          0.5,
+          31.1127
+        ],
+        "scale": [
+          3.0,
+          0.18,
+          3.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "sidePowerNode",
+          "nodeIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-platform-2-12",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_PLATFORM_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -31.1127,
+          -0.04,
+          -31.1127
+        ],
+        "scale": [
+          22.0,
+          0.08,
+          22.0
+        ],
+        "rotation": [
+          0.0,
+          3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "platform": "signalPlatform",
+          "signalIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-power-node-2-13",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_POWER_NODE_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          -31.1127,
+          2.0,
+          -31.1127
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "powerNode",
+          "nodeIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-objective-power-node-2-14",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_POWER_NODE_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -31.1127,
+          0.5,
+          -31.1127
+        ],
+        "scale": [
+          3.0,
+          0.18,
+          3.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "sidePowerNode",
+          "nodeIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-platform-3-15",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_PLATFORM_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          31.1127,
+          -0.04,
+          -31.1127
+        ],
+        "scale": [
+          22.0,
+          0.08,
+          22.0
+        ],
+        "rotation": [
+          0.0,
+          5.4978,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "floor",
+          "platform": "signalPlatform",
+          "signalIndex": 3
+        }
+      },
+      {
+        "uuid": "e2049-prop-signal-power-node-3-16",
+        "type": "Mesh",
+        "name": "E2049_PROP_SIGNAL_POWER_NODE_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          31.1127,
+          2.0,
+          -31.1127
+        ],
+        "scale": [
+          4.0,
+          4.0,
+          4.0
+        ],
+        "rotation": [
+          0.0,
+          5.4978,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "powerNode",
+          "nodeIndex": 3
+        }
+      },
+      {
+        "uuid": "e2049-objective-power-node-3-17",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_POWER_NODE_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          31.1127,
+          0.5,
+          -31.1127
+        ],
+        "scale": [
+          3.0,
+          0.18,
+          3.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "sidePowerNode",
+          "nodeIndex": 3
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-0-18",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          25.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-1-19",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          17.6777,
+          0.85,
+          17.6777
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-2-20",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0.0,
+          0.85,
+          25.0
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-3-21",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -17.6777,
+          0.85,
+          17.6777
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          -0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-4-22",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -25.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-5-23",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -17.6777,
+          0.85,
+          -17.6777
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          -2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-6-24",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -0.0,
+          0.85,
+          -25.0
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          -3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-central-platform-rail-7-25",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_CENTRAL_PLATFORM_RAIL_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          17.6777,
+          0.85,
+          -17.6777
+        ],
+        "scale": [
+          15.0,
+          1.7,
+          0.7
+        ],
+        "rotation": [
+          0.0,
+          -3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-n-west-rail-26",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_N_WEST_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -7.0,
+          0.9,
+          -38.0
+        ],
+        "scale": [
+          0.55,
+          1.8,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-n-east-rail-27",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_N_EAST_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          7.0,
+          0.9,
+          -38.0
+        ],
+        "scale": [
+          0.55,
+          1.8,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-s-west-rail-28",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_S_WEST_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -7.0,
+          0.9,
+          38.0
+        ],
+        "scale": [
+          0.55,
+          1.8,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-s-east-rail-29",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_S_EAST_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          7.0,
+          0.9,
+          38.0
+        ],
+        "scale": [
+          0.55,
+          1.8,
+          48.0
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-e-north-rail-30",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_E_NORTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          38.0,
+          0.9,
+          -7.0
+        ],
+        "scale": [
+          48.0,
+          1.8,
+          0.55
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-e-south-rail-31",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_E_SOUTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          38.0,
+          0.9,
+          7.0
+        ],
+        "scale": [
+          48.0,
+          1.8,
+          0.55
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-w-north-rail-32",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_W_NORTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -38.0,
+          0.9,
+          -7.0
+        ],
+        "scale": [
+          48.0,
+          1.8,
+          0.55
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-softlock-broadcast-bridge-w-south-rail-33",
+        "type": "Mesh",
+        "name": "E2049_SOFTLOCK_BROADCAST_BRIDGE_W_SOUTH_RAIL",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -38.0,
+          0.9,
+          7.0
+        ],
+        "scale": [
+          48.0,
+          1.8,
+          0.55
+        ],
+        "userData": {
+          "gameplayType": "softLock",
+          "collider": true,
+          "blocksPlayer": true,
+          "edgeProtection": true
+        }
+      },
+      {
+        "uuid": "e2049-entry-gate-from-data-harvest-plaza-34",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_FROM_DATA_HARVEST_PLAZA",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          3.25,
+          62.0
+        ],
+        "scale": [
+          16.0,
+          6.5,
+          1.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "entryGate",
+          "sourceArea": "data-harvest-plaza"
+        }
+      },
+      {
+        "uuid": "e2049-player-start-35",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-marker",
+        "material": "mat-marker-blue",
+        "position": [
+          0.0,
+          0.5,
+          58.0
+        ],
+        "scale": [
+          1.4,
+          0.18,
+          1.4
+        ],
+        "userData": {
+          "gameplayType": "playerStart",
+          "sourceArea": "data-harvest-plaza"
+        }
+      },
+      {
+        "uuid": "e2049-prop-extraction-gate-to-assembly-crucible-visual-36",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXTRACTION_GATE_TO_ASSEMBLY_CRUCIBLE_VISUAL",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          3.25,
+          -62.0
+        ],
+        "scale": [
+          16.0,
+          6.5,
+          1.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual",
+          "targetArea": "assembly-crucible"
+        }
+      },
+      {
+        "uuid": "e2049-extraction-gate-to-assembly-crucible-37",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_TO_ASSEMBLY_CRUCIBLE",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          0.5,
+          -58.0
+        ],
+        "scale": [
+          4.0,
+          0.18,
+          1.2
+        ],
+        "userData": {
+          "gameplayType": "extractionGate",
+          "targetArea": "assembly-crucible",
+          "lockedUntilObjectiveComplete": true
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-broadcast-spire-base-38",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_BROADCAST_SPIRE_BASE",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          4.0,
+          0.0
+        ],
+        "scale": [
+          10.0,
+          8.0,
+          10.0
+        ],
+        "userData": {
+          "gameplayType": "objectiveProp",
+          "objectiveType": "broadcastSpire"
+        }
+      },
+      {
+        "uuid": "e2049-objectiveprop-broadcast-spire-tower-39",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_BROADCAST_SPIRE_TOWER",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          14.0,
+          0.0
+        ],
+        "scale": [
+          6.0,
+          28.0,
+          6.0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpieceType": "broadcastSpire"
+        }
+      },
+      {
+        "uuid": "e2049-sign-spyd3r-net-face-40",
+        "type": "Mesh",
+        "name": "E2049_SIGN_SPYD3R_NET_FACE",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          16.0,
+          4.1
+        ],
+        "scale": [
+          6.0,
+          5.0,
+          0.12
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": ":) SPYD3R.NET // OWN THE FLOW",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-objective-broadcast-spire-uplink-array-41",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_BROADCAST_SPIRE_UPLINK_ARRAY",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          7.0,
+          0.18,
+          7.0
+        ],
+        "userData": {
+          "gameplayType": "objective",
+          "objectiveType": "broadcastSpireUplink"
+        }
+      },
+      {
+        "uuid": "e2049-boss-arena-broadcast-core-42",
+        "type": "Mesh",
+        "name": "E2049_BOSS_ARENA_BROADCAST_CORE",
+        "geometry": "geo-marker",
+        "material": "mat-marker-red",
+        "position": [
+          0.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          20.0,
+          0.18,
+          20.0
+        ],
+        "userData": {
+          "gameplayType": "bossArena",
+          "bossArenaType": "broadcastControlCore",
+          "dangerZone": "centralSpire"
+        }
+      },
+      {
+        "uuid": "e2049-route-main-south-bridge-to-spire-43",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_MAIN_SOUTH_BRIDGE_TO_SPIRE",
+        "geometry": "geo-unit",
+        "material": "mat-route-green",
+        "position": [
+          0.0,
+          0.035,
+          32.0
+        ],
+        "scale": [
+          9.0,
+          0.03,
+          54.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "mainSouthBridge"
+        }
+      },
+      {
+        "uuid": "e2049-route-main-spire-to-north-extract-44",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_MAIN_SPIRE_TO_NORTH_EXTRACT",
+        "geometry": "geo-unit",
+        "material": "mat-route-green",
+        "position": [
+          0.0,
+          0.035,
+          -32.0
+        ],
+        "scale": [
+          9.0,
+          0.03,
+          54.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "mainNorthBridge"
+        }
+      },
+      {
+        "uuid": "e2049-route-flank-east-bridges-45",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_FLANK_EAST_BRIDGES",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          32.0,
+          0.035,
+          0.0
+        ],
+        "scale": [
+          54.0,
+          0.03,
+          9.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "eastFlankBridge"
+        }
+      },
+      {
+        "uuid": "e2049-route-flank-west-bridges-46",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_FLANK_WEST_BRIDGES",
+        "geometry": "geo-unit",
+        "material": "mat-route-blue",
+        "position": [
+          -32.0,
+          0.035,
+          0.0
+        ],
+        "scale": [
+          54.0,
+          0.03,
+          9.0
+        ],
+        "userData": {
+          "gameplayType": "routeHint",
+          "route": "westFlankBridge"
+        }
+      },
+      {
+        "uuid": "e2049-hazardzone-core-transmitter-overload-47",
+        "type": "Mesh",
+        "name": "E2049_HAZARDZONE_CORE_TRANSMITTER_OVERLOAD",
+        "geometry": "geo-unit",
+        "material": "mat-route-red",
+        "position": [
+          0.0,
+          0.04,
+          0.0
+        ],
+        "scale": [
+          18.0,
+          0.04,
+          18.0
+        ],
+        "userData": {
+          "gameplayType": "hazardZone",
+          "hazard": "transmitterOverload"
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-0-48",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          22.0,
+          6.35,
+          0.0
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 0,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-1-49",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          15.5563,
+          6.35,
+          15.5563
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 1,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-2-50",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          6.35,
+          22.0
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 2,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-3-51",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -15.5563,
+          6.35,
+          15.5563
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 3,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-4-52",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -22.0,
+          6.35,
+          0.0
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 4,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-5-53",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -15.5563,
+          6.35,
+          -15.5563
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 5,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-6-54",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -0.0,
+          6.35,
+          -22.0
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 6,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-mid-ring-seg-7-55",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_MID_RING_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          15.5563,
+          6.35,
+          -15.5563
+        ],
+        "scale": [
+          14.0,
+          0.7,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "ring": "TRAVERSAL_BROADCAST_MID_RING",
+          "segment": 7,
+          "heightTier": "mid",
+          "route": "midRing",
+          "floorY": 6.0
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-0-56",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          24.5,
+          7.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-1-57",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          17.3241,
+          7.25,
+          17.3241
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-2-58",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0.0,
+          7.25,
+          24.5
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-3-59",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -17.3241,
+          7.25,
+          17.3241
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-4-60",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -24.5,
+          7.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-5-61",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -17.3241,
+          7.25,
+          -17.3241
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-6-62",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -0.0,
+          7.25,
+          -24.5
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 6,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-outer-seg-7-63",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_OUTER_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          17.3241,
+          7.25,
+          -17.3241
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_OUTER",
+          "segment": 7,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-0-64",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          19.5,
+          7.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 0,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-1-65",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          13.7886,
+          7.25,
+          13.7886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 1,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-2-66",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0.0,
+          7.25,
+          19.5
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 2,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-3-67",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -13.7886,
+          7.25,
+          13.7886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 3,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-4-68",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_4",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -19.5,
+          7.25,
+          0.0
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 4,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-5-69",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_5",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -13.7886,
+          7.25,
+          -13.7886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 5,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-6-70",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_6",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -0.0,
+          7.25,
+          -19.5
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 6,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-broadcast-mid-ring-inner-seg-7-71",
+        "type": "Mesh",
+        "name": "E2049_RAIL_BROADCAST_MID_RING_INNER_SEG_7",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          13.7886,
+          7.25,
+          -13.7886
+        ],
+        "scale": [
+          12.0,
+          1.3,
+          4.2
+        ],
+        "rotation": [
+          0.0,
+          -3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "ring": "RAIL_BROADCAST_MID_RING_INNER",
+          "segment": 7,
+          "collider": true
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-upper-bridge-n-72",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_UPPER_BRIDGE_N",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          8.35,
+          22.0
+        ],
+        "scale": [
+          4.5,
+          0.7,
+          44.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "spoke": "N",
+          "heightTier": "upper",
+          "route": "upperBridgeNetwork",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-upper-bridge-e-73",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_UPPER_BRIDGE_E",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          22.0,
+          8.35,
+          0.0
+        ],
+        "scale": [
+          44.0,
+          0.7,
+          4.5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "spoke": "E",
+          "heightTier": "upper",
+          "route": "upperBridgeNetwork",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-upper-bridge-s-74",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_UPPER_BRIDGE_S",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          0.0,
+          8.35,
+          -22.0
+        ],
+        "scale": [
+          4.5,
+          0.7,
+          44.0
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "spoke": "S",
+          "heightTier": "upper",
+          "route": "upperBridgeNetwork",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-broadcast-upper-bridge-w-75",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_BROADCAST_UPPER_BRIDGE_W",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -22.0,
+          8.35,
+          0.0
+        ],
+        "scale": [
+          44.0,
+          0.7,
+          4.5
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "spoke": "W",
+          "heightTier": "upper",
+          "route": "upperBridgeNetwork",
+          "floorY": 8.0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-signal-platform-sniper-perch-0-76",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_SIGNAL_PLATFORM_SNIPER_PERCH_0",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          31.1127,
+          12.35,
+          31.1127
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          12.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "sniper",
+          "floorY": 12.0,
+          "perch": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-signal-sniper-perch-0-77",
+        "type": "Mesh",
+        "name": "E2049_RAIL_SIGNAL_SNIPER_PERCH_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          31.1127,
+          13.2,
+          31.1127
+        ],
+        "scale": [
+          12.0,
+          1.4,
+          0.55
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "sniper"
+        }
+      },
+      {
+        "uuid": "e2049-lift-signal-platform-0-78",
+        "type": "Mesh",
+        "name": "E2049_LIFT_SIGNAL_PLATFORM_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          31.1127,
+          0.5,
+          31.1127
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "liftToSniperPerch",
+          "targetFloorY": 12.0,
+          "nodeIndex": 0
+        }
+      },
+      {
+        "uuid": "e2049-traversal-signal-platform-sniper-perch-1-79",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_SIGNAL_PLATFORM_SNIPER_PERCH_1",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -31.1127,
+          12.35,
+          31.1127
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          12.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "sniper",
+          "floorY": 12.0,
+          "perch": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-signal-sniper-perch-1-80",
+        "type": "Mesh",
+        "name": "E2049_RAIL_SIGNAL_SNIPER_PERCH_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -31.1127,
+          13.2,
+          31.1127
+        ],
+        "scale": [
+          12.0,
+          1.4,
+          0.55
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "sniper"
+        }
+      },
+      {
+        "uuid": "e2049-lift-signal-platform-1-81",
+        "type": "Mesh",
+        "name": "E2049_LIFT_SIGNAL_PLATFORM_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -31.1127,
+          0.5,
+          31.1127
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "liftToSniperPerch",
+          "targetFloorY": 12.0,
+          "nodeIndex": 1
+        }
+      },
+      {
+        "uuid": "e2049-traversal-signal-platform-sniper-perch-2-82",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_SIGNAL_PLATFORM_SNIPER_PERCH_2",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          -31.1127,
+          12.35,
+          -31.1127
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          12.0
+        ],
+        "rotation": [
+          0.0,
+          3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "sniper",
+          "floorY": 12.0,
+          "perch": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-signal-sniper-perch-2-83",
+        "type": "Mesh",
+        "name": "E2049_RAIL_SIGNAL_SNIPER_PERCH_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -31.1127,
+          13.2,
+          -31.1127
+        ],
+        "scale": [
+          12.0,
+          1.4,
+          0.55
+        ],
+        "rotation": [
+          0.0,
+          3.927,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "sniper"
+        }
+      },
+      {
+        "uuid": "e2049-lift-signal-platform-2-84",
+        "type": "Mesh",
+        "name": "E2049_LIFT_SIGNAL_PLATFORM_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -31.1127,
+          0.5,
+          -31.1127
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "liftToSniperPerch",
+          "targetFloorY": 12.0,
+          "nodeIndex": 2
+        }
+      },
+      {
+        "uuid": "e2049-traversal-signal-platform-sniper-perch-3-85",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_SIGNAL_PLATFORM_SNIPER_PERCH_3",
+        "geometry": "geo-unit",
+        "material": "mat-floor-metal",
+        "position": [
+          31.1127,
+          12.35,
+          -31.1127
+        ],
+        "scale": [
+          12.0,
+          0.7,
+          12.0
+        ],
+        "rotation": [
+          0.0,
+          5.4978,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "elevatedPosition",
+          "heightTier": "sniper",
+          "floorY": 12.0,
+          "perch": true
+        }
+      },
+      {
+        "uuid": "e2049-rail-signal-sniper-perch-3-86",
+        "type": "Mesh",
+        "name": "E2049_RAIL_SIGNAL_SNIPER_PERCH_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          31.1127,
+          13.2,
+          -31.1127
+        ],
+        "scale": [
+          12.0,
+          1.4,
+          0.55
+        ],
+        "rotation": [
+          0.0,
+          5.4978,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "railing",
+          "collider": true,
+          "heightTier": "sniper"
+        }
+      },
+      {
+        "uuid": "e2049-lift-signal-platform-3-87",
+        "type": "Mesh",
+        "name": "E2049_LIFT_SIGNAL_PLATFORM_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          31.1127,
+          0.5,
+          -31.1127
+        ],
+        "scale": [
+          2.2,
+          0.18,
+          2.2
+        ],
+        "userData": {
+          "gameplayType": "traversal",
+          "route": "liftToSniperPerch",
+          "targetFloorY": 12.0,
+          "nodeIndex": 3
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-0-88",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          0.85,
+          24.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-1-89",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          0.85,
+          -24.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-2-90",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          24.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-3-91",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -24.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-4-92",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_4",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          0.85,
+          45.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-5-93",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_5",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          0.0,
+          0.85,
+          -45.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-6-94",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_6",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          45.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-7-95",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_7",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -45.0,
+          0.85,
+          0.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-8-96",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_8",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          15.0,
+          0.85,
+          15.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-9-97",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_9",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -15.0,
+          0.85,
+          15.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          0.7854,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-10-98",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_10",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          15.0,
+          0.85,
+          -15.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-cover-broadcast-low-signal-box-11-99",
+        "type": "Mesh",
+        "name": "E2049_COVER_BROADCAST_LOW_SIGNAL_BOX_11",
+        "geometry": "geo-unit",
+        "material": "mat-bot-gunmetal",
+        "position": [
+          -15.0,
+          0.85,
+          -15.0
+        ],
+        "scale": [
+          5.0,
+          1.7,
+          3.0
+        ],
+        "rotation": [
+          0.0,
+          2.3562,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "cover",
+          "collider": true,
+          "climb": true,
+          "coverType": "signalBox"
+        }
+      },
+      {
+        "uuid": "e2049-prop-spire-dish-array-0-100",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPIRE_DISH_ARRAY_0",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          12.0,
+          13.0,
+          0.0
+        ],
+        "scale": [
+          4.0,
+          6.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpieceType": "dishArray",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-prop-spire-dish-array-1-101",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPIRE_DISH_ARRAY_1",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          0.0,
+          13.0,
+          12.0
+        ],
+        "scale": [
+          4.0,
+          6.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpieceType": "dishArray",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-prop-spire-dish-array-2-102",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPIRE_DISH_ARRAY_2",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -12.0,
+          13.0,
+          0.0
+        ],
+        "scale": [
+          4.0,
+          6.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpieceType": "dishArray",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-prop-spire-dish-array-3-103",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPIRE_DISH_ARRAY_3",
+        "geometry": "geo-unit",
+        "material": "mat-metal-dark",
+        "position": [
+          -0.0,
+          13.0,
+          -12.0
+        ],
+        "scale": [
+          4.0,
+          6.0,
+          1.0
+        ],
+        "rotation": [
+          0.0,
+          4.7124,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "setpiece",
+          "setpieceType": "dishArray",
+          "collider": false
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-0-104",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_0",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          -19.0,
+          8.0,
+          0.0
+        ],
+        "scale": [
+          0.12,
+          3.0,
+          14.0
+        ],
+        "rotation": [
+          0.0,
+          1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "BROADCAST NEXUS // SEIZE THE SIGNAL",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-1-105",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_1",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          19.0,
+          8.0,
+          0.0
+        ],
+        "scale": [
+          0.12,
+          3.0,
+          14.0
+        ],
+        "rotation": [
+          0.0,
+          -1.5708,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "SPYD3R.NET // EVERY SIGNAL IS A LEAD",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-2-106",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_2",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          5.0,
+          24.0
+        ],
+        "scale": [
+          14.0,
+          3.0,
+          0.12
+        ],
+        "rotation": [
+          0.0,
+          3.1416,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "WATCH THE DROPS -- FALLING MEANS RESPAWN",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-sign-bots-3-107",
+        "type": "Mesh",
+        "name": "E2049_SIGN_BOTS_3",
+        "geometry": "geo-unit",
+        "material": "mat-screen-green",
+        "position": [
+          0.0,
+          5.0,
+          -24.0
+        ],
+        "scale": [
+          14.0,
+          3.0,
+          0.12
+        ],
+        "rotation": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "userData": {
+          "gameplayType": "billboard",
+          "text": "OBEY THE SIGNAL",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-0-108",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -5.0,
+          0.5,
+          50.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-1-109",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          5.0,
+          0.5,
+          50.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-2-110",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -35.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-3-111",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          35.0,
+          0.5,
+          0.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-4-112",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -30.0,
+          0.5,
+          -30.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-5-113",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          30.0,
+          0.5,
+          -30.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-6-114",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          0.0,
+          0.5,
+          -50.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "groundWave",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-7-115",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_7",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -44.0,
+          12.5,
+          44.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-8-116",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_8",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          44.0,
+          12.5,
+          44.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-9-117",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_9",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          -44.0,
+          12.5,
+          -44.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-10-118",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_10",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          44.0,
+          12.5,
+          -44.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-enemy-spawn-bots-11-119",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_BOTS_11",
+        "geometry": "geo-marker",
+        "material": "mat-marker-green",
+        "position": [
+          0.0,
+          8.9,
+          -20.0
+        ],
+        "scale": [
+          1.0,
+          0.18,
+          1.0
+        ],
+        "userData": {
+          "gameplayType": "enemySpawn",
+          "faction": "bots",
+          "spawnGroup": "upperWave",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-0-120",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          12.0,
+          0.5,
+          32.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-1-121",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -12.0,
+          0.5,
+          32.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-2-122",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          32.0,
+          0.5,
+          12.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-3-123",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -32.0,
+          0.5,
+          12.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-4-124",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          12.0,
+          0.5,
+          -32.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-5-125",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -12.0,
+          0.5,
+          -32.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "ground"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-6-126",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          6.9,
+          18.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-7-127",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_7",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          0.0,
+          8.9,
+          -38.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-8-128",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_8",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          44.0,
+          12.5,
+          44.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-pickup-spawn-botsbroadcastnexuscommon-9-129",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_BOTSBROADCASTNEXUSCOMMON_9",
+        "geometry": "geo-marker",
+        "material": "mat-marker-white",
+        "position": [
+          -44.0,
+          12.5,
+          -44.0
+        ],
+        "scale": [
+          0.85,
+          0.18,
+          0.85
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn",
+          "lootTable": "botsBroadcastNexusCommon",
+          "heightTier": "upper"
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-0-130",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_0",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          16.0,
+          42.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 0
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-1-131",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_1",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          30.0,
+          16.0,
+          30.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 1
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-2-132",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_2",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          42.0,
+          16.0,
+          0.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 2
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-3-133",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_3",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          30.0,
+          16.0,
+          -30.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 3
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-4-134",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_4",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          0.0,
+          16.0,
+          -42.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 4
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-5-135",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_5",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -30.0,
+          16.0,
+          -30.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 5
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-6-136",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_6",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -42.0,
+          16.0,
+          0.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 6
+        }
+      },
+      {
+        "uuid": "e2049-drone-route-waypoint-broadcastnexusdroneorbit-7-137",
+        "type": "Mesh",
+        "name": "E2049_DRONE_ROUTE_WAYPOINT_BROADCASTNEXUSDRONEORBIT_7",
+        "geometry": "geo-marker",
+        "material": "mat-marker-yellow",
+        "position": [
+          -30.0,
+          16.0,
+          30.0
+        ],
+        "scale": [
+          0.7,
+          0.18,
+          0.7
+        ],
+        "userData": {
+          "gameplayType": "dronePatrolWaypoint",
+          "route": "broadcastNexusDroneOrbit",
+          "sequence": 7
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-broadcastnexusdroneorbit-0-138",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_BROADCASTNEXUSDRONEORBIT_0",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          17.5,
+          42.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "broadcastNexusDroneOrbit",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-broadcastnexusdroneorbit-1-139",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_BROADCASTNEXUSDRONEORBIT_1",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          42.0,
+          17.5,
+          0.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "broadcastNexusDroneOrbit",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-broadcastnexusdroneorbit-2-140",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_BROADCASTNEXUSDRONEORBIT_2",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          0.0,
+          17.5,
+          -42.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "broadcastNexusDroneOrbit",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-prop-drone-nest-broadcastnexusdroneorbit-3-141",
+        "type": "Mesh",
+        "name": "E2049_PROP_DRONE_NEST_BROADCASTNEXUSDRONEORBIT_3",
+        "geometry": "geo-unit",
+        "material": "mat-bot-green-dim",
+        "position": [
+          -42.0,
+          17.5,
+          0.0
+        ],
+        "scale": [
+          2.0,
+          1.0,
+          2.0
+        ],
+        "userData": {
+          "gameplayType": "droneSpawn",
+          "route": "broadcastNexusDroneOrbit",
+          "faction": "bots"
+        }
+      },
+      {
+        "uuid": "e2049-broadcast-core-142",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_BROADCAST_CORE",
+        "color": 3407718,
+        "intensity": 2.0,
+        "distance": 95,
+        "decay": 2,
+        "position": [
+          0.0,
+          18.0,
+          0.0
+        ]
+      },
+      {
+        "uuid": "e2049-broadcast-entry-143",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_BROADCAST_ENTRY",
+        "color": 3407718,
+        "intensity": 1.3,
+        "distance": 35,
+        "decay": 2,
+        "position": [
+          0.0,
+          7.0,
+          55.0
+        ]
+      },
+      {
+        "uuid": "e2049-broadcast-exit-144",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_BROADCAST_EXIT",
+        "color": 3407718,
+        "intensity": 1.3,
+        "distance": 35,
+        "decay": 2,
+        "position": [
+          0.0,
+          7.0,
+          -55.0
+        ]
+      },
+      {
+        "uuid": "e2049-broadcast-east-platform-145",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_BROADCAST_EAST_PLATFORM",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 40,
+        "decay": 2,
+        "position": [
+          44.0,
+          12.0,
+          44.0
+        ]
+      },
+      {
+        "uuid": "e2049-broadcast-west-platform-146",
+        "type": "PointLight",
+        "name": "E2049_LIGHT_BROADCAST_WEST_PLATFORM",
+        "color": 3407718,
+        "intensity": 1.2,
+        "distance": 40,
+        "decay": 2,
+        "position": [
+          -44.0,
+          12.0,
+          -44.0
+        ]
+      }
+    ]
+  }
+}
