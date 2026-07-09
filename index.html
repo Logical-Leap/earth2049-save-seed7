@@ -258,6 +258,18 @@ kbd{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);paddi
   font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:6px 10px;}
 #devToggleBtn:hover{background:rgba(0,229,255,.15);}
 body.dev-open #devToggleBtn{opacity:.55;}
+
+/* co-op */
+.coopbox{width:min(720px,94vw);border:1px solid rgba(0,229,255,.28);background:rgba(8,12,24,.72);padding:16px;text-align:left;box-shadow:0 0 28px rgba(0,229,255,.12);}
+.coopgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin:12px 0;}
+.coopbox label{display:block;font-size:9px;letter-spacing:.24em;text-transform:uppercase;opacity:.68;margin-bottom:5px;}
+.coopbox input{width:100%;pointer-events:auto;background:#080b14;color:#e8f6ff;border:1px solid rgba(120,150,255,.36);padding:9px 10px;font-size:13px;letter-spacing:.08em;}
+#coopRoomCode{font-size:34px;letter-spacing:.3em;color:var(--yellow);font-weight:900;text-align:center;text-shadow:0 0 16px rgba(255,230,0,.55);}
+#coopPlayers{display:flex;flex-direction:column;gap:6px;margin-top:10px;}
+.cooprow{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid rgba(120,150,255,.16);padding:7px 0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;}
+.cooprow span:last-child{opacity:.7;text-align:right;}
+#coopHint{font-size:11px;line-height:1.6;letter-spacing:.12em;opacity:.75;margin-top:10px;text-align:center;}
+.coop-nameplate{transform:translateY(-10px);}
 </style>
 </head>
 <body>
@@ -319,12 +331,38 @@ body.dev-open #devToggleBtn{opacity:.55;}
   <div class="logo3">SAVE SEED 7</div>
   <div class="tagline">Operation Dreamcaster &mdash; Simulation Combat Protocol</div>
   <div class="btnrow">
-    <div class="btn primary" id="btnStart">&#9654; Start Simulation</div>
+    <div class="btn primary" id="btnStart">&#9654; Solo Simulation</div>
+    <div class="btn" id="btnHostCoop">Host Co-op</div>
+    <div class="btn" id="btnJoinCoop">Join Co-op</div>
     <div class="btn" id="btnArmory">Armory</div>
     <div class="btn" id="btnHelp">Briefing</div>
   </div>
   <div class="gtwallet" id="titleGT">&#11042; 0 GIGATECH BANKED</div>
   <div class="small" id="titleBest">BEST RUN: —</div>
+</div>
+
+
+<div class="ov" id="ovCoop">
+  <h2 class="ovtitle">Co-op Uplink</h2>
+  <div class="ovsub">Private room · 1-4 Purple Team operatives · personal rewards</div>
+  <div class="coopbox">
+    <label>Room Code</label>
+    <div id="coopRoomCode">—</div>
+    <div class="coopgrid">
+      <div><label>Display Name</label><input id="coopName" maxlength="24" value="Purple Operative"></div>
+      <div><label>Join Room Code</label><input id="coopJoinCode" maxlength="8" placeholder="AB12C"></div>
+      <div><label>Worker URL</label><input id="coopWorkerUrl" placeholder="http://127.0.0.1:8787 or https://your-worker.workers.dev"></div>
+    </div>
+    <div class="btnrow" style="margin:12px auto 0;">
+      <div class="btn" id="btnSaveProfile">Save Profile</div>
+      <div class="btn primary" id="btnCoopConnect">Connect / Join</div>
+      <div class="btn" id="btnCoopReady">Ready: No</div>
+      <div class="btn primary" id="btnCoopStart" style="display:none;">Start Co-op Run</div>
+      <div class="btn danger" id="btnCoopBack">Leave / Back</div>
+    </div>
+    <div id="coopPlayers"></div>
+    <div id="coopHint">Set a Worker URL, host a private room, or join by code. Solo mode never requires network.</div>
+  </div>
 </div>
 
 <div class="ov" id="ovArmory">
@@ -462,12 +500,17 @@ body.dev-open #devToggleBtn{opacity:.55;}
 <script src="lib/BufferGeometryUtils.js?v=20260707-editor-workflow"></script>
 <script src="lib/GLTFLoader.js?v=20260707-editor-workflow"></script>
 <script src="lib/SkeletonUtils.js?v=20260707-editor-workflow"></script>
-<script src="js/config.js?v=20260707-editor-workflow"></script>
+<script src="js/config.js?v=20260708-coop-foundation"></script>
 <script src="js/loader.js?v=20260708-district-textures"></script>
-<script src="js/audio.js?v=20260707-editor-workflow"></script>
-<script src="js/assets.js?v=20260707-editor-workflow"></script>
+<script src="js/net/net-protocol.js?v=20260708-coop-foundation"></script>
+<script src="js/net/net-config.js?v=20260708-coop-foundation"></script>
+<script src="js/net/net-interpolation.js?v=20260708-coop-foundation"></script>
+<script src="js/net/net-client.js?v=20260708-coop-foundation"></script>
+<script src="js/net/net-room.js?v=20260708-coop-foundation"></script>
+<script src="js/audio.js?v=20260708-coop-foundation"></script>
+<script src="js/assets.js?v=20260708-coop-foundation"></script>
 <script src="js/world.js?v=20260708-scene-visibility"></script>
 <script src="js/devconsole.js?v=20260708-scene-manifest"></script>
-<script src="js/game.js?v=20260708-scene-manifest"></script>
+<script src="js/game.js?v=20260708-coop-foundation"></script>
 </body>
 </html>

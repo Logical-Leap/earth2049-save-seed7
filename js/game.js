@@ -38,7 +38,28 @@ function loadSave() { // NOSONAR - compact backwards-compatible localStorage mig
   if (!SAVE.modifiersSeen) SAVE.modifiersSeen = {};
   if (!SAVE.codex) SAVE.codex = {};
   if (!SAVE.corruptionUp) SAVE.corruptionUp = {};
+  ensureLocalProfile();
 }
+function randomId() {
+  if (crypto?.randomUUID) return crypto.randomUUID();
+  const a = new Uint8Array(12); crypto.getRandomValues(a);
+  return Array.from(a, b => b.toString(16).padStart(2, '0')).join('');
+}
+function ensureLocalProfile() {
+  if (!SAVE) return null;
+  if (!SAVE.profile) SAVE.profile = {};
+  if (!SAVE.profile.id) SAVE.profile.id = 'op-' + randomId();
+  if (!SAVE.profile.name) SAVE.profile.name = 'Purple Operative';
+  if (!SAVE.profile.color) SAVE.profile.color = '#9b59ff';
+  return SAVE.profile;
+}
+function setProfileName(name) {
+  const p = ensureLocalProfile();
+  p.name = String(name || 'Purple Operative').trim().slice(0, 24) || 'Purple Operative';
+  persist();
+  return p;
+}
+
 function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {} }
 const upLv = id => SAVE.up[id] || 0;
 const corruptLv = id => SAVE.corruptionUp?.[id] || 0;
@@ -100,11 +121,12 @@ async function boot() {
   Particles.init();
   DmgNums.init();
   initInput();
+  initCoopRuntime();
   wireMenus();
   if (typeof DevConsole !== 'undefined') await DevConsole.init();
   onResize();
   addEventListener('resize', onResize);
-  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run') setPaused(true); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'run' && !CoopRoom?.isCoop) setPaused(true); });
 
   // living city backdrop behind the title screen
   await World.build(scene, 0);
@@ -394,7 +416,7 @@ function resetRunWorld() {
   if (gunGroup) gunGroup.visible = false;
 }
 
-async function newRun() {
+async function newRun(opts = {}) {
   resetRunWorld();
   const p = {
     pos: V3(), velY: 0, yaw: Math.PI * 0.25, pitch: 0, onGround: true,
@@ -406,7 +428,7 @@ async function newRun() {
     fireT: 0, swapT: 0, adrenalT: 0, bobT: 0, recoil: 0,
     dashT: 0, dashCdT: 0, dashX: 0, dashZ: 0, iframesT: 0,
     combo: 0, comboT: 0, bestCombo: 0, gt: 0,
-    stats: { kills: 0, dmg: 0, taken: 0, missions: 0 }, intel: {}, reviveUsed: false,
+    stats: { kills: 0, dmg: 0, taken: 0, missions: 0, revives: 0 }, intel: {}, reviveUsed: false, coopState: 'alive', bleedT: 0,
   };
   p.hp = p.maxHp;
   p.slideK = 0; p.swayX = 0; p.swayY = 0;
@@ -420,6 +442,8 @@ async function newRun() {
     augs: [], theme: null, autoFire: SAVE.opts.auto,
     currentRoute: null, nextRoute: ROUTES[0], mission: null, ammoPity: 0,
     simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {}, banked:false,
+    coop: CoopRoom?.isCoop ? { roomCode: CoopRoom.roomCode, host: CoopRoom.isHost, seed: opts.seed || CoopRoom.runSeed || Date.now(), partySize: Math.max(1, CoopRoom.lobby?.players?.length || 1), rewardBanked:false } : null,
+    nextNetEnemyId: 1, nextNetPickupId: 1,
   };
   applyRunProgression(p);
   applyModifierData(G);
@@ -428,7 +452,7 @@ async function newRun() {
   AudioSys.setSfx(SAVE.opts.sfx); AudioSys.setMusic(SAVE.opts.music);
   equipGun();
   setState('loading');
-  await startDistrict(0);
+  await startDistrict(opts.district || 0);
   banner('SIMULATION #' + SAVE.runs, 'OPERATION DREAMCASTER — CAST INITIATED');
   setState('run');
 }
@@ -538,7 +562,8 @@ function startWave() {
   const d = G.district, dist = DISTRICTS[d];
   G.phase = 'wave';
   const routeEnemy = G.currentRoute?.enemy || 1;
-  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy * (1 + (G.simTier - 1) * 0.07));
+  const coopScale = CoopRoom?.isCoop ? NET_CONFIG.partyScaling[Math.min(4, Math.max(1, G.coop?.partySize || CoopRoom.lobby?.players?.length || 1))] : null;
+  const n = Math.round((5 + d * 2 + G.wave * 2) * (0.85 + G.director.threat * 0.5) * routeEnemy * (1 + (G.simTier - 1) * 0.07) * (coopScale?.enemyCount || 1));
   G.pending = [];
   for (let i = 0; i < n; i++) G.pending.push(pickFromPool(dist.pool));
   if (G.modStats.compliance && G.district < 4) for (let i = 0; i < Math.max(1, Math.floor(n * 0.16)); i++) G.pending.push('trooper');
@@ -565,7 +590,8 @@ function startBoss() {
 function spawnEnemy(typeId, x, z, elite, bossId) { // NOSONAR - enemy spawn construction keeps rig/state together
   const def = bossId ? BOSSES[bossId] : ETYPES[typeId];
   const rig = bossId ? Assets.buildBoss(bossId) : Assets.buildEnemy(typeId);
-  let hpMult = (1 + G.district * 0.5) * (0.9 + G.director.threat * 0.3) * (elite ? 2.2 : 1) * G.tierData.hp;
+  const coopScale = CoopRoom?.isCoop ? NET_CONFIG.partyScaling[Math.min(4, Math.max(1, G.coop?.partySize || CoopRoom.lobby?.players?.length || 1))] : null;
+  let hpMult = (1 + G.district * 0.5) * (0.9 + G.director.threat * 0.3) * (elite ? 2.2 : 1) * G.tierData.hp * (coopScale?.enemyHp || 1);
   if (def.fac === 'shillz' && G.modStats.shillShield) hpMult *= 1 + G.modStats.shillShield / 100;
   if (def.fac === 'bots' && intelRank('bots') >= 4 && bossId === 'spyder') hpMult *= 0.9;
   const e = {
@@ -581,6 +607,7 @@ function spawnEnemy(typeId, x, z, elite, bossId) { // NOSONAR - enemy spawn cons
     atkAnim: 0, dieT: 0, contactT: 0,
     size: def.size, fly: (rig.fly || def.fly || 0),
     pat: 0, patT: 1.4, phase2: false,
+    netId: G?.nextNetEnemyId ? 'e' + (G.nextNetEnemyId++) : null,
   };
   if (e.fly) e.rootY = e.fly + 8;
   rig.root.position.set(x, e.rootY, z);
@@ -590,6 +617,7 @@ function spawnEnemy(typeId, x, z, elite, bossId) { // NOSONAR - enemy spawn cons
     sp.scale.set(2.2, 0.8, 1); sp.position.y = 0.3; rig.root.add(sp);
   }
   G.enemies.push(e);
+  CoopRoom?.onEnemySpawn?.(e);
   spawnBeam(x, z, bossId ? 0xff2d55 : FACTIONS[def.fac].neon, 16);
   AudioSys.sfx('spawn');
   return e;
@@ -1045,8 +1073,9 @@ function hitscan(o, dir, w, muzzle) {
   }
 }
 
-function damageEnemy(e, dmg, crit, at) {
+function damageEnemy(e, dmg, crit, at, netConfirmed) {
   if (e.state === 'dying' || state !== 'run') return;
+  if (CoopRoom?.isCoop && !CoopRoom.isHost && !netConfirmed) CoopRoom.onEnemyDamaged(e, dmg, crit);
   if (e.type.fac === 'bots' && intelRank('bots') >= 3) dmg *= 1.06;
   e.hp -= dmg; e.flash = 0.75;
   G.p.stats.dmg += dmg;
@@ -1064,6 +1093,7 @@ function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
   p.stats.kills++; SAVE.kills++;
+  CoopRoom?.onEnemyDeath?.(e);
   addMastery(curWeapon().id, e.boss ? 35 : (e.elite ? 14 : 6), { kills: e.boss ? 0 : 1, eliteKills: e.elite ? 1 : 0 });
   let intelGain = 1;
   if (e.elite) intelGain = 3;
@@ -1156,7 +1186,9 @@ function spawnPickup(kind, x, z, val, weapon) {
   const mesh = Assets.pickupMesh(kind, hex);
   mesh.position.set(x, 0, z);
   scene.add(mesh);
-  G.pickups.push({ kind, mesh, x, z, val, weapon, t: rnd(0, 6), life: kind === 'weapon' ? 999 : 30 });
+  const pk = { kind, mesh, x, z, val, weapon, t: rnd(0, 6), life: kind === 'weapon' ? 999 : 30, netId: G?.nextNetPickupId ? 'p' + (G.nextNetPickupId++) : null };
+  G.pickups.push(pk);
+  CoopRoom?.onPickupSpawn?.(pk);
 }
 function pickupTick(pk, dt) {
   const p = G.p;
@@ -1186,6 +1218,7 @@ function pickupTick(pk, dt) {
       if (w && w.ammo !== Infinity) w.ammo = Math.min(w.ammoMax, w.ammo + Math.round(w.ammoMax * 0.45));
       AudioSys.sfx('pickup');
     }
+    CoopRoom?.onPickupCollect?.(pk);
     pk.dead = true;
   }
   if (pk.life <= 0) pk.dead = true;
@@ -1217,6 +1250,7 @@ function takeCrate() {
   if (!nearCrate) return;
   G.p.weapons[1] = nearCrate.weapon;
   G.p.cur = 1; equipGun();
+  CoopRoom?.onPickupCollect?.(nearCrate);
   nearCrate.dead = true; scene.remove(nearCrate.mesh);
   nearCrate = null;
   AudioSys.sfx('wpickup');
@@ -1248,12 +1282,21 @@ function damagePlayer(dmg, src) {
         const d = Math.hypot(e.pos.x - p.pos.x, e.pos.z - p.pos.z);
         if (d < 8) damageEnemy(e, 120, false, e.pos);
       }
+    } else if (CoopRoom?.isCoop && p.coopState !== 'downed') {
+      p.coopState = 'downed'; p.bleedT = 35; p.hp = 1; p.iframesT = 1.2;
+      banner('OPERATIVE DOWNED', 'WAIT FOR REVIVE — FULL WIPE ENDS THE RUN');
+      AudioSys.sfx('hurt');
     } else doDeath();
   }
 }
 
 function playerTick(dt) {
   const p = G.p;
+  if (CoopRoom?.isCoop && p.coopState === 'downed') {
+    p.bleedT -= dt;
+    Input.fire = false;
+    if (p.bleedT <= 0) { p.coopState = 'dead'; doDeath(); return; }
+  }
   // look
   p.yaw -= Input.lookDX * 0.0034 * SAVE.opts.sens;
   p.pitch = clamp(p.pitch - Input.lookDY * 0.0034 * SAVE.opts.sens, -1.45, 1.45);
@@ -1267,7 +1310,7 @@ function playerTick(dt) {
   const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw);
   let wx = (ix * cy - iz * sy), wz = (-ix * sy - iz * cy);
 
-  const spd = CFG.BASE_SPEED * (1 + p.mods.spd);
+  const spd = CFG.BASE_SPEED * (1 + p.mods.spd) * (p.coopState === 'downed' ? 0.28 : 1);
   let mvx = wx * spd, mvz = wz * spd;
 
   // dash
@@ -1489,6 +1532,7 @@ function bankGT() {
 }
 function doDeath() {
   if (G?.banked) return;
+  if (CoopRoom?.isCoop) CoopRoom.grantPersonalReward('wipe');
   setState('dead');
   bankGT();
   AudioSys.musicStop();
@@ -1499,6 +1543,7 @@ function doDeath() {
 }
 function doVictory() {
   if (G?.banked) return;
+  if (CoopRoom?.isCoop) CoopRoom.grantPersonalReward('run_complete');
   setState('victory');
   SAVE.wins++;
   G.p.gt += Math.round(500 * G.tierData.reward);
@@ -1520,6 +1565,83 @@ function statLines() {
     'FACTION INTEL RECOVERED <b>+' + intel + '</b><br>' +
     'GIGATECH BANKED <b>+' + p.gt + ' &#11042;</b><br>' +
     'SIM TIER <b>' + G.simTier + '</b> &nbsp; CORRUPTION <b>' + SAVE.corruption + '</b>';
+}
+
+
+/* ============ co-op runtime ============ */
+function initCoopRuntime() {
+  if (!window.CoopRoom) return;
+  CoopRoom.init({
+    getSave: () => SAVE,
+    getGame: () => G,
+    getScene: () => scene,
+    getCamera: () => camera,
+    getDistrictFac: i => DISTRICTS[i]?.fac,
+    isRunning: () => state === 'run',
+    ensureProfile: ensureLocalProfile,
+    startCoopRun: async opts => { AudioSys.init(); hideOverlays(); await newRun(opts || {}); },
+    onLobby: renderCoopLobby,
+    notice: msg => banner('CO-OP', msg),
+    grantReward: grantPersonalReward,
+    onEnemySpawnNet: spawnEnemyFromNet,
+    onEnemyStateNet: applyEnemyStateNet,
+    onHitNet: applyHitNet,
+    onPickupCollectNet: applyPickupCollectNet,
+  });
+}
+function hideOverlays() { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); }
+function grantPersonalReward(reward, reason) {
+  if (!reward) return;
+  if (reward.gt) SAVE.gt += Math.round(reward.gt);
+  if (reward.factionIntel) for (const [fac, pts] of Object.entries(reward.factionIntel)) {
+    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points:0, leaders:0 };
+    SAVE.intel[fac].points += Math.round(pts || 0);
+  }
+  if (reward.mastery) for (const [wid, xp] of Object.entries(reward.mastery)) addMastery(wid, Number(xp) || 0, {});
+  persist();
+  if (reason) banner('PERSONAL CO-OP REWARD', '+' + Math.round(reward.gt || 0) + ' GIGATECH — ' + reason.toUpperCase());
+}
+function spawnEnemyFromNet(ne) {
+  if (!G || !ne || G.enemies.some(e => e.netId === ne.id)) return;
+  const e = spawnEnemy(ne.typeId, ne.x, ne.z, !!ne.elite, ne.boss || null);
+  e.netId = ne.id; e.hp = Number(ne.hp || e.hp); e.maxHp = Number(ne.maxHp || e.maxHp);
+}
+function applyEnemyStateNet(enemies) {
+  if (!G || CoopRoom?.isHost) return;
+  for (const ne of enemies) {
+    let e = G.enemies.find(x => x.netId === ne.id);
+    if (!e) { spawnEnemyFromNet(ne); e = G.enemies.find(x => x.netId === ne.id); }
+    if (!e) continue;
+    e.pos.x += (Number(ne.x) - e.pos.x) * 0.45;
+    e.pos.z += (Number(ne.z) - e.pos.z) * 0.45;
+    e.yaw = Number(ne.yaw || e.yaw || 0);
+    e.rootY = Number(ne.y || e.rootY || 0);
+    e.hp = Number(ne.hp ?? e.hp); e.maxHp = Number(ne.maxHp ?? e.maxHp);
+    e.state = ne.state || e.state;
+    e.rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
+    if (e.hp <= 0 && e.state !== 'dying') killEnemy(e);
+  }
+}
+function applyHitNet(msg) {
+  if (!G || !CoopRoom?.isHost) return;
+  const e = G.enemies.find(x => x.netId === msg.enemyId);
+  if (e) damageEnemy(e, Math.max(0, Number(msg.damage) || 0), !!msg.crit, e.pos, true);
+}
+function applyPickupCollectNet(msg) {
+  if (!G) return;
+  const pk = G.pickups.find(p => p.netId === msg.pickupId);
+  if (!pk || pk.dead) return;
+  pk.dead = true;
+  if (pk.mesh) scene.remove(pk.mesh);
+}
+function renderCoopLobby(room) {
+  const list = el('coopPlayers');
+  if (!list) return;
+  if (!room) { list.innerHTML = '<div class="cooprow">Disconnected</div>'; return; }
+  el('coopRoomCode').textContent = room.roomCode || CoopRoom.roomCode || '—';
+  list.innerHTML = (room.players || []).map(p => '<div class="cooprow"><span style="color:' + (p.color || '#9b59ff') + '">●</span> ' + p.name + (p.id === room.hostPlayerId ? ' <b>HOST</b>' : '') + '<span>' + (p.ready ? 'READY' : 'STANDBY') + ' · LV ' + (p.effectiveLevel || 1) + '</span></div>').join('');
+  const host = room.hostPlayerId === ensureLocalProfile().id;
+  el('btnCoopStart').style.display = host ? 'block' : 'none';
 }
 
 /* ============ HUD ============ */
@@ -1793,9 +1915,45 @@ function addMetaCard(u, add) {
   });
 }
 
+
+async function hostCoopFlow() {
+  ensureLocalProfile();
+  el('coopName').value = SAVE.profile.name;
+  el('coopWorkerUrl').value = NET_CONFIG.workerUrl || '';
+  el('coopHint').textContent = 'Creating private room...';
+  try {
+    const code = await CoopRoom.host();
+    el('coopHint').textContent = 'Share room code ' + code + '. Host starts when the squad is ready.';
+    renderCoopLobby(CoopRoom.lobby || { roomCode:code, hostPlayerId:SAVE.profile.id, players:[SAVE.profile] });
+  } catch (e) { el('coopHint').textContent = e.message || String(e); }
+}
+function prepJoinCoopFlow() {
+  ensureLocalProfile();
+  el('coopName').value = SAVE.profile.name;
+  el('coopWorkerUrl').value = NET_CONFIG.workerUrl || '';
+  el('coopHint').textContent = 'Enter a private room code to join a co-op lobby.';
+  renderCoopLobby(null);
+  el('btnCoopConnect').onclick = async () => {
+    setProfileName(el('coopName').value);
+    NetConfig.setWorkerUrl(el('coopWorkerUrl').value);
+    const code = el('coopJoinCode').value.trim().toUpperCase();
+    if (!code) { el('coopHint').textContent = 'Room code required.'; return; }
+    el('coopHint').textContent = 'Joining ' + code + '...';
+    try { await CoopRoom.join(code); el('coopHint').textContent = 'Joined ' + code + '. Wait for host start.'; }
+    catch (e) { el('coopHint').textContent = e.message || String(e); }
+  };
+}
+
 function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
-  el('btnStart').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
+  el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
+  el('btnHostCoop').onclick = async () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); await hostCoopFlow(); };
+  el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
+  el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); updateTitle(); show('ovTitle'); };
+  el('btnCoopReady').onclick = () => { AudioSys.sfx('ui'); const ready = !el('btnCoopReady').classList.contains('primary'); el('btnCoopReady').classList.toggle('primary', ready); el('btnCoopReady').textContent = ready ? 'Ready: Yes' : 'Ready: No'; CoopRoom?.setReady?.(ready); };
+  el('btnCoopStart').onclick = () => { AudioSys.sfx('ui'); hideOverlays(); CoopRoom?.startRun?.(); };
+  el('btnSaveProfile').onclick = () => { setProfileName(el('coopName').value); AudioSys.sfx('pickup'); renderCoopLobby(CoopRoom?.lobby); };
+  el('coopWorkerUrl').onchange = e => NetConfig?.setWorkerUrl?.(e.target.value);
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
   el('btnArmBack').onclick = () => { AudioSys.sfx('ui'); updateTitle(); show('ovTitle'); };
   el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
@@ -1967,6 +2125,7 @@ function frame(t) {
 
     keyMove();
     playerTick(sdt);
+    CoopRoom?.tick?.(sdt);
     flowT -= sdt;
     if (flowT <= 0) { flowT = 0.35; World.computeFlow(G.p.pos.x, G.p.pos.z); }
 

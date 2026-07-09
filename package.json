@@ -7,7 +7,9 @@
     "scenes:manifest": "node scripts/build-scene-manifest.js",
     "predev": "node scripts/build-scene-manifest.js",
     "dev": "serve -l 8049 .",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "coop:dev": "wrangler dev --local --port 8787",
+    "coop:deploy": "wrangler deploy"
   },
   "devDependencies": {
     "serve": "^14.2.4"

@@ -50,6 +50,24 @@ assassin squads; struggle and it toys with you.
 Volt-9 Pistol · VX-2 Ripper SMG · Riptide-12 Shotgun · M-52 Revenant AR ·
 LRX-7 Harbinger Sniper · Compliance Saw LMG · Plasma Lancer · MGL-6 Thunderer
 
+
+## Co-op Foundation
+
+Earth 2049 now includes an optional co-op foundation for private 1-4 player rooms. Solo mode still works offline and does not require Cloudflare.
+
+- **Solo Simulation** launches the original local roguelike loop.
+- **Host Co-op** creates a private room through a Cloudflare Worker + Durable Object backend.
+- **Join Co-op** connects by room code.
+- Co-op uses local profile identity (`SAVE.profile`) for display name/color; no login is required.
+- Remote players render as lightweight rebel avatars with nameplates and HP.
+- The MVP uses host-authoritative enemy simulation with Durable Object room authority for lobby, WebSocket membership, event ordering, ready state, and shared run start.
+- Co-op rewards are personal: GigaTech, faction intel, mastery, and completion credit should not be stolen from other players.
+
+See:
+
+- [`docs/COOP_ARCHITECTURE.md`](docs/COOP_ARCHITECTURE.md)
+- [`docs/CLOUDFLARE_DEPLOYMENT.md`](docs/CLOUDFLARE_DEPLOYMENT.md)
+
 ## Tech Notes
 
 - No-build static Three.js r147 (UMD) + UnrealBloom postprocessing, local copies in `lib/`
