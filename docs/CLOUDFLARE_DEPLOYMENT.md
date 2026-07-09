@@ -1,13 +1,38 @@
-# Cloudflare Co-op Backend Deployment
+# Cloudflare Deployment
 
-Earth 2049 co-op uses a Cloudflare Worker with Durable Objects. The static game can still be hosted on GitHub Pages or opened locally for solo play.
+Earth 2049 uses a split Cloudflare setup so static game delivery does **not** burn Worker requests:
+
+- **Cloudflare Pages** serves the static Three.js game, assets, scenes, textures, and GLBs from `dist-pages/`.
+- **Cloudflare Worker + Durable Object** runs only the co-op room/WebSocket backend.
+- Solo play and static asset delivery do not require the Worker.
+
+Live production instance:
+
+- Static game: `https://earth2049-save-seed7.pages.dev/`
+- Co-op backend: `https://earth2049-coop.chandler-fac.workers.dev/`
 
 ## Files
 
-- `wrangler.jsonc` — Worker/Durable Object config.
+- `wrangler.pages.jsonc` — Pages project config (`earth2049-save-seed7`, output `dist-pages`).
+- `wrangler.jsonc` — Worker/Durable Object config (`earth2049-coop`).
+- `_headers` — Pages/CDN cache and security headers.
+- `scripts/prepare-pages-dist.js` — copies only runtime static files into `dist-pages/`.
 - `workers/coop-worker.js` — HTTP routes and WebSocket entrypoint.
 - `workers/room-durable-object.js` — per-room lobby/session authority.
 - `js/net/net-config.js` — frontend Worker URL configuration.
+
+## Why this split
+
+Do **not** deploy the whole game as a Worker. The app is a static no-build Three.js game, and Pages/CDN is the correct serving layer for:
+
+- `index.html`
+- `js/`
+- `lib/`
+- `assets/`
+- editor-exported scenes
+- GLB/textures/concept art assets
+
+The Worker is only justified for co-op because private rooms need WebSockets and Durable Object instance state.
 
 ## Install Wrangler
 
@@ -22,12 +47,23 @@ Or globally:
 npm install -g wrangler
 ```
 
+## Deploy static game to Cloudflare Pages
+
+Prepare the minimal static runtime directory, then deploy it to Pages:
+
+```bash
+npm run pages:prepare
+npx wrangler pages deploy dist-pages --project-name earth2049-save-seed7 --branch main --commit-dirty=true
+```
+
+The deploy intentionally uploads only `index.html`, `_headers`, `js/`, `lib/`, `assets/data/`, `assets/models/`, `assets/scenes/`, and `assets/levels/`. It does not upload Worker source, package files, `.git`, docs, concept-art source files, or unreferenced texture studies.
+
 ## Local development
 
 Run the Worker locally:
 
 ```bash
-npx wrangler dev --local --port 8787
+npx wrangler dev --config wrangler.jsonc --local --port 8787
 ```
 
 Run the static game in another terminal:
@@ -59,10 +95,10 @@ Login:
 npx wrangler login
 ```
 
-Deploy:
+Deploy the co-op backend Worker/Durable Object:
 
 ```bash
-npx wrangler deploy
+npx wrangler deploy --config wrangler.jsonc
 ```
 
 Wrangler prints a Worker URL like:

@@ -8,8 +8,10 @@
     "predev": "node scripts/build-scene-manifest.js",
     "dev": "serve -l 8049 .",
     "start": "npm run dev",
-    "coop:dev": "wrangler dev --local --port 8787",
-    "coop:deploy": "wrangler deploy"
+    "pages:prepare": "node scripts/prepare-pages-dist.js",
+    "pages:deploy": "npm run pages:prepare && wrangler pages deploy dist-pages --project-name earth2049-save-seed7 --branch main --commit-dirty=true",
+    "coop:dev": "wrangler dev --config wrangler.jsonc --local --port 8787",
+    "coop:deploy": "wrangler deploy --config wrangler.jsonc"
   },
   "devDependencies": {
     "serve": "^14.2.4"
