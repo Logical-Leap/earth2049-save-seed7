@@ -3,8 +3,9 @@
 (function (global) {
   const params = new URLSearchParams(location.search);
   const stored = (() => { try { return localStorage.getItem('e2049.coop.workerUrl') || ''; } catch (e) { return ''; } })();
+  const officialWorkerUrl = location.hostname === 'earth2049-save-seed7.pages.dev' ? 'https://earth2049-coop.chandler-fac.workers.dev' : '';
   const NET_CONFIG = {
-    workerUrl: params.get('coopWorker') || stored || '',
+    workerUrl: params.get('coopWorker') || stored || officialWorkerUrl,
     protocolVersion: 1,
     maxPlayers: 4,
     snapshotHz: 15,

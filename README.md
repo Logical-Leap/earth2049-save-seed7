@@ -1,6 +1,11 @@
 # EARTH 2049: SAVE SEED 7
 
-**▶ PLAY NOW: https://logical-leap.github.io/earth2049-save-seed7/** — desktop or phone, no install.
+Use the live Cloudflare Pages deployment, or GitHub Pages fallback:
+
+- Cloudflare Pages: https://earth2049-save-seed7.pages.dev/
+- GitHub Pages: https://logical-leap.github.io/earth2049-save-seed7/
+
+The Cloudflare setup is split intentionally: Pages serves the static game and assets; Workers/Durable Objects are used only for co-op rooms/WebSockets.
 
 A first-person roguelike shooter set in the Earth 2049 universe. You are **Punished Elliot**,
 casting combat simulations through the OG Device to find the timeline where Turing falls.

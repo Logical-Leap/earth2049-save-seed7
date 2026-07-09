@@ -1,0 +1,26 @@
+# Earth 2049 static runtime headers for Cloudflare Pages.
+# Static assets stay on Pages/CDN. The only Worker in this project is the
+# co-op room server, because WebSocket rooms need Durable Objects.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+
+/js/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/lib/*
+  Cache-Control: public, max-age=86400
+
+/assets/models/*
+  Cache-Control: public, max-age=604800, immutable
+
+/assets/textures/*
+  Cache-Control: public, max-age=604800, immutable
+
+/assets/scenes/*
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/assets/data/*
+  Cache-Control: public, max-age=300, must-revalidate
