@@ -665,6 +665,16 @@ function waveTick(dt) {
 function enemyTick(e, dt) {
   const p = G.p;
   const rig = e.rig;
+  if (CoopRoom?.isCoop && !CoopRoom.isHost && e.state !== 'dying') {
+    const snap = e.netBuf?.sample?.() || e.netBuf?.latest?.();
+    if (snap) {
+      e.pos.x = snap.x; e.pos.z = snap.z; e.rootY = snap.y || 0; e.yaw = snap.yaw || 0;
+      e.hp = snap.hp ?? e.hp; e.maxHp = snap.maxHp ?? e.maxHp; e.state = snap.state || e.state;
+    }
+    rig.root.position.set(e.pos.x, e.rootY, e.pos.z); rig.root.rotation.y = e.yaw || 0;
+    rig.update?.(dt, e.state === 'drop' ? 'idle' : 'walk');
+    return;
+  }
   if (e.stunT > 0) { e.stunT -= dt; e.flash = Math.max(e.flash, 0.25); rig.root.position.set(e.pos.x, e.rootY, e.pos.z); return; }
   if (e.state === 'drop') {
     e.dropV += 30 * dt; e.rootY -= e.dropV * dt;
@@ -1075,7 +1085,7 @@ function hitscan(o, dir, w, muzzle) {
 
 function damageEnemy(e, dmg, crit, at, netConfirmed) {
   if (e.state === 'dying' || state !== 'run') return;
-  if (CoopRoom?.isCoop && !CoopRoom.isHost && !netConfirmed) CoopRoom.onEnemyDamaged(e, dmg, crit);
+  if (CoopRoom?.isCoop && !CoopRoom.isHost && !netConfirmed) { CoopRoom.onEnemyDamaged(e, dmg, crit); return; }
   if (e.type.fac === 'bots' && intelRank('bots') >= 3) dmg *= 1.06;
   e.hp -= dmg; e.flash = 0.75;
   G.p.stats.dmg += dmg;
@@ -1179,16 +1189,18 @@ function rollWeapon(boost) {
   return makeWeapon(pool[Math.trunc(Math.random() * pool.length)], rar); // NOSONAR - gameplay loot RNG, not security-sensitive
 }
 const PICKUP_COLORS = { gt: 0x00e5ff, hp: 0xff2d55, ammo: 0xffe600, armor: 0x2979ff };
-function spawnPickup(kind, x, z, val, weapon) {
+function spawnPickup(kind, x, z, val, weapon, netId, fromNetwork) {
+  if (CoopRoom?.isCoop && !CoopRoom.isHost && !fromNetwork) return null;
   if (kind !== 'weapon' && G?.modStats?.lootbox && Math.random() < 0.12) kind = ['gt','hp','ammo','armor'][Math.trunc(Math.random() * 4)]; // NOSONAR - gameplay pickup mutation RNG
   if (kind === 'gt' && hasRelic('blitzRelic') && Math.random() < 0.12) { val *= 2; G.director.threat = Math.min(1.6, G.director.threat + 0.03); } // NOSONAR - gameplay relic RNG
   const hex = kind === 'weapon' ? RARITIES[weapon.rar].hex : PICKUP_COLORS[kind];
   const mesh = Assets.pickupMesh(kind, hex);
   mesh.position.set(x, 0, z);
   scene.add(mesh);
-  const pk = { kind, mesh, x, z, val, weapon, t: rnd(0, 6), life: kind === 'weapon' ? 999 : 30, netId: G?.nextNetPickupId ? 'p' + (G.nextNetPickupId++) : null };
+  const pk = { kind, mesh, x, z, val, weapon, t: rnd(0, 6), life: kind === 'weapon' ? 999 : 30, netId: netId || (G?.nextNetPickupId ? 'p' + (G.nextNetPickupId++) : null) };
   G.pickups.push(pk);
-  CoopRoom?.onPickupSpawn?.(pk);
+  if (!fromNetwork) CoopRoom?.onPickupSpawn?.(pk);
+  return pk;
 }
 function pickupTick(pk, dt) {
   const p = G.p;
@@ -1290,8 +1302,25 @@ function damagePlayer(dmg, src) {
   }
 }
 
+function tickTeammateRevive() {
+  if (!Input.keys.KeyE && !Input.interact) { CoopRoom.cancelRevive?.(); return; }
+  let best = null, bestD = 3.25;
+  for (const [id, remote] of CoopRoom.remote || []) {
+    const s = remote.buf.latest();
+    if (!s || s.state !== 'downed') continue;
+    const d = Math.hypot(G.p.pos.x - s.x, G.p.pos.z - s.z);
+    if (d < bestD) { bestD = d; best = id; }
+  }
+  if (!best) { CoopRoom.cancelRevive?.(); return; }
+  CoopRoom.beginRevive?.(best);
+  const held = performance.now() - (CoopRoom.reviveStarted || performance.now());
+  if (held < 1800) banner('REVIVING TEAMMATE', Math.ceil((1800 - held) / 100) / 10 + 's — KEEP HOLDING [E]');
+  else if (CoopRoom.completeRevive?.(best)) { Input.keys.KeyE = false; Input.interact = false; }
+}
+
 function playerTick(dt) {
   const p = G.p;
+  if (CoopRoom?.isCoop && p.coopState === 'alive') tickTeammateRevive();
   if (CoopRoom?.isCoop && p.coopState === 'downed') {
     p.bleedT -= dt;
     Input.fire = false;
@@ -1585,8 +1614,13 @@ function initCoopRuntime() {
     grantReward: grantPersonalReward,
     onEnemySpawnNet: spawnEnemyFromNet,
     onEnemyStateNet: applyEnemyStateNet,
+    onEnemyDeathNet: applyEnemyDeathNet,
+    onPickupSpawnNet: spawnPickupFromNet,
     onHitNet: applyHitNet,
     onPickupCollectNet: applyPickupCollectNet,
+    onWorldSnapshotNet: applyWorldSnapshotNet,
+    onReviveNet: applyReviveNet,
+    onRunFailedNet: () => { if (state === 'run') doDeath(); },
   });
 }
 function hideOverlays() { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); }
@@ -1605,22 +1639,57 @@ function spawnEnemyFromNet(ne) {
   if (!G || !ne || G.enemies.some(e => e.netId === ne.id)) return;
   const e = spawnEnemy(ne.typeId, ne.x, ne.z, !!ne.elite, ne.boss || null);
   e.netId = ne.id; e.hp = Number(ne.hp || e.hp); e.maxHp = Number(ne.maxHp || e.maxHp);
+  e.netBuf = new NetInterpolation.SnapshotBuffer(160);
+  e.netBuf.push({ x:Number(ne.x)||0, y:Number(ne.y)||0, z:Number(ne.z)||0, yaw:Number(ne.yaw)||0, hp:e.hp, maxHp:e.maxHp, state:ne.state || e.state });
 }
-function applyEnemyStateNet(enemies) {
+function applyEnemyStateNet(msg) {
   if (!G || CoopRoom?.isHost) return;
+  const enemies = Array.isArray(msg) ? msg : (msg?.enemies || []);
+  if (!Array.isArray(msg)) {
+    if (msg.wave !== undefined) G.wave = Number(msg.wave) || 0;
+    if (msg.phase) G.phase = msg.phase;
+    if (msg.waveDelay !== undefined) G.waveDelay = Number(msg.waveDelay) || 0;
+    if (Array.isArray(msg.pending)) G.pending = msg.pending.slice();
+    if (msg.directorThreat !== undefined && G.director) G.director.threat = Number(msg.directorThreat) || G.director.threat;
+  }
   for (const ne of enemies) {
     let e = G.enemies.find(x => x.netId === ne.id);
     if (!e) { spawnEnemyFromNet(ne); e = G.enemies.find(x => x.netId === ne.id); }
     if (!e) continue;
-    e.pos.x += (Number(ne.x) - e.pos.x) * 0.45;
-    e.pos.z += (Number(ne.z) - e.pos.z) * 0.45;
-    e.yaw = Number(ne.yaw || e.yaw || 0);
-    e.rootY = Number(ne.y || e.rootY || 0);
+    e.netBuf ||= new NetInterpolation.SnapshotBuffer(160);
+    e.netBuf.push({ x:Number(ne.x)||0, z:Number(ne.z)||0, y:Number(ne.y)||0, yaw:Number(ne.yaw)||0, hp:Number(ne.hp ?? e.hp), maxHp:Number(ne.maxHp ?? e.maxHp), state:ne.state || e.state });
     e.hp = Number(ne.hp ?? e.hp); e.maxHp = Number(ne.maxHp ?? e.maxHp);
-    e.state = ne.state || e.state;
-    e.rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
-    if (e.hp <= 0 && e.state !== 'dying') killEnemy(e);
+    if (e.hp <= 0 && e.state !== 'dying') applyEnemyDeathNet(e.netId);
   }
+  const ids = new Set(enemies.map(e => e.id));
+  for (const e of G.enemies) if (e.netId && !ids.has(e.netId) && e.state !== 'dying') applyEnemyDeathNet(e.netId);
+}
+function applyEnemyDeathNet(enemyId) {
+  const e = G?.enemies?.find(x => x.netId === enemyId);
+  if (!e || e.state === 'dying') return;
+  e.netBuf = null; e.hp = 0; e.state = 'dying'; e.dieT = 0;
+}
+function spawnPickupFromNet(np) {
+  if (!G || !np || G.pickups.some(p => p.netId === np.id)) return;
+  const weapon = np.weapon || (np.kind === 'weapon' ? rollWeapon(0) : null);
+  spawnPickup(np.kind, Number(np.x)||0, Number(np.z)||0, Number(np.val)||0, weapon, np.id, true);
+}
+function applyWorldSnapshotNet(snapshot) {
+  if (!G || !snapshot) return;
+  if (!CoopRoom?.isHost) {
+    applyEnemyStateNet(snapshot);
+    const pickupIds = new Set((snapshot.pickups || []).map(p => p.id));
+    for (const p of snapshot.pickups || []) spawnPickupFromNet(p);
+    for (const p of G.pickups) if (p.netId && !pickupIds.has(p.netId)) { p.dead = true; if (p.mesh) scene.remove(p.mesh); }
+    if (snapshot.wave !== undefined) G.wave = Number(snapshot.wave) || 0;
+    if (snapshot.phase) G.phase = snapshot.phase;
+  }
+  for (const ps of snapshot.players || []) CoopRoom?.applyPlayerState?.(ps);
+}
+function applyReviveNet(msg) {
+  if (!G || msg.playerId !== CoopRoom?.profile?.().id) return;
+  G.p.coopState = 'alive'; G.p.hp = Math.max(1, Number(msg.hp)||30); G.p.bleedT = 0; G.p.iframesT = 2;
+  banner('OPERATIVE REVIVED', 'BACK IN THE FIGHT'); AudioSys.sfx('revive');
 }
 function applyHitNet(msg) {
   if (!G || !CoopRoom?.isHost) return;
@@ -1696,7 +1765,7 @@ function hudTick() {
 }
 
 /* ============ input ============ */
-const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, dash: false, jump: false, keys: {} };
+const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, dash: false, jump: false, interact: false, keys: {} };
 function initInput() {
   const cv = el('c');
   // desktop
@@ -1708,11 +1777,11 @@ function initInput() {
     if (e.code === 'KeyQ') swapWeapon();
     if (e.code === 'Digit1') swapWeapon(0);
     if (e.code === 'Digit2') swapWeapon(1);
-    if (e.code === 'KeyE') takeCrate();
+    if (e.code === 'KeyE') { Input.interact = true; takeCrate(); }
     if (e.code === 'KeyF') activeAbility(0);
     if (e.code === 'KeyR') activeAbility(1);
   });
-  addEventListener('keyup', e => { Input.keys[e.code] = false; });
+  addEventListener('keyup', e => { Input.keys[e.code] = false; if (e.code === 'KeyE') Input.interact = false; });
   cv.addEventListener('mousedown', e => {
     if (state !== 'run' || paused) return;
     if (!isTouch && document.pointerLockElement !== cv) { cv.requestPointerLock(); return; }
@@ -1784,7 +1853,7 @@ function initInput() {
   bind('btnAbil1', () => activeAbility(0));
   bind('btnAbil2', () => activeAbility(1));
   bind('btnSwap', () => swapWeapon());
-  bind('btnPick', () => takeCrate());
+  bind('btnPick', () => { Input.interact = true; takeCrate(); }, () => { Input.interact = false; });
   bind('btnAuto', () => {
     G.autoFire = !G.autoFire; SAVE.opts.auto = G.autoFire; persist();
     el('btnAuto').textContent = 'AUTO: ' + (G.autoFire ? 'ON' : 'OFF');
@@ -2130,29 +2199,31 @@ function frame(t) {
     if (flowT <= 0) { flowT = 0.35; World.computeFlow(G.p.pos.x, G.p.pos.z); }
 
     for (const e of G.enemies) enemyTick(e, sdt);
-    // separation
-    const es = G.enemies;
-    for (let i = 0; i < es.length; i++) for (let j = i + 1; j < es.length; j++) {
-      const a = es[i], b = es[j];
-      if (a.state !== 'active' || b.state !== 'active') continue;
-      const dx = b.pos.x - a.pos.x, dz = b.pos.z - a.pos.z;
-      const md = 0.55 * (a.size + b.size);
-      const d2 = dx * dx + dz * dz;
-      if (d2 < md * md && d2 > 0.0001) {
-        const d = Math.sqrt(d2), push = (md - d) * 0.5 / d;
-        a.pos.x -= dx * push; a.pos.z -= dz * push;
-        b.pos.x += dx * push; b.pos.z += dz * push;
+    const authority = !CoopRoom?.isCoop || CoopRoom.isHost;
+    // Only the authority simulates enemy separation, projectiles, waves and director RNG.
+    if (authority) {
+      const es = G.enemies;
+      for (let i = 0; i < es.length; i++) for (let j = i + 1; j < es.length; j++) {
+        const a = es[i], b = es[j];
+        if (a.state !== 'active' || b.state !== 'active') continue;
+        const dx = b.pos.x - a.pos.x, dz = b.pos.z - a.pos.z;
+        const md = 0.55 * (a.size + b.size);
+        const d2 = dx * dx + dz * dz;
+        if (d2 < md * md && d2 > 0.0001) {
+          const d = Math.sqrt(d2), push = (md - d) * 0.5 / d;
+          a.pos.x -= dx * push; a.pos.z -= dz * push;
+          b.pos.x += dx * push; b.pos.z += dz * push;
+        }
       }
     }
     G.enemies = G.enemies.filter(e => !e.dead);
 
-    for (const pr of G.projs) if (!pr.dead) projTick(pr, sdt);
+    if (authority) for (const pr of G.projs) if (!pr.dead) projTick(pr, sdt);
     G.projs = G.projs.filter(p => !p.dead);
     for (const pk of G.pickups) if (!pk.dead) pickupTick(pk, sdt);
     G.pickups = G.pickups.filter(p => !p.dead);
 
-    waveTick(sdt);
-    directorTick(sdt);
+    if (authority) { waveTick(sdt); directorTick(sdt); }
     Particles.tick(sdt);
     DmgNums.tick(dt);
     fxTick(sdt);
