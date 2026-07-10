@@ -4,7 +4,7 @@ Earth 2049 remains a no-build static Three.js game. Co-op is additive: solo play
 
 ## Scope in this pass
 
-Implemented foundation:
+Implemented synchronization refinement:
 
 - Local profile identity in `SAVE.profile` (`id`, `name`, `color`).
 - Title menu co-op flow: **Host Co-op**, **Join Co-op**, room code lobby, ready state, host start.
@@ -12,36 +12,38 @@ Implemented foundation:
 - Cloudflare Worker + Durable Object room backend under `workers/`.
 - Remote rebel avatars with color accent, nameplate, HP text, interpolation.
 - Shared run-start event with room seed/district.
-- Host-authoritative MVP hooks for enemy spawn/state, hit forwarding, pickup collection, and personal reward grants.
+- Host-authoritative enemy simulation with Durable Object validation/canonical registries for enemies, pickups, players, and mission revision.
+- Non-host browsers no longer run wave/director/enemy AI RNG; they render authoritative spawn/state/death messages.
+- Atomic pickup claims in the Durable Object, reconnecting WebSockets, and full world snapshots on join/reconnect.
 - Party-size mission scaling constants in `NET_CONFIG.partyScaling`.
 - Personal co-op rewards via `grantReward(playerId, { gt, xp, factionIntel, mastery })` shape.
-- Co-op downed state: lethal damage sets the local operative to `downed` with a bleed timer instead of immediate solo death; full team wipe/server-side revive resolution is the next authority upgrade.
+- Co-op downed state plus hold-E teammate revive (1.8 seconds, server-validated alive/downed states and 3.25m proximity).
 
 Not included yet: public matchmaking, accounts, PvP, trading, MMO hub, voice chat, anti-cheat-hardening, or database persistence.
 
 ## Authority model
 
-The current pass uses a **hybrid host-authoritative model behind a room-authority protocol**:
+The current pass uses a **host-simulation / Durable-Object-authority model**:
 
-- Durable Object owns room membership, host identity, ready state, room code, run seed, current state, message ordering, and validation.
+- Durable Object owns room membership, host identity, ready state, room code, run seed, current state, canonical enemy/pickup/player registries, atomic pickup claims, revive validation, message ordering, and reconnect snapshots.
 - Host browser remains simulation owner for heavy world logic in the MVP: wave spawning, enemy AI, final enemy HP/death, boss phase, and pickup origin.
-- Non-host clients send intents/events (`PLAYER_STATE`, `HIT`, `PICKUP_COLLECT`) and receive host snapshots/events.
+- Non-host clients send intents (`PLAYER_STATE`, `HIT`, `PICKUP_COLLECT`, `REVIVE`) and receive host snapshots/events. Host-only world mutations are rejected server-side.
 - The message protocol is already shaped so enemy simulation can migrate server-side later without changing UI/lobby flow.
 
 Why: the existing game loop is a local static FPS. Moving all AI/physics server-side in one pass would require a full engine split. This foundation isolates networking in `js/net/*` and keeps solo mode untouched.
 
 ## Protocol
 
-`js/net/net-protocol.js` defines protocol version `1` and explicit JSON message types:
+`js/net/net-protocol.js` defines protocol version `2` and explicit JSON message types. Client and Worker must be deployed together for this breaking protocol upgrade:
 
 - Lobby: `ROOM_STATE`, `PLAYER_READY`, `START_RUN`, `LEAVE_ROOM`, `ERROR`
 - Players: `PLAYER_STATE`, `PLAYER_INPUT`, `SHOOT`, `DOWNED`, `REVIVE`
 - Enemies: `ENEMY_SPAWN`, `ENEMY_STATE`, `HIT`, `DAMAGE`, `ENEMY_DEATH`
 - Pickups/rewards: `PICKUP_SPAWN`, `PICKUP_COLLECT`, `REWARD_GRANT`
-- Run state: `BOSS_STATE`, `DISTRICT_COMPLETE`, `RUN_COMPLETE`, `RUN_FAILED`
+- Run state: `WORLD_SNAPSHOT`, `BOSS_STATE`, `DISTRICT_COMPLETE`, `RUN_COMPLETE`, `RUN_FAILED`
 - Health: `PING`, `PONG`
 
-Messages carry `protocolVersion: 1` and are validated on client and room server.
+Messages carry `protocolVersion: 2` and are validated on client and room server.
 
 ## Client modules
 
@@ -108,9 +110,9 @@ Do **not** use per-player enemy HP. The mission has one authoritative enemy HP p
 
 Mentor-sync direction: if a high-level player joins lower-level content, clamp effective combat stats near mission level while preserving build options, mastery choices, and tactical flexibility.
 
-## Downed/revive direction
+## Downed/revive
 
-The protocol reserves `DOWNED` and `REVIVE`. The current client implements the first gameplay seam: in co-op, lethal damage enters `downed` with a bleed-out timer instead of instant solo death. Full teammate hold-to-revive and room-wide wipe adjudication are follow-up authority work. Target behavior:
+In co-op, lethal damage enters `downed`. An alive teammate within 3.25m holds E (or the mobile interact button) for 1.8 seconds. The Durable Object validates the latest authoritative player states, distance, and hold duration, then broadcasts the revive. If every connected operative is down or dead, the room broadcasts a full-team wipe and ends the run.
 
 - Solo can retain the current death flow.
 - Co-op should use Alive → Downed → Dead.
@@ -126,4 +128,10 @@ MVP checks:
 - Message protocol version/type validation.
 - Clients cannot directly award arbitrary local rewards through the Worker.
 
-Future server-authoritative work should move enemy simulation, damage validation, reward finalization, and reconnect snapshots into the Durable Object.
+## Cost / traffic notes
+
+- Player state: 15 Hz per client. Enemy snapshots: 5 Hz from one host only. At four players and a typical 20-enemy wave this is roughly 60 player messages/sec into the room plus 5 larger enemy messages/sec; fan-out is three WebSocket sends per host snapshot.
+- WebSocket messages are handled inside one Durable Object request lifetime; they do not create new public Worker fetches per frame, but DO duration and WebSocket message billing still apply according to the account plan.
+- Canonical world storage is coalesced to at most one SQLite write per ~2 seconds during active updates, while lobby/start/disconnect/revive are persisted immediately. This avoids a storage write per 5 Hz snapshot.
+- Snapshots are full-state only on connect/reconnect. Regular updates remain bounded (`160` enemies, `240` pickups, four players).
+- Biggest remaining bandwidth lever: binary/delta enemy snapshots or adaptive 2–5 Hz snapshots based on motion. Biggest correctness follow-up: server-side hit geometry and damage validation.

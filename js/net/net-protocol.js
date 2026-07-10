@@ -1,19 +1,21 @@
 /* EARTH 2049 co-op protocol (UMD/no-build) */
 'use strict';
 (function (global) {
-  const PROTOCOL_VERSION = 1;
+  const PROTOCOL_VERSION = 2;
   const MSG = Object.freeze({
-    HELLO:'hello', CREATE_ROOM:'create_room', JOIN_ROOM:'join_room', LEAVE_ROOM:'leave_room', ROOM_STATE:'room_state',
+    HELLO:'hello', CREATE_ROOM:'create_room', JOIN_ROOM:'join_room', LEAVE_ROOM:'leave_room', ROOM_STATE:'room_state', WORLD_SNAPSHOT:'world_snapshot',
     PLAYER_READY:'player_ready', START_RUN:'start_run', PLAYER_INPUT:'player_input', PLAYER_STATE:'player_state',
     SHOOT:'shoot', HIT:'hit', DAMAGE:'damage', ENEMY_SPAWN:'enemy_spawn', ENEMY_STATE:'enemy_state', ENEMY_DEATH:'enemy_death',
     PICKUP_SPAWN:'pickup_spawn', PICKUP_COLLECT:'pickup_collect', BOSS_STATE:'boss_state', DISTRICT_COMPLETE:'district_complete',
-    RUN_COMPLETE:'run_complete', RUN_FAILED:'run_failed', REWARD_GRANT:'reward_grant', DOWNED:'downed', REVIVE:'revive', PING:'ping', PONG:'pong', ERROR:'error'
+    RUN_COMPLETE:'run_complete', RUN_FAILED:'run_failed', REWARD_GRANT:'reward_grant',
+    DOWNED:'downed', REVIVE:'revive', PLAYER_ELIMINATED:'player_eliminated', PING:'ping', PONG:'pong', ERROR:'error'
   });
   const REQUIRED = {
     [MSG.HELLO]: ['player'], [MSG.JOIN_ROOM]: ['roomCode','player'], [MSG.PLAYER_READY]: ['ready'],
     [MSG.START_RUN]: ['seed','district'], [MSG.PLAYER_STATE]: ['playerId','position','yaw'], [MSG.HIT]: ['enemyId','damage'],
     [MSG.ENEMY_SPAWN]: ['enemy'], [MSG.ENEMY_STATE]: ['enemies'], [MSG.ENEMY_DEATH]: ['enemyId'],
-    [MSG.PICKUP_COLLECT]: ['pickupId','playerId'], [MSG.REWARD_GRANT]: ['playerId','reward']
+    [MSG.PICKUP_SPAWN]: ['pickup'], [MSG.PICKUP_COLLECT]: ['pickupId'], [MSG.REWARD_GRANT]: ['playerId','reward'],
+    [MSG.REVIVE]: ['targetPlayerId','heldMs']
   };
   function withMeta(type, payload) {
     return Object.assign({ type, protocolVersion: PROTOCOL_VERSION, t: Date.now() }, payload || {});
