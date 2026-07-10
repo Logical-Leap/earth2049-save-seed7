@@ -5,7 +5,10 @@
   const stored = (() => { try { return localStorage.getItem('e2049.coop.workerUrl') || ''; } catch (e) { return ''; } })();
   const officialWorkerUrl = location.hostname === 'earth2049-save-seed7.pages.dev' ? 'https://earth2049-coop.chandler-fac.workers.dev' : '';
   const NET_CONFIG = {
-    workerUrl: params.get('coopWorker') || stored || officialWorkerUrl,
+    // The official Pages deployment must not be hijacked by a stale localhost or
+    // retired Worker URL saved before production was configured. A query-string
+    // override remains available for explicit diagnostics.
+    workerUrl: params.get('coopWorker') || officialWorkerUrl || stored,
     protocolVersion: 2,
     maxPlayers: 4,
     snapshotHz: 15,
