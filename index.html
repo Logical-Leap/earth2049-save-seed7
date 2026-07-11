@@ -112,6 +112,13 @@ body.inrun #hud{display:block;}
 #pickupPrompt{position:absolute;left:50%;bottom:24vh;transform:translateX(-50%);text-align:center;display:none;pointer-events:none;}
 #pickupName{font-weight:800;letter-spacing:.18em;font-size:clamp(13px,2.4vw,18px);text-transform:uppercase;text-shadow:0 0 12px currentColor;}
 #pickupKey{font-size:10px;letter-spacing:.3em;opacity:.75;margin-top:4px;}
+#revivePrompt{position:absolute;left:50%;bottom:18vh;transform:translateX(-50%);width:min(420px,86vw);text-align:center;display:none;pointer-events:none;
+  padding:10px 14px;border:1px solid rgba(0,229,255,.55);background:rgba(3,12,20,.82);box-shadow:0 0 22px rgba(0,229,255,.25);}
+#revivePrompt.show{display:block;}
+#reviveName{font-size:clamp(13px,2.5vw,18px);font-weight:900;letter-spacing:.2em;color:#fff;text-transform:uppercase;text-shadow:0 0 12px var(--cyan);}
+#reviveKey{font-size:10px;letter-spacing:.26em;color:var(--cyan);margin-top:5px;text-transform:uppercase;}
+#reviveProgress{height:6px;margin-top:8px;background:rgba(255,255,255,.12);overflow:hidden;}
+#reviveProgress i{display:block;width:100%;height:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--cyan),#39ff14);box-shadow:0 0 10px var(--cyan);}
 
 #dmgNums{position:fixed;inset:0;pointer-events:none;z-index:29;overflow:hidden;}
 .dn{position:absolute;font-weight:900;font-size:15px;color:#fff;text-shadow:0 0 6px rgba(0,229,255,.9),0 1px 2px #000;
@@ -311,6 +318,7 @@ body.dev-open #devToggleBtn{opacity:.55;}
   <div id="banner"><div id="bannerMain"></div><div id="bannerSub"></div></div>
   <div id="turingBox"><div id="turingTxt"></div></div>
   <div id="pickupPrompt"><div id="pickupName"></div><div id="pickupKey"></div></div>
+  <div id="revivePrompt"><div id="reviveName">Teammate Down</div><div id="reviveKey">Hold [E] to revive</div><div id="reviveProgress"><i></i></div></div>
 </div>
 
 <div id="touchUI">
@@ -429,7 +437,7 @@ body.dev-open #devToggleBtn{opacity:.55;}
 
 <div class="ov" id="ovPause">
   <h2 class="ovtitle">Paused</h2>
-  <div class="ovsub">Simulation Suspended</div>
+  <div class="ovsub" id="pauseSub">Simulation Suspended</div>
   <div class="optrow">Look Sensitivity <input type="range" id="optSens" min="30" max="200" value="100"></div>
   <div class="optrow">Music <div class="togbtn" id="optMusic">ON</div> &nbsp; SFX <div class="togbtn" id="optSfx">ON</div></div>
   <div class="btnrow">
@@ -506,11 +514,11 @@ body.dev-open #devToggleBtn{opacity:.55;}
 <script src="js/net/net-config.js?v=20260710-coop-url-fix"></script>
 <script src="js/net/net-interpolation.js?v=20260710-coop-sync-v2"></script>
 <script src="js/net/net-client.js?v=20260710-coop-sync-v2"></script>
-<script src="js/net/net-room.js?v=20260710-coop-sync-v2"></script>
+<script src="js/net/net-room.js?v=20260710-coop-pause-revive"></script>
 <script src="js/audio.js?v=20260708-coop-foundation"></script>
 <script src="js/assets.js?v=20260708-coop-foundation"></script>
 <script src="js/world.js?v=20260708-scene-visibility"></script>
 <script src="js/devconsole.js?v=20260708-scene-manifest"></script>
-<script src="js/game.js?v=20260710-coop-sync-v2"></script>
+<script src="js/game.js?v=20260710-coop-pause-revive"></script>
 </body>
 </html>
