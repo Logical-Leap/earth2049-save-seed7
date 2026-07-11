@@ -25,7 +25,7 @@
   function removeAvatar(a) { if (!a) return; if (a.root?.parent) a.root.parent.remove(a.root); if (a.name?.parentNode) a.name.parentNode.removeChild(a.name); }
 
   const CoopRoom = {
-    isCoop:false, isHost:false, roomCode:'', lobby:null, client:null, remote:new Map(), opts:null, lastStateSend:0, lastEnemySend:0, runSeed:0, reviveTarget:null, reviveStarted:0, pendingSnapshot:null,
+    isCoop:false, isHost:false, roomCode:'', lobby:null, client:null, remote:new Map(), opts:null, lastStateSend:0, lastEnemySend:0, runSeed:0, reviveTarget:null, reviveStarted:0, revivePendingAt:0, pendingSnapshot:null,
     init(opts) { this.opts = opts || {}; },
     profile() { return NetProtocol.safePlayer(Object.assign({}, this.opts?.getSave?.()?.profile, { effectiveLevel:profileLevel(this.opts?.getSave?.()) })); },
     status() { return { isCoop:this.isCoop, isHost:this.isHost, roomCode:this.roomCode, lobby:this.lobby }; },
@@ -54,10 +54,10 @@
       else if (msg.type === M.PICKUP_SPAWN && !this.isHost) this.opts?.onPickupSpawnNet?.(msg.pickup);
       else if (msg.type === M.HIT && this.isHost && msg.playerId !== this.profile().id) this.opts?.onHitNet?.(msg);
       else if (msg.type === M.PICKUP_COLLECT) this.opts?.onPickupCollectNet?.(msg);
-      else if (msg.type === M.REVIVE) this.opts?.onReviveNet?.(msg);
+      else if (msg.type === M.REVIVE) { this.cancelRevive(); this.opts?.onReviveNet?.(msg); }
       else if (msg.type === M.RUN_FAILED) this.opts?.onRunFailedNet?.(msg);
       else if (msg.type === M.REWARD_GRANT && msg.playerId === this.profile().id) this.opts?.grantReward?.(msg.reward, msg.reason || 'co-op');
-      else if (msg.type === M.ERROR) this.opts?.notice?.(msg.message || 'Co-op room error');
+      else if (msg.type === M.ERROR) { if (/revive/i.test(msg.message || '')) this.cancelRevive(); this.opts?.notice?.(msg.message || 'Co-op room error'); }
     },
     syncRemotePlayers() {
       const local = this.profile().id, players = this.lobby?.players || [];
@@ -110,9 +110,16 @@
     onEnemyDeath(e) { if (this.isCoop && this.isHost && e?.netId) this.client?.send(NetProtocol.MSG.ENEMY_DEATH, { enemyId:e.netId }); },
     onPickupSpawn(pk) { if (this.isCoop && this.isHost && pk?.netId) this.client?.send(NetProtocol.MSG.PICKUP_SPAWN, { pickup:{ id:pk.netId, kind:pk.kind, x:pk.x, z:pk.z, val:pk.val, weapon:pk.weapon || null } }); },
     onPickupCollect(pk) { if (this.isCoop && pk?.netId) this.client?.send(NetProtocol.MSG.PICKUP_COLLECT, { pickupId:pk.netId, playerId:this.profile().id, kind:pk.kind, val:pk.val }); },
-    beginRevive(targetId) { if (!targetId || !this.client?.connected) return; if (this.reviveTarget !== targetId) { this.reviveTarget = targetId; this.reviveStarted = performance.now(); } },
-    cancelRevive() { this.reviveTarget = null; this.reviveStarted = 0; },
-    completeRevive(targetId) { if (this.reviveTarget !== targetId) return false; const heldMs = performance.now() - this.reviveStarted; if (heldMs < 1800) return false; this.client?.send(NetProtocol.MSG.REVIVE, { targetPlayerId:targetId, heldMs:Math.round(heldMs), hp:30 }); this.cancelRevive(); return true; },
+    beginRevive(targetId) { if (!targetId || !this.client?.connected) return; if (this.reviveTarget !== targetId) { this.reviveTarget = targetId; this.reviveStarted = performance.now(); this.revivePendingAt = 0; } },
+    cancelRevive() { this.reviveTarget = null; this.reviveStarted = 0; this.revivePendingAt = 0; },
+    completeRevive(targetId) {
+      if (this.reviveTarget !== targetId || !this.client?.connected) return false;
+      const now = performance.now(), heldMs = now - this.reviveStarted;
+      if (heldMs < 1800 || (this.revivePendingAt && now - this.revivePendingAt < 1500)) return false;
+      const sent = this.client.send(NetProtocol.MSG.REVIVE, { targetPlayerId:targetId, heldMs:Math.round(heldMs), hp:30 });
+      if (sent) this.revivePendingAt = now;
+      return sent;
+    },
     personalReward(reason) {
       const g = this.opts?.getGame?.(); if (!this.isCoop || !g?.p) return null;
       const fac = this.opts?.getDistrictFac?.(g.district) || 'shillz';

@@ -410,6 +410,8 @@ function resetRunWorld() {
     const node = el(id);
     if (node) node.style.display = 'none';
   }
+  const revivePrompt = el('revivePrompt');
+  if (revivePrompt) { revivePrompt.classList.remove('show'); revivePrompt.style.removeProperty('display'); }
   if (turingT) { clearTimeout(turingT); turingT = null; }
   const turingBox = el('turingBox');
   if (turingBox) turingBox.classList.remove('show');
@@ -1252,6 +1254,7 @@ function updateCratePrompt() {
     el('pickupName').textContent = nearCrate.weapon.name;
     el('pickupName').style.color = rc.color;
     el('pickupKey').textContent = isTouch ? 'TAP [TAKE]' : 'PRESS [E] — ' + rc.name.toUpperCase() + ' ' + nearCrate.weapon.cls.toUpperCase();
+    el('btnPick').textContent = 'TAKE';
     el('btnPick').style.display = isTouch ? 'flex' : 'none';
   } else {
     pr.style.display = 'none';
@@ -1302,20 +1305,39 @@ function damagePlayer(dmg, src) {
   }
 }
 
-function tickTeammateRevive() {
-  if (!Input.keys.KeyE && !Input.interact) { CoopRoom.cancelRevive?.(); return; }
-  let best = null, bestD = 3.25;
+function nearestDownedTeammate(maxDistance = 3.25) {
+  if (!G?.p || !CoopRoom?.isCoop) return null;
+  let best = null, bestD = maxDistance;
   for (const [id, remote] of CoopRoom.remote || []) {
     const s = remote.buf.latest();
     if (!s || s.state !== 'downed') continue;
     const d = Math.hypot(G.p.pos.x - s.x, G.p.pos.z - s.z);
-    if (d < bestD) { bestD = d; best = id; }
+    if (d <= bestD) { bestD = d; best = { id, remote, state:s, distance:d }; }
   }
-  if (!best) { CoopRoom.cancelRevive?.(); return; }
-  CoopRoom.beginRevive?.(best);
+  return best;
+}
+
+function updateRevivePrompt() {
+  const prompt = el('revivePrompt');
+  if (!prompt) return;
+  const target = G?.p?.coopState === 'alive' ? nearestDownedTeammate() : null;
+  prompt.classList.toggle('show', !!target && !paused);
+  if (!target || paused) return;
+  const holding = CoopRoom.reviveTarget === target.id && (Input.keys.KeyE || Input.interact);
+  const held = holding ? performance.now() - CoopRoom.reviveStarted : 0;
+  const progress = clamp(held / 1800, 0, 1);
+  el('reviveName').textContent = 'REVIVE ' + (target.state.name || target.remote.player?.name || 'TEAMMATE');
+  el('reviveKey').textContent = held >= 1800 ? 'REVIVE REQUEST SENT — STAY CLOSE' : (isTouch ? 'HOLD [REVIVE]' : 'HOLD [E] TO REVIVE') + (holding ? ' — ' + Math.max(0, (1.8 - held / 1000)).toFixed(1) + 's' : '');
+  el('reviveProgress').firstElementChild.style.transform = 'scaleX(' + progress + ')';
+  if (isTouch) { const b = el('btnPick'); b.style.display = 'flex'; b.textContent = 'REVIVE'; }
+}
+
+function tickTeammateRevive() {
+  const target = nearestDownedTeammate();
+  if (!target || (!Input.keys.KeyE && !Input.interact)) { CoopRoom.cancelRevive?.(); return; }
+  CoopRoom.beginRevive?.(target.id);
   const held = performance.now() - (CoopRoom.reviveStarted || performance.now());
-  if (held < 1800) banner('REVIVING TEAMMATE', Math.ceil((1800 - held) / 100) / 10 + 's — KEEP HOLDING [E]');
-  else if (CoopRoom.completeRevive?.(best)) { Input.keys.KeyE = false; Input.interact = false; }
+  if (held >= 1800) CoopRoom.completeRevive?.(target.id);
 }
 
 function playerTick(dt) {
@@ -1762,6 +1784,7 @@ function hudTick() {
   el('vDamage').style.opacity = String(G.dmgVin);
   el('vLow').style.opacity = p.hp < p.maxHp * 0.3 ? '1' : '0';
   updateCratePrompt();
+  updateRevivePrompt();
 }
 
 /* ============ input ============ */
@@ -1777,7 +1800,7 @@ function initInput() {
     if (e.code === 'KeyQ') swapWeapon();
     if (e.code === 'Digit1') swapWeapon(0);
     if (e.code === 'Digit2') swapWeapon(1);
-    if (e.code === 'KeyE') { Input.interact = true; takeCrate(); }
+    if (e.code === 'KeyE') { Input.interact = true; if (!nearestDownedTeammate()) takeCrate(); }
     if (e.code === 'KeyF') activeAbility(0);
     if (e.code === 'KeyR') activeAbility(1);
   });
@@ -1853,7 +1876,7 @@ function initInput() {
   bind('btnAbil1', () => activeAbility(0));
   bind('btnAbil2', () => activeAbility(1));
   bind('btnSwap', () => swapWeapon());
-  bind('btnPick', () => { Input.interact = true; takeCrate(); }, () => { Input.interact = false; });
+  bind('btnPick', () => { Input.interact = true; if (!nearestDownedTeammate()) takeCrate(); }, () => { Input.interact = false; CoopRoom?.cancelRevive?.(); });
   bind('btnAuto', () => {
     G.autoFire = !G.autoFire; SAVE.opts.auto = G.autoFire; persist();
     el('btnAuto').textContent = 'AUTO: ' + (G.autoFire ? 'ON' : 'OFF');
@@ -1881,7 +1904,13 @@ function setPaused(v) {
   if (state !== 'run') return;
   paused = v;
   el('ovPause').classList.toggle('show', v);
-  if (v) { document.exitPointerLock && document.exitPointerLock(); }
+  const sub = el('pauseSub');
+  if (sub) sub.textContent = CoopRoom?.isCoop ? 'LOCAL MENU — SQUAD SIMULATION CONTINUES' : 'SIMULATION SUSPENDED';
+  if (v) {
+    Input.fire = false; Input.dash = false; Input.jump = false; Input.interact = false;
+    Input.moveX = 0; Input.moveZ = 0; CoopRoom?.cancelRevive?.();
+    document.exitPointerLock && document.exitPointerLock();
+  }
 }
 function updateTitle() {
   ensureAbilityUnlocks();
@@ -2186,14 +2215,15 @@ function frame(t) {
   if (dt <= 0) return;
   adaptQuality(dt);
 
-  if (state === 'run' && !paused && G) {
+  // Pausing in co-op is a local input/menu state. The shared simulation and
+  // network stream must keep running, especially when the authority pauses.
+  if (state === 'run' && G && (!paused || CoopRoom?.isCoop)) {
     G.timeScale += (1 - G.timeScale) * dt * 2.2;
     const sdt = dt * G.timeScale;
     G.time += sdt;
     G.shake = Math.max(0, G.shake - dt * 2.4);
 
-    keyMove();
-    playerTick(sdt);
+    if (!paused) { keyMove(); playerTick(sdt); }
     CoopRoom?.tick?.(sdt);
     flowT -= sdt;
     if (flowT <= 0) { flowT = 0.35; World.computeFlow(G.p.pos.x, G.p.pos.z); }

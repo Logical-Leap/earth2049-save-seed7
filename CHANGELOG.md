@@ -10,3 +10,6 @@
 - Added server validation for revive state, range, and hold duration.
 - Added host migration when the current authority is downed or disconnected.
 - Prevented non-host clients from independently generating enemy deaths, drops, waves, and director events.
+- Changed co-op pause to a local menu: the shared AI, world clock, and network synchronization continue while the paused operative's controls are neutralized.
+- Added an always-visible nearby teammate revive prompt with hold progress, countdown, target name, and mobile **REVIVE** button state.
+- Made revive requests retry safely while the player keeps holding the interaction key and clear only after the server confirms or rejects the request.
