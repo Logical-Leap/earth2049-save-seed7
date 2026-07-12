@@ -381,9 +381,12 @@ const World = (() => {
 
     if (editorScene) {
       editorScene.name = editorScene.name || ('EditorScene_' + theme.name);
-      if (authoredVisualModel) editorScene.traverse(obj => { if (obj.isMesh) obj.visible = false; });
       group.add(editorScene);
       parseEditorScene(editorScene);
+      // Keep the metadata/collision scene loaded, but never render its blockout
+      // meshes when the production GLB is present. parseEditorScene intentionally
+      // changes marker visibility, so this must run after marker parsing.
+      if (authoredVisualModel) editorScene.traverse(obj => { if (obj.isMesh) obj.visible = false; });
       if (authoredVisualModel) {
         authoredVisualModel.name = 'RebelHavenHub_ProductionVisuals';
         group.add(authoredVisualModel);
