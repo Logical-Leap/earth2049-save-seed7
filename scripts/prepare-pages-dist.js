@@ -19,7 +19,9 @@ const entries = [
   'assets/data',
   'assets/models',
   'assets/scenes',
-  'assets/levels'
+  'assets/levels',
+  'assets/textures/rebel-hub-haven-commons-v3-texture-pack',
+  'assets/textures/rebel-hub-haven-commons-final'
 ];
 
 function copyRecursive(src, dest) {
