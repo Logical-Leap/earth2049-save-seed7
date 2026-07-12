@@ -1,0 +1,18 @@
+{
+  "package": "rebel-hub-haven-commons-final",
+  "entryScene": "assets/scenes/districts/rebel-hub-haven-commons-final.scene.json",
+  "collisionScene": "assets/scenes/districts/hub-final-collision.scene.json",
+  "visualGlb": "assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-final.glb",
+  "textureBindings": "assets/textures/rebel-hub-haven-commons-final/hub-final-texture-bindings.json",
+  "textureLibrary": "assets/textures/rebel-hub-haven-commons-v3-texture-pack",
+  "sourceScene": "assets/scenes/districts/rebel-hub-haven-commons-v3.scene.json",
+  "conceptReferences": [
+    "assets/concept_art/HubArea1.png",
+    "assets/concept_art/HubArea2.png",
+    "assets/concept_art/HubArea3.png",
+    "assets/concept_art/HubArea4.png",
+    "assets/concept_art/HubArea5.png",
+    "assets/concept_art/HubArea6.png"
+  ],
+  "generator": "scripts/build-rebel-hub-final.py"
+}

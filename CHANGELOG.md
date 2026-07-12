@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-12 — Rebel Hub: Haven Commons production package
+
+- Added the production Haven Commons Object JSON while preserving every authoritative Hub V3 gameplay object, transform, name, and `userData` value.
+- Added 221 modular settlement-art meshes spanning the arrival yard, Commons, market, workshop, customization/stash, training garden, memorial, Command Overlook, bridge, balcony, and catwalk.
+- Embedded the supplied PBR material library with correct sRGB/linear map treatment and reusable texture bindings.
+- Added a consolidated Blender-exported GLB, collision-only scene, asset manifest, performance/validation reports, build/export/validation scripts, and complete distributable ZIP.
+- Registered the final scene in the generated scene manifest and validated stock Three.js `ObjectLoader` parsing, texture HTTP resolution, metadata, gameplay markers, collision references, and elevated routes.
+
 ## 2026-07-10 — Co-op synchronization and revives
 
 - Made the host the sole authority for enemy AI, waves, projectiles, spawn RNG, enemy health/death, and pickup creation.
