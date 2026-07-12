@@ -366,11 +366,15 @@ const World = (() => {
       new THREE.MeshBasicMaterial({ map: Assets.skyTex(theme), side: THREE.BackSide, fog: false, depthWrite: false }));
     group.add(sky);
 
-    // ground
-    const gt = Assets.groundTex(theme); gt.repeat.set(30, 30);
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300),
-      new THREE.MeshStandardMaterial({ map: gt, roughness: 0.85, metalness: 0.15 }));
-    ground.rotation.x = -Math.PI / 2; group.add(ground);
+    // Authored Hub visuals contain their own floor at Y=0. Adding the generic
+    // district plane here puts two differently textured surfaces at the exact
+    // same depth and causes map-wide z-fighting while the camera moves.
+    if (!usingHubScene) {
+      const gt = Assets.groundTex(theme); gt.repeat.set(30, 30);
+      const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300),
+        new THREE.MeshStandardMaterial({ map: gt, roughness: 0.85, metalness: 0.15 }));
+      ground.rotation.x = -Math.PI / 2; group.add(ground);
+    }
 
     // lights
     group.add(new THREE.HemisphereLight(theme.fog, 0x04050c, 3.4));

@@ -7,7 +7,7 @@ out=ROOT/'assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-fi
 d=json.loads(scene_path.read_text())
 bpy.ops.object.select_all(action='SELECT'); bpy.ops.object.delete(use_global=False)
 
-SKIP_TYPES={'playerStart','npcAnchor','vendorZone','vendor','upgradeStation','characterCustomization','stash','missionBoard','missionLaunch','trainingZone','routeHint','socialZone','progressBoard','travelGate'}
+SKIP_TYPES={'playerStart','npcAnchor','vendorZone','vendor','upgradeStation','characterCustomization','stash','missionBoard','missionLaunch','trainingZone','routeHint','socialZone','progressBoard','travelGate','arenaWall','softLock'}
 
 def image(path, noncolor=False):
     if not path.exists(): return None
