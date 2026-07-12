@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T06:17:32.487Z",
+  "generatedAt": "2026-07-12T22:05:19.990Z",
   "scenes": [
     {
       "id": "bots-assembly-crucible",
@@ -24,7 +24,7 @@
     },
     {
       "id": "bots-data-harvest-plaza",
-      "label": "Scene — BOTS DISTRICT - DATA HARVEST PLAZA",
+      "label": "Scene — Bots Data Harvest Plaza",
       "sceneUrl": "assets/scenes/districts/bots-data-harvest-plaza.scene.json",
       "faction": "bots",
       "district": 2
@@ -63,6 +63,41 @@
       "sceneUrl": "assets/scenes/districts/cryptids-private-banking-suites.v2.scene.json",
       "faction": "cryptids",
       "district": 3
+    },
+    {
+      "id": "hub-final-collision",
+      "label": "Scene — REBEL HUB - HAVEN COMMONS COLLISION",
+      "sceneUrl": "assets/scenes/districts/hub-final-collision.scene.json",
+      "faction": "shillz",
+      "district": 0
+    },
+    {
+      "id": "rebel-hub-haven-commons-final",
+      "label": "Scene — REBEL HUB - HAVEN COMMONS",
+      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-final.scene.json",
+      "faction": "shillz",
+      "district": 0
+    },
+    {
+      "id": "rebel-hub-haven-commons-v2",
+      "label": "Scene — REBEL HUB - HAVEN COMMONS V2",
+      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-v2.scene.json",
+      "faction": "shillz",
+      "district": 0
+    },
+    {
+      "id": "rebel-hub-haven-commons-v3",
+      "label": "Scene — REBEL HUB - HAVEN COMMONS V2",
+      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-v3.scene.json",
+      "faction": "shillz",
+      "district": 0
+    },
+    {
+      "id": "rebel-hub-haven-commons",
+      "label": "Scene — REBEL HUB - HAVEN COMMONS",
+      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons.scene.json",
+      "faction": "shillz",
+      "district": 0
     },
     {
       "id": "shillz-central",

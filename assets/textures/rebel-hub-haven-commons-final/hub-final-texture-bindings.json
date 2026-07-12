@@ -1,0 +1,304 @@
+{
+  "scene": "rebel-hub-haven-commons-final.scene.json",
+  "textureResolution": 1024,
+  "colorSpace": {
+    "baseColor": "sRGB",
+    "emissive": "sRGB",
+    "normal": "Linear",
+    "roughness": "Linear",
+    "metalness": "Linear",
+    "ao": "Linear",
+    "alpha": "Linear"
+  },
+  "materials": {
+    "mat-floor-stone": {
+      "folder": "mat-floor-stone",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        8,
+        8
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Cracked wet stone/concrete plaza paving with light moss."
+    },
+    "mat-wall-ruin": {
+      "folder": "mat-wall-ruin",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        4,
+        4
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Weathered ruined masonry with mortar, cracks, streaking, and moss."
+    },
+    "mat-rust-metal": {
+      "folder": "mat-rust-metal",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "metalnessMap": "metalness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        4,
+        4
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Panelized gunmetal with seams, bolts, chipped finish, and rust bloom."
+    },
+    "mat-wood-dark": {
+      "folder": "mat-wood-dark",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        4,
+        4
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Dark salvaged planks with seams, grain, and nail holes."
+    },
+    "mat-tarp-faded": {
+      "folder": "mat-tarp-faded",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        2,
+        2
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Faded khaki/olive tarpaulin with weave, folds, stains, and bleaching."
+    },
+    "mat-ivy-green": {
+      "folder": "mat-ivy-green",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png",
+        "alphaMap": "alpha.png"
+      },
+      "repeat": [
+        3,
+        3
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Tileable ivy decal. Use transparent=true and alphaTest\u22480.35."
+    },
+    "mat-rebel-purple": {
+      "folder": "mat-rebel-purple",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "metalnessMap": "metalness.png",
+        "aoMap": "ao.png",
+        "emissiveMap": "emissive.png"
+      },
+      "repeat": [
+        3,
+        3
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Worn Purple Team painted metal with subtle emissive undertone."
+    },
+    "mat-screen-amber": {
+      "folder": "mat-screen-amber",
+      "maps": {
+        "map": "basecolor.png",
+        "emissiveMap": "emissive.png",
+        "roughnessMap": "roughness.png",
+        "alphaMap": "alpha.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Amber terminal UI."
+    },
+    "mat-screen-blue": {
+      "folder": "mat-screen-blue",
+      "maps": {
+        "map": "basecolor.png",
+        "emissiveMap": "emissive.png",
+        "roughnessMap": "roughness.png",
+        "alphaMap": "alpha.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Blue terminal UI."
+    },
+    "mat-screen-green": {
+      "folder": "mat-screen-green",
+      "maps": {
+        "map": "basecolor.png",
+        "emissiveMap": "emissive.png",
+        "roughnessMap": "roughness.png",
+        "alphaMap": "alpha.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Green terminal UI."
+    },
+    "mat-light-warm": {
+      "folder": "mat-light-warm",
+      "maps": {
+        "emissiveMap": "emissive.png",
+        "alphaMap": "alpha.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "ClampToEdgeWrapping",
+      "wrapT": "ClampToEdgeWrapping",
+      "notes": "Warm radial emissive sprite."
+    },
+    "mat-water": {
+      "folder": "mat-water",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "alphaMap": "opacity.png"
+      },
+      "repeat": [
+        4,
+        4
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Dark shallow reclaimed water/puddle. Use transparent=true and opacity\u22480.55."
+    },
+    "mat-sandbag": {
+      "folder": "mat-sandbag",
+      "maps": {
+        "map": "basecolor.png",
+        "normalMap": "normal.png",
+        "roughnessMap": "roughness.png",
+        "aoMap": "ao.png"
+      },
+      "repeat": [
+        4,
+        4
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Stacked dirty sandbags with alternating seams and coarse weave."
+    },
+    "mat-marker-blue": {
+      "folder": "mat-marker-blue",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    },
+    "mat-marker-green": {
+      "folder": "mat-marker-green",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    },
+    "mat-marker-yellow": {
+      "folder": "mat-marker-yellow",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    },
+    "mat-marker-purple": {
+      "folder": "mat-marker-purple",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    },
+    "mat-marker-white": {
+      "folder": "mat-marker-white",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    },
+    "mat-route-dim": {
+      "folder": "mat-route-dim",
+      "maps": {
+        "map": "debug.png"
+      },
+      "repeat": [
+        1,
+        1
+      ],
+      "wrapS": "RepeatWrapping",
+      "wrapT": "RepeatWrapping",
+      "notes": "Debug only."
+    }
+  },
+  "source": "Supplied Hub V3 texture pack"
+}
