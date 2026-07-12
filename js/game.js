@@ -467,7 +467,7 @@ async function newRun(opts = {}) {
     const hs = World.playerStart();
     G.p.pos.set(hs.x, 0, hs.z - 6);
     G.p.velY = 0;
-    G.p.yaw = hs.yaw ?? Math.PI;
+    G.p.yaw = hs.yaw ?? 0;
     G.mission = null;
     el('missionBox').style.display = 'none';
     banner('REBEL HAVEN', 'HAVEN COMMONS — WEAPONS SAFE // COMBAT DISABLED');
