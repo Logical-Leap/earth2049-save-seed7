@@ -28,6 +28,15 @@ const FACTIONS = {
   rebels:  { name:'Rebels',   neon:0x9b59ff, accent:0x00e5ff, dark:0x141021, skin:0xc98c5a },
 };
 
+const REBEL_HAVEN_HUB = Object.freeze({
+  name: 'REBEL HAVEN — HAVEN COMMONS',
+  sceneUrl: 'assets/scenes/districts/rebel-hub-haven-commons-final.scene.json?v=20260712-real-hub',
+  modelUrl: 'assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-final.glb?v=20260712-real-hub',
+  faction: 'rebels',
+  gameMode: 'hubLobby',
+  combatDisabled: true,
+});
+
 const RARITIES = [
   { name:'Common',    prefix:'Surplus',       color:'#4caf50', hex:0x4caf50, mult:1.00 },
   { name:'Uncommon',  prefix:'Modded',        color:'#42a5f5', hex:0x42a5f5, mult:1.16 },

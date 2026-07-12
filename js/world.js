@@ -13,7 +13,7 @@ const World = (() => {
   let embers = null, emberPos = null;
   let signMats = [], holos = [];
   let themeRef = null, spawnCell = null, bossCell = null, colliders = [], spawnCursor = 0;
-  let usingExternalScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [];
+  let usingExternalScene = false, usingHubScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [];
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -145,7 +145,7 @@ const World = (() => {
       sz: size.z,
       y0: box.min.y,
       h: box.max.y,
-      climb: obj.userData?.climb === true,
+      climb: obj.userData?.climb === true || box.max.y <= 0.65,
       gameplayType: obj.userData?.gameplayType || null,
     });
   }
@@ -339,7 +339,7 @@ const World = (() => {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
     signMats = []; holos = []; colliders = []; spawnCursor = 0;
-    playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false;
+    playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false; usingHubScene = false;
     const base = DISTRICTS[dIdx] || DISTRICTS[0];
     const theme = { ...base };
     if (opts.sceneUrl !== undefined) theme.sceneUrl = opts.sceneUrl;
@@ -349,7 +349,13 @@ const World = (() => {
     const editorScene = theme.sceneUrl && AssetLoader
       ? await AssetLoader.loadScene(theme.sceneUrl, { faction: theme.fac })
       : null;
+    let authoredVisualModel = null;
+    if (opts.modelUrl && AssetLoader) {
+      await AssetLoader.loadModel('rebel-haven-hub', opts.modelUrl);
+      authoredVisualModel = AssetLoader.cloneModel('rebel-haven-hub');
+    }
     usingExternalScene = !!editorScene;
+    usingHubScene = editorScene?.userData?.gameMode === 'hubLobby';
     if (editorScene) genOpenLayout(); else genLayout();
 
     scene.fog = new THREE.FogExp2(theme.fog, CFG.FOG_DENS);
@@ -375,8 +381,13 @@ const World = (() => {
 
     if (editorScene) {
       editorScene.name = editorScene.name || ('EditorScene_' + theme.name);
+      if (authoredVisualModel) editorScene.traverse(obj => { if (obj.isMesh) obj.visible = false; });
       group.add(editorScene);
       parseEditorScene(editorScene);
+      if (authoredVisualModel) {
+        authoredVisualModel.name = 'RebelHavenHub_ProductionVisuals';
+        group.add(authoredVisualModel);
+      }
     }
 
     // arena walls (merged)
@@ -657,7 +668,7 @@ const World = (() => {
     return colliders.some(c => rectCircleHit(c, x, z, r));
   }
   function circleHits(x, z, r) {
-    return gridCircleHits(x, z, r);
+    return usingHubScene ? false : gridCircleHits(x, z, r);
   }
   function playerPropHits(x, z, r, y) {
     return colliders.some(c => playerColliderBlocks(c, x, z, r, y));
