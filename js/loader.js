@@ -200,7 +200,8 @@ const AssetLoader = (() => {
       const loader = new THREE.ObjectLoader();
       const obj = loader.parse(data);
       const materialIdMap = buildMaterialIdMap(data, obj);
-      await applyDistrictTextures(obj, { ...opts, sceneUrl: url, materialIdMap });
+      const isHub = data?.object?.userData?.gameMode === 'hubLobby';
+      if (!isHub) await applyDistrictTextures(obj, { ...opts, sceneUrl: url, materialIdMap });
       sceneCache[url] = obj;
       return cloneObject(obj);
     } catch (err) {

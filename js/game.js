@@ -449,11 +449,32 @@ async function newRun(opts = {}) {
   };
   applyRunProgression(p);
   applyModifierData(G);
-  SAVE.runs++; persist();
+  if (!opts.hub) { SAVE.runs++; persist(); }
   AudioSys.init(); AudioSys.resume(); if (SAVE.opts.music) AudioSys.musicStart();
   AudioSys.setSfx(SAVE.opts.sfx); AudioSys.setMusic(SAVE.opts.music);
   equipGun();
   setState('loading');
+  if (opts.hub) {
+    G.hub = true;
+    G.district = -1;
+    G.phase = 'hub';
+    G.waveDelay = Number.POSITIVE_INFINITY;
+    G.theme = await World.build(scene, 0, {
+      sceneUrl: REBEL_HAVEN_HUB.sceneUrl,
+      modelUrl: REBEL_HAVEN_HUB.modelUrl,
+      faction: REBEL_HAVEN_HUB.faction,
+    });
+    const hs = World.playerStart();
+    G.p.pos.set(hs.x, 0, hs.z - 6);
+    G.p.velY = 0;
+    G.p.yaw = hs.yaw ?? Math.PI;
+    G.mission = null;
+    el('missionBox').style.display = 'none';
+    banner('REBEL HAVEN', 'HAVEN COMMONS — WEAPONS SAFE // COMBAT DISABLED');
+    setState('run');
+    if (gunGroup) gunGroup.visible = false;
+    return;
+  }
   await startDistrict(opts.district || 0);
   banner('SIMULATION #' + SAVE.runs, 'OPERATION DREAMCASTER — CAST INITIATED');
   setState('run');
@@ -970,6 +991,7 @@ function killProj(pr) {
 function curWeapon() { return G.p.weapons[G.p.cur]; }
 const KICK = { pistol: 0.45, smg: 0.32, shotgun: 1.0, ar: 0.42, dmr: 0.95, lmg: 0.38, energy: 0.5, rocket: 1.0 };
 function fireWeapon(dt) {
+  if (G?.hub) return;
   const p = G.p, w = curWeapon();
   if (!w || p.fireT > 0 || p.swapT > 0 || !curGunObj) return;
   if (w.ammo <= 0) { AudioSys.sfx('nammo'); swapWeapon(0); return; }
@@ -1464,6 +1486,7 @@ function equipGun() {
 
 /* ============ Turing director ============ */
 function directorTick(dt) {
+  if (G?.hub) return;
   const D = G.director;
   D.t -= dt; D.msgT -= dt;
   if (D.t <= 0) {
@@ -1761,10 +1784,16 @@ function hudTick() {
   el('wpnClass').textContent = w.cls + (p.weapons[1] && p.cur === 0 ? '  —  [Q] ' + p.weapons[1].cls : '');
   el('ammoText').innerHTML = w.ammo === Infinity ? '&#8734;' : w.ammo;
   el('gtText').innerHTML = '&#11042; ' + p.gt + ' GIGATECH';
-  el('distText').textContent = 'DISTRICT ' + (G.district + 1) + ' — ' + DISTRICTS[G.district].name;
-  el('waveText').textContent = G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves;
-  el('hostText').textContent = 'HOSTILES: ' + (G.enemies.filter(e => e.state !== 'dying').length + G.pending.length);
-  el('modText').textContent = 'TIER ' + G.simTier + ' — ' + simTierData(G.simTier).n + (G.modifiers.length ? ' | MODS: ' + G.modifiers.map(m => m.n).join(' / ') : '');
+  if (G.hub) {
+    el('distText').textContent = 'REBEL HAVEN — HAVEN COMMONS';
+    el('waveText').textContent = 'HUB LOBBY';
+    el('hostText').textContent = 'COMBAT DISABLED';
+  } else {
+    el('distText').textContent = 'DISTRICT ' + (G.district + 1) + ' — ' + DISTRICTS[G.district].name;
+    el('waveText').textContent = G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves;
+    el('hostText').textContent = 'HOSTILES: ' + (G.enemies.filter(e => e.state !== 'dying').length + G.pending.length);
+  }
+  el('modText').textContent = G.hub ? 'SAFE ZONE — REBEL SERVICES ONLINE' : 'TIER ' + G.simTier + ' — ' + simTierData(G.simTier).n + (G.modifiers.length ? ' | MODS: ' + G.modifiers.map(m => m.n).join(' / ') : '');
   const aw = el('abilityHud');
   aw.innerHTML = SAVE.equippedAbilities.map((id, i) => {
     const a = ABILITIES[id], cd = Math.ceil(abilityCooldown(id));
@@ -2044,6 +2073,7 @@ function prepJoinCoopFlow() {
 
 function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
+  el('btnHub').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun({ hub:true }); };
   el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
   el('btnHostCoop').onclick = async () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); await hostCoopFlow(); };
   el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
