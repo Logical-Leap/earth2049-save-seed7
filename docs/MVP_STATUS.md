@@ -1,8 +1,8 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 00:25 EDT
+Last audited: 2026-07-13 (system-documentation audit)
 
-Baseline commit: `1977324` (`main`, synchronized with `origin/main`)
+Baseline commit: `7653b97` (`origin/main`, including MVP baseline PR #35 and save PR #36)
 
 Production target: https://earth2049-save-seed7.pages.dev/
 
@@ -36,6 +36,8 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Milestone | Status | Evidence / exit gate |
 |---|---|---|
 | M1 audit and baseline | **Complete** | Required baseline documents published in PR #35; syntax/tests/manifest/Pages preparation and live Pages/Worker probes passed. |
+| M2 save contract | **Merged; live browser verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection landed in PR #36 with unit + static browser-integration tests. |
+| M2 first playable vertical slice | **In progress** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
 | M2 save contract | **Complete** | PR #36 merged: schema v2, verified backup-before-replace, migration/recovery, raw future export, import/reset, bounded normalization, and 15 executable tests. |
 | M2 first playable vertical slice | **Implemented; release combat pass pending** | Controlled browser smoke proved Hub mission launch → authored objective → Riya lifecycle → extraction → 123 GT banked → Hub workshop purchase → second run at 120 HP, with no JavaScript errors. |
 | Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |
@@ -69,12 +71,23 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 
 ## Baseline inventories
 
+### Required system documentation
+
+The current-versus-target contracts, verification commands, and blockers are maintained in:
+
+- [`MAP_AUTHORING.md`](MAP_AUTHORING.md) and [`ASSET_PIPELINE.md`](ASSET_PIPELINE.md);
+- [`ENEMY_SYSTEM.md`](ENEMY_SYSTEM.md), [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md), and [`OBJECTIVE_SYSTEM.md`](OBJECTIVE_SYSTEM.md);
+- [`TURING_DIRECTOR.md`](TURING_DIRECTOR.md) and [`SAVE_SCHEMA.md`](SAVE_SCHEMA.md);
+- [`PERFORMANCE_BUDGETS.md`](PERFORMANCE_BUDGETS.md) and [`QA_CHECKLIST.md`](QA_CHECKLIST.md).
+
+These documents describe target contracts as unimplemented where appropriate. ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists, not rebels or a counterfeit resistance, and Riya is a pro-authority GigaCorp propagandist. Conflicting older runtime strings are tracked as content debt rather than documented as canon.
+
 ### Runtime and deployment
 
 - Static no-build Three.js r147 UMD application: `index.html`, `js/`, `lib/`.
 - `scripts/prepare-pages-dist.js` copies the runtime to `dist-pages/` and excludes archives.
 - Pages config: `wrangler.pages.jsonc`; co-op Worker/DO config: `wrangler.jsonc`.
-- Baseline tracked counts: 31 JavaScript files, 15 district scene JSON files, 5 GLBs, 153 PNG/JPG assets, 1 test file.
+- Baseline tracked counts: 34 JavaScript files, 13 scene JSON files (including one collision-only scene), 5 GLBs, 153 PNG/JPG assets, 3 test files.
 - Source `assets/` footprint at audit: approximately 350 MiB. Largest tracked authoring archives are not copied to Pages.
 - `assets/models/environments/` and `scripts/__pycache__/` were untracked at audit and are excluded from this milestone.
 
@@ -117,7 +130,7 @@ Passed locally:
 ```text
 node --check js/*.js js/net/*.js workers/*.js scripts/*.js tests/*.js
 node --test tests/*.test.js
-  3 tests, 3 pass, 0 fail
+  15 tests, 15 pass, 0 fail
 npm run scenes:manifest
   Wrote 12 scenes
 npm run pages:prepare
@@ -139,7 +152,7 @@ Not yet accepted:
 
 ## Current blockers
 
-No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Co-op must remain beta/feature-gated until its multi-client matrix passes.
+No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Deterministic Objective/Enemy/Boss/Director seams and representative performance evidence are also absent. Co-op must remain beta/feature-gated until its multi-client matrix passes. See [`QA_CHECKLIST.md`](QA_CHECKLIST.md) for the complete acceptance gate.
 
 ## Next three priorities
 
