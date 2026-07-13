@@ -30,6 +30,9 @@ function copyRecursive(src, dest) {
     for (const name of fs.readdirSync(src)) copyRecursive(path.join(src, name), path.join(dest, name));
     return;
   }
+  // Source archives are retained in Git for authoring but are not runtime assets;
+  // Cloudflare Pages rejects the all-faction ZIP because it exceeds 25 MiB.
+  if (/\.(zip|7z|rar)$/i.test(src)) return;
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.copyFileSync(src, dest);
 }
