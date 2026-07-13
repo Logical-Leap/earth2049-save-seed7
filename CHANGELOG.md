@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 — Co-op protocol authorization hardening
+
+- Replaced the Durable Object's catch-all client rebroadcast with an explicit browser-message allowlist and rejection of unknown, unhandled, and server-origin event types.
+- Made `REWARD_GRANT` server-origin-only at both the browser send boundary and room server, closing forged local reward delivery through the room.
+- Enforced host authority for boss/objective/district and run transition/completion/failure messages, with active-run/lobby state guards and sanitized transition payloads.
+- Enforced all-connected-player ready state before server-approved run start and removed the host's optimistic local start path.
+- Added 64 KiB message and 120 messages/second/player limits plus executable Node security regressions for authorization, reward forgery, ready gates, transition replay, payload sanitization, and traffic bounds.
+
 ## 2026-07-13 — Versioned save recovery and portability
 
 - Added schema-v2 save defaults, ordered/idempotent migration, validation and bounded normalization while preserving the existing `earth2049_seed7_v1` storage key and recognized/unknown legacy fields.

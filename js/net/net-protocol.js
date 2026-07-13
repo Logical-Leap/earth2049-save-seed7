@@ -6,7 +6,7 @@
     HELLO:'hello', CREATE_ROOM:'create_room', JOIN_ROOM:'join_room', LEAVE_ROOM:'leave_room', ROOM_STATE:'room_state', WORLD_SNAPSHOT:'world_snapshot',
     PLAYER_READY:'player_ready', START_RUN:'start_run', PLAYER_INPUT:'player_input', PLAYER_STATE:'player_state',
     SHOOT:'shoot', HIT:'hit', DAMAGE:'damage', ENEMY_SPAWN:'enemy_spawn', ENEMY_STATE:'enemy_state', ENEMY_DEATH:'enemy_death',
-    PICKUP_SPAWN:'pickup_spawn', PICKUP_COLLECT:'pickup_collect', BOSS_STATE:'boss_state', DISTRICT_COMPLETE:'district_complete',
+    PICKUP_SPAWN:'pickup_spawn', PICKUP_COLLECT:'pickup_collect', BOSS_STATE:'boss_state', OBJECTIVE_STATE:'objective_state', DISTRICT_COMPLETE:'district_complete',
     RUN_COMPLETE:'run_complete', RUN_FAILED:'run_failed', REWARD_GRANT:'reward_grant',
     DOWNED:'downed', REVIVE:'revive', PLAYER_ELIMINATED:'player_eliminated', PING:'ping', PONG:'pong', ERROR:'error'
   });
@@ -17,6 +17,15 @@
     [MSG.PICKUP_SPAWN]: ['pickup'], [MSG.PICKUP_COLLECT]: ['pickupId'], [MSG.REWARD_GRANT]: ['playerId','reward'],
     [MSG.REVIVE]: ['targetPlayerId','heldMs']
   };
+  // Direction is part of the protocol contract. Server-origin messages must
+  // never be put on the browser -> room socket, even if a caller is compromised.
+  const CLIENT_SEND_TYPES = Object.freeze([
+    MSG.PING, MSG.PLAYER_READY, MSG.START_RUN, MSG.PLAYER_STATE, MSG.HIT,
+    MSG.ENEMY_SPAWN, MSG.ENEMY_STATE, MSG.ENEMY_DEATH, MSG.PICKUP_SPAWN,
+    MSG.PICKUP_COLLECT, MSG.BOSS_STATE, MSG.OBJECTIVE_STATE, MSG.DISTRICT_COMPLETE,
+    MSG.RUN_COMPLETE, MSG.RUN_FAILED, MSG.REVIVE
+  ]);
+  const CLIENT_SEND_SET = new Set(CLIENT_SEND_TYPES);
   function withMeta(type, payload) {
     return Object.assign({ type, protocolVersion: PROTOCOL_VERSION, t: Date.now() }, payload || {});
   }
@@ -41,5 +50,6 @@
       effectiveLevel: Math.max(1, Number(profile?.effectiveLevel || 1))
     };
   }
-  global.NetProtocol = { PROTOCOL_VERSION, MSG, withMeta, parse, validate, safePlayer };
+  function canClientSend(type) { return CLIENT_SEND_SET.has(type); }
+  global.NetProtocol = { PROTOCOL_VERSION, MSG, CLIENT_SEND_TYPES, withMeta, parse, validate, safePlayer, canClientSend };
 })(window);
