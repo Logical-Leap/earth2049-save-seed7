@@ -1,8 +1,8 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 00:25 EDT
+Last audited: 2026-07-13 (system-documentation audit)
 
-Baseline commit: `1977324` (`main`, synchronized with `origin/main`)
+Baseline commit: `7653b97` (`origin/main`, including MVP baseline PR #35 and save PR #36)
 
 Production target: https://earth2049-save-seed7.pages.dev/
 
@@ -10,20 +10,20 @@ Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
 ## Executive status
 
-**Estimated MVP completion: 47%.** The repository is a playable combat prototype with five configured districts, five bosses, persistent upgrades, an authored Hub scene, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: the Hub is not the campaign shell, the first playable loop does not return through Hub services, later districts lack production map contracts, campaign completion is only a victory overlay, co-op acceptance is untested, and broad gameplay/map automation is still missing.
+**Estimated MVP completion: 54%.** The repository now has a working Hub-led ShillZ vertical loop, five configured districts/bosses, persistent upgrades, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: later districts lack production campaign map contracts, campaign completion is only a victory overlay, co-op acceptance is unproven, and broad campaign/performance automation is still incomplete.
 
 Do not interpret configured content as acceptance. A row is complete only after its listed automated and browser tests pass.
 
 ## Current player flow
 
-Actual shipped flow:
+Current implemented flow:
 
 1. Title screen.
-2. Player independently chooses **Rebel Haven**, **Start Simulation**, Armory, Briefing, or co-op.
-3. Solo simulation starts directly in ShillZ Central.
-4. Waves → faction boss → OG augment plus route → next district repeats through Turing.
-5. Death banks run GigaTech and opens Death UI; victory banks rewards and opens Victory UI.
-6. Player can retry, return to title, or open the Armory from death.
+2. Player enters **Rebel Haven**, where authored service markers open Armory/Briefing, heal the player, or deploy to ShillZ Central.
+3. ShillZ starts at an authored loyalty terminal objective, then runs waves and Riya in Engagement Square.
+4. Hub-launched ShillZ runs unlock the authored extraction gate, bank rewards, and return to Rebel Haven; the workshop spends upgrades before a second deployment.
+5. Direct full-campaign simulation remains available: boss → OG augment plus route → next district through Turing.
+6. Death and victory primary actions return to Rebel Haven; title remains an explicit secondary action.
 
 Required MVP flow:
 
@@ -36,8 +36,10 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Milestone | Status | Evidence / exit gate |
 |---|---|---|
 | M1 audit and baseline | **Complete** | Required baseline documents published in PR #35; syntax/tests/manifest/Pages preparation and live Pages/Worker probes passed. |
-| M2 save contract | **Implemented locally; PR verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection have unit + browser-integration tests. |
+| M2 save contract | **Merged; live browser verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection landed in PR #36 with unit + static browser-integration tests. |
 | M2 first playable vertical slice | **In progress** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
+| M2 save contract | **Complete** | PR #36 merged: schema v2, verified backup-before-replace, migration/recovery, raw future export, import/reset, bounded normalization, and 15 executable tests. |
+| M2 first playable vertical slice | **Implemented; release combat pass pending** | Controlled browser smoke proved Hub mission launch → authored objective → Riya lifecycle → extraction → 123 GT banked → Hub workshop purchase → second run at 120 HP, with no JavaScript errors. |
 | Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |
 | Muskers / Magnus | **Prototype** | Configured procedural district and boss; no authored production map or campaign acceptance test. |
 | Bots / SPYD3R | **Prototype** | Four authored scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
@@ -54,10 +56,10 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 |---|---|---|---|
 | Solo combat | FPS movement, touch controls, weapons, waves, enemies, bosses, pickups | Only look-input has an automated regression test | Syntax + unit tests + browser combat smoke on every district |
 | Campaign | Five districts/bosses configured; OG transition between districts | Later maps procedural; no Hub shell; no authored ending/credits/return | Complete beginning-to-ending run without dev commands |
-| ShillZ | Authored scene, engagement-square layout, Riya, 3 waves | Objective is generic route mission; no complete Hub round trip | Vertical-slice acceptance test |
+| ShillZ | 104-object Engagement Square, authored loyalty-terminal objective/extraction, Riya, 3 waves, Hub round trip | Requires full manual combat/balance pass and screenshot baseline | Vertical-slice acceptance test |
 | Other districts | Muskers/Bots/Cryptids/GigaCorp configs and bosses | Authored Bots/Cryptids scenes not wired; Muskers/GigaCorp production scenes absent | Per-district map/collision/boss/reward tests |
-| Hub | Final scene JSON + GLB + collision metadata; non-combat state | No service markers/interactions, mission launch, post-run return, or upgrade loop | Hub lifecycle browser test |
-| Objectives | Five generic mission types and HUD/rewards | No shared ObjectiveSystem or authored-objective marker lifecycle | Unit state-machine tests + scene integration |
+| Hub | Final scene JSON + GLB + collision metadata; proximity-driven mission launch, Armory, Briefing, medical, training, and post-run return | NPC dialogue/trophy-state presentation remains modest | Hub lifecycle browser test |
+| Objectives | Five generic mission types plus authored objective/extraction marker activation for ShillZ | Full serialized shared ObjectiveSystem and co-op synchronization remain pending | Unit state-machine tests + scene integration |
 | Progression | GigaTech, upgrades, intel, abilities, mastery, relics, tiers, corruption | Logic is embedded in `game.js`; no invariants/migration tests | Deterministic unit tests and two-run browser test |
 | Saves | Schema v2, idempotent legacy migration, validation/normalization, raw/reset backup, future-version read-only mode, export/import/reset UI | No cloud sync; storage failure warning is visible only in Armory Save tab | Save fixture matrix + browser tab smoke; full Hub Save Terminal comes with lifecycle work |
 | Assets | GLTF/scene loading with procedural fallbacks; central manifests; skybox fallback | Only 3 enemy GLBs + 1 weapon GLB; optional failures lack automated probes | Missing/corrupt asset tests and browser console probes |
@@ -69,18 +71,29 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 
 ## Baseline inventories
 
+### Required system documentation
+
+The current-versus-target contracts, verification commands, and blockers are maintained in:
+
+- [`MAP_AUTHORING.md`](MAP_AUTHORING.md) and [`ASSET_PIPELINE.md`](ASSET_PIPELINE.md);
+- [`ENEMY_SYSTEM.md`](ENEMY_SYSTEM.md), [`BOSS_SYSTEM.md`](BOSS_SYSTEM.md), and [`OBJECTIVE_SYSTEM.md`](OBJECTIVE_SYSTEM.md);
+- [`TURING_DIRECTOR.md`](TURING_DIRECTOR.md) and [`SAVE_SCHEMA.md`](SAVE_SCHEMA.md);
+- [`PERFORMANCE_BUDGETS.md`](PERFORMANCE_BUDGETS.md) and [`QA_CHECKLIST.md`](QA_CHECKLIST.md).
+
+These documents describe target contracts as unimplemented where appropriate. ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists, not rebels or a counterfeit resistance, and Riya is a pro-authority GigaCorp propagandist. Conflicting older runtime strings are tracked as content debt rather than documented as canon.
+
 ### Runtime and deployment
 
 - Static no-build Three.js r147 UMD application: `index.html`, `js/`, `lib/`.
 - `scripts/prepare-pages-dist.js` copies the runtime to `dist-pages/` and excludes archives.
 - Pages config: `wrangler.pages.jsonc`; co-op Worker/DO config: `wrangler.jsonc`.
-- Baseline tracked counts: 31 JavaScript files, 15 district scene JSON files, 5 GLBs, 153 PNG/JPG assets, 1 test file.
+- Baseline tracked counts: 34 JavaScript files, 13 scene JSON files (including one collision-only scene), 5 GLBs, 153 PNG/JPG assets, 3 test files.
 - Source `assets/` footprint at audit: approximately 350 MiB. Largest tracked authoring archives are not copied to Pages.
 - `assets/models/environments/` and `scripts/__pycache__/` were untracked at audit and are excluded from this milestone.
 
 ### Map inventory
 
-- Runtime-selected authored scenes: final Rebel Haven Hub and ShillZ Central.
+- Runtime-selected authored scenes: final Rebel Haven Hub and the 104-object ShillZ Engagement Square MVP scene.
 - Dev-manifest-only scenes: four Bots scenes, five Cryptids v2 scenes, and an older Hub v3 scene.
 - Procedural runtime districts: Muskers, Bots, Cryptids, GigaCorp.
 - Hub visual model: `assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-final.glb`.
@@ -117,7 +130,7 @@ Passed locally:
 ```text
 node --check js/*.js js/net/*.js workers/*.js scripts/*.js tests/*.js
 node --test tests/*.test.js
-  3 tests, 3 pass, 0 fail
+  15 tests, 15 pass, 0 fail
 npm run scenes:manifest
   Wrote 12 scenes
 npm run pages:prepare
@@ -139,7 +152,7 @@ Not yet accepted:
 
 ## Current blockers
 
-No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Co-op must remain beta/feature-gated until its multi-client matrix passes.
+No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Deterministic Objective/Enemy/Boss/Director seams and representative performance evidence are also absent. Co-op must remain beta/feature-gated until its multi-client matrix passes. See [`QA_CHECKLIST.md`](QA_CHECKLIST.md) for the complete acceptance gate.
 
 ## Next three priorities
 

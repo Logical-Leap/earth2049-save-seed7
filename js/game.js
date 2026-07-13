@@ -411,7 +411,7 @@ function makeWeapon(id, rarity) { // NOSONAR - weapon mastery shaping is data-lo
 
 function resetRunWorld() {
   if (G) clearEntities();
-  nearCrate = null;
+  nearCrate = null; nearHubService = null; nearMapMarker = null; hubOverlayOpen = false; paused = false;
   for (const id of ['pickupPrompt', 'btnPick', 'bossBar', 'missionBox']) {
     const node = el(id);
     if (node) node.style.display = 'none';
@@ -449,7 +449,7 @@ async function newRun(opts = {}) {
     director: { threat: 0.5, t: 4, msgT: 14, kills: [], taken: [] },
     augs: [], theme: null, autoFire: SAVE.opts.auto,
     currentRoute: null, nextRoute: ROUTES[0], mission: null, ammoPity: 0,
-    simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {}, banked:false,
+    simTier: SAVE.simTier, tierData: simTierData(SAVE.simTier), modifiers: rollRunModifiers(), modStats: {}, banked:false, clearedFactions:[], fromHub:!!opts.fromHub,
     coop: CoopRoom?.isCoop ? { roomCode: CoopRoom.roomCode, host: CoopRoom.isHost, seed: opts.seed || CoopRoom.runSeed || Date.now(), partySize: Math.max(1, CoopRoom.lobby?.players?.length || 1), rewardBanked:false } : null,
     nextNetEnemyId: 1, nextNetPickupId: 1,
   };
@@ -496,7 +496,9 @@ async function startDistrict(i) {
   G.p.yaw = s.yaw !== undefined ? s.yaw : Math.atan2(s.x, s.z); // authored start yaw or face arena center
   G.p.hp = Math.min(G.p.maxHp, G.p.hp + Math.round(G.p.maxHp * 0.3));
   if (G.modStats.timelineDrift) G.director.threat = Math.min(1.6, G.director.threat + 0.08);
-  G.wave = 0; G.phase = 'intro'; G.waveDelay = 2.6; G.boss = null;
+  G.wave = 0; G.phase = World.objectivePoints.length ? 'objective' : 'intro'; G.waveDelay = 2.6; G.boss = null;
+  G.authoredObjective = World.objectivePoints[0] || null;
+  G.authoredExtraction = World.extractionPoints[0] || null;
   G.currentRoute = G.nextRoute || ROUTES[0];
   G.nextRoute = null;
   startMission(G.currentRoute, DISTRICTS[i]);
@@ -1192,13 +1194,18 @@ function bossKilled(e) {
   G.boss = null;
   el('bossBar').style.display = 'none';
   G.timeScale = 0.3;
-  G.phase = 'bossdead';
-  G.waveDelay = G.district >= DISTRICTS.length - 1 ? 4.5 : 10.5;
-  banner(e.type.name + ' TERMINATED', G.district >= 4 ? 'SEED 7 IS FREE' : 'COLLECT WEAPON CORES — NEXT DISTRICT SOON');
+  const hubExtraction = G.fromHub && G.district === 0 && G.authoredExtraction;
+  G.phase = hubExtraction ? 'extraction' : 'bossdead';
+  G.waveDelay = hubExtraction ? Number.POSITIVE_INFINITY : (G.district >= DISTRICTS.length - 1 ? 4.5 : 10.5);
+  banner(e.type.name + ' TERMINATED', hubExtraction ? 'EXTRACTION OPEN — RETURN TO REBEL HAVEN' : (G.district >= 4 ? 'SEED 7 IS FREE' : 'COLLECT WEAPON CORES — NEXT DISTRICT SOON'));
   G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt) * G.tierData.reward);
   addMastery(curWeapon().id, 25, { clears: 1 });
   const relic = Object.values(BOSS_RELICS).find(r => r.boss === e.boss);
   if (relic && !SAVE.relics[relic.id]) { SAVE.relics[relic.id] = { owned:true, firstAt: Date.now() }; SAVE.codex[relic.id] = true; banner('RELIC ACQUIRED', relic.name.toUpperCase()); }
+  const defeatedFaction = e.type.fac;
+  if (!G.clearedFactions.includes(defeatedFaction)) G.clearedFactions.push(defeatedFaction);
+  CampaignProgression.recordLeaderDefeat(SAVE, defeatedFaction);
+  persist();
   if (e.boss === 'turing') SAVE.simTier = Math.max(SAVE.simTier, G.simTier + 1);
   if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
   finishCleanMission();
@@ -1267,8 +1274,97 @@ function pickupTick(pk, dt) {
   if (pk.life <= 0) pk.dead = true;
   if (pk.dead) scene.remove(pk.mesh);
 }
-let nearCrate = null;
+let nearCrate = null, nearHubService = null, nearMapMarker = null, hubOverlayOpen = false;
+function hubServiceLabel(point) {
+  const role = point.userData?.npcRole;
+  if (point.gameplayType === 'missionLaunch' || point.gameplayType === 'travelGate') return ['DEPLOY TO SHILLZ CENTRAL', 'START SIMULATION'];
+  if (point.gameplayType === 'upgradeStation' || point.gameplayType === 'vendor' || point.gameplayType === 'stash' || point.gameplayType === 'customization') return ['OPEN ARMORY', 'MANAGE LOADOUT & UPGRADES'];
+  if (role === 'commander' || role === 'scoutmaster' || role === 'storyNPC') return ['OPEN BRIEFING', 'VIEW CAMPAIGN & FACTION INTEL'];
+  if (role === 'service') return ['MEDICAL STATION', 'RESTORE HEALTH & ARMOR'];
+  if (role === 'trainer') return ['TRAINING COURTYARD', 'WEAPONS REMAIN SAFE IN HAVEN'];
+  return ['REBEL HAVEN CONTACT', 'SPEAK'];
+}
+function updateHubPrompt() {
+  nearHubService = null;
+  let best = 3.1;
+  for (const point of World.interactionPoints || []) {
+    const vertical = Math.abs((G.p.pos.y || 0) - (point.y || 0));
+    const distance = Math.hypot(G.p.pos.x - point.x, G.p.pos.z - point.z);
+    if (distance < best && vertical < 3.2) { best = distance; nearHubService = point; }
+  }
+  const prompt = el('pickupPrompt');
+  if (!nearHubService) { prompt.style.display = 'none'; el('btnPick').style.display = 'none'; return; }
+  const [name, action] = hubServiceLabel(nearHubService);
+  prompt.style.display = 'block';
+  el('pickupName').textContent = name;
+  el('pickupName').style.color = '#b884ff';
+  el('pickupKey').textContent = isTouch ? 'TAP [USE] — ' + action : 'PRESS [E] — ' + action;
+  el('btnPick').textContent = 'USE';
+  el('btnPick').style.display = isTouch ? 'flex' : 'none';
+}
+function activateHubService() {
+  const point = nearHubService;
+  if (!G?.hub || !point) return false;
+  const role = point.userData?.npcRole;
+  AudioSys.sfx('ui');
+  if (point.gameplayType === 'missionLaunch' || point.gameplayType === 'travelGate') {
+    nearHubService = null;
+    newRun({ district:0, fromHub:true });
+    return true;
+  }
+  if (role === 'service') {
+    G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor;
+    banner('MEDICAL STATION', 'OPERATIVE RESTORED');
+    return true;
+  }
+  if (role === 'trainer') {
+    banner('TRAINING COURTYARD', 'LIVE FIRE DISABLED IN HAVEN — DEPLOY WHEN READY');
+    return true;
+  }
+  hubOverlayOpen = true;
+  paused = true;
+  document.exitPointerLock?.();
+  hideOverlays();
+  if (role === 'commander' || role === 'scoutmaster' || role === 'storyNPC') { renderBriefing(); el('ovHelp').classList.add('show'); }
+  else { renderArmory(); el('ovArmory').classList.add('show'); }
+  return true;
+}
+function updateMapMarkerPrompt() {
+  nearMapMarker = G.phase === 'objective' ? G.authoredObjective : (G.phase === 'extraction' ? G.authoredExtraction : null);
+  if (!nearMapMarker) return false;
+  const vertical = Math.abs((G.p.pos.y || 0) - (nearMapMarker.y || 0));
+  const distance = Math.hypot(G.p.pos.x - nearMapMarker.x, G.p.pos.z - nearMapMarker.z);
+  if (distance > 3.2 || vertical > 3.2) { nearMapMarker = null; return false; }
+  const extracting = G.phase === 'extraction';
+  const prompt = el('pickupPrompt');
+  prompt.style.display = 'block';
+  el('pickupName').textContent = extracting ? 'EXTRACTION READY' : 'LOYALTY BROADCAST TERMINAL';
+  el('pickupName').style.color = extracting ? '#9b59ff' : '#ffe600';
+  el('pickupKey').textContent = isTouch ? 'TAP [USE]' : 'PRESS [E] — ' + (extracting ? 'RETURN TO REBEL HAVEN' : 'DISABLE PROPAGANDA FEED');
+  el('btnPick').textContent = 'USE';
+  el('btnPick').style.display = isTouch ? 'flex' : 'none';
+  return true;
+}
+function activateMapMarker() {
+  if (!nearMapMarker || !G || G.hub) return false;
+  if (G.phase === 'objective') {
+    G.phase = 'intro'; G.waveDelay = 0.8; nearMapMarker = null;
+    banner('LOYALTY FEED DISABLED', 'SHILLZ MOB MOBILIZING — HOLD ENGAGEMENT SQUARE');
+    progressMission('objective', 1);
+    return true;
+  }
+  if (G.phase === 'extraction') {
+    nearMapMarker = null; bankGT();
+    newRun({ hub:true });
+    return true;
+  }
+  return false;
+}
 function updateCratePrompt() {
+  if (G.hub) { nearCrate = null; updateHubPrompt(); return; }
+  nearHubService = null;
+  if (updateMapMarkerPrompt()) { nearCrate = null; return; }
+  nearMapMarker = null;
   nearCrate = null;
   let bd = 2.2;
   for (const pk of G.pickups) {
@@ -1291,6 +1387,8 @@ function updateCratePrompt() {
   }
 }
 function takeCrate() {
+  if (G?.hub) { activateHubService(); return; }
+  if (activateMapMarker()) return;
   if (!nearCrate) return;
   G.p.weapons[1] = nearCrate.weapon;
   G.p.cur = 1; equipGun();
@@ -1601,12 +1699,11 @@ function bankGT() {
     if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
     SAVE.intel[fac].points += pts;
   }
-  if ((G.phase === 'bossdead' || state === 'victory') && DISTRICTS[G.district]) {
-    const fac = DISTRICTS[G.district].fac;
-    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
-    SAVE.intel[fac].leaders = Math.max(SAVE.intel[fac].leaders || 0, 1);
-  }
-  SAVE.bestD = Math.max(SAVE.bestD, G.district + (G.phase === 'bossdead' || state === 'victory' ? 1 : 0));
+  const completedDistrict = G.phase === 'bossdead' || G.phase === 'extraction' || state === 'victory';
+  const defeatedFactions = new Set(G.clearedFactions || []);
+  if (completedDistrict && DISTRICTS[G.district]) defeatedFactions.add(DISTRICTS[G.district].fac);
+  CampaignProgression.recordLeaderDefeats(SAVE, [...defeatedFactions]);
+  SAVE.bestD = Math.max(SAVE.bestD, G.district + (completedDistrict ? 1 : 0));
   ensureAbilityUnlocks();
   persist();
   return true;
@@ -2140,13 +2237,21 @@ function wireMenus() {
   el('btnSaveProfile').onclick = () => { setProfileName(el('coopName').value); AudioSys.sfx('pickup'); renderCoopLobby(CoopRoom?.lobby); };
   el('coopWorkerUrl').onchange = e => NetConfig?.setWorkerUrl?.(e.target.value);
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
-  el('btnArmBack').onclick = () => { AudioSys.sfx('ui'); updateTitle(); show('ovTitle'); };
+  el('btnArmBack').onclick = () => {
+    AudioSys.sfx('ui');
+    if (hubOverlayOpen && G?.hub) { hubOverlayOpen = false; paused = false; show(null); banner('REBEL HAVEN', 'RETURNED TO HAVEN COMMONS'); }
+    else { updateTitle(); show('ovTitle'); }
+  };
   el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
-  el('btnHelpBack').onclick = () => { AudioSys.sfx('ui'); show('ovTitle'); };
-  el('btnRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun(); };
+  el('btnHelpBack').onclick = () => {
+    AudioSys.sfx('ui');
+    if (hubOverlayOpen && G?.hub) { hubOverlayOpen = false; paused = false; show(null); banner('REBEL HAVEN', 'INTEL TERMINAL CLOSED'); }
+    else show('ovTitle');
+  };
+  el('btnRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun({ hub:true }); };
   el('btnDeathArmory').onclick = () => { AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
   el('btnDeathTitle').onclick = () => { AudioSys.sfx('ui'); updateTitle(); setState('title'); show('ovTitle'); };
-  el('btnVictRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun(); };
+  el('btnVictRetry').onclick = () => { AudioSys.sfx('ui'); show(null); newRun({ hub:true }); };
   el('btnVictTitle').onclick = () => { AudioSys.sfx('ui'); updateTitle(); setState('title'); show('ovTitle'); };
   el('btnResume').onclick = () => { AudioSys.sfx('ui'); setPaused(false); };
   el('btnAbort').onclick = () => {
