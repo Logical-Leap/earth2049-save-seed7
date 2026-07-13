@@ -33,7 +33,7 @@
     async join(code) { this.ensureProfile(); const c = new NetClient(NET_CONFIG); this.bind(c); await c.joinRoom(code, this.profile()); this.client = c; this.isCoop = true; this.isHost = false; this.roomCode = String(code).toUpperCase(); return this.roomCode; },
     leave() { if (this.client) this.client.close(); this.client = null; this.isCoop = false; this.isHost = false; this.roomCode = ''; this.lobby = null; this.clearRemotes(); this.opts?.onLobby?.(null); },
     setReady(ready) { this.client?.send(NetProtocol.MSG.PLAYER_READY, { ready:!!ready }); },
-    startRun() { if (!this.isHost) return false; const seed = Math.floor(Math.random() * 2147483647); this.runSeed = seed; this.client?.send(NetProtocol.MSG.START_RUN, { seed, district:0, tier:this.opts?.getSave?.()?.simTier || 1 }); this.opts?.startCoopRun?.({ seed, district:0 }); return true; },
+    startRun() { if (!this.isHost) return false; const connected = (this.lobby?.players || []).filter(p => p.connected !== false); if (!connected.length || connected.some(p => !p.ready)) { this.opts?.notice?.('Every connected operative must be ready.'); return false; } const seed = Math.floor(Math.random() * 2147483647); this.runSeed = seed; return !!this.client?.send(NetProtocol.MSG.START_RUN, { seed, district:0, tier:this.opts?.getSave?.()?.simTier || 1 }); },
     bind(c) {
       c.addEventListener('message', ev => this.onMessage(ev.detail));
       c.addEventListener('close', ev => { this.opts?.notice?.(ev.detail?.reconnecting ? 'Connection lost — reconnecting…' : 'Disconnected'); this.opts?.onLobby?.(this.lobby); });

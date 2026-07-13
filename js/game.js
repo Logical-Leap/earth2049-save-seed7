@@ -2233,7 +2233,7 @@ function wireMenus() {
   el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
   el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); updateTitle(); show('ovTitle'); };
   el('btnCoopReady').onclick = () => { AudioSys.sfx('ui'); const ready = !el('btnCoopReady').classList.contains('primary'); el('btnCoopReady').classList.toggle('primary', ready); el('btnCoopReady').textContent = ready ? 'Ready: Yes' : 'Ready: No'; CoopRoom?.setReady?.(ready); };
-  el('btnCoopStart').onclick = () => { AudioSys.sfx('ui'); hideOverlays(); CoopRoom?.startRun?.(); };
+  el('btnCoopStart').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.startRun?.(); };
   el('btnSaveProfile').onclick = () => { setProfileName(el('coopName').value); AudioSys.sfx('pickup'); renderCoopLobby(CoopRoom?.lobby); };
   el('coopWorkerUrl').onchange = e => NetConfig?.setWorkerUrl?.(e.target.value);
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };

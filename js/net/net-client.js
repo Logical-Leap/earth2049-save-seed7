@@ -27,7 +27,7 @@
         ws.onclose = ev => { clearTimeout(timer); this.connected = false; this.emit('close', { code:ev.code, reason:ev.reason, reconnecting:!this.closedByUser }); if (!this.closedByUser) this.scheduleReconnect(); };
       });
     }
-    send(type, payload) { if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return false; this.ws.send(JSON.stringify(NetProtocol.withMeta(type, Object.assign({ seq:++this.seq }, payload || {})))); return true; }
+    send(type, payload) { if (!NetProtocol.canClientSend(type)) { this.emit('error', { error:'client_message_type_not_allowed', type }); return false; } if (!this.ws || this.ws.readyState !== WebSocket.OPEN) return false; this.ws.send(JSON.stringify(NetProtocol.withMeta(type, Object.assign({ seq:++this.seq }, payload || {})))); return true; }
     scheduleReconnect() { if (this.reconnectTimer || !this.roomCode || !this.player) return; this.reconnectTimer = setTimeout(() => { this.reconnectTimer = null; this.connect(this.roomCode, this.player, true).catch(() => this.scheduleReconnect()); }, this.config.reconnectMs || 2500); }
     close() { this.closedByUser = true; clearTimeout(this.reconnectTimer); this.reconnectTimer = null; if (this.ws) this.ws.close(1000, 'client_leave'); this.ws = null; this.connected = false; }
     emit(type, detail) { this.dispatchEvent(new CustomEvent(type, { detail })); }

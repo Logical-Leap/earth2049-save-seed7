@@ -1,11 +1,20 @@
 # Changelog
 
+## 2026-07-13 — Co-op protocol authorization hardening
+
+- Replaced the Durable Object's catch-all client rebroadcast with an explicit browser-message allowlist and rejection of unknown, unhandled, and server-origin event types.
+- Made `REWARD_GRANT` server-origin-only at both the browser send boundary and room server, closing forged local reward delivery through the room.
+- Enforced host authority for boss/objective/district and run transition/completion/failure messages, with active-run/lobby state guards and sanitized transition payloads.
+- Enforced all-connected-player ready state before server-approved run start and removed the host's optimistic local start path.
+- Added 64 KiB message and 120 messages/second/player limits plus executable Node security regressions for authorization, reward forgery, ready gates, transition replay, payload sanitization, and traffic bounds.
+
 ## 2026-07-13 — Required MVP system documentation
 
 - Published current-versus-target contracts for map authoring, assets, enemies, bosses, objectives, the Turing Director, schema-v2 saves, performance budgets, and release QA.
 - Added reproducible verification commands and explicit blockers without presenting unimplemented modules, browser acceptance, deterministic simulation, performance targets, or campaign lifecycle as complete.
 - Established authoritative ShillZ documentation canon: willing pro-GigaCorp consumer loyalists rather than rebels/counterfeit resistance, with Riya as a pro-authority GigaCorp propagandist; conflicting legacy strings remain tracked content debt.
 - Updated the MVP status document to reference the complete documentation set and the merged save baseline; no runtime or user assets changed.
+
 ## 2026-07-13 — Hub-to-ShillZ vertical campaign loop
 
 - Turned Rebel Haven's authored mission, workshop, vendor, stash, medical, training, commander, and scout markers into usable proximity interactions for deployment, Armory, Briefing, healing, and training feedback.
