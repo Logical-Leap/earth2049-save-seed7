@@ -1,8 +1,11 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 00:25 EDT  
-Baseline commit: `1977324` (`main`, synchronized with `origin/main`)  
-Production target: https://earth2049-save-seed7.pages.dev/  
+Last audited: 2026-07-13 00:25 EDT
+
+Baseline commit: `1977324` (`main`, synchronized with `origin/main`)
+
+Production target: https://earth2049-save-seed7.pages.dev/
+
 Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
 ## Executive status
