@@ -32,14 +32,7 @@ const REBEL_HAVEN_HUB = Object.freeze({
   name: 'REBEL HAVEN — HAVEN COMMONS',
   sceneUrl: 'assets/scenes/districts/rebel-hub-haven-commons-final.scene.json?v=20260712-real-hub',
   modelUrl: 'assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-final.glb?v=20260712-clipping-fix-v2',
-  skyUrls: [
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_px.png?v=20260713',
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_nx.png?v=20260713',
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_py.png?v=20260713',
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_ny.png?v=20260713',
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_pz.png?v=20260713',
-    'assets/textures/rebel-hub-haven-commons-final/skybox/earth2049_deadzone_nz.png?v=20260713',
-  ],
+
   faction: 'rebels',
   gameMode: 'hubLobby',
   combatDisabled: true,
