@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — Required MVP system documentation
+
+- Published current-versus-target contracts for map authoring, assets, enemies, bosses, objectives, the Turing Director, schema-v2 saves, performance budgets, and release QA.
+- Added reproducible verification commands and explicit blockers without presenting unimplemented modules, browser acceptance, deterministic simulation, performance targets, or campaign lifecycle as complete.
+- Established authoritative ShillZ documentation canon: willing pro-GigaCorp consumer loyalists rather than rebels/counterfeit resistance, with Riya as a pro-authority GigaCorp propagandist; conflicting legacy strings remain tracked content debt.
+- Updated the MVP status document to reference the complete documentation set and the merged save baseline; no runtime or user assets changed.
+
 ## 2026-07-13 — Versioned save recovery and portability
 
 - Added schema-v2 save defaults, ordered/idempotent migration, validation and bounded normalization while preserving the existing `earth2049_seed7_v1` storage key and recognized/unknown legacy fields.
