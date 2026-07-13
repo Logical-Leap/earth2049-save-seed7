@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Reproducible co-op deployment and cache refresh
+
+- Pinned Wrangler 4.110.0 in the repository so `coop:deploy` and `pages:deploy` no longer depend on a globally installed CLI; the locked toolchain reports zero npm audit vulnerabilities.
+- Cache-busted the co-op protocol, client, room, and game scripts so browsers immediately receive PR #40's authorization rules instead of retaining the previous one-hour JS cache entries.
+- Updated the MVP status with merged QA/docs/security evidence and removed stale duplicate Milestone 2 rows.
+
 ## 2026-07-13 — Co-op protocol authorization hardening
 
 - Replaced the Durable Object's catch-all client rebroadcast with an explicit browser-message allowlist and rejection of unknown, unhandled, and server-origin event types.
