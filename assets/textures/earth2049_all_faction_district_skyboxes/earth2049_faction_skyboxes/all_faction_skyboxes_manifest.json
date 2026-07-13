@@ -1,0 +1,156 @@
+{
+  "name": "Earth 2049 Faction District Skybox Set",
+  "format": "cubemap + equirectangular",
+  "factions": {
+    "shillz": {
+      "faction": "shillz",
+      "displayName": "ShillZ Consumption District",
+      "colorSpace": "sRGB",
+      "faceResolution": [
+        1024,
+        1024
+      ],
+      "equirectangularResolution": [
+        2048,
+        1024
+      ],
+      "threeJsCubeTextureLoaderOrder": [
+        "earth2049_shillz_px.png",
+        "earth2049_shillz_nx.png",
+        "earth2049_shillz_py.png",
+        "earth2049_shillz_ny.png",
+        "earth2049_shillz_pz.png",
+        "earth2049_shillz_nz.png"
+      ],
+      "faces": {
+        "+X": "earth2049_shillz_px.png",
+        "-X": "earth2049_shillz_nx.png",
+        "+Y": "earth2049_shillz_py.png",
+        "-Y": "earth2049_shillz_ny.png",
+        "+Z": "earth2049_shillz_pz.png",
+        "-Z": "earth2049_shillz_nz.png"
+      },
+      "equirectangular": "earth2049_shillz_equirectangular_2x1.png"
+    },
+    "muskers": {
+      "faction": "muskers",
+      "displayName": "Muskers Technological Dominion",
+      "colorSpace": "sRGB",
+      "faceResolution": [
+        1024,
+        1024
+      ],
+      "equirectangularResolution": [
+        2048,
+        1024
+      ],
+      "threeJsCubeTextureLoaderOrder": [
+        "earth2049_muskers_px.png",
+        "earth2049_muskers_nx.png",
+        "earth2049_muskers_py.png",
+        "earth2049_muskers_ny.png",
+        "earth2049_muskers_pz.png",
+        "earth2049_muskers_nz.png"
+      ],
+      "faces": {
+        "+X": "earth2049_muskers_px.png",
+        "-X": "earth2049_muskers_nx.png",
+        "+Y": "earth2049_muskers_py.png",
+        "-Y": "earth2049_muskers_ny.png",
+        "+Z": "earth2049_muskers_pz.png",
+        "-Z": "earth2049_muskers_nz.png"
+      },
+      "equirectangular": "earth2049_muskers_equirectangular_2x1.png"
+    },
+    "gigacorp": {
+      "faction": "gigacorp",
+      "displayName": "GigaCorp Corporate Enclave",
+      "colorSpace": "sRGB",
+      "faceResolution": [
+        1024,
+        1024
+      ],
+      "equirectangularResolution": [
+        2048,
+        1024
+      ],
+      "threeJsCubeTextureLoaderOrder": [
+        "earth2049_gigacorp_px.png",
+        "earth2049_gigacorp_nx.png",
+        "earth2049_gigacorp_py.png",
+        "earth2049_gigacorp_ny.png",
+        "earth2049_gigacorp_pz.png",
+        "earth2049_gigacorp_nz.png"
+      ],
+      "faces": {
+        "+X": "earth2049_gigacorp_px.png",
+        "-X": "earth2049_gigacorp_nx.png",
+        "+Y": "earth2049_gigacorp_py.png",
+        "-Y": "earth2049_gigacorp_ny.png",
+        "+Z": "earth2049_gigacorp_pz.png",
+        "-Z": "earth2049_gigacorp_nz.png"
+      },
+      "equirectangular": "earth2049_gigacorp_equirectangular_2x1.png"
+    },
+    "bots": {
+      "faction": "bots",
+      "displayName": "Bots Automated Zone",
+      "colorSpace": "sRGB",
+      "faceResolution": [
+        1024,
+        1024
+      ],
+      "equirectangularResolution": [
+        2048,
+        1024
+      ],
+      "threeJsCubeTextureLoaderOrder": [
+        "earth2049_bots_px.png",
+        "earth2049_bots_nx.png",
+        "earth2049_bots_py.png",
+        "earth2049_bots_ny.png",
+        "earth2049_bots_pz.png",
+        "earth2049_bots_nz.png"
+      ],
+      "faces": {
+        "+X": "earth2049_bots_px.png",
+        "-X": "earth2049_bots_nx.png",
+        "+Y": "earth2049_bots_py.png",
+        "-Y": "earth2049_bots_ny.png",
+        "+Z": "earth2049_bots_pz.png",
+        "-Z": "earth2049_bots_nz.png"
+      },
+      "equirectangular": "earth2049_bots_equirectangular_2x1.png"
+    },
+    "cryptids": {
+      "faction": "cryptids",
+      "displayName": "Cryptids Virtual Playground",
+      "colorSpace": "sRGB",
+      "faceResolution": [
+        1024,
+        1024
+      ],
+      "equirectangularResolution": [
+        2048,
+        1024
+      ],
+      "threeJsCubeTextureLoaderOrder": [
+        "earth2049_cryptids_px.png",
+        "earth2049_cryptids_nx.png",
+        "earth2049_cryptids_py.png",
+        "earth2049_cryptids_ny.png",
+        "earth2049_cryptids_pz.png",
+        "earth2049_cryptids_nz.png"
+      ],
+      "faces": {
+        "+X": "earth2049_cryptids_px.png",
+        "-X": "earth2049_cryptids_nx.png",
+        "+Y": "earth2049_cryptids_py.png",
+        "-Y": "earth2049_cryptids_ny.png",
+        "+Z": "earth2049_cryptids_pz.png",
+        "-Z": "earth2049_cryptids_nz.png"
+      },
+      "equirectangular": "earth2049_cryptids_equirectangular_2x1.png"
+    }
+  }
+}

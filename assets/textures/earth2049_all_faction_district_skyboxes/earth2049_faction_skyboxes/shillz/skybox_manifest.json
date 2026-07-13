@@ -1,0 +1,30 @@
+{
+  "faction": "shillz",
+  "displayName": "ShillZ Consumption District",
+  "colorSpace": "sRGB",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "equirectangularResolution": [
+    2048,
+    1024
+  ],
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_shillz_px.png",
+    "earth2049_shillz_nx.png",
+    "earth2049_shillz_py.png",
+    "earth2049_shillz_ny.png",
+    "earth2049_shillz_pz.png",
+    "earth2049_shillz_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_shillz_px.png",
+    "-X": "earth2049_shillz_nx.png",
+    "+Y": "earth2049_shillz_py.png",
+    "-Y": "earth2049_shillz_ny.png",
+    "+Z": "earth2049_shillz_pz.png",
+    "-Z": "earth2049_shillz_nz.png"
+  },
+  "equirectangular": "earth2049_shillz_equirectangular_2x1.png"
+}

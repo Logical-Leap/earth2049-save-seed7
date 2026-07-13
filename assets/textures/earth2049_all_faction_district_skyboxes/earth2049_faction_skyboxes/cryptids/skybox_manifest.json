@@ -1,0 +1,30 @@
+{
+  "faction": "cryptids",
+  "displayName": "Cryptids Virtual Playground",
+  "colorSpace": "sRGB",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "equirectangularResolution": [
+    2048,
+    1024
+  ],
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_cryptids_px.png",
+    "earth2049_cryptids_nx.png",
+    "earth2049_cryptids_py.png",
+    "earth2049_cryptids_ny.png",
+    "earth2049_cryptids_pz.png",
+    "earth2049_cryptids_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_cryptids_px.png",
+    "-X": "earth2049_cryptids_nx.png",
+    "+Y": "earth2049_cryptids_py.png",
+    "-Y": "earth2049_cryptids_ny.png",
+    "+Z": "earth2049_cryptids_pz.png",
+    "-Z": "earth2049_cryptids_nz.png"
+  },
+  "equirectangular": "earth2049_cryptids_equirectangular_2x1.png"
+}

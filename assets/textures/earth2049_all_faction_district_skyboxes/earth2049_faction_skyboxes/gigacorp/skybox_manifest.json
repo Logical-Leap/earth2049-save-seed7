@@ -1,0 +1,30 @@
+{
+  "faction": "gigacorp",
+  "displayName": "GigaCorp Corporate Enclave",
+  "colorSpace": "sRGB",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "equirectangularResolution": [
+    2048,
+    1024
+  ],
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_gigacorp_px.png",
+    "earth2049_gigacorp_nx.png",
+    "earth2049_gigacorp_py.png",
+    "earth2049_gigacorp_ny.png",
+    "earth2049_gigacorp_pz.png",
+    "earth2049_gigacorp_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_gigacorp_px.png",
+    "-X": "earth2049_gigacorp_nx.png",
+    "+Y": "earth2049_gigacorp_py.png",
+    "-Y": "earth2049_gigacorp_ny.png",
+    "+Z": "earth2049_gigacorp_pz.png",
+    "-Z": "earth2049_gigacorp_nz.png"
+  },
+  "equirectangular": "earth2049_gigacorp_equirectangular_2x1.png"
+}

@@ -1,0 +1,30 @@
+{
+  "faction": "bots",
+  "displayName": "Bots Automated Zone",
+  "colorSpace": "sRGB",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "equirectangularResolution": [
+    2048,
+    1024
+  ],
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_bots_px.png",
+    "earth2049_bots_nx.png",
+    "earth2049_bots_py.png",
+    "earth2049_bots_ny.png",
+    "earth2049_bots_pz.png",
+    "earth2049_bots_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_bots_px.png",
+    "-X": "earth2049_bots_nx.png",
+    "+Y": "earth2049_bots_py.png",
+    "-Y": "earth2049_bots_ny.png",
+    "+Z": "earth2049_bots_pz.png",
+    "-Z": "earth2049_bots_nz.png"
+  },
+  "equirectangular": "earth2049_bots_equirectangular_2x1.png"
+}

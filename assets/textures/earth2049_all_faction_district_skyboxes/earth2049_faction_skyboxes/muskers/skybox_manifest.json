@@ -1,0 +1,30 @@
+{
+  "faction": "muskers",
+  "displayName": "Muskers Technological Dominion",
+  "colorSpace": "sRGB",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "equirectangularResolution": [
+    2048,
+    1024
+  ],
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_muskers_px.png",
+    "earth2049_muskers_nx.png",
+    "earth2049_muskers_py.png",
+    "earth2049_muskers_ny.png",
+    "earth2049_muskers_pz.png",
+    "earth2049_muskers_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_muskers_px.png",
+    "-X": "earth2049_muskers_nx.png",
+    "+Y": "earth2049_muskers_py.png",
+    "-Y": "earth2049_muskers_ny.png",
+    "+Z": "earth2049_muskers_pz.png",
+    "-Z": "earth2049_muskers_nz.png"
+  },
+  "equirectangular": "earth2049_muskers_equirectangular_2x1.png"
+}
