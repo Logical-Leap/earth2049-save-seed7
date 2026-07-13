@@ -1,6 +1,13 @@
 # Changelog
 
-## 2026-07-12 — Real Rebel Haven Hub runtime and Blender art pass
+## 2026-07-13 — Faction skyboxes across every district
+
+- Added a centralized, cached faction skybox registry for ShillZ, Muskers, GigaCorp, Bots, Cryptids, and the Rebel/Dead Zone Hub.
+- Added metadata/file/config faction detection, automatic start-to-objective yaw, explicit `skyboxFaction` and `skyboxYawDegrees` overrides, safe loading colors, faction fog, and r147-compatible cached cubemap rotation.
+- Kept skyboxes visual-only (`scene.environment = null`) and preserved gameplay geometry, collision, spawns, objectives, and extraction metadata.
+- Added automated cubemap/scene validation and a complete mapping report in `docs/faction-skybox-integration.md`.
+
+## 2026-07-12 — Rebel Haven Hub runtime integration and production visual correction
 
 - Added a dedicated **Enter Rebel Haven Hub** title-screen path, separate from ShillZ Central and all combat districts.
 - Added a Blender-authored 599-mesh production visual scene with beveled architecture, structural ribs, windows, signs, ducts, antennas, cables, landmark framing, and embedded Hub PBR textures.
