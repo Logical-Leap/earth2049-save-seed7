@@ -6,6 +6,12 @@
 - Added reproducible verification commands and explicit blockers without presenting unimplemented modules, browser acceptance, deterministic simulation, performance targets, or campaign lifecycle as complete.
 - Established authoritative ShillZ documentation canon: willing pro-GigaCorp consumer loyalists rather than rebels/counterfeit resistance, with Riya as a pro-authority GigaCorp propagandist; conflicting legacy strings remain tracked content debt.
 - Updated the MVP status document to reference the complete documentation set and the merged save baseline; no runtime or user assets changed.
+## 2026-07-13 — Hub-to-ShillZ vertical campaign loop
+
+- Turned Rebel Haven's authored mission, workshop, vendor, stash, medical, training, commander, and scout markers into usable proximity interactions for deployment, Armory, Briefing, healing, and training feedback.
+- Replaced the 10-object ShillZ sample with a deterministic 104-object Engagement Square containing sealed boundaries, three routes, elevated traversal, 20 cover islands, 12 enemy spawns, 8 pickups, a world objective, Riya arena, extraction, commercial infrastructure, and canon-correct pro-GigaCorp loyalty propaganda.
+- Wired authored objective and extraction markers into runtime interaction: disable the loyalty broadcast, clear waves and Riya, extract to Rebel Haven, bank rewards, purchase a permanent upgrade, and deploy into a stronger second run.
+- Added persistent, idempotent leader-defeat credit for every faction through the shared `CampaignProgression` seam and regression coverage for the Hub/ShillZ contracts.
 
 ## 2026-07-13 — Versioned save recovery and portability
 

@@ -2,112 +2,2269 @@
   "metadata": {
     "version": 4.5,
     "type": "Object",
-    "generator": "E2049 sample Three.js Editor scene"
+    "generator": "Earth 2049 ShillZ Central MVP builder"
   },
   "geometries": [
-    { "uuid": "geo-marker", "type": "BoxGeometry", "width": 1, "height": 1, "depth": 1 },
-    { "uuid": "geo-floor", "type": "BoxGeometry", "width": 34, "height": 0.08, "depth": 34 },
-    { "uuid": "geo-cover", "type": "BoxGeometry", "width": 4, "height": 1.1, "depth": 1.4 }
+    {
+      "uuid": "geo-unit",
+      "type": "BoxGeometry",
+      "width": 1,
+      "height": 1,
+      "depth": 1
+    },
+    {
+      "uuid": "geo-cylinder",
+      "type": "CylinderGeometry",
+      "radiusTop": 1,
+      "radiusBottom": 1,
+      "height": 1,
+      "radialSegments": 8
+    }
   ],
   "materials": [
-    { "uuid": "mat-marker", "type": "MeshBasicMaterial", "color": 16776960, "transparent": true, "opacity": 0.35 },
-    { "uuid": "mat-floor", "type": "MeshBasicMaterial", "color": 2631720, "transparent": true, "opacity": 0.28 },
-    { "uuid": "mat-cover", "type": "MeshStandardMaterial", "color": 16739840, "roughness": 0.55, "metalness": 0.25 }
+    {
+      "uuid": "mat-asphalt",
+      "type": "MeshStandardMaterial",
+      "color": 1513757,
+      "roughness": 0.88,
+      "metalness": 0.08
+    },
+    {
+      "uuid": "mat-commercial",
+      "type": "MeshStandardMaterial",
+      "color": 13662728,
+      "roughness": 0.62,
+      "metalness": 0.18
+    },
+    {
+      "uuid": "mat-loyalty",
+      "type": "MeshStandardMaterial",
+      "color": 15976448,
+      "roughness": 0.48,
+      "metalness": 0.1,
+      "emissive": 4861440,
+      "emissiveIntensity": 0.18
+    },
+    {
+      "uuid": "mat-black",
+      "type": "MeshStandardMaterial",
+      "color": 1118481,
+      "roughness": 0.72,
+      "metalness": 0.3
+    },
+    {
+      "uuid": "mat-screen",
+      "type": "MeshBasicMaterial",
+      "color": 16756736
+    },
+    {
+      "uuid": "mat-marker",
+      "type": "MeshBasicMaterial",
+      "color": 16776960,
+      "transparent": true,
+      "opacity": 0.12
+    },
+    {
+      "uuid": "mat-route",
+      "type": "MeshBasicMaterial",
+      "color": 10115584,
+      "transparent": true,
+      "opacity": 0.22
+    }
   ],
   "object": {
-    "uuid": "scene-shillz-central-editor-sample",
+    "uuid": "scene-shillz-central-mvp-v2",
     "type": "Scene",
-    "name": "SHILLZ CENTRAL EDITOR SAMPLE",
+    "name": "SHILLZ CENTRAL \u2014 ENGAGEMENT SQUARE",
+    "userData": {
+      "district": "shillz-central",
+      "area": "engagement-square",
+      "faction": "shillz",
+      "version": "mvp-v2",
+      "skyboxFaction": "shillz",
+      "combatDisabled": false,
+      "canon": "pro-GigaCorp consumer-loyalist civilian district; no Rebel or anti-GigaCorp imagery"
+    },
     "children": [
       {
-        "uuid": "floor-sample",
+        "uuid": "shillz-001",
         "type": "Mesh",
-        "name": "E2049_PROP_SAMPLE_EDITOR_FLOOR",
-        "geometry": "geo-floor",
-        "material": "mat-floor",
-        "position": [0, -0.04, 0]
+        "name": "E2049_FLOOR_ENGAGEMENT_SQUARE",
+        "geometry": "geo-unit",
+        "material": "mat-asphalt",
+        "position": [
+          0,
+          0.1,
+          0
+        ],
+        "scale": [
+          70,
+          0.2,
+          90
+        ],
+        "userData": {
+          "gameplayType": "floor"
+        }
       },
       {
-        "uuid": "player-start",
-        "type": "Mesh",
-        "name": "E2049_PLAYER_START",
-        "geometry": "geo-marker",
-        "material": "mat-marker",
-        "position": [0, 0.5, 14],
-        "scale": [1.2, 0.2, 1.2]
-      },
-      {
-        "uuid": "boss-arena",
-        "type": "Mesh",
-        "name": "E2049_BOSS_ARENA",
-        "geometry": "geo-marker",
-        "material": "mat-marker",
-        "position": [0, 0.5, -13],
-        "scale": [2, 0.2, 2]
-      },
-      {
-        "uuid": "enemy-spawn-a",
-        "type": "Mesh",
-        "name": "E2049_ENEMY_SPAWN_SHILLZ_A",
-        "geometry": "geo-marker",
-        "material": "mat-marker",
-        "position": [-10, 0.5, -7],
-        "scale": [1, 0.2, 1]
-      },
-      {
-        "uuid": "enemy-spawn-b",
-        "type": "Mesh",
-        "name": "E2049_ENEMY_SPAWN_B",
-        "geometry": "geo-marker",
-        "material": "mat-marker",
-        "position": [10, 0.5, -7],
-        "scale": [1, 0.2, 1]
-      },
-      {
-        "uuid": "pickup-spawn-a",
-        "type": "Mesh",
-        "name": "E2049_PICKUP_SPAWN_A",
-        "geometry": "geo-marker",
-        "material": "mat-marker",
-        "position": [8, 0.5, 8],
-        "scale": [0.8, 0.2, 0.8]
-      },
-      {
-        "uuid": "cover-visible-a",
-        "type": "Mesh",
-        "name": "EDITOR_SAMPLE_VISIBLE_COVER_A",
-        "geometry": "geo-cover",
-        "material": "mat-cover",
-        "position": [-4, 0.55, 2]
-      },
-      {
-        "uuid": "cover-collider-a",
-        "type": "Mesh",
-        "name": "E2049_COLLIDER_COVER_A",
-        "geometry": "geo-cover",
-        "material": "mat-marker",
-        "position": [-4, 0.55, 2],
-        "userData": { "climb": true, "gameplayType": "cover" }
-      },
-      {
-        "uuid": "blocker-north",
+        "uuid": "shillz-002",
         "type": "Mesh",
         "name": "E2049_BLOCKER_NORTH",
-        "geometry": "geo-cover",
-        "material": "mat-marker",
-        "position": [0, 1.5, -17],
-        "scale": [8, 2.4, 0.8],
-        "userData": { "gameplayType": "arenaWall" }
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          0,
+          2.5,
+          -45
+        ],
+        "scale": [
+          70,
+          5,
+          1
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "arenaWall"
+        }
       },
       {
-        "uuid": "light-key",
-        "type": "PointLight",
+        "uuid": "shillz-003",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_SOUTH",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          0,
+          2.5,
+          45
+        ],
+        "scale": [
+          70,
+          5,
+          1
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "arenaWall"
+        }
+      },
+      {
+        "uuid": "shillz-004",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_WEST",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          -35,
+          2.5,
+          0
+        ],
+        "scale": [
+          1,
+          5,
+          90
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "arenaWall"
+        }
+      },
+      {
+        "uuid": "shillz-005",
+        "type": "Mesh",
+        "name": "E2049_BLOCKER_EAST",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          35,
+          2.5,
+          0
+        ],
+        "scale": [
+          1,
+          5,
+          90
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "arenaWall"
+        }
+      },
+      {
+        "uuid": "shillz-006",
+        "type": "Mesh",
+        "name": "E2049_ENTRY_GATE_SHILLZ",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          0,
+          2,
+          41
+        ],
+        "scale": [
+          10,
+          4,
+          1
+        ],
+        "userData": {
+          "gameplayType": "entryGate"
+        }
+      },
+      {
+        "uuid": "shillz-007",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_VISUAL_SHILLZ",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          0,
+          2,
+          -41
+        ],
+        "scale": [
+          10,
+          4,
+          1
+        ],
+        "userData": {
+          "gameplayType": "extractionGateVisual"
+        }
+      },
+      {
+        "uuid": "shillz-008",
+        "type": "Mesh",
+        "name": "E2049_PLAYER_START",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          0,
+          0.5,
+          37
+        ],
+        "scale": [
+          1.2,
+          0.2,
+          1.2
+        ],
+        "userData": {
+          "yawDegrees": 180,
+          "gameplayType": "playerStart"
+        }
+      },
+      {
+        "uuid": "shillz-009",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVE_LOYALTY_BROADCAST",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          0,
+          0.5,
+          3
+        ],
+        "scale": [
+          2,
+          0.2,
+          2
+        ],
+        "userData": {
+          "objectiveId": "shillz-disable-loyalty-broadcast",
+          "objectiveType": "activateTerminal",
+          "gameplayType": "objective"
+        }
+      },
+      {
+        "uuid": "shillz-010",
+        "type": "Mesh",
+        "name": "E2049_OBJECTIVEPROP_LOYALTY_KIOSK",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          0,
+          2.2,
+          3
+        ],
+        "scale": [
+          4,
+          4.4,
+          2
+        ],
+        "userData": {
+          "objectiveId": "shillz-disable-loyalty-broadcast",
+          "gameplayType": "objectiveProp"
+        }
+      },
+      {
+        "uuid": "shillz-011",
+        "type": "Mesh",
+        "name": "E2049_BOSS_ARENA_RIYA",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          0,
+          0.5,
+          -32
+        ],
+        "scale": [
+          4,
+          0.2,
+          4
+        ],
+        "userData": {
+          "bossId": "riya",
+          "gameplayType": "bossArena"
+        }
+      },
+      {
+        "uuid": "shillz-012",
+        "type": "Mesh",
+        "name": "E2049_EXTRACTION_GATE_SHILLZ",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          0,
+          0.5,
+          -39
+        ],
+        "scale": [
+          4,
+          0.2,
+          2
+        ],
+        "userData": {
+          "targetArea": "rebel-haven",
+          "gameplayType": "extractionGate"
+        }
+      },
+      {
+        "uuid": "shillz-013",
+        "type": "Mesh",
+        "name": "E2049_COMBAT_ZONE_MAIN",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          0,
+          0.2,
+          -8
+        ],
+        "scale": [
+          62,
+          0.2,
+          60
+        ],
+        "userData": {
+          "gameplayType": "combatZone"
+        }
+      },
+      {
+        "uuid": "shillz-014",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_MAIN",
+        "geometry": "geo-unit",
+        "material": "mat-route",
+        "position": [
+          0,
+          0.22,
+          5
+        ],
+        "scale": [
+          8,
+          0.04,
+          62
+        ],
+        "userData": {
+          "routeId": "main",
+          "gameplayType": "routeHint"
+        }
+      },
+      {
+        "uuid": "shillz-015",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_FLANK_WEST",
+        "geometry": "geo-unit",
+        "material": "mat-route",
+        "position": [
+          -24,
+          0.22,
+          2
+        ],
+        "scale": [
+          5,
+          0.04,
+          58
+        ],
+        "userData": {
+          "routeId": "west-flank",
+          "gameplayType": "routeHint"
+        }
+      },
+      {
+        "uuid": "shillz-016",
+        "type": "Mesh",
+        "name": "E2049_ROUTE_ELEVATED_EAST",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          23,
+          4.0,
+          -4
+        ],
+        "scale": [
+          6,
+          0.4,
+          42
+        ],
+        "userData": {
+          "routeId": "east-elevated",
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-017",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_00",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          18.0,
+          0.35,
+          16
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-018",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_01",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          18.8,
+          0.95,
+          10
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-019",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_02",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          19.6,
+          1.5499999999999998,
+          4
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-020",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_03",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          20.4,
+          2.15,
+          -2
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-021",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_04",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          21.2,
+          2.75,
+          -8
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-022",
+        "type": "Mesh",
+        "name": "E2049_TRAVERSAL_UPPER_RAMP_05",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          22.0,
+          3.35,
+          -14
+        ],
+        "scale": [
+          7,
+          0.5,
+          7
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "traversal"
+        }
+      },
+      {
+        "uuid": "shillz-023",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_W",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          19.8,
+          5,
+          -4
+        ],
+        "scale": [
+          0.3,
+          2,
+          42
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "railing"
+        }
+      },
+      {
+        "uuid": "shillz-024",
+        "type": "Mesh",
+        "name": "E2049_RAIL_UPPER_E",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          26.2,
+          5,
+          -4
+        ],
+        "scale": [
+          0.3,
+          2,
+          42
+        ],
+        "userData": {
+          "blocksPlayer": true,
+          "gameplayType": "railing"
+        }
+      },
+      {
+        "uuid": "shillz-025",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_00",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          -12,
+          0.8,
+          10
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-026",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_01",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          12,
+          0.8,
+          10
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-027",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_02",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -8,
+          0.8,
+          1
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-028",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_03",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          8,
+          0.8,
+          1
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-029",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_04",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -14,
+          0.8,
+          -9
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-030",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_05",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          14,
+          0.8,
+          -9
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-031",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_06",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          -8,
+          0.8,
+          -19
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-032",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_07",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          8,
+          0.8,
+          -19
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-033",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_08",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -24,
+          0.8,
+          20
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-034",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_09",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          24,
+          0.8,
+          20
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-035",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_10",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -26,
+          0.8,
+          5
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-036",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_11",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          26,
+          0.8,
+          5
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-037",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_12",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          -24,
+          0.8,
+          -13
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-038",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_13",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          24,
+          0.8,
+          -13
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-039",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_14",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -15,
+          0.8,
+          29
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-040",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_15",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          15,
+          0.8,
+          29
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-041",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_16",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -5,
+          0.8,
+          24
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-042",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_17",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          5,
+          0.8,
+          24
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-043",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_18",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          -17,
+          0.8,
+          -27
+        ],
+        "scale": [
+          5,
+          1.6,
+          1.6
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-044",
+        "type": "Mesh",
+        "name": "E2049_COVER_COMMERCIAL_19",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          17,
+          0.8,
+          -27
+        ],
+        "scale": [
+          2,
+          1.6,
+          4
+        ],
+        "userData": {
+          "climb": true,
+          "gameplayType": "cover"
+        }
+      },
+      {
+        "uuid": "shillz-045",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_00",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -27,
+          0.5,
+          29
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 0,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-046",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_01",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          27,
+          0.5,
+          29
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 0,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-047",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_02",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -21,
+          0.5,
+          15
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 0,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-048",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_03",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          21,
+          0.5,
+          15
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 0,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-049",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_04",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -28,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 1,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-050",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_05",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          28,
+          0.5,
+          0
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 1,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-051",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_06",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -20,
+          0.5,
+          -14
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 1,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-052",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_07",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          20,
+          0.5,
+          -14
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 1,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-053",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_08",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -12,
+          0.5,
+          -25
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 2,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-054",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_09",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          12,
+          0.5,
+          -25
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 2,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-055",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_10",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -26,
+          0.5,
+          -30
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 2,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-056",
+        "type": "Mesh",
+        "name": "E2049_ENEMY_SPAWN_SHILLZ_11",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          26,
+          0.5,
+          -30
+        ],
+        "scale": [
+          1,
+          0.2,
+          1
+        ],
+        "userData": {
+          "spawnGroup": 2,
+          "faction": "shillz",
+          "gameplayType": "enemySpawn"
+        }
+      },
+      {
+        "uuid": "shillz-057",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_00",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -18,
+          0.5,
+          32
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-058",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_01",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          18,
+          0.5,
+          32
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-059",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_02",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -28,
+          0.5,
+          12
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-060",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_03",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          28,
+          0.5,
+          12
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-061",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_04",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -18,
+          0.5,
+          -5
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-062",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_05",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          18,
+          0.5,
+          -5
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-063",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_06",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          -12,
+          0.5,
+          -22
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-064",
+        "type": "Mesh",
+        "name": "E2049_PICKUP_SPAWN_07",
+        "geometry": "geo-unit",
+        "material": "mat-marker",
+        "position": [
+          12,
+          0.5,
+          -22
+        ],
+        "scale": [
+          0.8,
+          0.2,
+          0.8
+        ],
+        "userData": {
+          "gameplayType": "pickupSpawn"
+        }
+      },
+      {
+        "uuid": "shillz-065",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_00",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          30
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-066",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_00",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          30
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-067",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_01",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          20
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-068",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_01",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          20
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-069",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_02",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          10
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-070",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_02",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          10
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-071",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_03",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          0
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-072",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_03",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          0
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-073",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_04",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          -10
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-074",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_04",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          -10
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-075",
+        "type": "Mesh",
+        "name": "E2049_PROP_MERCH_STALL_WEST_05",
+        "geometry": "geo-unit",
+        "material": "mat-commercial",
+        "position": [
+          -30,
+          2,
+          -20
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "merchStall",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-076",
+        "type": "Mesh",
+        "name": "E2049_PROP_SERVICE_KIOSK_EAST_05",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          30,
+          2,
+          -20
+        ],
+        "scale": [
+          7,
+          4,
+          6
+        ],
+        "userData": {
+          "setpieceType": "loyaltyKiosk",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-077",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_00",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          35
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "GIGACORP PROVIDES",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-078",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_01",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          35
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "ORDER IS FREEDOM",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-079",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_02",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          26
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "OBEDIENCE BUILDS PEACE",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-080",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_03",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          26
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "REPORT DISSENT",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-081",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_04",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          17
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "THE BOARD KNOWS BEST",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-082",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_05",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          17
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "CONSUME WITH PRIDE",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-083",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_06",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          8
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "LOYALTY EARNS REWARDS",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-084",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_07",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          8
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "TRUST THE PROCESS",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-085",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_08",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          -1
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "WORLD PEACE REQUIRES COMPLIANCE",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-086",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_09",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          -1
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "AUTHORIZED CONTENT ONLY",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-087",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_10",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          -10
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "GOOD CITIZENS ENGAGE",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-088",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_11",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          -10
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "SECURITY IS EVERYONE'S RESPONSIBILITY",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-089",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_12",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          -19
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "SUPPORT OUR EXECUTIVES",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-090",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_13",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          -19
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "PROTECT THE SYSTEM",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-091",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_14",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -32,
+          5,
+          -28
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "REBELLION COSTS JOBS",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-092",
+        "type": "Mesh",
+        "name": "E2049_SIGN_LOYALTY_15",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          32,
+          5,
+          -28
+        ],
+        "scale": [
+          0.3,
+          5,
+          7
+        ],
+        "userData": {
+          "text": "GIGACORP CARES",
+          "faction": "shillz",
+          "gameplayType": "billboard"
+        }
+      },
+      {
+        "uuid": "shillz-093",
+        "type": "Mesh",
+        "name": "E2049_PROP_RIYA_BROADCAST_STAGE",
+        "geometry": "geo-unit",
+        "material": "mat-black",
+        "position": [
+          0,
+          2,
+          -31
+        ],
+        "scale": [
+          20,
+          4,
+          8
+        ],
+        "userData": {
+          "setpieceType": "influencerStage",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-094",
+        "type": "Mesh",
+        "name": "E2049_PROP_EXECUTIVE_SHRINE",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          0,
+          5,
+          -43
+        ],
+        "scale": [
+          16,
+          10,
+          2
+        ],
+        "userData": {
+          "setpieceType": "executiveShrine",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-095",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOCIAL_CREDIT_BOARD_00",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -18,
+          4,
+          20
+        ],
+        "scale": [
+          6,
+          8,
+          1
+        ],
+        "userData": {
+          "setpieceType": "socialCreditBoard",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-096",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOCIAL_CREDIT_BOARD_01",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          -9,
+          4,
+          20
+        ],
+        "scale": [
+          6,
+          8,
+          1
+        ],
+        "userData": {
+          "setpieceType": "socialCreditBoard",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-097",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOCIAL_CREDIT_BOARD_02",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          9,
+          4,
+          20
+        ],
+        "scale": [
+          6,
+          8,
+          1
+        ],
+        "userData": {
+          "setpieceType": "socialCreditBoard",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-098",
+        "type": "Mesh",
+        "name": "E2049_PROP_SOCIAL_CREDIT_BOARD_03",
+        "geometry": "geo-unit",
+        "material": "mat-screen",
+        "position": [
+          18,
+          4,
+          20
+        ],
+        "scale": [
+          6,
+          8,
+          1
+        ],
+        "userData": {
+          "setpieceType": "socialCreditBoard",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-099",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPONSOR_PYLON_00",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          -10,
+          4,
+          34
+        ],
+        "scale": [
+          2,
+          8,
+          2
+        ],
+        "userData": {
+          "setpieceType": "sponsorPylon",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-100",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPONSOR_PYLON_01",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          10,
+          4,
+          34
+        ],
+        "scale": [
+          2,
+          8,
+          2
+        ],
+        "userData": {
+          "setpieceType": "sponsorPylon",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-101",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPONSOR_PYLON_02",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          -10,
+          4,
+          -25
+        ],
+        "scale": [
+          2,
+          8,
+          2
+        ],
+        "userData": {
+          "setpieceType": "sponsorPylon",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "shillz-102",
+        "type": "Mesh",
+        "name": "E2049_PROP_SPONSOR_PYLON_03",
+        "geometry": "geo-unit",
+        "material": "mat-loyalty",
+        "position": [
+          10,
+          4,
+          -25
+        ],
+        "scale": [
+          2,
+          8,
+          2
+        ],
+        "userData": {
+          "setpieceType": "sponsorPylon",
+          "gameplayType": "setpiece"
+        }
+      },
+      {
+        "uuid": "light-hemi",
+        "type": "HemisphereLight",
+        "name": "E2049_LIGHT_AMBIENT_SHILLZ",
+        "color": 16765802,
+        "groundColor": 1511946,
+        "intensity": 0.7
+      },
+      {
+        "uuid": "light-sun",
+        "type": "DirectionalLight",
         "name": "E2049_LIGHT_KEY_SHILLZ",
-        "color": 16770560,
-        "intensity": 1.4,
-        "distance": 40,
-        "decay": 2,
-        "position": [0, 7, 0]
+        "color": 16769184,
+        "intensity": 1.3,
+        "position": [
+          -20,
+          35,
+          25
+        ]
       }
     ]
   }

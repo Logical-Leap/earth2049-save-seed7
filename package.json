@@ -5,7 +5,9 @@
   "description": "EARTH 2049: SAVE SEED 7 — local dev server",
   "scripts": {
     "scenes:manifest": "node scripts/build-scene-manifest.js",
-    "test": "node --test tests/*.test.js",
+    "scenes:check": "node scripts/build-scene-manifest.js --check",
+    "qa:assets": "npm run scenes:check && node scripts/validate-release-assets.js",
+    "test": "npm run qa:assets && node --test tests/*.test.js",
     "predev": "node scripts/build-scene-manifest.js",
     "dev": "serve -l 8049 .",
     "start": "npm run dev",
