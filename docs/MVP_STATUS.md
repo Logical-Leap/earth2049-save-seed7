@@ -1,10 +1,12 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 (Milestone 2 authored-map/reward acceptance candidate)
+Last audited: 2026-07-13 (Milestone 2 production verification)
 
-Production commit: `240692e` (`origin/main`, including PRs #35–#40)
+Production commit: `6922c9d` (`origin/main`, including PRs #35–#43)
 
 Production target: https://earth2049-save-seed7.pages.dev/
+
+Last production deployment: 2026-07-13 — PR #43 runtime deployed and verified through live HTTP, title-screen, and Rebel Haven browser smokes.
 
 Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
@@ -121,27 +123,36 @@ Recovery keys preserve the raw/pre-migration payload and latest reset payload. T
 - Host simulates enemies/waves/director; DO validates role-sensitive messages and owns canonical snapshots/claims/revive state.
 - Production Pages hostname selects the official Worker ahead of stale localStorage.
 
-## Baseline verification (2026-07-13)
+## Current verification (2026-07-13)
 
 Passed locally:
 
 ```text
-node --check js/*.js js/net/*.js workers/*.js scripts/*.js tests/*.js
-node --test tests/*.test.js
-  15 tests, 15 pass, 0 fail
-npm run scenes:manifest
-  Wrote 12 scenes
+node --check js/game.js js/world.js js/map-runtime-rules.js js/run-settlement.js scripts/qa/m2-browser-acceptance.js
+npm test
+  50 tests, 50 pass, 0 fail
+  12 scenes, 1,825 objects, 61 file references validated
+node scripts/qa/m2-browser-acceptance.js
+  Hub entry → deployment → authored ShillZ movement → terminal activation → wave 1 / 10 hostiles passed
 npm run pages:prepare
   Prepared Cloudflare Pages static runtime in dist-pages
+npm audit --audit-level=high
+  0 vulnerabilities
 git diff --check
 ```
 
+Live production verification passed:
+
+- title screen and **Enter Rebel Haven Hub** rendered;
+- Rebel Haven loaded with safe-zone HUD and deployment prompt;
+- `map-runtime-rules.js`, `run-settlement.js`, `game.js`, and ShillZ scene returned HTTP 200;
+- browser console reported the authored Hub/ShillZ marker sets with zero JavaScript errors.
+
 Not yet accepted:
 
-- live Pages HTTP/browser smoke;
 - live Worker health and room flow;
 - full campaign completion;
-- Hub round trip;
+- human ShillZ/Riya combat, extraction, and balance pass;
 - save migration/import/export/reset;
 - optional asset failure recovery;
 - map reachability/void/softlock validation;
@@ -150,7 +161,7 @@ Not yet accepted:
 
 ## Current blockers
 
-No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Deterministic Objective/Enemy/Boss/Director seams and representative performance evidence are also absent. Co-op must remain beta/feature-gated until its multi-client matrix passes. See [`QA_CHECKLIST.md`](QA_CHECKLIST.md) for the complete acceptance gate.
+No credential blocker has been established. The Hub campaign shell and real-input launch/objective smoke are now live. Product/code blockers are the human Riya combat/balance gate, later district production loops, the Turing ending, broader deterministic Objective/Enemy/Boss/Director seams, and representative performance evidence. Co-op must remain beta/feature-gated until its multi-client matrix passes. See [`QA_CHECKLIST.md`](QA_CHECKLIST.md) for the complete acceptance gate.
 
 ## Next three priorities
 
