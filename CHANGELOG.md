@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Automated scene/data/asset QA gates
+
+- Added read-only release validation for direct and editor-wrapped Three.js Object JSON, explicit per-map marker contracts, canonical IDs, unique UUIDs, finite transforms, above-ground spawn/pickup markers, and resolved geometry/material references.
+- Added repository-local asset existence checks and GLB header/length validation across scene and asset manifests.
+- Integrated the gates and regression tests into `npm test`, with drift-free scene manifest generation and a read-only stale-manifest check documented in `docs/QA_CHECKLIST.md`.
+
 ## 2026-07-13 — Versioned save recovery and portability
 
 - Added schema-v2 save defaults, ordered/idempotent migration, validation and bounded normalization while preserving the existing `earth2049_seed7_v1` storage key and recognized/unknown legacy fields.
