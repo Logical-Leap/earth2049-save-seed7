@@ -35,7 +35,7 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 
 | Milestone | Status | Evidence / exit gate |
 |---|---|---|
-| M1 audit and baseline | **In progress** | This document set exists; baseline syntax/tests/manifest/Pages preparation pass. Live browser/performance evidence remains. |
+| M1 audit and baseline | **Complete** | Required baseline documents published in PR #35; syntax/tests/manifest/Pages preparation and live Pages/Worker probes passed. |
 | M2 save contract | **Implemented locally; PR verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection have unit + browser-integration tests. |
 | M2 first playable vertical slice | **In progress** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
 | Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |

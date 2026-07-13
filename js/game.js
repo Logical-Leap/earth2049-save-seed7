@@ -5,7 +5,7 @@
 let renderer, scene, camera, composer, bloomPass;
 let gunGroup, gunModels = {}, curGunObj = null, muzzleSprite, muzzleLight, explLight;
 let SAVE, G = null;
-let saveWriteBlocked = false, saveLoadStatus = 'pending';
+let saveWriteBlocked = false, saveLoadStatus = 'pending', futureSaveRaw = null;
 let isTouch = false;
 let state = 'title';            // title | run | og | dead | victory
 let paused = false;
@@ -25,6 +25,10 @@ function saveCatalogs() {
   return {
     factionIds: Object.keys(FACTIONS).filter(id => id !== 'rebels'),
     weaponIds: Object.keys(WEAPONS),
+    upgrades: Object.fromEntries(METAUP.map(item => [item.id, { max:item.max }])),
+    corruptionUpgrades: Object.fromEntries(CORRUPTION_UPGRADES.map(item => [item.id, { max:item.max }])),
+    relicIds: Object.values(BOSS_RELICS).map(item => item.id),
+    modifierIds: MODIFIERS.map(item => item.id),
     abilities: Object.fromEntries(Object.keys(ABILITIES).map(id => [id, { unlocked:id === 'empGrenade', level:id === 'empGrenade' ? 1 : 0 }])),
   };
 }
@@ -32,6 +36,7 @@ function loadSave() {
   const result = SaveSystem.load(localStorage, saveCatalogs(), randomId);
   saveLoadStatus = result.status;
   saveWriteBlocked = result.status === 'unsupported-future-version';
+  futureSaveRaw = result.futureRaw || null;
   SAVE = result.save || SaveSystem.createDefault(saveCatalogs(), randomId);
   if (saveWriteBlocked) console.error('[E2049] Save is from a newer version. Running read-only until import or reset.');
 }
@@ -1977,12 +1982,14 @@ function cardHtml(title, body, action) {
 }
 function saveStatusCopy() {
   if (saveWriteBlocked) return 'READ-ONLY — this browser contains a save from a newer Earth 2049 version. Export it or explicitly reset/import a compatible save.';
+  if (saveLoadStatus === 'backup-failed') return 'PROTECTED — the original save could not be backed up, so it was left untouched. Export before retrying recovery.';
   if (saveLoadStatus === 'storage-unavailable') return 'VOLATILE — browser storage is unavailable. Export before closing this tab.';
   if (saveLoadStatus === 'recovered-invalid-json' || saveLoadStatus === 'recovered-invalid-save') return 'RECOVERED — the unreadable original was preserved in the backup slot.';
   return 'Schema v' + SaveSystem.CURRENT_VERSION + ' — local progress is ready.';
 }
 function downloadSaveFile() {
-  const blob = new Blob([SaveSystem.exportSave(SAVE)], { type:'application/json' });
+  const payload = saveWriteBlocked && futureSaveRaw ? futureSaveRaw : SaveSystem.exportSave(SAVE);
+  const blob = new Blob([payload], { type:'application/json' });
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url; link.download = 'earth2049-seed7-save.json';
@@ -1998,7 +2005,7 @@ function chooseSaveImport() {
     const result = SaveSystem.importSave(await file.text(), localStorage, saveCatalogs(), randomId);
     input.remove();
     if (!result.ok) { alert('Save import failed: ' + result.error); return; }
-    SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'imported';
+    SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'imported'; futureSaveRaw = null;
     ensureAbilityUnlocks(); updateTitle(); renderArmory();
   };
   document.body.appendChild(input); input.click();
@@ -2006,7 +2013,8 @@ function chooseSaveImport() {
 function resetSaveData() {
   if (!confirm('Reset all Earth 2049 progression? A recovery copy will be kept in this browser.')) return;
   const result = SaveSystem.reset(localStorage, saveCatalogs(), randomId);
-  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = result.status;
+  if (!result.ok) { saveLoadStatus = result.status; alert('Save reset failed: ' + result.status + '. Your original save was not replaced.'); renderArmory(); return; }
+  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = result.status; futureSaveRaw = null;
   ensureAbilityUnlocks(); updateTitle(); renderArmory();
 }
 function renderArmory() { // NOSONAR - static tab renderer avoids framework/bundler dependency

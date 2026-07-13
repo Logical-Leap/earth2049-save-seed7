@@ -3,7 +3,8 @@
 ## 2026-07-13 — Versioned save recovery and portability
 
 - Added schema-v2 save defaults, ordered/idempotent migration, validation and bounded normalization while preserving the existing `earth2049_seed7_v1` storage key and recognized/unknown legacy fields.
-- Added raw/pre-migration and reset backups, invalid-save recovery, future-version read-only protection, graceful storage-failure behavior, and validated JSON export/import/reset APIs.
+- Added mandatory verified backups before recovery/import/reset can replace primary data, invalid-save recovery, exact raw export for future-version saves, current-schema normalization backup, graceful storage-failure behavior, and validated JSON export/import/reset APIs.
+- Bounded catalog-controlled upgrades, corruption upgrades, relics, modifiers, mastery, abilities, intel, options, and scalar counters so malformed saves cannot inject non-finite gameplay state.
 - Added an Armory **Save** tab for status, export, import, and confirmed reset, plus Node and browser-integration regression coverage.
 
 ## 2026-07-13 — Early Access MVP baseline
