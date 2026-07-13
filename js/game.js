@@ -462,6 +462,7 @@ async function newRun(opts = {}) {
     G.theme = await World.build(scene, 0, {
       sceneUrl: REBEL_HAVEN_HUB.sceneUrl,
       modelUrl: REBEL_HAVEN_HUB.modelUrl,
+      skyUrls: REBEL_HAVEN_HUB.skyUrls,
       faction: REBEL_HAVEN_HUB.faction,
     });
     const hs = World.playerStart();

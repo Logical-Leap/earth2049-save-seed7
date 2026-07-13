@@ -11,12 +11,25 @@ const World = (() => {
   let freeCells = [];
   let rain = null, rainPos = null, rainVel = null;
   let embers = null, emberPos = null;
+  let hubSkyTexture = null;
   let signMats = [], holos = [];
   let themeRef = null, spawnCell = null, bossCell = null, colliders = [], spawnCursor = 0;
   let usingExternalScene = false, usingHubScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [];
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
+
+  function loadCubeTexture(urls) {
+    return new Promise(resolve => {
+      new THREE.CubeTextureLoader().load(urls, tex => {
+        tex.encoding = THREE.sRGBEncoding;
+        resolve(tex);
+      }, undefined, err => {
+        console.warn('[E2049] Rebel Haven skybox failed; using procedural fallback.', err);
+        resolve(null);
+      });
+    });
+  }
   function worldToCell(x, z) { return { cx: Math.floor((x + HALF_W) / CELL), cy: Math.floor((z + HALF_H) / CELL) }; }
   function cellCenter(cx, cy) { return { x: (cx + 0.5) * CELL - HALF_W, z: (cy + 0.5) * CELL - HALF_H }; }
   function cellH(cx, cy) { return inG(cx, cy) ? grid[idx(cx, cy)] : CFG.WALL_H; }
@@ -337,6 +350,7 @@ const World = (() => {
   /* ---------- build scenery ---------- */
   async function build(scene, dIdx, opts = {}) {
     if (group) { scene.remove(group); disposeGroup(group); }
+    if (hubSkyTexture) { hubSkyTexture.dispose(); hubSkyTexture = null; }
     group = new THREE.Group(); scene.add(group);
     signMats = []; holos = []; colliders = []; spawnCursor = 0;
     playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false; usingHubScene = false;
@@ -359,12 +373,18 @@ const World = (() => {
     if (editorScene) genOpenLayout(); else genLayout();
 
     scene.fog = new THREE.FogExp2(theme.fog, CFG.FOG_DENS);
-    scene.background = new THREE.Color(theme.sky);
+    if (usingHubScene && Array.isArray(opts.skyUrls) && opts.skyUrls.length === 6) {
+      hubSkyTexture = await loadCubeTexture(opts.skyUrls);
+    }
+    scene.background = hubSkyTexture || new THREE.Color(theme.sky);
 
-    // sky dome
-    const sky = new THREE.Mesh(new THREE.SphereGeometry(190, 16, 12),
-      new THREE.MeshBasicMaterial({ map: Assets.skyTex(theme), side: THREE.BackSide, fog: false, depthWrite: false }));
-    group.add(sky);
+    // Combat districts retain their procedural dome. The Hub uses its authored
+    // cubemap as scene.background, avoiding an extra depth surface.
+    if (!hubSkyTexture) {
+      const sky = new THREE.Mesh(new THREE.SphereGeometry(190, 16, 12),
+        new THREE.MeshBasicMaterial({ map: Assets.skyTex(theme), side: THREE.BackSide, fog: false, depthWrite: false }));
+      group.add(sky);
+    }
 
     // Authored Hub visuals contain their own floor at Y=0. Adding the generic
     // district plane here puts two differently textured surfaces at the exact
