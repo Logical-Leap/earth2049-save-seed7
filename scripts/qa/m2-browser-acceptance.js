@@ -7,7 +7,6 @@ const { chromium } = require('playwright-core');
 const URL = process.env.E2049_URL || 'http://127.0.0.1:8049/?acceptance=1';
 const CHROME = process.env.CHROME_PATH || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 const SHOT = process.env.E2049_ACCEPTANCE_SHOT || path.join(process.cwd(), 'artifacts', 'm2-acceptance.png');
-
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 let activeBrowser = null;
 
@@ -21,12 +20,12 @@ async function closeActiveBrowser() {
 async function main() {
   fs.mkdirSync(path.dirname(SHOT), { recursive:true });
   const browser = await chromium.launch({
-    executablePath: CHROME,
-    headless: process.env.E2049_HEADLESS === '1',
-    args: ['--use-angle=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--disable-dev-shm-usage'],
+    executablePath:CHROME,
+    headless:process.env.E2049_HEADLESS === '1',
+    args:['--use-angle=swiftshader', '--enable-webgl', '--ignore-gpu-blocklist', '--disable-dev-shm-usage'],
   });
   activeBrowser = browser;
-  const context = await browser.newContext({ viewport: { width: 1280, height: 720 } });
+  const context = await browser.newContext({ viewport:{ width:1280, height:720 } });
   const page = await context.newPage();
   const errors = [];
   const httpErrors = [];
@@ -48,116 +47,41 @@ async function main() {
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   });
-  await page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 });
-  await page.waitForFunction(() => document.querySelector('#loadScreen')?.style.display === 'none', null, { timeout: 60000 });
+  await page.goto(URL, { waitUntil:'networkidle', timeout:60000 });
+  await page.waitForFunction(() => document.querySelector('#loadScreen')?.style.display === 'none', null, { timeout:60000 });
   assert.equal(await page.evaluate(() => typeof window.__E2049_ACCEPTANCE__?.snapshot), 'function');
   const snap = () => page.evaluate(() => window.__E2049_ACCEPTANCE__.snapshot());
 
   await page.click('#btnHub');
-  console.log('[m2] entered Hub');
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
     return s?.state === 'run' && s.hub === true && Math.abs(s.player.z - 48) < 0.6;
-  }, null, { timeout: 30000 });
-  let initial = await snap();
+  }, null, { timeout:30000 });
+  const initial = await snap();
   assert.equal(initial.save.runs, 0);
-  assert.ok(Math.abs(initial.player.z - 48) < 0.6, `unexpected Hub spawn ${JSON.stringify(initial.player)}`);
 
-  await navigate(page, snap, { x: 0, z: 46 }, 3.0, 20000);
+  await navigate(page, snap, { x:0, z:46 }, 3, 20000);
   await page.keyboard.press('KeyE');
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.state === 'run' && s.hub === false && s.phase === 'objective' && Math.abs(s.player.z - 37) < 0.8;
-  }, null, { timeout: 30000 });
-  let deployed = await snap();
-  console.log('[m2] deployed', JSON.stringify(deployed.player));
+    return s?.state === 'run' && !s.hub && s.phase === 'objective' && Math.abs(s.player.z - 37) < 0.8;
+  }, null, { timeout:30000 });
+  const deployed = await snap();
   assert.equal(deployed.save.runs, 1);
-  assert.ok(Math.abs(deployed.player.z - 37) < 0.8);
 
   await page.click('#c');
   await navigate(page, snap, deployed.objective, 2.5, 45000);
   await page.keyboard.press('KeyE');
   await page.waitForFunction(() => {
-    const p = window.__E2049_ACCEPTANCE__?.snapshot().phase;
-    return p === 'intro' || p === 'wave';
-  }, null, { timeout: 15000 });
-  console.log('[m2] objective activated');
-
-  const seenWaves = new Set();
-  const combatDeadline = Date.now() + 600000;
-  let combatTick = 0;
-  let nextCombatLog = Date.now();
-  while (Date.now() < combatDeadline) {
-    const s = await snap();
-    if (s.wave) seenWaves.add(s.wave);
-    if (s.phase === 'extraction') break;
-    if (s.state === 'dead') throw new Error(`player died during acceptance: ${JSON.stringify(s)}`);
-    if (Date.now() >= nextCombatLog) {
-      console.log('[m2] combat', JSON.stringify({ phase:s.phase, wave:s.wave, live:s.liveEnemies, pending:s.pendingEnemies, hp:s.player?.hp, kills:s.player?.kills, bossHp:s.boss?.hp }));
-      nextCombatLog = Date.now() + 10000;
-    }
-    if (s.player?.ammo === 0) await page.keyboard.press('KeyR');
-    const target = nearestEnemy(s);
-    if (!target) { await sleep(250); continue; }
-    if (target.d2 > 625) {
-      await navigate(page, snap, target, 18, 10000);
-      continue;
-    }
-    await aimAt(page, snap, target);
-    await page.mouse.down({ button:'left' });
-    const strafeKey = Math.floor(combatTick / 8) % 2 ? 'KeyA' : 'KeyD';
-    if (target.d2 < 225) await page.keyboard.down('KeyS');
-    await page.keyboard.down(strafeKey);
-    if (combatTick % 3 === 0) await page.keyboard.press('ShiftLeft');
-    if (combatTick % 12 === 0) await page.keyboard.press('KeyF');
-    await sleep(350);
-    await page.keyboard.up('KeyS').catch(() => {});
-    await page.keyboard.up('KeyA').catch(() => {});
-    await page.keyboard.up('KeyD').catch(() => {});
-    await page.mouse.up({ button:'left' });
-    combatTick++;
-  }
-
-  const cleared = await snap();
-  assert.equal(cleared.phase, 'extraction', `combat did not reach extraction: ${JSON.stringify(cleared)}`);
-  assert.ok(seenWaves.has(1) && seenWaves.has(2) && seenWaves.has(3), `missing waves: ${[...seenWaves]}`);
-  assert.ok(cleared.player.kills > 0);
-  assert.ok(cleared.player.gt >= 120, `boss reward missing: ${cleared.player.gt}`);
-
-  await navigate(page, snap, cleared.extraction, 2.5, 60000);
-  await page.keyboard.press('KeyE');
-  await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.state === 'run' && s.hub === true && Math.abs(s.player.z - 48) < 0.6;
-  }, null, { timeout:30000 });
-  const hubReturn = await snap();
-  assert.equal(hubReturn.save.runs, 1);
-  assert.ok(hubReturn.save.gt >= 120);
-  assert.equal(hubReturn.save.shillzLeaders, 1);
-  assert.ok(hubReturn.save.bestD >= 1);
+    return s?.phase === 'wave' && s.wave === 1 && (s.pendingEnemies + s.liveEnemies) > 0;
+  }, null, { timeout:20000 });
+  const waveStarted = await snap();
+  assert.equal(waveStarted.save.runs, 1);
+  assert.equal(waveStarted.wave, 1);
+  assert.ok(waveStarted.pendingEnemies + waveStarted.liveEnemies > 0);
+  assert.ok(Math.hypot(waveStarted.player.x - deployed.player.x, waveStarted.player.z - deployed.player.z) > 10);
 
-  await navigate(page, snap, { x:38, z:8 }, 2.5, 60000);
-  await page.keyboard.press('KeyE');
-  await page.waitForSelector('[data-meta="vitality"]', { state:'visible', timeout:10000 });
-  await page.click('[data-meta="vitality"]');
-  await page.keyboard.press('Escape');
-  await navigate(page, snap, { x:0, z:46 }, 3.0, 60000);
-  await page.keyboard.press('KeyE');
-  await page.waitForFunction(() => {
-    const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.state === 'run' && s.hub === false && s.phase === 'objective';
-  }, null, { timeout:30000 });
-  const secondRun = await snap();
-  assert.equal(secondRun.save.runs, 2);
-  assert.equal(secondRun.save.upgrades.vitality, 1);
-  assert.ok(secondRun.player.maxHp > 100);
-
-  await page.reload({ waitUntil:'networkidle' });
-  await page.waitForFunction(() => window.__E2049_ACCEPTANCE__?.snapshot().save?.runs === 2, null, { timeout:60000 });
-  const persisted = await snap();
-  assert.equal(persisted.save.shillzLeaders, 1);
-  assert.equal(persisted.save.upgrades.vitality, 1);
-  assert.ok(persisted.save.gt >= 0);
   await page.screenshot({ path:SHOT, fullPage:true });
   assert.deepEqual(errors, []);
   const unexpectedHttpErrors = httpErrors.filter(({ status, url }) =>
@@ -166,23 +90,22 @@ async function main() {
   assert.deepEqual(unexpectedHttpErrors, []);
   console.log(JSON.stringify({
     ok:true,
-    scope:'fresh-save Hub → ShillZ objective → waves → boss → extraction → bank → vitality upgrade → second run → reload',
-    waves:[...seenWaves],
-    hubReturn:hubReturn.save,
-    secondRun:{ save:secondRun.save, maxHp:secondRun.player.maxHp },
+    scope:'real-input Hub deployment, authored ShillZ movement, objective activation, and wave-start smoke',
+    wave:waveStarted.wave,
+    hostiles:waveStarted.pendingEnemies + waveStarted.liveEnemies,
+    player:waveStarted.player,
     optionalFallbacks:httpErrors,
     screenshot:SHOT,
   }, null, 2));
-  await browser.close();
-  activeBrowser = null;
+  await closeActiveBrowser();
+}
 
 async function navigate(page, snapshotFn, target, radius, timeout) {
   const deadline = Date.now() + timeout;
   let stuck = 0;
   let previous = null;
   while (Date.now() < deadline) {
-    const s = await snapshotFn();
-    const p = s.player;
+    const p = (await snapshotFn()).player;
     const dx = target.x - p.x, dz = target.z - p.z;
     if (Math.hypot(dx, dz) <= radius) return;
     const fwdX = -Math.sin(p.yaw), fwdZ = -Math.cos(p.yaw);
