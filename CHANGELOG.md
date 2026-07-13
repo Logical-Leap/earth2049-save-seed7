@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Camera look reset fix
+
+- Bounded pointer-lock and touch look deltas so OS/browser input spikes during fast turns cannot snap the camera or abruptly redirect held movement.
+- Normalized accumulated yaw and cleared queued look input across pointer-lock and pause transitions.
+- Added regression coverage for extreme and non-finite look input.
+
 ## 2026-07-13 — Faction skyboxes across every district
 
 - Added a centralized, cached faction skybox registry for ShillZ, Muskers, GigaCorp, Bots, Cryptids, and the Rebel/Dead Zone Hub.
