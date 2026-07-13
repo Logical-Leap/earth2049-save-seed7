@@ -10,7 +10,7 @@ Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
 ## Executive status
 
-**Estimated MVP completion: 42%.** The repository is a playable combat prototype with five configured districts, five bosses, persistent upgrades, an authored Hub scene, asset fallbacks, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: the Hub is not the campaign shell, the first playable loop does not return through Hub services, saves are not versioned or user-manageable, later districts lack production map contracts, campaign completion is only a victory overlay, co-op acceptance is untested, and automated coverage is one input-safety test.
+**Estimated MVP completion: 47%.** The repository is a playable combat prototype with five configured districts, five bosses, persistent upgrades, an authored Hub scene, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: the Hub is not the campaign shell, the first playable loop does not return through Hub services, later districts lack production map contracts, campaign completion is only a victory overlay, co-op acceptance is untested, and broad gameplay/map automation is still missing.
 
 Do not interpret configured content as acceptance. A row is complete only after its listed automated and browser tests pass.
 
@@ -36,8 +36,9 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Milestone | Status | Evidence / exit gate |
 |---|---|---|
 | M1 audit and baseline | **In progress** | This document set exists; baseline syntax/tests/manifest/Pages preparation pass. Live browser/performance evidence remains. |
-| M2 first playable vertical slice | **Not started** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
-| Shared runtime stabilization | **Partial** | `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression/Save contracts are not isolated or regression-tested. |
+| M2 save contract | **Implemented locally; PR verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection have unit + browser-integration tests. |
+| M2 first playable vertical slice | **In progress** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
+| Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |
 | Muskers / Magnus | **Prototype** | Configured procedural district and boss; no authored production map or campaign acceptance test. |
 | Bots / SPYD3R | **Prototype** | Four authored scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
 | Cryptids / Blitz | **Prototype** | Five authored v2 scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
@@ -58,7 +59,7 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Hub | Final scene JSON + GLB + collision metadata; non-combat state | No service markers/interactions, mission launch, post-run return, or upgrade loop | Hub lifecycle browser test |
 | Objectives | Five generic mission types and HUD/rewards | No shared ObjectiveSystem or authored-objective marker lifecycle | Unit state-machine tests + scene integration |
 | Progression | GigaTech, upgrades, intel, abilities, mastery, relics, tiers, corruption | Logic is embedded in `game.js`; no invariants/migration tests | Deterministic unit tests and two-run browser test |
-| Saves | localStorage defaults and additive lazy migration | No schema version, validation, backup, import/export/reset, corruption recovery report | Save fixture matrix and UI acceptance |
+| Saves | Schema v2, idempotent legacy migration, validation/normalization, raw/reset backup, future-version read-only mode, export/import/reset UI | No cloud sync; storage failure warning is visible only in Armory Save tab | Save fixture matrix + browser tab smoke; full Hub Save Terminal comes with lifecycle work |
 | Assets | GLTF/scene loading with procedural fallbacks; central manifests; skybox fallback | Only 3 enemy GLBs + 1 weapon GLB; optional failures lack automated probes | Missing/corrupt asset tests and browser console probes |
 | Collision/navigation | Procedural connectivity, editor colliders, spawn filtering, authored ShillZ containment | External-scene nav is coarse open grid; no automated reachability/void/softlock validator | Marker/collider validator + traversal probes |
 | Performance | capped enemies (13), particles (700), co-op registries, disposal paths, adaptive quality | No district-transition soak, heap/GPU baseline or draw-call budget | 30-minute/all-district soak and metric capture |
@@ -93,13 +94,13 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 
 ### Save inventory
 
-Current key: `earth2049_seed7_v1`. Current data grows lazily to include:
+Current key remains `earth2049_seed7_v1`, now with internal `schemaVersion: 2`. `SaveSystem` migrates legacy data idempotently and validates/bounds fields while preserving recognized and unknown legacy fields. Data includes:
 
 - currencies/stats: `gt`, `corruption`, `runs`, `bestD`, `kills`, `wins`;
 - progression: `up`, `corruptionUp`, `intel`, `abilities`, `equippedAbilities`, `mastery`, `relics`, `simTier`, `modifiersSeen`, `codex`;
 - profile/options: `profile`, `opts`.
 
-There is no `schemaVersion`, migration registry, checksum/validation, backup slot, import/export, or reset UI.
+Recovery keys preserve the raw/pre-migration payload and latest reset payload. The Armory Save tab exposes status plus JSON export/import/reset. Unsupported future saves remain untouched and block writes until explicit compatible import or reset.
 
 ### Co-op inventory
 
@@ -116,7 +117,7 @@ Passed locally:
 ```text
 node --check js/*.js js/net/*.js workers/*.js scripts/*.js tests/*.js
 node --test tests/*.test.js
-  1 test, 1 pass, 0 fail
+  3 tests, 3 pass, 0 fail
 npm run scenes:manifest
   Wrote 12 scenes
 npm run pages:prepare
@@ -138,10 +139,10 @@ Not yet accepted:
 
 ## Current blockers
 
-No credential blocker has been established. Product/code blockers are the missing Hub campaign shell, save contract and automated acceptance harness. Co-op must remain beta/feature-gated until its multi-client matrix passes.
+No credential blocker has been established. Product/code blockers are the missing Hub campaign shell and automated campaign/map acceptance harness. Co-op must remain beta/feature-gated until its multi-client matrix passes.
 
 ## Next three priorities
 
-1. Build the tested, versioned SaveSystem seam with migration/backup/import/export/reset while preserving `earth2049_seed7_v1` data.
-2. Implement and test the Hub mission/service lifecycle, then ship the complete ShillZ vertical slice and post-run Hub upgrade/second-run loop.
-3. Add map/objective/runtime validators and browser acceptance automation before wiring later authored district scenes.
+1. Implement and test the Hub mission/service lifecycle, then ship the complete ShillZ vertical slice and post-run Hub upgrade/second-run loop.
+2. Add map/objective/runtime validators and browser campaign acceptance automation before wiring later authored district scenes.
+3. Stabilize shared Objective/Progression/Enemy/Boss contracts, then complete the four later district/ending slices.

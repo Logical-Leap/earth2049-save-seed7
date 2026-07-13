@@ -5,6 +5,7 @@
 let renderer, scene, camera, composer, bloomPass;
 let gunGroup, gunModels = {}, curGunObj = null, muzzleSprite, muzzleLight, explLight;
 let SAVE, G = null;
+let saveWriteBlocked = false, saveLoadStatus = 'pending';
 let isTouch = false;
 let state = 'title';            // title | run | og | dead | victory
 let paused = false;
@@ -20,25 +21,19 @@ const rnd = (a, b) => a + Math.random() * (b - a);
 window.onerror = (m, s, l) => { const d = el('loadScreen'); if (d && d.style.display !== 'none') { d.style.display = 'flex'; d.innerHTML = 'ERROR<br><span style="font-size:10px;letter-spacing:.1em;color:#f66">' + m + ' @' + l + '</span>'; } };
 
 /* ============ save ============ */
-function loadSave() { // NOSONAR - compact backwards-compatible localStorage migration for a static game
-  try { SAVE = JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch (e) { SAVE = null; }
-  if (!SAVE) SAVE = { gt: 0, up: {}, runs: 0, bestD: 0, kills: 0, wins: 0, opts: { sens: 1, music: true, sfx: true, auto: true } };
-  if (!SAVE.opts) SAVE.opts = { sens: 1, music: true, sfx: true, auto: true };
-  if (!SAVE.up) SAVE.up = {};
-  if (!SAVE.intel) SAVE.intel = {};
-  for (const id of Object.keys(FACTIONS)) if (id !== 'rebels' && !SAVE.intel[id]) SAVE.intel[id] = { points: 0, leaders: 0 };
-  SAVE.corruption = Number(SAVE.corruption || 0);
-  if (!SAVE.abilities) SAVE.abilities = {};
-  for (const id of Object.keys(ABILITIES)) if (!SAVE.abilities[id]) SAVE.abilities[id] = { unlocked: id === 'empGrenade', level: id === 'empGrenade' ? 1 : 0 };
-  if (!Array.isArray(SAVE.equippedAbilities)) SAVE.equippedAbilities = ['empGrenade'];
-  if (!SAVE.mastery) SAVE.mastery = {};
-  for (const id of Object.keys(WEAPONS)) if (!SAVE.mastery[id]) SAVE.mastery[id] = { xp: 0, level: 0, kills: 0, eliteKills: 0, bossDamage: 0, headshots: 0, clears: 0 };
-  if (!SAVE.relics) SAVE.relics = {};
-  SAVE.simTier = Math.max(1, Number(SAVE.simTier || 1));
-  if (!SAVE.modifiersSeen) SAVE.modifiersSeen = {};
-  if (!SAVE.codex) SAVE.codex = {};
-  if (!SAVE.corruptionUp) SAVE.corruptionUp = {};
-  ensureLocalProfile();
+function saveCatalogs() {
+  return {
+    factionIds: Object.keys(FACTIONS).filter(id => id !== 'rebels'),
+    weaponIds: Object.keys(WEAPONS),
+    abilities: Object.fromEntries(Object.keys(ABILITIES).map(id => [id, { unlocked:id === 'empGrenade', level:id === 'empGrenade' ? 1 : 0 }])),
+  };
+}
+function loadSave() {
+  const result = SaveSystem.load(localStorage, saveCatalogs(), randomId);
+  saveLoadStatus = result.status;
+  saveWriteBlocked = result.status === 'unsupported-future-version';
+  SAVE = result.save || SaveSystem.createDefault(saveCatalogs(), randomId);
+  if (saveWriteBlocked) console.error('[E2049] Save is from a newer version. Running read-only until import or reset.');
 }
 function randomId() {
   if (crypto?.randomUUID) return crypto.randomUUID();
@@ -60,7 +55,12 @@ function setProfileName(name) {
   return p;
 }
 
-function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(SAVE)); } catch (e) {} }
+function persist() {
+  if (saveWriteBlocked) return false;
+  const ok = SaveSystem.persist(localStorage, SAVE);
+  if (!ok) saveLoadStatus = 'storage-unavailable';
+  return ok;
+}
 const upLv = id => SAVE.up[id] || 0;
 const corruptLv = id => SAVE.corruptionUp?.[id] || 0;
 const abilityLv = id => SAVE.abilities?.[id]?.level || 0;
@@ -1975,10 +1975,44 @@ let activeArmoryTab = 'body';
 function cardHtml(title, body, action) {
   return '<h3>' + title + '</h3><p>' + body + '</p>' + (action || '');
 }
+function saveStatusCopy() {
+  if (saveWriteBlocked) return 'READ-ONLY — this browser contains a save from a newer Earth 2049 version. Export it or explicitly reset/import a compatible save.';
+  if (saveLoadStatus === 'storage-unavailable') return 'VOLATILE — browser storage is unavailable. Export before closing this tab.';
+  if (saveLoadStatus === 'recovered-invalid-json' || saveLoadStatus === 'recovered-invalid-save') return 'RECOVERED — the unreadable original was preserved in the backup slot.';
+  return 'Schema v' + SaveSystem.CURRENT_VERSION + ' — local progress is ready.';
+}
+function downloadSaveFile() {
+  const blob = new Blob([SaveSystem.exportSave(SAVE)], { type:'application/json' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url; link.download = 'earth2049-seed7-save.json';
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+function chooseSaveImport() {
+  const input = document.createElement('input');
+  input.type = 'file'; input.accept = 'application/json,.json'; input.hidden = true;
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) { input.remove(); return; }
+    const result = SaveSystem.importSave(await file.text(), localStorage, saveCatalogs(), randomId);
+    input.remove();
+    if (!result.ok) { alert('Save import failed: ' + result.error); return; }
+    SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'imported';
+    ensureAbilityUnlocks(); updateTitle(); renderArmory();
+  };
+  document.body.appendChild(input); input.click();
+}
+function resetSaveData() {
+  if (!confirm('Reset all Earth 2049 progression? A recovery copy will be kept in this browser.')) return;
+  const result = SaveSystem.reset(localStorage, saveCatalogs(), randomId);
+  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = result.status;
+  ensureAbilityUnlocks(); updateTitle(); renderArmory();
+}
 function renderArmory() { // NOSONAR - static tab renderer avoids framework/bundler dependency
   ensureAbilityUnlocks();
   el('armGT').textContent = '⬢ ' + SAVE.gt + ' GIGATECH | CORRUPTION ' + SAVE.corruption + ' | SIM TIER ' + SAVE.simTier;
-  const tabs = [ ['body','Body Mods'], ['arsenal','Arsenal'], ['og','OG Device'], ['abilities','Abilities'], ['research','Faction Research'], ['corruption','Corruption'] ];
+  const tabs = [ ['body','Body'], ['arsenal','Arsenal'], ['og','OG Device'], ['abilities','Abilities'], ['research','Faction Research'], ['corruption','Corruption'], ['save','Save'] ];
   const tabWrap = el('armoryTabs');
   tabWrap.innerHTML = '';
   for (const [id,n] of tabs) {
@@ -2031,6 +2065,17 @@ function renderArmory() { // NOSONAR - static tab renderer avoids framework/bund
         const b = card.querySelector('[data-corrupt]'); if (b) b.onclick = () => { if (buyCorruptionUpgrade(u.id)) AudioSys.sfx('augment'); renderArmory(); };
       });
     }
+  } else if (activeArmoryTab === 'save') {
+    add(cardHtml('Save Status', saveStatusCopy()));
+    add(cardHtml('Export Progress', 'Download a portable JSON copy before moving devices or testing an Early Access update.', '<div class="buybtn" data-save-export>EXPORT SAVE</div>'), card => {
+      card.querySelector('[data-save-export]').onclick = downloadSaveFile;
+    });
+    add(cardHtml('Import Progress', 'Import validates and migrates a compatible save before replacing local progress. The previous local save is backed up.', '<div class="buybtn" data-save-import>IMPORT SAVE</div>'), card => {
+      card.querySelector('[data-save-import]').onclick = chooseSaveImport;
+    });
+    add(cardHtml('Reset Progress', 'Start over with a fresh schema-v' + SaveSystem.CURRENT_VERSION + ' profile. The current save is retained in a recovery slot.', '<div class="buybtn danger" data-save-reset>RESET SAVE</div>'), card => {
+      card.querySelector('[data-save-reset]').onclick = resetSaveData;
+    });
   }
 }
 function addMetaCard(u, add) {

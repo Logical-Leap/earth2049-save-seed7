@@ -63,9 +63,9 @@ Exit gate:
 
 ## M2 — First playable vertical slice
 
-### M2a SaveSystem
+### M2a SaveSystem — implemented, pending PR/live verification
 
-Introduce `js/save-system.js` as a UMD module behind the existing `SAVE`/`persist()` interface.
+`js/save-system.js` now provides the UMD module behind the existing `SAVE`/`persist()` interface.
 
 Required behavior:
 

@@ -14,14 +14,6 @@ Impact: required Hub → mission → rewards → Hub → upgrade → second-run 
 
 Fix/verification: implement CampaignRuntime/Hub service interactions and the M2 vertical-slice acceptance test.
 
-### MVP-002 — Save format is unversioned and not user-manageable
-
-Evidence: `loadSave()` performs inline lazy defaults under key `earth2049_seed7_v1`; no internal schema version, migration registry, validation backup, import/export or reset UI exists.
-
-Impact: changes can silently mutate or lose Early Access progression; users cannot recover or transfer saves.
-
-Fix/verification: SaveSystem fixture matrix and export→reset→import browser acceptance.
-
 ### MVP-003 — Complete campaign acceptance is unproven
 
 Evidence: five districts and bosses are configured and the final Turing kill opens a victory overlay, but there is no automated campaign test, production ending sequence, or return Hub. Later districts are procedural despite authored Bots/Cryptids scenes in the dev manifest.
@@ -94,15 +86,19 @@ Pages preparation and Wrangler commands exist, but there is no repository script
 
 The code has entity caps, pooling, disposal and adaptive quality, but there is no recorded renderer/heap/entity baseline across repeated district/Hub transitions or a long campaign.
 
-### MVP-016 — Save/storage failures are swallowed silently
-
-`persist()` catches localStorage errors and does nothing. A quota/privacy failure is invisible to the player.
-
-Risk: users believe progression saved when it did not.
-
 ### MVP-017 — Existing implementation plan is stale
 
 `docs/earth2049-implementation-plan.md` describes earlier missing systems that are now partially present and references an old commit/branch. Treat `MVP_PLAN.md` and `MVP_STATUS.md` as current authority; archive or refresh the old plan in a later docs cleanup.
+
+## Resolved during MVP execution
+
+### MVP-002 — Versioned/recoverable save contract
+
+Resolved by schema-v2 `SaveSystem`: legacy migration, validation, raw/reset backup, future-version read-only protection, JSON export/import/reset UI and regression tests.
+
+### MVP-016 — Visible storage failure state
+
+`persist()` now returns success/failure and the Armory Save tab reports a volatile storage state so players know to export before closing.
 
 ## P2 — Polish and deferred hardening
 

@@ -40,9 +40,9 @@ The game is functional but `js/game.js` combines too many stateful concerns. MVP
 
 All modules remain UMD scripts exposed on `window` and loaded before `game.js`.
 
-### SaveSystem
+### SaveSystem (implemented in schema v2)
 
-Responsibilities:
+Responsibilities now covered:
 
 - current schema and default factory;
 - ordered idempotent migration registry;
