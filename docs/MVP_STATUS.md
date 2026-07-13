@@ -1,6 +1,6 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 (post-co-op-security production verification)
+Last audited: 2026-07-13 (Milestone 2 authored-map/reward acceptance candidate)
 
 Production commit: `240692e` (`origin/main`, including PRs #35–#40)
 
@@ -10,7 +10,7 @@ Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
 ## Executive status
 
-**Estimated MVP completion: 57%.** The repository now has a working Hub-led ShillZ vertical loop, five configured districts/bosses, persistent upgrades, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: later districts lack production campaign map contracts, campaign completion is only a victory overlay, co-op acceptance is unproven, and broad campaign/performance automation is still incomplete.
+**Estimated MVP completion: 59%.** The repository now has a working Hub-led ShillZ structural loop, five configured districts/bosses, persistent upgrades, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: later districts lack production campaign map contracts, campaign completion is only a victory overlay, co-op acceptance is unproven, and broad campaign/performance automation is still incomplete.
 
 Do not interpret configured content as acceptance. A row is complete only after its listed automated and browser tests pass.
 
@@ -37,7 +37,7 @@ The first Hub-led district loop is now structural, not a menu-only prototype. Re
 |---|---|---|
 | M1 audit and baseline | **Complete** | Required baseline documents published in PR #35; syntax/tests/manifest/Pages preparation and live Pages/Worker probes passed. |
 | M2 save contract | **Complete** | PR #36 merged: schema v2, verified backup-before-replace, migration/recovery, raw future export, import/reset, bounded normalization, and 15 executable tests. |
-| M2 first playable vertical slice | **Implemented; release combat pass pending** | Controlled browser smoke proved Hub mission launch → authored objective → Riya lifecycle → extraction → 123 GT banked → Hub workshop purchase → second run at 120 HP, with no JavaScript errors. |
+| M2 first playable vertical slice | **Implemented; manual combat/balance pass pending** | Real-input browser smoke proves Hub entry → authored deployment → ShillZ movement → terminal activation → wave 1 with 10 hostiles. Deterministic tests cover authored collision/traversal, exact-once boss rewards, persistent leader credit, and retry-safe extraction settlement. Full Riya combat remains a human play/balance gate rather than bot-play automation. |
 | Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |
 | Muskers / Magnus | **Prototype** | Configured procedural district and boss; no authored production map or campaign acceptance test. |
 | Bots / SPYD3R | **Prototype** | Four authored scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
@@ -54,14 +54,14 @@ The first Hub-led district loop is now structural, not a menu-only prototype. Re
 |---|---|---|---|
 | Solo combat | FPS movement, touch controls, weapons, waves, enemies, bosses, pickups | Only look-input has an automated regression test | Syntax + unit tests + browser combat smoke on every district |
 | Campaign | Five districts/bosses configured; OG transition between districts | Later maps procedural; no Hub shell; no authored ending/credits/return | Complete beginning-to-ending run without dev commands |
-| ShillZ | 104-object Engagement Square, authored loyalty-terminal objective/extraction, Riya, 3 waves, Hub round trip | Requires full manual combat/balance pass and screenshot baseline | Vertical-slice acceptance test |
+| ShillZ | 104-object Engagement Square, authored loyalty-terminal objective/extraction, Riya, 3 waves, Hub round trip | Requires full manual combat/balance pass; browser screenshot shows the map/HUD functioning but the broad plaza floor remains visually flat/overbright | Real-input launch/objective/wave-start smoke + deterministic lifecycle/reward tests |
 | Other districts | Muskers/Bots/Cryptids/GigaCorp configs and bosses | Authored Bots/Cryptids scenes not wired; Muskers/GigaCorp production scenes absent | Per-district map/collision/boss/reward tests |
 | Hub | Final scene JSON + GLB + collision metadata; proximity-driven mission launch, Armory, Briefing, medical, training, and post-run return | NPC dialogue/trophy-state presentation remains modest | Hub lifecycle browser test |
 | Objectives | Five generic mission types plus authored objective/extraction marker activation for ShillZ | Full serialized shared ObjectiveSystem and co-op synchronization remain pending | Unit state-machine tests + scene integration |
 | Progression | GigaTech, upgrades, intel, abilities, mastery, relics, tiers, corruption | Logic is embedded in `game.js`; no invariants/migration tests | Deterministic unit tests and two-run browser test |
 | Saves | Schema v2, idempotent legacy migration, validation/normalization, raw/reset backup, future-version read-only mode, export/import/reset UI | No cloud sync; storage failure warning is visible only in Armory Save tab | Save fixture matrix + browser tab smoke; full Hub Save Terminal comes with lifecycle work |
 | Assets | GLTF/scene loading with procedural fallbacks; central manifests; skybox fallback | Only 3 enemy GLBs + 1 weapon GLB; optional failures lack automated probes | Missing/corrupt asset tests and browser console probes |
-| Collision/navigation | Procedural connectivity, editor colliders, spawn filtering, authored ShillZ containment | External-scene nav is coarse open grid; no automated reachability/void/softlock validator | Marker/collider validator + traversal probes |
+| Collision/navigation | Procedural connectivity, editor colliders, spawn filtering, authored-scene movement, Hub walkable traversal/support surfaces, and southern perimeter fallback blockers | External-scene enemy flow remains coarse; broader per-map reachability automation is pending | Executable collider/traversal/perimeter rules + real-input ShillZ movement smoke |
 | Performance | capped enemies (13), particles (700), co-op registries, disposal paths, adaptive quality | No district-transition soak, heap/GPU baseline or draw-call budget | 30-minute/all-district soak and metric capture |
 | Solo independence | Solo code path does not require Worker | Must be covered with Worker unavailable | Offline/no-Worker browser test |
 | Co-op | private rooms, all-ready start, avatars, host simulation, snapshots, pickup claims, reconnect, revive, explicit send allowlist and server-origin reward protection | Token-bound identity, pickup confirmation, room TTL and multi-district two-browser acceptance remain | Seven Worker security tests + live two-WebSocket authorization smoke passed; browser campaign host remains |
@@ -154,6 +154,6 @@ No credential blocker has been established. Product/code blockers are the missin
 
 ## Next three priorities
 
-1. Implement and test the Hub mission/service lifecycle, then ship the complete ShillZ vertical slice and post-run Hub upgrade/second-run loop.
-2. Add map/objective/runtime validators and browser campaign acceptance automation before wiring later authored district scenes.
-3. Stabilize shared Objective/Progression/Enemy/Boss contracts, then complete the four later district/ending slices.
+1. Complete a human ShillZ/Riya combat-and-balance pass, then treat the deterministic reward/settlement tests as the repeatable lifecycle gate.
+2. Stabilize shared Objective/Progression/Enemy/Boss contracts and apply the proven shell to Muskers.
+3. Add broader campaign, map-reachability, fallback, and performance automation before wiring the remaining authored district scenes.

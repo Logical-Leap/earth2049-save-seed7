@@ -149,6 +149,7 @@ const World = (() => {
       y0: box.min.y,
       h: box.max.y,
       climb: obj.userData?.climb === true || box.max.y <= 0.65,
+      walkable: obj.userData?.walkable === true || obj.userData?.gameplayType === 'traversal',
       gameplayType: obj.userData?.gameplayType || null,
     });
   }
@@ -164,6 +165,7 @@ const World = (() => {
   ]);
   const INTERACTION_GAMEPLAY_TYPES = new Set([
     'missionLaunch', 'travelGate', 'upgradeStation', 'vendor', 'stash', 'customization', 'npcAnchor',
+    'characterCustomization', 'trainingZone', 'missionBoard', 'progressBoard',
   ]);
 
   function shouldHideEditorObject(obj, bare) {
@@ -194,6 +196,31 @@ const World = (() => {
     return gt === 'cover' || gt === 'arenaWall' || gt === 'softLock' || gt === 'traversal' || gt === 'railing';
   }
 
+  function ensureHubMissionLaunchFallback() {
+    if (!usingHubScene || !playerStartPos) return;
+    const hasGroundLaunch = interactionPoints.some(point =>
+      (point.gameplayType === 'missionLaunch' || point.gameplayType === 'travelGate') &&
+      Math.abs(point.y || 0) <= 3.2
+    );
+    if (hasGroundLaunch) return;
+    interactionPoints.push({
+      x: playerStartPos.x,
+      y: 0.5,
+      z: playerStartPos.z - 2,
+      name: 'E2049_MISSION_LAUNCH_ARRIVAL_FALLBACK',
+      gameplayType: 'missionLaunch',
+      userData: { fallback: true, targetArea: 'mission-start' },
+    });
+  }
+
+  function ensureHubPerimeterFallback() {
+    if (!usingHubScene) return;
+    const existing = new Set(colliders.map(collider => collider.name));
+    for (const collider of MapRuntimeRules.hubCornerBlockers()) {
+      if (!existing.has(collider.name)) colliders.push(collider);
+    }
+  }
+
   function parseEditorScene(root) {
     const markers = { player:0, boss:0, enemy:0, pickup:0, collider:0, visible:0, hidden:0 };
     root.updateMatrixWorld(true);
@@ -202,7 +229,9 @@ const World = (() => {
       const name = obj.name.toUpperCase();
       const bare = name.replace(/^E2049_/, '');
       if (bare.startsWith('PLAYER_START')) {
-        const p = markerWorldPosition(obj); playerStartPos = { x:p.x, z:p.z }; spawnCell = cellFromWorld(p.x, p.z); markers.player++;
+        const p = markerWorldPosition(obj);
+        playerStartPos = { x:p.x, z:p.z, yaw:MapRuntimeRules.markerYaw(obj.userData, obj.rotation?.y) };
+        spawnCell = cellFromWorld(p.x, p.z); markers.player++;
       } else if (bare.startsWith('BOSS_ARENA')) {
         const p = markerWorldPosition(obj); bossArenaPos = { x:p.x, z:p.z }; bossCell = cellFromWorld(p.x, p.z); markers.boss++;
       } else if (bare.startsWith('ENEMY_SPAWN')) {
@@ -216,7 +245,8 @@ const World = (() => {
       } else if (gameplayType === 'extractionGate') {
         const p = markerWorldPosition(obj); extractionPoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, userData:{ ...obj.userData } });
       } else if (INTERACTION_GAMEPLAY_TYPES.has(gameplayType)) {
-        const p = markerWorldPosition(obj); interactionPoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, gameplayType, userData:{ ...obj.userData } });
+        const p = markerWorldPosition(obj);
+        interactionPoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, gameplayType:MapRuntimeRules.normalizeInteractionType(gameplayType), userData:{ ...obj.userData } });
       }
       if (shouldRegisterEditorCollider(obj, bare)) {
         if (bare.startsWith('COVER') && obj.userData && obj.userData.climb === undefined) obj.userData.climb = true;
@@ -411,6 +441,8 @@ const World = (() => {
       editorScene.name = editorScene.name || ('EditorScene_' + theme.name);
       group.add(editorScene);
       parseEditorScene(editorScene);
+      ensureHubPerimeterFallback();
+      ensureHubMissionLaunchFallback();
       // Keep the metadata/collision scene loaded, but never render its blockout
       // meshes when the production GLB is present. parseEditorScene intentionally
       // changes marker visibility, so this must run after marker parsing.
@@ -691,25 +723,21 @@ const World = (() => {
     return false;
   }
   function playerColliderBlocks(c, x, z, r, y) {
-    if (!rectCircleHit(c, x, z, r)) return false;
-    if (c.y0 > y + CFG.PLAYER_H) return false;
-    return !(c.climb && y + 0.18 >= c.h);
+    return MapRuntimeRules.colliderBlocksAt(c, x, z, r, y, CFG.PLAYER_H, 0.75);
   }
   function spawnBlockedByProp(x, z, r) {
     return colliders.some(c => rectCircleHit(c, x, z, r));
   }
   function circleHits(x, z, r) {
-    return usingHubScene ? false : gridCircleHits(x, z, r);
+    // External scenes define their own physical bounds. Their authored starts
+    // can sit beyond the smaller procedural grid used by enemy flow fields.
+    return usingExternalScene ? false : gridCircleHits(x, z, r);
   }
   function playerPropHits(x, z, r, y) {
     return colliders.some(c => playerColliderBlocks(c, x, z, r, y));
   }
-  function groundHeight(x, z, r) {
-    let h = 0;
-    for (const c of colliders) {
-      if (c.climb && rectCircleHit(c, x, z, r || CFG.PLAYER_R * 0.8)) h = Math.max(h, c.h);
-    }
-    return h;
+  function groundHeight(x, z, r, y = 0) {
+    return MapRuntimeRules.groundHeight(colliders, x, z, r || CFG.PLAYER_R * 0.8, y, 0.75);
   }
 
   /* flow field toward player */
