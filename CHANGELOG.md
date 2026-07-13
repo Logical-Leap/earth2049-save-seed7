@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-13 — Early Access MVP baseline
+
+- Added a truthful Early Access baseline covering current player flow, completion estimate, feature matrix, map/asset/save/co-op/deployment/performance inventories, verification evidence, blockers, and next priorities.
+- Added the focused milestone/task graph and exact acceptance tests for the Hub-to-ShillZ vertical slice, shared runtime seams, five-district campaign, deterministic Turing Director, private co-op beta, and production release.
+- Documented the current and target no-build architecture plus prioritized MVP blockers/risks; no gameplay or user assets changed in this documentation milestone.
+
 ## 2026-07-13 — Camera look reset fix
 
 - Bounded pointer-lock and touch look deltas so OS/browser input spikes during fast turns cannot snap the camera or abruptly redirect held movement.
