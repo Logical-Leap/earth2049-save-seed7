@@ -1373,7 +1373,7 @@ function playerTick(dt) {
     if (p.bleedT <= 0) { p.coopState = 'dead'; doDeath(); return; }
   }
   // look
-  p.yaw -= Input.lookDX * 0.0034 * SAVE.opts.sens;
+  p.yaw = InputSafety.normalizeYaw(p.yaw - Input.lookDX * 0.0034 * SAVE.opts.sens);
   p.pitch = clamp(p.pitch - Input.lookDY * 0.0034 * SAVE.opts.sens, -1.45, 1.45);
   Input.lastLookX += Input.lookDX; Input.lastLookY += Input.lookDY;
   Input.lookDX = 0; Input.lookDY = 0;
@@ -1844,10 +1844,12 @@ function initInput() {
   addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; });
   addEventListener('mousemove', e => {
     if (document.pointerLockElement === cv && state === 'run' && !paused) {
-      Input.lookDX += e.movementX * 0.65; Input.lookDY += e.movementY * 0.65;
+      Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, e.movementX * 0.65);
+      Input.lookDY = InputSafety.accumulateLookDelta(Input.lookDY, e.movementY * 0.65);
     }
   });
   document.addEventListener('pointerlockchange', () => {
+    Input.lookDX = 0; Input.lookDY = 0;
     if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused) setPaused(true);
   });
 
@@ -1880,8 +1882,8 @@ function initInput() {
         Input.moveX = dx / max; Input.moveZ = -dy / max;
         knob.style.left = (anchor.x + dx - 26) + 'px'; knob.style.top = (anchor.y + dy - 26) + 'px';
       } else if (t.identifier === lookId) {
-        Input.lookDX += (t.clientX - lookLast.x) * 2.1;
-        Input.lookDY += (t.clientY - lookLast.y) * 2.1;
+        Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, (t.clientX - lookLast.x) * 2.1);
+        Input.lookDY = InputSafety.accumulateLookDelta(Input.lookDY, (t.clientY - lookLast.y) * 2.1);
         lookLast = { x: t.clientX, y: t.clientY };
       }
     }
@@ -1939,7 +1941,7 @@ function setPaused(v) {
   if (sub) sub.textContent = CoopRoom?.isCoop ? 'LOCAL MENU — SQUAD SIMULATION CONTINUES' : 'SIMULATION SUSPENDED';
   if (v) {
     Input.fire = false; Input.dash = false; Input.jump = false; Input.interact = false;
-    Input.moveX = 0; Input.moveZ = 0; CoopRoom?.cancelRevive?.();
+    Input.moveX = 0; Input.moveZ = 0; Input.lookDX = 0; Input.lookDY = 0; CoopRoom?.cancelRevive?.();
     document.exitPointerLock && document.exitPointerLock();
   }
 }
