@@ -538,15 +538,15 @@ Maps must communicate faction identity through architecture, layout, materials, 
 
 ### ShillZ Maps
 
-Lore basis: ShillZ are brainwashed common people tricked into serving GigaCorp, often dangerous because they are numerous, self-righteous, and operate like a propaganda-driven horde.
+Lore basis: ShillZ are Seed 7's lower- and middle-class mass-consumer civilian loyalists. They sincerely treat GigaCorp authority, consumption, social credit, and reporting dissidents as civic virtues. GigaCorp exploits them as a surveillance network, captive market, cheap labor pool, approval bloc, mob, and disposable militia. They are not rebels, counterfeit rebels, or anti-establishment.
 
 Use:
 
 ```text
 yellow / orange / black
 high-vis hazard color
-propaganda screens
-fake resistance slogans
+propaganda screens and executive portraits
+authority, loyalty, reporting, and consumption slogans
 merch kiosks
 rally stages
 sponsor drones
@@ -554,7 +554,9 @@ checkout traps
 ad towers
 shuttered storefronts
 crowd-control barricades
-rebel graffiti side routes
+citizen-reporting terminals and loyalty kiosks
+social-credit scoreboards and bounty posters
+consumer queues and security-force memorabilia
 ```
 
 Good ShillZ map themes:
@@ -566,11 +568,11 @@ Drone Checkpoint
 Ad-Billboard Canyon
 Ration Row
 Food Court
-Fake Resistance Bazaar
-Sponsored Riot Plaza
+Loyalty Rewards Bazaar
+Executive Appreciation Plaza
 ```
 
-ShillZ spaces should feel cheap, loud, commercialized, and morally stupid.
+ShillZ spaces should feel cheap, loud, commercialized, crowded, heavily monitored, and morally certain. Every civilian, screen, camera, worker, and consumer may report the player and mobilize nearby loyalists. Never place Rebel symbols, anti-GigaCorp slogans, or resistance imagery in ShillZ territory.
 
 ### Cryptids Maps
 

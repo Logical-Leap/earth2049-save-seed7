@@ -16,7 +16,7 @@ Status: **five configured prototype encounters; target BossSystem not implemente
 
 All bosses gain speed and faster patterns below 50% HP. Attack order is fixed by array order, but teleport positions, projectiles, and summons use unseeded RNG. Boss spawn falls back to arena center when no authored marker exists.
 
-Riya canon: Riya is a sincere pro-authority, pro-GigaCorp propagandist and the public voice of consumer obedience. She is not a rebel leader, secret resistance figure, or counterfeit dissident. Current runtime mechanics do not encode this narrative distinction, and older environmental/config language that suggests resistance is content debt.
+Riya canon: Riya is a sincere pro-authority, pro-GigaCorp propagandist and the public voice of consumer obedience. She is not a rebel leader, secret resistance figure, or counterfeit dissident. Runtime identity names her **The Signal Witch — Loyalty Icon**; future dialogue and mechanics must reinforce civilian mobilization, reporting, and defense of GigaCorp authority.
 
 ### Current death effects
 

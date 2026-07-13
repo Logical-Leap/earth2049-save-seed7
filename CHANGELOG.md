@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-07-13 — ShillZ loyalist canon runtime correction
+
+- Replaced outdated counterfeit-resistance slogans in active ShillZ config, procedural fallback scenery, and character patches with approved pro-GigaCorp loyalty, authority, reporting, and consumption language.
+- Identified Riya Vex in the boss HUD as **The Signal Witch — Loyalty Icon**.
+- Updated the map-making knowledgebase and system docs so future authored content cannot regress to Rebel graffiti, anti-GigaCorp messaging, or fake-resistance themes.
+- Added executable canon regression tests and cache-busted all affected no-build scripts.
+
 ## 2026-07-13 — Reproducible co-op deployment and cache refresh
 
 - Pinned Wrangler 4.110.0 in the repository so `coop:deploy` and `pages:deploy` no longer depend on a globally installed CLI; the locked toolchain reports zero npm audit vulnerabilities.

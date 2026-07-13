@@ -210,7 +210,7 @@ const Assets = (() => {
     if (texCache[key]) return texCache[key];
     const c = cv(128, 128), x = c.getContext('2d');
     x.fillStyle = '#15130c'; x.fillRect(0, 0, 128, 128);
-    const words = ['OBEY', '#AD', 'CONSOOM', 'TREND', 'LIKE', 'SUBSCRIBE', 'RESIST™', '999K', 'SPONSORED', 'CLAP 4\nCHANGE'];
+    const words = ['OBEY', '#AD', 'CONSUME', 'ENGAGE', 'LOYAL', 'REPORT', 'BOARD APPROVED', '999K', 'SPONSORED', 'GIGACORP\nCARES'];
     const cols = ['#ffe600', '#ff8c00', '#ffffff', '#111111'];
     for (let i = 0; i < 7; i++) {
       const px = Math.random() * 90, py = Math.random() * 100, pw = 30 + Math.random() * 34, ph = 14 + Math.random() * 14;

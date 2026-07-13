@@ -82,7 +82,7 @@ const ETYPES = {
 };
 
 const BOSSES = {
-  riya:  { name:'RIYA VEX',     title:'Voice of the Feed',   fac:'shillz',  hp:850,  spd:3.4, size:2.1,
+  riya:  { name:'RIYA VEX',     title:'The Signal Witch — Loyalty Icon', fac:'shillz', hp:850, spd:3.4, size:2.1,
            attacks:['radial','volley','summon'], summon:'shill',  projSpd:16, dmg:14, contact:22, gt:120 },
   magnus:{ name:'MAGNUS',       title:'Apex Ascendant',      fac:'muskers', hp:1100, spd:3.9, size:2.3,
            attacks:['charge','volley','radial'], summon:'runner', projSpd:20, dmg:16, contact:30, gt:150 },
@@ -98,7 +98,7 @@ const DISTRICTS = [
   { name:'SHILLZ CENTRAL', fac:'shillz', waves:3, boss:'riya', map:'engagementSquare', fallbackMap:'engagementSquare',
     sceneUrl:'assets/scenes/districts/shillz-central.scene.json',
     fog:0x171006, sky:0x0d0a04, ground:0x17130a, rain:false,
-    slogans:['RESIST™','CONSOOM','LIKE. SUBSCRIBE. OBEY.','TREND OR DIE','GO VIRAL','SPONSORED REVOLUTION','SMASH THAT BUTTON'],
+    slogans:['GIGACORP PROVIDES','ORDER IS FREEDOM','OBEDIENCE BUILDS PEACE','REPORT DISSENT','THE BOARD KNOWS BEST','CONSUME WITH PRIDE','LOYALTY EARNS REWARDS','AUTHORIZED CONTENT ONLY','GOOD CITIZENS ENGAGE','PROTECT THE SYSTEM','REBELLION COSTS JOBS','GIGACORP CARES'],
     pool:[['shill',6],['streamer',3],['hypebeast',1.5]] },
   { name:'MUSKER LABS', fac:'muskers', waves:3, boss:'magnus',
     fog:0x0e081e, sky:0x080414, ground:0x120c20, rain:true,

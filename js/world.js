@@ -325,9 +325,9 @@ const World = (() => {
 
     mapBox('UPPER_FLANK_left_bridge', [sc(-33.5), 5.2, sc(-5), sc(5), 0.45, sc(32)], cyan);
     mapBox('UPPER_FLANK_crosscatwalk', [sc(-14), 6.1, sc(-24), sc(34), 0.45, sc(4)], cyan);
-    mapBox('REBEL_GRAFFITI_ALLEY_wall', [sc(43), 0, sc(16), 0.8, 5.4, sc(24)], purple);
-    mapSign('THE FEED\nIS A LIE', sc(42.5), 4.0, sc(16), 5.0, 3.4, 0x9b59ff, Math.PI / 2);
-    mapPlane('REBEL_GRAFFITI_ALLEY_floor_route', sc(40), 0.07, sc(16), sc(7), sc(24), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
+    mapBox('CITIZEN_REPORTING_ALLEY_wall', [sc(43), 0, sc(16), 0.8, 5.4, sc(24)], purple);
+    mapSign('REPORT\nDISSENT', sc(42.5), 4.0, sc(16), 5.0, 3.4, 0x9b59ff, Math.PI / 2);
+    mapPlane('LOYALTY_REPORTING_ALLEY_floor_route', sc(40), 0.07, sc(16), sc(7), sc(24), new THREE.MeshBasicMaterial({ color: 0x9b59ff, transparent: true, opacity: 0.16, depthWrite: false }));
 
     mapPlane('main_route_forward', 0, 0.08, sc(13), sc(4), sc(34), new THREE.MeshBasicMaterial({ color: fac.neon, transparent: true, opacity: 0.18, depthWrite: false }));
     mapPlane('left_flank_route', sc(-30), 0.08, sc(3), sc(4), sc(34), new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.16, depthWrite: false }));
@@ -345,7 +345,7 @@ const World = (() => {
 
     mapSign('EXTRACTION\nLOCKED UNTIL\nOBJECTIVE CLEAR', sc(28), 4.2, sc(29), sc(10), 2.4, fac.neon, 0);
     mapSign('TRUST\nTHE FEED', sc(-31), 10.5, sc(-25), sc(12), 5, fac.neon, 0.25);
-    mapSign('RESIST? LOL.\nCONSUME.', sc(31), 10.5, sc(-18), sc(12), 5, fac.neon, -0.25);
+    mapSign('PROTECT THE SYSTEM\nCONSUME WITH PRIDE', sc(31), 10.5, sc(-18), sc(12), 5, fac.neon, -0.25);
   }
 
   /* ---------- build scenery ---------- */

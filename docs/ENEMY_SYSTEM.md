@@ -8,7 +8,7 @@ Enemy definitions are `ETYPES` in `js/config.js`; construction, spawn queues, sc
 
 Current common types: ShillZ `shill`, `hypebeast`, `streamer`; Muskers `runner`, `lancer`; Bots `node`, `sentinel`; Cryptids `cdrone`, `broker`; GigaCorp `trooper`, `enforcer`.
 
-ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists and promotional enforcers, **not rebels and not a counterfeit resistance**. Any older `RESIST`/“sponsored revolution” phrasing in config or scenery is current content debt and must not be used as system truth.
+ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists and promotional enforcers, **not rebels and not a counterfeit resistance**. Runtime slogans, clothing patches, and procedural scenery now enforce that distinction with corporate-loyalty, reporting, authority, and consumption language.
 
 ### Lifecycle and caps today
 
