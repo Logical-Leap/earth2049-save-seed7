@@ -1,8 +1,8 @@
 # Earth 2049 Early Access MVP Status
 
-Last audited: 2026-07-13 (system-documentation audit)
+Last audited: 2026-07-13 (post-co-op-security production verification)
 
-Baseline commit: `7653b97` (`origin/main`, including MVP baseline PR #35 and save PR #36)
+Production commit: `240692e` (`origin/main`, including PRs #35–#40)
 
 Production target: https://earth2049-save-seed7.pages.dev/
 
@@ -10,7 +10,7 @@ Co-op target: https://earth2049-coop.chandler-fac.workers.dev/
 
 ## Executive status
 
-**Estimated MVP completion: 54%.** The repository now has a working Hub-led ShillZ vertical loop, five configured districts/bosses, persistent upgrades, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: later districts lack production campaign map contracts, campaign completion is only a victory overlay, co-op acceptance is unproven, and broad campaign/performance automation is still incomplete.
+**Estimated MVP completion: 57%.** The repository now has a working Hub-led ShillZ vertical loop, five configured districts/bosses, persistent upgrades, asset fallbacks, a versioned/recoverable save contract, and a substantial private co-op foundation. It is **not yet an Early Access MVP**: later districts lack production campaign map contracts, campaign completion is only a victory overlay, co-op acceptance is unproven, and broad campaign/performance automation is still incomplete.
 
 Do not interpret configured content as acceptance. A row is complete only after its listed automated and browser tests pass.
 
@@ -29,15 +29,13 @@ Required MVP flow:
 
 `Hub → mission launch → ShillZ objective/waves → Riya → rewards → Hub → upgrade → second run`, followed by the same stable shell for all districts and the Turing ending.
 
-The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hub, but the Hub has no live launch/Armory/Briefing interaction loop and death/victory do not return there.
+The first Hub-led district loop is now structural, not a menu-only prototype. Remaining campaign work applies this shell to Muskers, Bots, Cryptids, GigaCorp, and the Turing ending.
 
 ## Milestone status
 
 | Milestone | Status | Evidence / exit gate |
 |---|---|---|
 | M1 audit and baseline | **Complete** | Required baseline documents published in PR #35; syntax/tests/manifest/Pages preparation and live Pages/Worker probes passed. |
-| M2 save contract | **Merged; live browser verification pending** | Schema v2, migration/recovery, backup, import/export/reset and future-version protection landed in PR #36 with unit + static browser-integration tests. |
-| M2 first playable vertical slice | **In progress** | Must prove Hub → ShillZ → Riya → rewards → Hub → upgrade → second run. |
 | M2 save contract | **Complete** | PR #36 merged: schema v2, verified backup-before-replace, migration/recovery, raw future export, import/reset, bounded normalization, and 15 executable tests. |
 | M2 first playable vertical slice | **Implemented; release combat pass pending** | Controlled browser smoke proved Hub mission launch → authored objective → Riya lifecycle → extraction → 123 GT banked → Hub workshop purchase → second run at 120 HP, with no JavaScript errors. |
 | Shared runtime stabilization | **Partial** | `SaveSystem`, `World`, game loop, loader and asset registry exist, but Map/Objective/Enemy/Boss/Progression contracts are not isolated or broadly regression-tested. |
@@ -45,9 +43,9 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Bots / SPYD3R | **Prototype** | Four authored scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
 | Cryptids / Blitz | **Prototype** | Five authored v2 scene files are discoverable in the dev manifest but are not selected by `DISTRICTS`. |
 | GigaCorp / Turing / ending | **Prototype** | Procedural district and Turing boss exist; no Omnidome/Turing Core sequence, narrative ending, or Hub return. |
-| Hub services/progression | **Partial** | Authored scene/GLB and separate Armory/Briefing overlays exist; no in-Hub service interaction contract. |
+| Hub services/progression | **Implemented for M2** | Authored service markers launch ShillZ, open Armory/Briefing, heal, acknowledge training, and receive death/victory/extraction returns. |
 | Turing Director | **Partial** | Runtime threat/taunts/assassin pressure exist; RNG is not seeded, bounded by a test, or exposed in a deterministic overlay. |
-| Private 1–4 co-op beta | **Partial / disabled for release until proven** | Lobby, host authority, snapshots, revive and DO limits exist. No automated protocol/DO or two-client acceptance suite. |
+| Private 1–4 co-op beta | **Partial / disabled for release until proven** | PR #40 blocks reward forgery, enforces protocol direction/host transitions/all-ready start, and adds seven security tests. Token identity, pickup confirmation, cleanup, and full two-browser campaign acceptance remain. |
 | Release polish/acceptance | **Not started** | Requires live campaign, save, fallback, soak, accessibility/input and deployment gates. |
 
 ## Feature matrix
@@ -66,8 +64,8 @@ The gap is structural, not cosmetic: `newRun({hub:true})` builds a non-combat Hu
 | Collision/navigation | Procedural connectivity, editor colliders, spawn filtering, authored ShillZ containment | External-scene nav is coarse open grid; no automated reachability/void/softlock validator | Marker/collider validator + traversal probes |
 | Performance | capped enemies (13), particles (700), co-op registries, disposal paths, adaptive quality | No district-transition soak, heap/GPU baseline or draw-call budget | 30-minute/all-district soak and metric capture |
 | Solo independence | Solo code path does not require Worker | Must be covered with Worker unavailable | Offline/no-Worker browser test |
-| Co-op | private rooms, ready/start, avatars, host simulation, snapshots, pickup claims, reconnect, revive | No release feature flag; transition/reward/host-migration acceptance is unproven | Worker unit tests + two WebSocket clients + browser host |
-| Deployment | minimal Pages prep, cache/security headers, Wrangler configs | No automated deployment/live smoke script in repository | prepare → deploy → cache-busted HTTP/browser/API checks |
+| Co-op | private rooms, all-ready start, avatars, host simulation, snapshots, pickup claims, reconnect, revive, explicit send allowlist and server-origin reward protection | Token-bound identity, pickup confirmation, room TTL and multi-district two-browser acceptance remain | Seven Worker security tests + live two-WebSocket authorization smoke passed; browser campaign host remains |
+| Deployment | minimal Pages prep, cache/security headers, Wrangler configs and pinned Wrangler CLI | No automated GitHub deployment workflow/live-smoke script in repository | prepare → deploy → cache-busted HTTP/browser/API checks |
 
 ## Baseline inventories
 
@@ -87,7 +85,7 @@ These documents describe target contracts as unimplemented where appropriate. Sh
 - Static no-build Three.js r147 UMD application: `index.html`, `js/`, `lib/`.
 - `scripts/prepare-pages-dist.js` copies the runtime to `dist-pages/` and excludes archives.
 - Pages config: `wrangler.pages.jsonc`; co-op Worker/DO config: `wrangler.jsonc`.
-- Baseline tracked counts: 34 JavaScript files, 13 scene JSON files (including one collision-only scene), 5 GLBs, 153 PNG/JPG assets, 3 test files.
+- Current QA baseline: 12 registered gameplay scenes, 1,825 parsed objects, 61 referenced files, 5 GLBs, 153 PNG/JPG assets, and 6 executable test files.
 - Source `assets/` footprint at audit: approximately 350 MiB. Largest tracked authoring archives are not copied to Pages.
 - `assets/models/environments/` and `scripts/__pycache__/` were untracked at audit and are excluded from this milestone.
 

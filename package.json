@@ -17,6 +17,7 @@
     "coop:deploy": "wrangler deploy --config wrangler.jsonc"
   },
   "devDependencies": {
-    "serve": "^14.2.4"
+    "serve": "^14.2.4",
+    "wrangler": "4.110.0"
   }
 }
