@@ -32,10 +32,12 @@ def infer(text):
     return 'deadzone'
 
 def position(root, types):
+    hits=[]
     for obj in walk(root):
         u=obj.get('userData',{}); typ=str(u.get('gameplayType','')).lower(); name=str(obj.get('name','')).lower()
         if any(t == typ or t in name for t in types):
-            p=obj.get('position',[0,0,0]); return (float(p[0]),float(p[2]))
+            p=obj.get('position',[0,0,0]); x,z=float(p[0]),float(p[2]); primary=bool(u.get('primary') or u.get('isPrimary') or any(k in name for k in ('primary','central','spire','uplink'))); hits.append((not primary,x*x+z*z,(x,z)))
+    return sorted(hits)[0][2] if hits else None
 
 def mapping(path):
     data=json.loads(path.read_text()); root=scene_root(data); u=root.get('userData',{})

@@ -28,7 +28,7 @@ Orientation priority: `skyboxYawDegrees` → player start to objective/boss → 
 | Scene | Skybox | Orientation source | Yaw |
 |---|---|---|---:|
 | `bots-assembly-crucible.scene.json` | `earth2049_bots` | playerStart → objective | 180° |
-| `bots-broadcast-nexus.scene.json` | `earth2049_bots` | playerStart → objective | 130.833° |
+| `bots-broadcast-nexus.scene.json` | `earth2049_bots` | playerStart → central spire/uplink objective | 180° |
 | `bots-corruption-core.scene.json` | `earth2049_bots` | playerStart → objective | 180° |
 | `bots-data-harvest-plaza.scene.json` | `earth2049_bots` | wrapper/file inference fallback | 0° |
 | `cryptids-crypto-vault.v2.scene.json` | `earth2049_cryptids` | playerStart → objective | 180° |

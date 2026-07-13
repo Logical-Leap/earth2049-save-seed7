@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T22:59:19.864Z",
+  "generatedAt": "2026-07-13T03:17:41.213Z",
   "scenes": [
     {
       "id": "bots-assembly-crucible",
@@ -24,7 +24,7 @@
     },
     {
       "id": "bots-data-harvest-plaza",
-      "label": "Scene — Bots Data Harvest Plaza",
+      "label": "Scene — Scene",
       "sceneUrl": "assets/scenes/districts/bots-data-harvest-plaza.scene.json",
       "faction": "bots",
       "district": 2
@@ -65,38 +65,17 @@
       "district": 3
     },
     {
-      "id": "hub-final-collision",
-      "label": "Scene — REBEL HUB - HAVEN COMMONS COLLISION",
-      "sceneUrl": "assets/scenes/districts/hub-final-collision.scene.json",
-      "faction": "shillz",
-      "district": 0
-    },
-    {
       "id": "rebel-hub-haven-commons-final",
       "label": "Scene — REBEL HUB - HAVEN COMMONS",
       "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-final.scene.json",
-      "faction": "shillz",
-      "district": 0
-    },
-    {
-      "id": "rebel-hub-haven-commons-v2",
-      "label": "Scene — REBEL HUB - HAVEN COMMONS V2",
-      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-v2.scene.json",
-      "faction": "shillz",
+      "faction": "rebels",
       "district": 0
     },
     {
       "id": "rebel-hub-haven-commons-v3",
       "label": "Scene — REBEL HUB - HAVEN COMMONS V2",
       "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons-v3.scene.json",
-      "faction": "shillz",
-      "district": 0
-    },
-    {
-      "id": "rebel-hub-haven-commons",
-      "label": "Scene — REBEL HUB - HAVEN COMMONS",
-      "sceneUrl": "assets/scenes/districts/rebel-hub-haven-commons.scene.json",
-      "faction": "shillz",
+      "faction": "rebels",
       "district": 0
     },
     {
