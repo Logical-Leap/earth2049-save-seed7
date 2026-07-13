@@ -1,0 +1,26 @@
+{
+  "name": "Earth 2049 Dead Zone Overlook Skybox",
+  "format": "cubemap",
+  "faceResolution": [
+    1024,
+    1024
+  ],
+  "colorSpace": "sRGB",
+  "threeJsCubeTextureLoaderOrder": [
+    "earth2049_deadzone_px.png",
+    "earth2049_deadzone_nx.png",
+    "earth2049_deadzone_py.png",
+    "earth2049_deadzone_ny.png",
+    "earth2049_deadzone_pz.png",
+    "earth2049_deadzone_nz.png"
+  ],
+  "faces": {
+    "+X": "earth2049_deadzone_px.png",
+    "-X": "earth2049_deadzone_nx.png",
+    "+Y": "earth2049_deadzone_py.png",
+    "-Y": "earth2049_deadzone_ny.png",
+    "+Z": "earth2049_deadzone_pz.png",
+    "-Z": "earth2049_deadzone_nz.png"
+  },
+  "equirectangular": "earth2049_deadzone_equirectangular_2x1.png"
+}
