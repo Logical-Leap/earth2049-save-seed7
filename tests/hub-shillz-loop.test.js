@@ -62,6 +62,22 @@ test('runtime exposes authored interactions, objective and extraction markers', 
   assert.match(game, /newRun\(\{ hub:true \}\)/);
 });
 
+test('fresh Hub run starts on the authored player marker instead of the sealed arrival-yard pocket', () => {
+  assert.match(game, /G\.p\.pos\.set\(hs\.x, 0, hs\.z\)/);
+  assert.doesNotMatch(game, /hs\.z\s*-\s*6/);
+});
+
+test('authored scene players use authored colliders instead of the smaller procedural grid boundary', () => {
+  assert.match(world, /function circleHits\(x, z, r\)/);
+  assert.match(world, /return usingExternalScene \? false : gridCircleHits\(x, z, r\)/);
+});
+
+test('Hub exposes a ground-level mission launch fallback when authored launch points are upstairs', () => {
+  assert.match(world, /ensureHubMissionLaunchFallback/);
+  assert.match(world, /gameplayType:\s*'missionLaunch'/);
+  assert.match(world, /fallback:\s*true/);
+});
+
 test('Hub services launch ShillZ and post-run primary actions return to Haven', () => {
   assert.match(game, /DEPLOY TO SHILLZ CENTRAL/);
   assert.match(game, /newRun\(\{ district:0, fromHub:true \}\)/);
@@ -69,4 +85,10 @@ test('Hub services launch ShillZ and post-run primary actions return to Haven', 
   assert.match(html, /id="btnRetry">Return to Rebel Haven/);
   assert.match(html, /id="btnVictRetry">Return to Rebel Haven/);
   assert.ok(html.indexOf('js/progression-system.js') < html.indexOf('js/game.js'));
+});
+
+test('ShillZ objective phase gives persistent terminal guidance instead of showing a fake wave', () => {
+  assert.match(game, /DISABLE THE LOYALTY BROADCAST/);
+  assert.match(game, /LOYALTY TERMINAL.*M/i);
+  assert.match(game, /G\.phase === 'objective'/);
 });

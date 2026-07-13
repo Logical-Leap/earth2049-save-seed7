@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-07-13 — Milestone 2 authored-map and reward reliability
+
+- Fixed external authored-map movement so ShillZ's authored player start no longer inherits the smaller procedural-grid boundary, and preserved authored starting yaw.
+- Made authored Hub traversal surfaces walkable/supporting, normalized service marker aliases, added a reachable arrival deployment fallback, and sealed the southern corner escape gaps.
+- Added persistent ShillZ terminal guidance and replaced the misleading pre-objective wave label with an objective state.
+- Removed duplicate Riya GigaTech/intel reward paths and made extraction settlement atomic: failed local save writes retain the live run and rewards for a safe retry.
+- Added deterministic map-runtime/reward/settlement regressions plus a localhost-only read-only observer and real-input browser smoke covering Hub entry, deployment, authored ShillZ movement, terminal activation, and wave-one spawning.
+
 ## 2026-07-13 — ShillZ loyalist canon runtime correction
 
 - Replaced outdated counterfeit-resistance slogans in active ShillZ config, procedural fallback scenery, and character patches with approved pro-GigaCorp loyalty, authority, reporting, and consumption language.

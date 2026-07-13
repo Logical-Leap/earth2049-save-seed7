@@ -8,6 +8,7 @@
     "scenes:check": "node scripts/build-scene-manifest.js --check",
     "qa:assets": "npm run scenes:check && node scripts/validate-release-assets.js",
     "test": "npm run qa:assets && node --test tests/*.test.js",
+    "test:m2:browser": "node scripts/qa/m2-browser-acceptance.js",
     "predev": "node scripts/build-scene-manifest.js",
     "dev": "serve -l 8049 .",
     "start": "npm run dev",
@@ -17,6 +18,7 @@
     "coop:deploy": "wrangler deploy --config wrangler.jsonc"
   },
   "devDependencies": {
+    "playwright-core": "^1.61.1",
     "serve": "^14.2.4",
     "wrangler": "4.110.0"
   }

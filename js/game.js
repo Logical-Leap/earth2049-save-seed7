@@ -72,14 +72,16 @@ const abilityLv = id => SAVE.abilities?.[id]?.level || 0;
 const hasRelic = id => !!SAVE.relics?.[id];
 function intelPoints(fac){ return SAVE.intel?.[fac]?.points || 0; }
 function intelRank(fac){ const p = intelPoints(fac); return p >= 180 ? 4 : p >= 90 ? 3 : p >= 35 ? 2 : p > 0 ? 1 : 0; }
-function ensureAbilityUnlocks(){
+function ensureAbilityUnlocks(targetSave = SAVE){
+  const targetIntelPoints = fac => targetSave.intel?.[fac]?.points || 0;
+  const targetUpgradeLevel = id => targetSave.up?.[id] || 0;
   for (const [id,a] of Object.entries(ABILITIES)) {
-    const rec = SAVE.abilities[id] || (SAVE.abilities[id] = { unlocked:false, level:0 });
+    const rec = targetSave.abilities[id] || (targetSave.abilities[id] = { unlocked:false, level:0 });
     if (rec.unlocked) continue;
-    if (a.unlock?.intel && intelPoints(a.unlock.intel.fac) >= a.unlock.intel.points) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
-    if (a.unlock?.up && upLv(a.unlock.up) > 0) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
+    if (a.unlock?.intel && targetIntelPoints(a.unlock.intel.fac) >= a.unlock.intel.points) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
+    if (a.unlock?.up && targetUpgradeLevel(a.unlock.up) > 0) { rec.unlocked = true; rec.level = Math.max(1, rec.level || 0); }
   }
-  if (!SAVE.equippedAbilities.length) SAVE.equippedAbilities.push('empGrenade');
+  if (!targetSave.equippedAbilities.length) targetSave.equippedAbilities.push('empGrenade');
 }
 
 /* ============ boot ============ */
@@ -472,7 +474,9 @@ async function newRun(opts = {}) {
       faction: REBEL_HAVEN_HUB.faction,
     });
     const hs = World.playerStart();
-    G.p.pos.set(hs.x, 0, hs.z - 6);
+    // The authored marker is the safe arrival pad. Offsetting it six metres
+    // north places fresh runs between the center hall and the sandbag line.
+    G.p.pos.set(hs.x, 0, hs.z);
     G.p.velY = 0;
     G.p.yaw = hs.yaw ?? 0;
     G.mission = null;
@@ -570,6 +574,13 @@ function finishCleanMission() {
 }
 function updateMissionHud() {
   const box = el('missionBox');
+  if (box && G?.phase === 'objective' && G.authoredObjective && G.p) {
+    const distance = Math.ceil(Math.hypot(G.p.pos.x - G.authoredObjective.x, G.p.pos.z - G.authoredObjective.z));
+    box.style.display = state === 'run' ? 'block' : 'none';
+    el('missionName').textContent = 'OBJECTIVE: DISABLE THE LOYALTY BROADCAST';
+    el('missionProg').textContent = 'FOLLOW THE YELLOW SIGNAL TO THE LOYALTY TERMINAL — ' + distance + 'M';
+    return;
+  }
   if (!box || !G?.mission) return;
   const m = G.mission;
   box.style.display = state === 'run' ? 'block' : 'none';
@@ -1138,9 +1149,8 @@ function killEnemy(e) {
   p.stats.kills++; SAVE.kills++;
   CoopRoom?.onEnemyDeath?.(e);
   addMastery(curWeapon().id, e.boss ? 35 : (e.elite ? 14 : 6), { kills: e.boss ? 0 : 1, eliteKills: e.elite ? 1 : 0 });
-  let intelGain = 1;
-  if (e.elite) intelGain = 3;
-  if (e.boss) intelGain = 25;
+  const rewardPolicy = RunSettlement.enemyRewardPolicy({ boss:!!e.boss, elite:!!e.elite, gt:e.type.gt });
+  const intelGain = rewardPolicy.killIntel;
   p.intel[e.type.fac] = (p.intel[e.type.fac] || 0) + intelGain;
   progressMission('kills', 1);
   progressMission('intel', intelGain);
@@ -1167,8 +1177,8 @@ function killEnemy(e) {
     }
   }
   // drops
-  const gtv = Math.round(e.type.gt * (e.elite ? 3 : 1) * (1 + G.district * 0.15) * G.tierData.reward);
-  const nSh = e.boss ? 12 : (1 + Math.trunc(Math.random() * 2)); // NOSONAR - gameplay shard variance
+  const gtv = Math.round(rewardPolicy.shardGT * (1 + G.district * 0.15) * G.tierData.reward);
+  const nSh = gtv > 0 ? (1 + Math.trunc(Math.random() * 2)) : 0; // NOSONAR - gameplay shard variance
   for (let i = 0; i < nSh; i++) spawnPickup('gt', e.pos.x + rnd(-0.8, 0.8), e.pos.z + rnd(-0.8, 0.8), Math.max(1, Math.round(gtv / nSh)));
   const r = Math.random();
   if (!e.boss && G.modStats.botFragments && e.type.fac === 'bots' && Math.random() < 0.22) spawnPickup('gt', e.pos.x, e.pos.z, 3); // NOSONAR - gameplay modifier RNG
@@ -1198,7 +1208,8 @@ function bossKilled(e) {
   G.phase = hubExtraction ? 'extraction' : 'bossdead';
   G.waveDelay = hubExtraction ? Number.POSITIVE_INFINITY : (G.district >= DISTRICTS.length - 1 ? 4.5 : 10.5);
   banner(e.type.name + ' TERMINATED', hubExtraction ? 'EXTRACTION OPEN — RETURN TO REBEL HAVEN' : (G.district >= 4 ? 'SEED 7 IS FREE' : 'COLLECT WEAPON CORES — NEXT DISTRICT SOON'));
-  G.p.gt += Math.round(e.type.gt * (1 + G.p.mods.gt) * G.tierData.reward);
+  const rewardPolicy = RunSettlement.enemyRewardPolicy({ boss:true, gt:e.type.gt });
+  G.p.gt += Math.round(rewardPolicy.bossGT * (1 + G.p.mods.gt) * G.tierData.reward);
   addMastery(curWeapon().id, 25, { clears: 1 });
   const relic = Object.values(BOSS_RELICS).find(r => r.boss === e.boss);
   if (relic && !SAVE.relics[relic.id]) { SAVE.relics[relic.id] = { owned:true, firstAt: Date.now() }; SAVE.codex[relic.id] = true; banner('RELIC ACQUIRED', relic.name.toUpperCase()); }
@@ -1207,7 +1218,7 @@ function bossKilled(e) {
   CampaignProgression.recordLeaderDefeat(SAVE, defeatedFaction);
   persist();
   if (e.boss === 'turing') SAVE.simTier = Math.max(SAVE.simTier, G.simTier + 1);
-  if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += 25;
+  if (G.p.intel[e.type.fac] !== undefined) G.p.intel[e.type.fac] += rewardPolicy.bossIntel;
   finishCleanMission();
   AudioSys.sfx('expl'); AudioSys.setIntensity(0.4); persist();
   // clear remaining enemies
@@ -1354,7 +1365,11 @@ function activateMapMarker() {
     return true;
   }
   if (G.phase === 'extraction') {
-    nearMapMarker = null; bankGT();
+    nearMapMarker = null;
+    if (!bankGT()) {
+      banner('SAVE FAILED', 'REWARDS RETAINED — FREE SPACE OR EXPORT SAVE, THEN RETRY EXTRACTION');
+      return false;
+    }
     newRun({ hub:true });
     return true;
   }
@@ -1511,7 +1526,7 @@ function playerTick(dt) {
   p.pos.x = r.x; p.pos.z = r.z;
 
   // gravity / jump, including reachable ShillZ cover tops.
-  const floorY = World.groundHeight ? World.groundHeight(p.pos.x, p.pos.z, CFG.PLAYER_R * 0.75) : 0;
+  const floorY = World.groundHeight ? World.groundHeight(p.pos.x, p.pos.z, CFG.PLAYER_R * 0.75, p.pos.y) : 0;
   if (Input.jump && p.onGround) { p.velY = CFG.JUMP_V; p.onGround = false; AudioSys.sfx('jump'); }
   Input.jump = false;
   p.velY += CFG.GRAVITY * dt;
@@ -1692,20 +1707,32 @@ function openOG() {
 /* ============ death & victory ============ */
 function bankGT() {
   if (!G || G.banked) return false;
-  G.banked = true;
-  SAVE.gt += G.p.gt;
-  if (!SAVE.intel) SAVE.intel = {};
-  for (const [fac, pts] of Object.entries(G.p.intel || {})) {
-    if (!SAVE.intel[fac]) SAVE.intel[fac] = { points: 0, leaders: 0 };
-    SAVE.intel[fac].points += pts;
-  }
   const completedDistrict = G.phase === 'bossdead' || G.phase === 'extraction' || state === 'victory';
   const defeatedFactions = new Set(G.clearedFactions || []);
   if (completedDistrict && DISTRICTS[G.district]) defeatedFactions.add(DISTRICTS[G.district].fac);
-  CampaignProgression.recordLeaderDefeats(SAVE, [...defeatedFactions]);
-  SAVE.bestD = Math.max(SAVE.bestD, G.district + (completedDistrict ? 1 : 0));
-  ensureAbilityUnlocks();
-  persist();
+  const result = RunSettlement.commit({
+    save: SAVE,
+    run: G,
+    mutateDraft(nextSave) {
+      nextSave.gt += G.p.gt;
+      if (!nextSave.intel) nextSave.intel = {};
+      for (const [fac, pts] of Object.entries(G.p.intel || {})) {
+        if (!nextSave.intel[fac]) nextSave.intel[fac] = { points: 0, leaders: 0 };
+        nextSave.intel[fac].points += pts;
+      }
+      CampaignProgression.recordLeaderDefeats(nextSave, [...defeatedFactions]);
+      nextSave.bestD = Math.max(nextSave.bestD, G.district + (completedDistrict ? 1 : 0));
+      ensureAbilityUnlocks(nextSave);
+    },
+    persist(nextSave) {
+      if (saveWriteBlocked) return false;
+      const ok = SaveSystem.persist(localStorage, nextSave);
+      if (!ok) saveLoadStatus = 'storage-unavailable';
+      return ok;
+    },
+  });
+  if (!result.ok) return false;
+  SAVE = result.save;
   return true;
 }
 function doDeath() {
@@ -1894,7 +1921,7 @@ function hudTick() {
     el('hostText').textContent = 'COMBAT DISABLED';
   } else {
     el('distText').textContent = 'DISTRICT ' + (G.district + 1) + ' — ' + DISTRICTS[G.district].name;
-    el('waveText').textContent = G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves;
+    el('waveText').textContent = G.phase === 'objective' ? 'OBJECTIVE' : (G.phase === 'boss' ? 'FACTION LEADER' : 'WAVE ' + Math.max(1, G.wave) + '/' + DISTRICTS[G.district].waves);
     el('hostText').textContent = 'HOSTILES: ' + (G.enemies.filter(e => e.state !== 'dying').length + G.pending.length);
   }
   el('modText').textContent = G.hub ? 'SAFE ZONE — REBEL SERVICES ONLINE' : 'TIER ' + G.simTier + ' — ' + simTierData(G.simTier).n + (G.modifiers.length ? ' | MODS: ' + G.modifiers.map(m => m.n).join(' / ') : '');
@@ -1940,12 +1967,12 @@ function initInput() {
   addEventListener('keyup', e => { Input.keys[e.code] = false; if (e.code === 'KeyE') Input.interact = false; });
   cv.addEventListener('mousedown', e => {
     if (state !== 'run' || paused) return;
-    if (!isTouch && document.pointerLockElement !== cv) { cv.requestPointerLock(); return; }
+    if (!isTouch && document.pointerLockElement !== cv && !acceptanceInputEnabled) { cv.requestPointerLock(); return; }
     if (e.button === 0) Input.fire = true;
   });
   addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; });
   addEventListener('mousemove', e => {
-    if (document.pointerLockElement === cv && state === 'run' && !paused) {
+    if ((document.pointerLockElement === cv || acceptanceInputEnabled) && state === 'run' && !paused) {
       Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, e.movementX * 0.65);
       Input.lookDY = InputSafety.accumulateLookDelta(Input.lookDY, e.movementY * 0.65);
     }
@@ -2378,6 +2405,37 @@ const DevAPI = {
   enemies: () => Object.keys(ETYPES),
   bosses: () => Object.keys(BOSSES),
 };
+
+function acceptanceSnapshot() {
+  const player = G?.p;
+  const weapon = player?.weapons[player.cur];
+  const boss = G?.boss;
+  const promptName = el('pickupName')?.textContent || null;
+  return {
+    state,
+    paused,
+    hub: !!G?.hub,
+    district: G?.district ?? null,
+    phase: G?.phase ?? null,
+    wave: G?.wave ?? 0,
+    pendingEnemies: G?.pending?.length ?? 0,
+    liveEnemies: G?.enemies?.filter(enemy => enemy.state !== 'dying')?.length ?? 0,
+    enemies: G?.enemies?.filter(enemy => enemy.state === 'active').map(enemy => ({ id:enemy.id, type:enemy.type?.id, x:enemy.pos.x, y:enemy.rootY, z:enemy.pos.z, hp:enemy.hp, maxHp:enemy.maxHp, boss:!!enemy.boss })) ?? [],
+    player: player ? { x:player.pos.x, y:player.pos.y, z:player.pos.z, yaw:player.yaw, pitch:player.pitch, hp:player.hp, maxHp:player.maxHp, gt:player.gt, kills:player.stats.kills, damage:player.stats.dmg, weapon:weapon?.id, ammo:weapon?.ammo, ammoMax:weapon?.ammoMax } : null,
+    boss: boss ? { id:boss.boss, hp:boss.hp, maxHp:boss.maxHp, x:boss.pos.x, y:boss.rootY, z:boss.pos.z } : null,
+    objective: G?.authoredObjective ? { x:G.authoredObjective.x, y:G.authoredObjective.y, z:G.authoredObjective.z } : null,
+    extraction: G?.authoredExtraction ? { x:G.authoredExtraction.x, y:G.authoredExtraction.y, z:G.authoredExtraction.z } : null,
+    prompt: promptName ? { name:promptName, key:el('pickupKey')?.textContent || null } : null,
+    save: SAVE ? { schemaVersion:SAVE.schemaVersion, runs:SAVE.runs, gt:SAVE.gt, bestD:SAVE.bestD, upgrades:{ ...SAVE.up }, shillzIntel:SAVE.intel?.shillz?.points || 0, shillzLeaders:SAVE.intel?.shillz?.leaders || 0 } : null,
+  };
+}
+
+const acceptanceParams = new URLSearchParams(location.search);
+const acceptanceHost = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+const acceptanceInputEnabled = acceptanceHost && acceptanceParams.get('acceptance') === '1';
+if (acceptanceInputEnabled) {
+  window.__E2049_ACCEPTANCE__ = Object.freeze({ snapshot: acceptanceSnapshot });
+}
 
 /* ============ adaptive quality ============ */
 function adaptQuality(dt) {
