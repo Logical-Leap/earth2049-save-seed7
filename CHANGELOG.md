@@ -1,10 +1,11 @@
 # Changelog
 
-## 2026-07-13 — Automated scene/data/asset QA gates
+## 2026-07-13 — Hub-to-ShillZ vertical campaign loop
 
-- Added read-only release validation for direct and editor-wrapped Three.js Object JSON, explicit per-map marker contracts, canonical IDs, unique UUIDs, finite transforms, above-ground spawn/pickup markers, and resolved geometry/material references.
-- Added repository-local asset existence checks and GLB header/length validation across scene and asset manifests.
-- Integrated the gates and regression tests into `npm test`, with drift-free scene manifest generation and a read-only stale-manifest check documented in `docs/QA_CHECKLIST.md`.
+- Turned Rebel Haven's authored mission, workshop, vendor, stash, medical, training, commander, and scout markers into usable proximity interactions for deployment, Armory, Briefing, healing, and training feedback.
+- Replaced the 10-object ShillZ sample with a deterministic 104-object Engagement Square containing sealed boundaries, three routes, elevated traversal, 20 cover islands, 12 enemy spawns, 8 pickups, a world objective, Riya arena, extraction, commercial infrastructure, and canon-correct pro-GigaCorp loyalty propaganda.
+- Wired authored objective and extraction markers into runtime interaction: disable the loyalty broadcast, clear waves and Riya, extract to Rebel Haven, bank rewards, purchase a permanent upgrade, and deploy into a stronger second run.
+- Added persistent, idempotent leader-defeat credit for every faction through the shared `CampaignProgression` seam and regression coverage for the Hub/ShillZ contracts.
 
 ## 2026-07-13 — Versioned save recovery and portability
 

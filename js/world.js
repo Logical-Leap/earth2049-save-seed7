@@ -14,7 +14,7 @@ const World = (() => {
 
   let signMats = [], holos = [];
   let themeRef = null, spawnCell = null, bossCell = null, colliders = [], spawnCursor = 0;
-  let usingExternalScene = false, usingHubScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [];
+  let usingExternalScene = false, usingHubScene = false, playerStartPos = null, bossArenaPos = null, editorSpawnPoints = [], pickupSpawnPoints = [], interactionPoints = [], objectivePoints = [], extractionPoints = [];
 
   const idx = (cx, cy) => cy * W + cx;
   const inG = (cx, cy) => cx >= 0 && cy >= 0 && cx < W && cy < H;
@@ -162,6 +162,9 @@ const World = (() => {
     'setpiece', 'billboard', 'objectiveProp', 'extractionGateVisual', 'entryGate',
     'hazard', 'elevatedPosition',
   ]);
+  const INTERACTION_GAMEPLAY_TYPES = new Set([
+    'missionLaunch', 'travelGate', 'upgradeStation', 'vendor', 'stash', 'customization', 'npcAnchor',
+  ]);
 
   function shouldHideEditorObject(obj, bare) {
     if (obj.userData?.visibleMarker === true) return false;
@@ -206,6 +209,14 @@ const World = (() => {
         const p = markerWorldPosition(obj); editorSpawnPoints.push({ x:p.x, z:p.z, fac:markerFaction(name), name:obj.name }); markers.enemy++;
       } else if (bare.startsWith('PICKUP_SPAWN')) {
         const p = markerWorldPosition(obj); pickupSpawnPoints.push({ x:p.x, z:p.z, name:obj.name }); markers.pickup++;
+      }
+      const gameplayType = obj.userData?.gameplayType;
+      if (gameplayType === 'objective') {
+        const p = markerWorldPosition(obj); objectivePoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, userData:{ ...obj.userData } });
+      } else if (gameplayType === 'extractionGate') {
+        const p = markerWorldPosition(obj); extractionPoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, userData:{ ...obj.userData } });
+      } else if (INTERACTION_GAMEPLAY_TYPES.has(gameplayType)) {
+        const p = markerWorldPosition(obj); interactionPoints.push({ x:p.x, y:p.y, z:p.z, name:obj.name, gameplayType, userData:{ ...obj.userData } });
       }
       if (shouldRegisterEditorCollider(obj, bare)) {
         if (bare.startsWith('COVER') && obj.userData && obj.userData.climb === undefined) obj.userData.climb = true;
@@ -342,7 +353,7 @@ const World = (() => {
     if (group) { scene.remove(group); disposeGroup(group); }
     group = new THREE.Group(); scene.add(group);
     signMats = []; holos = []; colliders = []; spawnCursor = 0;
-    playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; usingExternalScene = false; usingHubScene = false;
+    playerStartPos = null; bossArenaPos = null; editorSpawnPoints = []; pickupSpawnPoints = []; interactionPoints = []; objectivePoints = []; extractionPoints = []; usingExternalScene = false; usingHubScene = false;
     const base = DISTRICTS[dIdx] || DISTRICTS[0];
     const theme = { ...base };
     if (opts.sceneUrl !== undefined) theme.sceneUrl = opts.sceneUrl;
@@ -799,5 +810,5 @@ const World = (() => {
     return cellCenter((W - 1) / 2, (H - 1) / 2);
   }
 
-  return { build, tick, raycast, losClear, moveCircle, movePlayerCircle, circleHits, playerPropHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; }, get editorSpawnPoints() { return editorSpawnPoints; }, get pickupSpawnPoints() { return pickupSpawnPoints; }, get usingExternalScene() { return usingExternalScene; } };
+  return { build, tick, raycast, losClear, moveCircle, movePlayerCircle, circleHits, playerPropHits, groundHeight, computeFlow, flowDir, randomSpawn, playerStart, bossArena, worldToCell, cellCenter, cellH, get group() { return group; }, get colliders() { return colliders; }, get editorSpawnPoints() { return editorSpawnPoints; }, get pickupSpawnPoints() { return pickupSpawnPoints; }, get interactionPoints() { return interactionPoints; }, get objectivePoints() { return objectivePoints; }, get extractionPoints() { return extractionPoints; }, get usingExternalScene() { return usingExternalScene; } };
 })();
