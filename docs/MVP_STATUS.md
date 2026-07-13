@@ -78,7 +78,7 @@ The current-versus-target contracts, verification commands, and blockers are mai
 - [`TURING_DIRECTOR.md`](TURING_DIRECTOR.md) and [`SAVE_SCHEMA.md`](SAVE_SCHEMA.md);
 - [`PERFORMANCE_BUDGETS.md`](PERFORMANCE_BUDGETS.md) and [`QA_CHECKLIST.md`](QA_CHECKLIST.md).
 
-These documents describe target contracts as unimplemented where appropriate. ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists, not rebels or a counterfeit resistance, and Riya is a pro-authority GigaCorp propagandist. Conflicting older runtime strings are tracked as content debt rather than documented as canon.
+These documents describe target contracts as unimplemented where appropriate. ShillZ canon is authoritative: ShillZ are willing pro-GigaCorp consumer loyalists, not rebels or a counterfeit resistance, and Riya is a pro-authority GigaCorp propagandist. Automated canon regression coverage now guards the runtime slogans, fallback scenery, character patches, and Riya title.
 
 ### Runtime and deployment
 
