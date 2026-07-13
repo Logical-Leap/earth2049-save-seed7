@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-13T03:17:41.213Z",
+  "generatedAt": "2026-07-13T05:15:56.354Z",
   "scenes": [
     {
       "id": "bots-assembly-crucible",
@@ -80,7 +80,7 @@
     },
     {
       "id": "shillz-central",
-      "label": "Scene — SHILLZ CENTRAL EDITOR SAMPLE",
+      "label": "Scene — SHILLZ CENTRAL — ENGAGEMENT SQUARE",
       "sceneUrl": "assets/scenes/districts/shillz-central.scene.json",
       "faction": "shillz",
       "district": 0
