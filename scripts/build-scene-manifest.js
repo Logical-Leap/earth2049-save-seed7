@@ -19,18 +19,23 @@ const FACTION_DISTRICT = {
   gigacorp: 4,
 };
 
-function inferFaction(file) {
-  const n = file.toLowerCase();
+function inferFaction(file, userData = {}) {
+  const n = [userData.skyboxFaction, userData.faction, userData.district, userData.area, file].filter(Boolean).join(' ').toLowerCase();
+  if (n.includes('rebel') || n.includes('haven') || n.includes('dead-zone') || n.includes('deadzone')) return 'rebels';
   if (n.includes('shillz') || n.includes('shill-')) return 'shillz';
   if (n.includes('musker')) return 'muskers';
   if (n.includes('bot')) return 'bots';
   if (n.includes('cryptid')) return 'cryptids';
   if (n.includes('gigacorp') || n.includes('giga-corp')) return 'gigacorp';
-  return 'shillz';
+  return null;
+}
+
+function sceneObject(data) {
+  return data?.object || data?.scene?.object || data?.scene || {};
 }
 
 function sceneLabel(file, data) {
-  const sceneName = data?.object?.name || data?.metadata?.generator;
+  const sceneName = sceneObject(data)?.name || data?.metadata?.generator;
   if (sceneName) return 'Scene — ' + sceneName;
   const base = file.replace(/\.scene\.json$/i, '').replace(/[-_]+/g, ' ');
   return 'Scene — ' + base.replace(/\b\w/g, c => c.toUpperCase());
@@ -58,7 +63,14 @@ for (const dir of SCAN_DIRS) {
       console.warn('Skipping invalid scene JSON:', rel, err.message);
       continue;
     }
-    const faction = inferFaction(file);
+    const object = sceneObject(data);
+    const userData = object?.userData || {};
+    if (userData.collisionOnly === true) continue;
+    const faction = inferFaction(file, userData);
+    if (!faction) {
+      console.warn('Skipping scene with unresolved faction:', rel);
+      continue;
+    }
     scenes.push({
       id: sceneId(rel),
       label: sceneLabel(file, data),

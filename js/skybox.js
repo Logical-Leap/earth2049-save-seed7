@@ -28,14 +28,18 @@ const Skyboxes = (() => {
   }
 
   function markerPosition(scene, types) {
-    let hit = null;
+    const hits = [];
     scene?.traverse?.(obj => {
-      if (hit) return;
       const t = String(obj.userData?.gameplayType || '').toLowerCase();
       const n = String(obj.name || '').toLowerCase();
-      if (types.some(type => t === type || n.includes(type))) hit = obj.getWorldPosition(new THREE.Vector3());
+      if (types.some(type => t === type || n.includes(type))) {
+        const p = obj.getWorldPosition(new THREE.Vector3());
+        const primary = obj.userData?.primary === true || obj.userData?.isPrimary === true || /primary|central|spire|uplink/.test(n);
+        hits.push({ p, primary, centerDistance: p.x * p.x + p.z * p.z });
+      }
     });
-    return hit;
+    hits.sort((a, b) => Number(b.primary) - Number(a.primary) || a.centerDistance - b.centerDistance);
+    return hits[0]?.p || null;
   }
 
   function resolveYaw(scene, fallbackStart, fallbackTarget) {
