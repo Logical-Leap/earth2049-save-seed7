@@ -81,11 +81,29 @@ for (const dir of SCAN_DIRS) {
   }
 }
 
-const manifest = {
-  generatedAt: new Date().toISOString(),
-  scenes,
-};
+let previous = null;
+try {
+  previous = JSON.parse(fs.readFileSync(OUT, 'utf8'));
+} catch (_error) {
+  // A missing or invalid manifest is replaced below.
+}
 
-fs.mkdirSync(path.dirname(OUT), { recursive: true });
-fs.writeFileSync(OUT, JSON.stringify(manifest, null, 2) + '\n');
-console.log('Wrote', scenes.length, 'scenes to', path.relative(ROOT, OUT));
+const scenesChanged = JSON.stringify(previous?.scenes) !== JSON.stringify(scenes);
+if (process.argv.includes('--check')) {
+  if (scenesChanged) {
+    console.error('Scene manifest is stale. Run npm run scenes:manifest and commit the result.');
+    process.exitCode = 1;
+  } else {
+    console.log('Scene manifest is current:', scenes.length, 'scenes');
+  }
+} else {
+  const sourceDateEpoch = Number(process.env.SOURCE_DATE_EPOCH);
+  const generatedAt = Number.isFinite(sourceDateEpoch) && process.env.SOURCE_DATE_EPOCH !== ''
+    ? new Date(sourceDateEpoch * 1000).toISOString()
+    : (!scenesChanged && previous?.generatedAt) || new Date().toISOString();
+  const manifest = { generatedAt, scenes };
+  const output = JSON.stringify(manifest, null, 2) + '\n';
+  fs.mkdirSync(path.dirname(OUT), { recursive: true });
+  if (!fs.existsSync(OUT) || fs.readFileSync(OUT, 'utf8') !== output) fs.writeFileSync(OUT, output);
+  console.log(scenesChanged ? 'Wrote' : 'Verified', scenes.length, 'scenes in', path.relative(ROOT, OUT));
+}

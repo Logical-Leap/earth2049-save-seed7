@@ -1,0 +1,34 @@
+{
+  "mapTypes": {
+    "hub": {
+      "requiredMarkers": ["playerStart"],
+      "requiredIds": ["E2049_PLAYER_START"]
+    },
+    "legacy-arena": {
+      "requiredMarkers": ["playerStart", "bossArena", "enemySpawn", "pickupSpawn"],
+      "requiredIds": ["E2049_PLAYER_START", "E2049_BOSS_ARENA"]
+    },
+    "combat": {
+      "requiredMarkers": ["playerStart", "objective", "extractionGate", "enemySpawn", "pickupSpawn"],
+      "requiredIds": ["E2049_PLAYER_START"]
+    },
+    "boss-combat": {
+      "requiredMarkers": ["playerStart", "objective", "bossArena", "extractionGate", "enemySpawn", "pickupSpawn"],
+      "requiredIds": ["E2049_PLAYER_START"]
+    }
+  },
+  "scenes": {
+    "bots-assembly-crucible": "boss-combat",
+    "bots-broadcast-nexus": "boss-combat",
+    "bots-corruption-core": "boss-combat",
+    "bots-data-harvest-plaza": "boss-combat",
+    "cryptids-crypto-vault.v2": "combat",
+    "cryptids-executive-skybridge.v2": "combat",
+    "cryptids-gigaverse-access-node.v2": "combat",
+    "cryptids-liquidity-exchange-atrium.v2": "combat",
+    "cryptids-private-banking-suites.v2": "combat",
+    "rebel-hub-haven-commons-final": "hub",
+    "rebel-hub-haven-commons-v3": "hub",
+    "shillz-central": "legacy-arena"
+  }
+}
