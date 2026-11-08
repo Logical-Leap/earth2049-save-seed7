@@ -24,8 +24,12 @@ test('PS1 models are traceable to a game-art-pipeline commit', () => {
   }
 });
 
+// Props-kit units (drone, sentinel) have no clips; the game animates their leg_/spin_ nodes.
+const UNITS = ['cryptid_drone', 'bots_sentinel'];
+const isUnit = url => UNITS.some(u => url.endsWith(`/${u}.glb`));
+
 test('every PS1 character carries the clips the game drives', () => {
-  for (const url of new Set(Object.values(manifest).filter(u => u.includes('/characters/')))) {
+  for (const url of new Set(Object.values(manifest).filter(u => u.includes('/characters/') && !isUnit(u)))) {
     const b = fs.readFileSync(path.join(root, url));
     const json = JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString());
     const names = new Set((json.animations || []).map(a => a.name));
@@ -40,4 +44,13 @@ test('runtime district textures are PS1-scale', () => {
   for (const f of fs.readdirSync(dir).filter(n => /_texture\d+\.png$/.test(n))) {
     assert.ok(fs.statSync(path.join(dir, f)).size < 200 * 1024, `${f} is larger than a 256px palette texture should be`);
   }
+});
+
+test('props-kit units expose the nodes the game animates', () => {
+  const nodes = url => {
+    const b = fs.readFileSync(path.join(root, url));
+    return JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString()).nodes.map(n => n.name);
+  };
+  assert.equal(nodes(manifest['enemy.sentinel']).filter(n => /^leg_\d$/.test(n)).length, 4);
+  assert.ok(nodes(manifest['enemy.cdrone']).some(n => n.startsWith('spin_')));
 });
