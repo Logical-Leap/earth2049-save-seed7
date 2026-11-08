@@ -831,6 +831,11 @@ function enemyTick(e, dt) {
   const sw = (mx || mz) ? Math.sin(e.walkP) * 0.55 : 0;
   if (rig.legs.length === 2) { rig.legs[0].rotation.x = sw; rig.legs[1].rotation.x = -sw; }
   else if (rig.legs.length === 6) { for (let i = 0; i < 6; i++) rig.legs[i].rotation.x = Math.sin(e.walkP * 1.4 + i) * 0.18; }
+  else if (rig.legs.length === 4) {                    // quad walker: diagonal pairs step together
+    const g = (mx || mz) ? Math.sin(e.walkP * 1.2) * 0.32 : 0;
+    rig.legs[0].rotation.x = rig.legs[2].rotation.x = g;
+    rig.legs[1].rotation.x = rig.legs[3].rotation.x = -g;
+  }
   if (e.atkAnim > 0) e.atkAnim = Math.max(0, e.atkAnim - dt * 3);
   if (rig.arms.length === 2) {
     const aim = (atk === 'ranged' || atk === 'boss') ? -1.35 : 0;

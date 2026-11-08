@@ -20,6 +20,11 @@ const Assets = (() => {
     streamer:  { height: 1.8, anim: PS1_CLIPS.ranged },
     runner:    { height: 1.8, anim: PS1_CLIPS.melee },
     lancer:    { height: 1.8, anim: PS1_CLIPS.ranged },
+    node:      { height: 1.8, anim: PS1_CLIPS.ranged },
+    // Units built with the props kit: no clips; the game animates their
+    // leg_* nodes (gait) and spin_* nodes (rotors/halos) procedurally.
+    sentinel:  { height: 1.75, unit: true },
+    cdrone:    { height: 0.9,  unit: true },
     broker:    { height: 1.8, anim: PS1_CLIPS.ranged },
     trooper:   { height: 1.8, anim: PS1_CLIPS.ranged },
     enforcer:  { height: 1.9, anim: PS1_CLIPS.ranged },
@@ -423,6 +428,19 @@ const Assets = (() => {
     model.position.x -= (fit.min.x + fit.max.x) / 2;
     model.position.y -= fit.min.y;
     model.position.z -= (fit.min.z + fit.max.z) / 2;
+
+    if (def.unit) {
+      // Procedural animation path: game.js swings rig.legs and spins rig.spin.
+      rig.external = false;
+      const legs = [];
+      model.traverse(o => {
+        if (/^leg_\d+$/.test(o.name)) legs.push(o);
+        else if (/^spin_/.test(o.name)) rig.spin.push(o);
+      });
+      legs.sort((a, b) => a.name.localeCompare(b.name));
+      rig.legs.push(...legs);
+      return rig;
+    }
 
     rig.mixer = new THREE.AnimationMixer(model);
     rig.actions = {};
@@ -888,6 +906,7 @@ const Assets = (() => {
       case 'enforcer': rig = enforcerRig(); break;
       default: rig = humanoid('gigacorp', {});
     }
+    if (rig.ps1 && t.fly) { rig.fly = t.fly; rig.baseY = t.fly; }
     rig.root.scale.setScalar(t.size * (rig.rootScale || 1));
     rig.size = t.size;
     shadowBlob(rig, 1);

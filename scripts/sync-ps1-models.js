@@ -19,9 +19,11 @@ const P = 'projects/earth2049';
 
 const CHARACTERS = {
   shillz: 'shillz', shillz_big: 'shillz_big', musker: 'musker', cryptid: 'cryptid',
-  mech: 'mech', mech_enforcer: 'mech_enforcer',
+  mech: 'mech', mech_enforcer: 'mech_enforcer', bot_node: 'bot_node',
   riya: 'riya', magnus: 'magnus', spyd3r: 'spyd3r', blitz: 'blitz', turing: 'turing',
 };
+// Non-humanoid units built with the props kit (named leg_/spin_ nodes, no clips).
+const UNITS = ['cryptid_drone', 'bots_sentinel'];
 const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer'];
 
 if (!fs.existsSync(path.join(src, P))) {
@@ -35,6 +37,11 @@ const files = [];
 for (const [dir, name] of Object.entries(CHARACTERS)) {
   const from = path.join(src, P, 'characters', dir, 'models', `${name}_ps1.glb`);
   const to = path.join(out, 'characters', `${name}.glb`);
+  fs.copyFileSync(from, to); files.push(path.relative(process.cwd(), to));
+}
+for (const u of UNITS) {
+  const from = path.join(src, P, 'props', 'models', `${u}.glb`);
+  const to = path.join(out, 'characters', `${u}.glb`);
   fs.copyFileSync(from, to); files.push(path.relative(process.cwd(), to));
 }
 for (const w of WEAPONS) {

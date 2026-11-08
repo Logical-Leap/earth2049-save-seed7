@@ -42,8 +42,10 @@ node scripts/sync-ps1-models.js ../game-art-pipeline   # copies the GLBs, record
 
 `assets/models/ps1/SOURCE.json` records which pipeline commit the files came from. Every character uses the
 shared humanoid15 clip library; `js/assets.js` (`PS1_CLIPS`) maps game states to clip names
-(`Idle Combat`, `Walk`, `Run`, `Punch Combo` / `Shoot`, `Hit React`, `Death`). Enemy types without a PS1
-model (Bots node and sentinel, Cryptid drone) and the Compliance Saw LMG keep their procedural builds.
+(`Idle Combat`, `Walk`, `Run`, `Punch Combo` / `Shoot`, `Hit React`, `Death`). Non-humanoid units (Bots
+sentinel, Cryptid drone) are props-kit models with no clips: `EXTERNAL_MODELS` marks them `unit: true` and the
+game animates their `leg_<n>` nodes (gait) and `spin_<n>` nodes (rotors, halos). The Compliance Saw LMG has no
+PS1 model yet and keeps its procedural build.
 In-game, PS1 rigs use per-vertex Lambert (Gouraud) shading and step their animation at 15 fps.
 
 `js/ps1-mode.js` gives the whole frame the PS1 look: low internal resolution (360 or 240 lines), nearest

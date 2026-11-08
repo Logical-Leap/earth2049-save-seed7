@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-08 — Every enemy is PS1
+
+- Bots node, Bots sentinel ("Ad Broadcaster") and Cryptid drone now use new PS1 models from game-art-pipeline, so no procedural enemies remain. The node is a full humanoid15 character (face-screen smiley, all clips); the sentinel and drone are props-kit units whose `leg_*` / `spin_*` nodes the game animates (new 4-leg diagonal gait).
+- Free-cursor aiming fallback when a browser frame refuses pointer lock (desktop players in embeds could not aim or fire).
+
 ## 2026-11-08 — PS1 look, PS1 cast and lighter assets
 
 - Added a PS1 render mode (`js/ps1-mode.js`): 360-line default or 240-line authentic internal resolution, nearest-filtered textures, vertex snapping, 15-bit colour with the PS1 4x4 dither. Title-screen **Look** button switches PS1 / PS1 Authentic / Modern.
