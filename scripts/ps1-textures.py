@@ -48,11 +48,11 @@ def png_bytes(im):
 
 
 def convert_file(path, size, palette=True):
-    im = Image.open(path)
-    if im.size[0] <= size[0] and im.size[1] <= size[1]:
-        return 0, 0
+    with Image.open(path) as im:
+        if im.size[0] <= size[0] and im.size[1] <= size[1]:
+            return 0, 0
+        out = im.convert('RGB').resize(size, Image.LANCZOS)
     before = os.path.getsize(path)
-    out = im.convert('RGB').resize(size, Image.LANCZOS)
     if palette:
         out = palettise(out)
     data = png_bytes(out)
@@ -63,13 +63,15 @@ def convert_file(path, size, palette=True):
 
 
 def rewrite_glb(path):
-    raw = open(path, 'rb').read()
-    magic, version, _ = struct.unpack('<III', raw[:12])
-    assert magic == 0x46546C67 and version == 2, 'not a glTF 2 binary'
-    jlen, jtype = struct.unpack('<II', raw[12:20])
+    with open(path, 'rb') as f:
+        raw = f.read()
+    magic, version, _length = struct.unpack('<III', raw[:12])
+    if magic != 0x46546C67 or version != 2:
+        raise ValueError(f'{path} is not a glTF 2 binary')
+    jlen = struct.unpack('<I', raw[12:16])[0]
     gltf = json.loads(raw[20:20 + jlen])
     off = 20 + jlen
-    blen, btype = struct.unpack('<II', raw[off:off + 8])
+    blen = struct.unpack('<I', raw[off:off + 4])[0]
     binary = raw[off + 8:off + 8 + blen]
 
     views = gltf['bufferViews']
@@ -87,7 +89,9 @@ def rewrite_glb(path):
         chunk = binary[view.get('byteOffset', 0): view.get('byteOffset', 0) + view['byteLength']]
         if vi in image_views:
             ii = image_views[vi]
-            im = Image.open(io.BytesIO(chunk))
+            with Image.open(io.BytesIO(chunk)) as src:
+                src.load()
+                im = src.copy()
             w, h = im.size
             scale = min(1.0, GLB_MAX / max(w, h))
             if scale < 1.0:

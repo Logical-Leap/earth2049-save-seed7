@@ -11,7 +11,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
 
 const src = path.resolve(process.argv[2] || '../game-art-pipeline');
 const out = path.join(process.cwd(), 'assets/models/ps1');
@@ -43,7 +43,11 @@ for (const w of WEAPONS) {
   fs.copyFileSync(from, to); files.push(path.relative(process.cwd(), to));
 }
 let commit = 'unknown';
-try { commit = execSync('git rev-parse HEAD', { cwd: src }).toString().trim(); } catch (_) {}
+try {
+  commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: src }).toString().trim();
+} catch (err) {
+  console.warn('could not read the pipeline commit:', err.message);
+}
 fs.writeFileSync(path.join(out, 'SOURCE.json'), JSON.stringify({
   repo: 'Logical-Leap/game-art-pipeline', commit, synced: new Date().toISOString().slice(0, 10), files,
 }, null, 2) + '\n');

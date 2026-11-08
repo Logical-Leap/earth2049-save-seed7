@@ -16,7 +16,7 @@
  * FPS floors and the art direction is "PS1 spirit", not strict mimicry.
  *
  * The mode is chosen once per page load (shader chunks are compiled once),
- * so changing it reloads the page. Override for testing with ?retro=off|240|360.
+ * so changing it reloads the page. A fresh browser can be tested with ?retro=off|240|360.
  */
 'use strict';
 
@@ -25,10 +25,16 @@ const PS1Mode = (() => {
   const MODES = ['360', '240', 'off'];
   const LABEL = { '360': 'PS1 (360p)', '240': 'PS1 Authentic (240p)', off: 'Modern' };
 
+  function stored() {
+    try { return localStorage.getItem(KEY); } catch (err) { return null; }   // storage blocked: use default
+  }
+  function fromUrl() {
+    const m = /[?&]retro=(off|240|360)\b/.exec(location.search);
+    return m ? m[1] : null;
+  }
+  // A choice made with the title-screen button wins; ?retro= is for testing a fresh browser.
   function readMode() {
-    let m = null;
-    try { m = new URLSearchParams(location.search).get('retro'); } catch (_) {}
-    if (!MODES.includes(m)) { try { m = localStorage.getItem(KEY); } catch (_) {} }
+    const m = stored() || fromUrl();
     return MODES.includes(m) ? m : '360';
   }
 
@@ -138,10 +144,8 @@ void main() {
 
   function cycle() {
     const next = MODES[(MODES.indexOf(mode) + 1) % MODES.length];
-    try { localStorage.setItem(KEY, next); } catch (_) {}
-    const url = new URL(location.href);
-    url.searchParams.delete('retro');
-    location.replace(url.toString());
+    try { localStorage.setItem(KEY, next); } catch (err) { console.warn('[E2049] cannot save look setting', err); }
+    location.reload();
   }
 
   return Object.freeze({ mode, enabled, lines, label: LABEL[mode], install, cycle, lowSize });

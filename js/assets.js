@@ -407,11 +407,10 @@ const Assets = (() => {
     const def = kind === 'boss' ? EXTERNAL_BOSSES[typeId] : EXTERNAL_MODELS[typeId];
     const gltf = def && AssetLoader?.getModel?.(kind + '.' + typeId);
     if (!gltf) return null;
-    const rec = { gltf };
     const rig = newRig();
     rig.external = true;
     rig.ps1 = true;
-    const model = cloneExternalScene(rec.gltf.scene);
+    const model = cloneExternalScene(gltf.scene);
     model.name = 'GLB_' + typeId;
     ps1Materials(model, rig.flash);
     rig.root.add(model);
@@ -427,7 +426,7 @@ const Assets = (() => {
 
     rig.mixer = new THREE.AnimationMixer(model);
     rig.actions = {};
-    const clips = rec.gltf.animations || [];
+    const clips = gltf.animations || [];
     for (const [key, rx] of Object.entries(def.anim)) {
       const clip = pickClip(clips, rx);
       if (clip) {
