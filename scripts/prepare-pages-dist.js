@@ -33,6 +33,8 @@ function copyRecursive(src, dest) {
   // Source archives are retained in Git for authoring but are not runtime assets;
   // Cloudflare Pages rejects the all-faction ZIP because it exceeds 25 MiB.
   if (/\.(zip|7z|rar)$/i.test(src)) return;
+  // The hub's full-size PBR texture pack is the GLB build source, not a runtime asset.
+  if (src.includes('rebel-hub-haven-commons-v3-texture-pack')) return;
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.copyFileSync(src, dest);
 }
