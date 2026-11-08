@@ -32,6 +32,28 @@ Use stable IDs: `enemy.<id>`, `boss.<id>`, `weapon.<id>`, `prop.<id>`, `pickup.<
 
 Do not modify or publish `assets/models/environments/` as part of documentation work; untracked authoring output is explicitly outside this baseline.
 
+## PS1 models and render mode
+
+Characters and weapons are made in **Logical-Leap/game-art-pipeline**, never edited here. To update them:
+
+```bash
+node scripts/sync-ps1-models.js ../game-art-pipeline   # copies the GLBs, records the source commit
+```
+
+`assets/models/ps1/SOURCE.json` records which pipeline commit the files came from. Every character uses the
+shared humanoid15 clip library; `js/assets.js` (`PS1_CLIPS`) maps game states to clip names
+(`Idle Combat`, `Walk`, `Run`, `Punch Combo` / `Shoot`, `Hit React`, `Death`). Enemy types without a PS1
+model (Bots node and sentinel, Cryptid drone) and the Compliance Saw LMG keep their procedural builds.
+In-game, PS1 rigs use per-vertex Lambert (Gouraud) shading and step their animation at 15 fps.
+
+`js/ps1-mode.js` gives the whole frame the PS1 look: low internal resolution (360 or 240 lines), nearest
+texture filtering, vertex snapping, and 15-bit colour with the PS1 4x4 dither. The title screen's **Look**
+button cycles PS1 (360p) → PS1 Authentic (240p) → Modern and reloads; `?retro=off|240|360` overrides it.
+
+Runtime textures are PS1-scale: run `python3 scripts/ps1-textures.py` after adding district textures,
+skyboxes or a new Hub GLB (256 px tiles, 512 px sky faces, 256-colour palettes; Hub GLB images 256 px).
+Originals are in git history at `7a834ed`. Screenshots of all three looks: `node scripts/qa/ps1-look-shots.js`.
+
 ## Required MVP target contract
 
 Each registry record should eventually report `idle | loading | ready | failed | fallback`, source URL, error/timeout diagnostic, clone owner, and disposable resources. Optional asset failure must emit one actionable warning and may not prevent title, Hub, mission, boss, reward, or ending progression. Primary and fallback presentations must share gameplay collision/marker contracts.

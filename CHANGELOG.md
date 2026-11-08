@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-08 — PS1 look, PS1 cast and lighter assets
+
+- Added a PS1 render mode (`js/ps1-mode.js`): 360-line default or 240-line authentic internal resolution, nearest-filtered textures, vertex snapping, 15-bit colour with the PS1 4x4 dither. Title-screen **Look** button switches PS1 / PS1 Authentic / Modern.
+- Replaced the enemy GLBs with PS1 models from game-art-pipeline: ShillZ (shill, streamer), big ShillZ (hypebeast), Muskers (runner, lancer), Cryptid (broker), mech (trooper), mech enforcer (enforcer). Bosses Riya, Magnus, SPYD3R, Blitz and Turing now use their PS1 models. Each uses real Walk / Run / Punch Combo or Shoot / Hit React / Death clips, stepped at 15 fps in PS1 mode.
+- Seven of the eight guns now use the PS1 weapon models (Volt-9, VX-2 Ripper, Riptide-12, M-52 Revenant, LRX-7 Harbinger, Plasma Lancer, MGL-6 Thunderer).
+- Fixed GLB enemies staying locked in their attack animation after the first attack (the attack timer only decayed on the procedural path).
+- Cut runtime textures to PS1 scale (150.8 MB → 14.4 MB; Hub GLB 25 MB → 5.3 MB) and removed the duplicate authoring zips and the old 6–8 MB enemy models from the tree. Character models went from ~21 MB to 5.9 MB. Repo working tree: 329 MB → 94 MB.
+
 ## 2026-07-13 — Milestone 2 authored-map and reward reliability
 
 - Fixed external authored-map movement so ShillZ's authored player start no longer inherits the smaller procedural-grid boundary, and preserved authored starting yaw.

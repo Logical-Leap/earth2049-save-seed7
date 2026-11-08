@@ -105,7 +105,9 @@ async function boot() {
   composer.addPass(new THREE.RenderPass(scene, camera));
   bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.95, 0.55, 0.6);
   composer.addPass(bloomPass);
-  composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
+  const gammaPass = new THREE.ShaderPass(THREE.GammaCorrectionShader);
+  composer.addPass(gammaPass);
+  window.PS1Mode?.install?.({ renderer, composer, gammaPass, bloomPass });
 
   const loadScreen = el('loadScreen');
   if (loadScreen) loadScreen.textContent = 'LOADING SIMULATION DATA…';
@@ -733,7 +735,9 @@ function enemyTick(e, dt) {
     e.dieT += dt;
     if (rig.external) {
       rig.update?.(dt, 'dead');
-      if (e.dieT > 0.3) e.rootY -= dt * 2.4;
+      // PS1 rigs have a real Death clip: let it land before sinking away.
+      const sinkAt = rig.ps1 ? 1.15 : 0.3;
+      if (e.dieT > sinkAt) e.rootY -= dt * 2.4;
       rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
       rig.root.rotation.y = e.yaw;
     } else {
@@ -741,7 +745,7 @@ function enemyTick(e, dt) {
       if (e.dieT > 0.3) e.rootY -= dt * 2.4;
       rig.root.position.y = e.rootY;
     }
-    if (e.dieT > 0.85) { despawnRig(e); e.dead = true; }
+    if (e.dieT > (rig.ps1 ? 1.7 : 0.85)) { despawnRig(e); e.dead = true; }
     return;
   }
 
@@ -817,6 +821,9 @@ function enemyTick(e, dt) {
   rig.root.rotation.y = e.yaw;
   if (rig.external) {
     const anim = e.atkAnim > 0 || e.burstN > 0 ? 'attack' : ((mx || mz) ? (e.dashT > 0 ? 'run' : 'walk') : 'idle');
+    // atkAnim used to decay only on the procedural path, so GLB enemies stayed
+    // locked in their attack clip after the first swing.
+    if (e.atkAnim > 0) e.atkAnim = Math.max(0, e.atkAnim - dt * 1.4);
     rig.update?.(dt, anim);
     if (e.flash > 0) { e.flash = Math.max(0, e.flash - dt * 8); rig.setFlash(e.flash); }
     return;
@@ -1965,14 +1972,31 @@ function initInput() {
     if (e.code === 'KeyR') activeAbility(1);
   });
   addEventListener('keyup', e => { Input.keys[e.code] = false; if (e.code === 'KeyE') Input.interact = false; });
+  // Sandboxed iframes (claude.ai previews, some web portals) can refuse pointer
+  // lock. Then fall back to free-cursor aiming: mouse movement over the canvas
+  // turns the camera and clicks fire, instead of the game being unplayable.
+  let freeLook = false;
+  const enableFreeLook = () => {
+    if (freeLook) return;
+    freeLook = true;
+    cv.style.cursor = 'crosshair';
+    console.info('[E2049] Pointer lock unavailable; using free-cursor aiming.');
+  };
+  document.addEventListener('pointerlockerror', enableFreeLook);
   cv.addEventListener('mousedown', e => {
     if (state !== 'run' || paused) return;
-    if (!isTouch && document.pointerLockElement !== cv && !acceptanceInputEnabled) { cv.requestPointerLock(); return; }
+    if (!isTouch && !freeLook && document.pointerLockElement !== cv && !acceptanceInputEnabled) {
+      try {
+        const req = cv.requestPointerLock();
+        if (req && typeof req.catch === 'function') req.catch(enableFreeLook);
+      } catch (err) { enableFreeLook(); }
+      return;
+    }
     if (e.button === 0) Input.fire = true;
   });
   addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; });
   addEventListener('mousemove', e => {
-    if ((document.pointerLockElement === cv || acceptanceInputEnabled) && state === 'run' && !paused) {
+    if ((document.pointerLockElement === cv || acceptanceInputEnabled || (freeLook && e.target === cv)) && state === 'run' && !paused) {
       Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, e.movementX * 0.65);
       Input.lookDY = InputSafety.accumulateLookDelta(Input.lookDY, e.movementY * 0.65);
     }
@@ -2269,6 +2293,11 @@ function wireMenus() {
     if (hubOverlayOpen && G?.hub) { hubOverlayOpen = false; paused = false; show(null); banner('REBEL HAVEN', 'RETURNED TO HAVEN COMMONS'); }
     else { updateTitle(); show('ovTitle'); }
   };
+  const btnLook = el('btnLook');
+  if (btnLook) {
+    btnLook.textContent = 'Look: ' + (window.PS1Mode?.label || 'Modern');
+    btnLook.onclick = () => { AudioSys.sfx?.('ui'); window.PS1Mode?.cycle?.(); };
+  }
   el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
   el('btnHelpBack').onclick = () => {
     AudioSys.sfx('ui');

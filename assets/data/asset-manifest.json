@@ -1,8 +1,24 @@
 {
   "models": {
-    "enemy.shill": "assets/models/enemies/shillz-common.glb",
-    "enemy.runner": "assets/models/enemies/musker-common.glb",
-    "enemy.broker": "assets/models/enemies/cryptid-common.glb",
-    "weapon.ar": "assets/models/weapons/ar.glb"
+    "enemy.shill": "assets/models/ps1/characters/shillz.glb",
+    "enemy.streamer": "assets/models/ps1/characters/shillz.glb",
+    "enemy.hypebeast": "assets/models/ps1/characters/shillz_big.glb",
+    "enemy.runner": "assets/models/ps1/characters/musker.glb",
+    "enemy.lancer": "assets/models/ps1/characters/musker.glb",
+    "enemy.broker": "assets/models/ps1/characters/cryptid.glb",
+    "enemy.trooper": "assets/models/ps1/characters/mech.glb",
+    "enemy.enforcer": "assets/models/ps1/characters/mech_enforcer.glb",
+    "boss.riya": "assets/models/ps1/characters/riya.glb",
+    "boss.magnus": "assets/models/ps1/characters/magnus.glb",
+    "boss.spyder": "assets/models/ps1/characters/spyd3r.glb",
+    "boss.blitz": "assets/models/ps1/characters/blitz.glb",
+    "boss.turing": "assets/models/ps1/characters/turing.glb",
+    "weapon.pistol": "assets/models/ps1/weapons/volt9_pistol.glb",
+    "weapon.smg": "assets/models/ps1/weapons/vx2_ripper.glb",
+    "weapon.shotgun": "assets/models/ps1/weapons/riptide12_shotgun.glb",
+    "weapon.ar": "assets/models/ps1/weapons/m52_revenant.glb",
+    "weapon.dmr": "assets/models/ps1/weapons/lrx7_harbinger.glb",
+    "weapon.energy": "assets/models/ps1/weapons/plasma_lancer.glb",
+    "weapon.rocket": "assets/models/ps1/weapons/mgl6_thunderer.glb"
   }
 }
