@@ -1972,14 +1972,31 @@ function initInput() {
     if (e.code === 'KeyR') activeAbility(1);
   });
   addEventListener('keyup', e => { Input.keys[e.code] = false; if (e.code === 'KeyE') Input.interact = false; });
+  // Sandboxed iframes (claude.ai previews, some web portals) can refuse pointer
+  // lock. Then fall back to free-cursor aiming: mouse movement over the canvas
+  // turns the camera and clicks fire, instead of the game being unplayable.
+  let freeLook = false;
+  const enableFreeLook = () => {
+    if (freeLook) return;
+    freeLook = true;
+    cv.style.cursor = 'crosshair';
+    console.info('[E2049] Pointer lock unavailable; using free-cursor aiming.');
+  };
+  document.addEventListener('pointerlockerror', enableFreeLook);
   cv.addEventListener('mousedown', e => {
     if (state !== 'run' || paused) return;
-    if (!isTouch && document.pointerLockElement !== cv && !acceptanceInputEnabled) { cv.requestPointerLock(); return; }
+    if (!isTouch && !freeLook && document.pointerLockElement !== cv && !acceptanceInputEnabled) {
+      try {
+        const req = cv.requestPointerLock();
+        if (req && typeof req.catch === 'function') req.catch(enableFreeLook);
+      } catch (err) { enableFreeLook(); }
+      return;
+    }
     if (e.button === 0) Input.fire = true;
   });
   addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; });
   addEventListener('mousemove', e => {
-    if ((document.pointerLockElement === cv || acceptanceInputEnabled) && state === 'run' && !paused) {
+    if ((document.pointerLockElement === cv || acceptanceInputEnabled || (freeLook && e.target === cv)) && state === 'run' && !paused) {
       Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, e.movementX * 0.65);
       Input.lookDY = InputSafety.accumulateLookDelta(Input.lookDY, e.movementY * 0.65);
     }
