@@ -1,0 +1,25 @@
+{
+  "repo": "Logical-Leap/game-art-pipeline",
+  "commit": "1d1d1dc9d337123e9d19e7765137b1f87d382d15",
+  "synced": "2026-11-08",
+  "files": [
+    "assets/models/ps1/characters/shillz.glb",
+    "assets/models/ps1/characters/shillz_big.glb",
+    "assets/models/ps1/characters/musker.glb",
+    "assets/models/ps1/characters/cryptid.glb",
+    "assets/models/ps1/characters/mech.glb",
+    "assets/models/ps1/characters/mech_enforcer.glb",
+    "assets/models/ps1/characters/riya.glb",
+    "assets/models/ps1/characters/magnus.glb",
+    "assets/models/ps1/characters/spyd3r.glb",
+    "assets/models/ps1/characters/blitz.glb",
+    "assets/models/ps1/characters/turing.glb",
+    "assets/models/ps1/weapons/volt9_pistol.glb",
+    "assets/models/ps1/weapons/vx2_ripper.glb",
+    "assets/models/ps1/weapons/riptide12_shotgun.glb",
+    "assets/models/ps1/weapons/m52_revenant.glb",
+    "assets/models/ps1/weapons/lrx7_harbinger.glb",
+    "assets/models/ps1/weapons/plasma_lancer.glb",
+    "assets/models/ps1/weapons/mgl6_thunderer.glb"
+  ]
+}

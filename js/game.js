@@ -105,7 +105,9 @@ async function boot() {
   composer.addPass(new THREE.RenderPass(scene, camera));
   bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.95, 0.55, 0.6);
   composer.addPass(bloomPass);
-  composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
+  const gammaPass = new THREE.ShaderPass(THREE.GammaCorrectionShader);
+  composer.addPass(gammaPass);
+  window.PS1Mode?.install?.({ renderer, composer, gammaPass, bloomPass });
 
   const loadScreen = el('loadScreen');
   if (loadScreen) loadScreen.textContent = 'LOADING SIMULATION DATA…';
@@ -733,7 +735,9 @@ function enemyTick(e, dt) {
     e.dieT += dt;
     if (rig.external) {
       rig.update?.(dt, 'dead');
-      if (e.dieT > 0.3) e.rootY -= dt * 2.4;
+      // PS1 rigs have a real Death clip: let it land before sinking away.
+      const sinkAt = rig.ps1 ? 1.15 : 0.3;
+      if (e.dieT > sinkAt) e.rootY -= dt * 2.4;
       rig.root.position.set(e.pos.x, e.rootY, e.pos.z);
       rig.root.rotation.y = e.yaw;
     } else {
@@ -741,7 +745,7 @@ function enemyTick(e, dt) {
       if (e.dieT > 0.3) e.rootY -= dt * 2.4;
       rig.root.position.y = e.rootY;
     }
-    if (e.dieT > 0.85) { despawnRig(e); e.dead = true; }
+    if (e.dieT > (rig.ps1 ? 1.7 : 0.85)) { despawnRig(e); e.dead = true; }
     return;
   }
 
@@ -817,6 +821,9 @@ function enemyTick(e, dt) {
   rig.root.rotation.y = e.yaw;
   if (rig.external) {
     const anim = e.atkAnim > 0 || e.burstN > 0 ? 'attack' : ((mx || mz) ? (e.dashT > 0 ? 'run' : 'walk') : 'idle');
+    // atkAnim used to decay only on the procedural path, so GLB enemies stayed
+    // locked in their attack clip after the first swing.
+    if (e.atkAnim > 0) e.atkAnim = Math.max(0, e.atkAnim - dt * 1.4);
     rig.update?.(dt, anim);
     if (e.flash > 0) { e.flash = Math.max(0, e.flash - dt * 8); rig.setFlash(e.flash); }
     return;
@@ -2269,6 +2276,11 @@ function wireMenus() {
     if (hubOverlayOpen && G?.hub) { hubOverlayOpen = false; paused = false; show(null); banner('REBEL HAVEN', 'RETURNED TO HAVEN COMMONS'); }
     else { updateTitle(); show('ovTitle'); }
   };
+  const btnLook = el('btnLook');
+  if (btnLook) {
+    btnLook.textContent = 'Look: ' + (window.PS1Mode?.label || 'Modern');
+    btnLook.onclick = () => { AudioSys.sfx?.('ui'); window.PS1Mode?.cycle?.(); };
+  }
   el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
   el('btnHelpBack').onclick = () => {
     AudioSys.sfx('ui');

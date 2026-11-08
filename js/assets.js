@@ -4,41 +4,45 @@
 const Assets = (() => {
   const texCache = {};
   const modelCache = {};
+  // PS1 characters and weapons come from Logical-Leap/game-art-pipeline
+  // (synced by scripts/sync-ps1-models.js). URLs live in assets/data/asset-manifest.json
+  // under enemy.<type>, boss.<id> and weapon.<class>; these defs only say how to use them.
+  // Every PS1 character shares the humanoid15 clip library, so one clip map fits all.
+  const PS1_CLIPS = {
+    melee:  { idle:/^Idle Combat$/, walk:/^Walk$/, run:/^Run$/, attack:/^Punch Combo$/, hit:/^Hit React$/, dead:/^Death$/ },
+    ranged: { idle:/^Idle Combat$/, walk:/^Walk$/, run:/^Run$/, attack:/^Shoot$/,       hit:/^Hit React$/, dead:/^Death$/ },
+    boss:   { idle:/^Taunt$|^Idle Combat$/, walk:/^Walk$/, run:/^Run$/, attack:/^Controlled Riot$|^Shoot$/, hit:/^Hit React$/, dead:/^Death$/ },
+  };
+  // height = metres for size 1.0; the game's procedural humanoid stands about 1.8.
   const EXTERNAL_MODELS = {
-    // Use only finished biped "Common" drops for matching standard enemy roles.
-    // Cryptids also have a flying drone enemy; this biped is intentionally used
-    // only for the grounded Broker so the rig/animations stay coherent.
-    shill: {
-      url: 'assets/models/enemies/shillz-common.glb',
-      height: 0.18,
-      rootScale: 0.1,
-      anim: { idle:/alert|idle/i, walk:/walk_forward|walking|walk/i, run:/run_and_shoot|running|run/i, attack:/boxing|shoot/i, hit:/hit|reaction/i, dead:/dead/i },
-    },
-    runner: {
-      url: 'assets/models/enemies/musker-common.glb',
-      height: 0.19,
-      rootScale: 0.1,
-      anim: { idle:/idle/i, walk:/walking|walk/i, run:/runfast|running|run_fast|run/i, attack:/kick|hook|punch|charge|lunge/i, hit:/knock|hit|shot/i, dead:/dead|fall/i },
-    },
-    broker: {
-      url: 'assets/models/enemies/cryptid-common.glb',
-      height: 0.18,
-      rootScale: 0.1,
-      anim: { idle:/walk_forward_while_shooting|walking|walk/i, walk:/walking|walk/i, run:/running|run_fast|run/i, attack:/spell|soell|shoot/i, hit:/hit|reaction|gunshot/i, dead:/dead|fall/i },
-    },
+    shill:     { height: 1.8, anim: PS1_CLIPS.melee },
+    hypebeast: { height: 1.8, anim: PS1_CLIPS.melee },
+    streamer:  { height: 1.8, anim: PS1_CLIPS.ranged },
+    runner:    { height: 1.8, anim: PS1_CLIPS.melee },
+    lancer:    { height: 1.8, anim: PS1_CLIPS.ranged },
+    broker:    { height: 1.8, anim: PS1_CLIPS.ranged },
+    trooper:   { height: 1.8, anim: PS1_CLIPS.ranged },
+    enforcer:  { height: 1.9, anim: PS1_CLIPS.ranged },
   };
+  const EXTERNAL_BOSSES = {
+    riya:   { height: 1.75, anim: PS1_CLIPS.boss },
+    magnus: { height: 1.85, anim: Object.assign({}, PS1_CLIPS.boss, { attack:/^Punch Combo$/ }) },
+    spyder: { height: 1.8,  anim: PS1_CLIPS.boss },
+    blitz:  { height: 1.8,  anim: PS1_CLIPS.boss, fly: true },
+    turing: { height: 1.85, anim: PS1_CLIPS.boss },
+  };
+  // length = longest side in viewmodel units (gunGroup is scaled 0.52).
+  // PS1 weapon props point their barrel down +Z, the camera looks down -Z.
+  const gunDef = (length) => ({ length, centerX: 0, centerY: 0.02, centerZ: -0.05, muzzleZ: -0.05 - length / 2, yaw: Math.PI });
   const EXTERNAL_GUNS = {
-    ar: {
-      url: 'assets/models/weapons/ar.glb',
-      length: 2.0,
-      muzzleZ: -0.58,
-      centerX: 0.1,
-      centerY: 0.1,
-      centerZ: 0.1,
-      yaw: -Math.PI / 2,
-    },
+    pistol:  gunDef(0.34),
+    smg:     gunDef(0.95),
+    shotgun: gunDef(1.35),
+    ar:      gunDef(1.4),
+    dmr:     gunDef(1.75),
+    energy:  gunDef(1.3),
+    rocket:  gunDef(1.25),
   };
-
 
   function cv(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
   function ctex(canvas, repeat) {
@@ -347,22 +351,47 @@ const Assets = (() => {
   }
 
   async function preloadExternalModels() {
+    // All GLBs are listed in the asset manifest and loaded (once) by AssetLoader.
     await AssetLoader?.preloadManifest?.();
-    if (!THREE.GLTFLoader) return Promise.resolve();
-    const loader = new THREE.GLTFLoader();
-    const entries = [
-      ...Object.entries(EXTERNAL_MODELS).map(([id, def]) => ['enemy:' + id, def]),
-      ...Object.entries(EXTERNAL_GUNS).map(([id, def]) => ['gun:' + id, def]),
-    ];
-    return Promise.all(entries.map(([id, def]) => {
-      if (modelCache[id]) return modelCache[id].promise;
-      const rec = { gltf:null, error:null };
-      rec.promise = new Promise(resolve => {
-        loader.load(def.url, gltf => { rec.gltf = gltf; resolve(); }, undefined, err => { rec.error = err; console.warn('GLB model failed:', id, err); resolve(); });
-      });
-      modelCache[id] = rec;
-      return rec.promise;
-    })).then(() => undefined);
+  }
+
+  // PS1 look: swap the GLB's PBR materials for per-vertex (Gouraud) Lambert
+  // shading, the closest three.js match to PS1 GTE lighting. Each rig gets its
+  // own material copies so a hit-flash only lights up the enemy that was hit.
+  function ps1Materials(root, flashList, unlit = false) {
+    root.traverse(o => {
+      if (!(o.isMesh || o.isSkinnedMesh)) return;
+      o.castShadow = false;
+      o.receiveShadow = false;
+      o.frustumCulled = false;   // animated limbs can leave their bind-pose bounds
+      const conv = m => {
+        if (!m) return m;
+        if (unlit) {
+          // Viewmodels sit right at the camera, away from scene lights: show their
+          // painted vertex colours flat, like most PS1 shooters did.
+          const bm = new THREE.MeshBasicMaterial({ map: m.map || null, color: m.color ? m.color.clone() : new THREE.Color(1, 1, 1), vertexColors: !!m.vertexColors, side: m.side });
+          if (bm.map) bm.map.encoding = THREE.sRGBEncoding;
+          return bm;
+        }
+        const lm = new THREE.MeshLambertMaterial({
+          map: m.map || null,
+          color: m.color ? m.color.clone() : new THREE.Color(1, 1, 1),
+          emissive: m.emissive ? m.emissive.clone() : new THREE.Color(0, 0, 0),
+          emissiveMap: m.emissiveMap || null,
+          emissiveIntensity: m.emissiveIntensity ?? 1,
+          vertexColors: !!m.vertexColors,
+          side: m.side,
+          transparent: m.transparent,
+          alphaTest: m.alphaTest,
+        });
+        lm.color.multiplyScalar(1.35);   // lift dark outfits in dim districts
+        if (lm.map) lm.map.encoding = THREE.sRGBEncoding;
+        if (lm.emissiveMap) lm.emissiveMap.encoding = THREE.sRGBEncoding;
+        flashList?.push({ m: lm, e: lm.emissive.clone(), i: lm.emissiveIntensity });
+        return lm;
+      };
+      o.material = Array.isArray(o.material) ? o.material.map(conv) : conv(o.material);
+    });
   }
 
   function cloneExternalScene(src) {
@@ -374,27 +403,17 @@ const Assets = (() => {
     return clips.find(c => rx.test(c.name)) || null;
   }
 
-  function makeExternalRig(typeId) {
-    const def = EXTERNAL_MODELS[typeId];
-    const manifestGltf = AssetLoader?.getModel?.('enemy.' + typeId);
-    const rec = manifestGltf ? { gltf: manifestGltf, error: null } : (def && modelCache['enemy:' + typeId]);
-    if (!def || !rec?.gltf || rec.error) return null;
+  function makeExternalRig(typeId, kind = 'enemy') {
+    const def = kind === 'boss' ? EXTERNAL_BOSSES[typeId] : EXTERNAL_MODELS[typeId];
+    const gltf = def && AssetLoader?.getModel?.(kind + '.' + typeId);
+    if (!gltf) return null;
+    const rec = { gltf };
     const rig = newRig();
     rig.external = true;
-    rig.rootScale = def.rootScale || 1;
+    rig.ps1 = true;
     const model = cloneExternalScene(rec.gltf.scene);
     model.name = 'GLB_' + typeId;
-    model.traverse(o => {
-      if (o.isMesh || o.isSkinnedMesh) {
-        o.castShadow = false;
-        o.receiveShadow = true;
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        for (const m of mats) if (m) {
-          if (m.map) { m.map.encoding = THREE.sRGBEncoding; m.map.anisotropy = 4; }
-          if (m.emissive) rig.flash.push({ m, e: m.emissive.clone(), i: m.emissiveIntensity || 0 });
-        }
-      }
-    });
+    ps1Materials(model, rig.flash);
     rig.root.add(model);
     model.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(model);
@@ -426,11 +445,21 @@ const Assets = (() => {
       if (rig.activeAction) rig.activeAction.fadeOut(fade);
       rig.activeAction = next;
     };
+    if (rig.actions.dead) rig.actions.dead.timeScale = 1.8;   // 3.4 s clip -> falls in ~1 s
+    // PS1 games animated at a lower rate than they rendered; step the mixer
+    // at 15 fps in PS1 mode for the crunchy stepped look.
+    const stepFps = window.PS1Mode?.enabled ? 15 : 0;
+    let acc = 0;
     rig.update = (dt, mode) => {
       rig.play(mode);
-      if (rig.mixer) rig.mixer.update(dt);
+      if (!rig.mixer) return;
+      if (!stepFps) { rig.mixer.update(dt); return; }
+      acc += dt;
+      const step = 1 / stepFps;
+      if (acc >= step) { const n = Math.floor(acc / step); acc -= n * step; rig.mixer.update(n * step); }
     };
     rig.play('idle', 0);
+    rig.mixer.update(0);
     return rig;
   }
 
@@ -869,8 +898,10 @@ const Assets = (() => {
 
   function buildBoss(bossId) {
     const b = BOSSES[bossId];
-    let rig;
-    switch (bossId) {
+    let rig = makeExternalRig(bossId, 'boss');
+    if (rig) {
+      if (EXTERNAL_BOSSES[bossId].fly) { rig.fly = b.fly || 0; rig.baseY = rig.fly; }
+    } else switch (bossId) {
       case 'riya': {
         rig = humanoid('shillz', { bodyW: 1.15, suit: 0x17150e });
         dressShill(rig, false); attachMegaphone(rig);
@@ -923,23 +954,12 @@ const Assets = (() => {
 
   function makeExternalGun(clsKey) {
     const def = EXTERNAL_GUNS[clsKey];
-    const manifestGltf = AssetLoader?.getModel?.('weapon.' + clsKey);
-    const rec = manifestGltf ? { gltf: manifestGltf, error: null } : (def && modelCache['gun:' + clsKey]);
-    if (!def || !rec?.gltf || rec.error) return null;
+    const gltf = def && AssetLoader?.getModel?.('weapon.' + clsKey);
+    if (!gltf) return null;
     const g = new THREE.Group();
-    const model = cloneExternalScene(rec.gltf.scene);
+    const model = cloneExternalScene(gltf.scene);
     model.name = 'GLB_gun_' + clsKey;
-    model.traverse(o => {
-      if (o.isMesh) {
-        o.castShadow = false;
-        o.receiveShadow = false;
-        const mats = Array.isArray(o.material) ? o.material : [o.material];
-        for (const m of mats) if (m) {
-          if (m.map) { m.map.encoding = THREE.sRGBEncoding; m.map.anisotropy = 4; }
-          if (m.emissiveMap) m.emissiveIntensity = Math.min(m.emissiveIntensity || 0.35, 0.5);
-        }
-      }
-    });
+    ps1Materials(model, null, true);
     g.add(model);
     model.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(model);
