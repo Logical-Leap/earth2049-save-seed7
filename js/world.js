@@ -188,6 +188,34 @@ const World = (() => {
     return false;
   }
 
+  // Authored blockout floors are slabs (e.g. 0..0.2 m) with a flat dark colour.
+  // Players, enemies and props all stand at y = 0, so the slab buried every
+  // foot 20 cm and ended in a hard step at its edge; and the flat colour under
+  // the district's stacked lights washed out to a blank beige sheet. Sink each
+  // floor so its top is y = 0 and give it the district ground texture, tiled
+  // per metre like the generic ground.
+  function groundEditorFloors(root, theme) {
+    const floors = [];
+    root.traverse(o => { if (o.isMesh && o.userData?.gameplayType === 'floor') floors.push(o); });
+    for (const o of floors) {
+      o.updateWorldMatrix(true, false);
+      const box = new THREE.Box3().setFromObject(o);
+      if (!isFinite(box.max.y)) continue;
+      const parentScaleY = o.parent ? o.parent.getWorldScale(new THREE.Vector3()).y || 1 : 1;
+      o.position.y -= box.max.y / parentScaleY;
+      const size = box.getSize(new THREE.Vector3());
+      const tex = Assets.groundTex(theme).clone();
+      tex.needsUpdate = true;
+      tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(Math.max(1, size.x / 10), Math.max(1, size.z / 10));   // 10 m tiles, as the generic ground
+      const old = o.material;
+      o.material = new THREE.MeshStandardMaterial({ map: tex, color: 0xffffff, roughness: 0.9, metalness: 0.08 });
+      if (old && old !== o.material) old.dispose?.();
+      o.receiveShadow = true;
+    }
+    return floors.length;
+  }
+
   function shouldRegisterEditorCollider(obj, bare) {
     if (bare.startsWith('COLLIDER') || bare.startsWith('COVER') || bare.startsWith('BLOCKER')) return true;
     if (bare.startsWith('TRAVERSAL') || bare.startsWith('SOFTLOCK')) return true;
@@ -427,7 +455,12 @@ const World = (() => {
       const gt = Assets.groundTex(theme); gt.repeat.set(30, 30);
       const ground = new THREE.Mesh(new THREE.PlaneGeometry(300, 300),
         new THREE.MeshStandardMaterial({ map: gt, roughness: 0.85, metalness: 0.15 }));
-      ground.rotation.x = -Math.PI / 2; group.add(ground);
+      ground.name = 'E2049_GENERIC_GROUND';
+      ground.rotation.x = -Math.PI / 2;
+      // Authored floors are grounded at y = 0 (see groundEditorFloors); keep the
+      // generic plane a few cm below so the two never share a depth.
+      if (editorScene) ground.position.y = -0.04;
+      group.add(ground);
     }
 
     // lights
@@ -441,6 +474,7 @@ const World = (() => {
       editorScene.name = editorScene.name || ('EditorScene_' + theme.name);
       group.add(editorScene);
       parseEditorScene(editorScene);
+      if (!usingHubScene) groundEditorFloors(editorScene, theme);
       ensureHubPerimeterFallback();
       ensureHubMissionLaunchFallback();
       // Keep the metadata/collision scene loaded, but never render its blockout
