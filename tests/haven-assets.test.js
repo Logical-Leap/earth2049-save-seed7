@@ -56,7 +56,13 @@ test('crowd variant bases carry a variant recipe and a slot mask texture', () =>
 
 test('Haven NPCs point at known models; Turing never swears', () => {
   const { HAVEN_MODELS, HAVEN_NPCS, HAVEN_TURING } = havenData();
-  for (const n of Object.values(HAVEN_NPCS)) assert.ok(HAVEN_MODELS[n.model], `${n.name}: ${n.model}`);
+  const cat = JSON.parse(read('assets/models/ps1/avatar/catalog.json'));
+  for (const n of Object.values(HAVEN_NPCS)) {
+    if (n.avatar) {                                   // built from the player avatar kit: every item must exist for that body
+      for (const [c, id] of Object.entries(n.avatar.items)) assert.ok(cat.items[n.avatar.sex].some(i => i.id === id && i.cat === c), `${n.name}: ${c}=${id}`);
+      for (const [slot, name] of Object.entries(n.avatar.colors)) assert.ok(cat.palettes[slot].some(p => p.name === name), `${n.name}: ${slot}=${name}`);
+    } else assert.ok(HAVEN_MODELS[n.model], `${n.name}: ${n.model}`);
+  }
   const bad = /\b(fuck\w*|shit\w*|damn\w*|hell|ass|asshole|bitch\w*|crap\w*)\b/i;
   for (const line of HAVEN_TURING) assert.doesNotMatch(line, bad, line);
 });

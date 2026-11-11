@@ -239,7 +239,7 @@ AR.Player = (() => {
       let dx = wx, dz = wz;
       if (!wl) { dx = -sy; dz = -cy; }
       P.dashDir.set(dx, 0, dz); P.dashT = 0.15; P.iframes = Math.max(P.iframes, 0.22);
-      P.fovPunch += 9; AR.Sfx.dash(); AR.Hud?.flash('dash');
+      P.fovPunch += 9; AR.Sfx.dash(); AR.Hud?.flash('dash'); if (window.Wardrobe?.ready) window.Wardrobe.bump('dashes');
       AR.Fx.emit(AR.Fx.glow, b.pos.x, b.pos.y + 0.9, b.pos.z, 0x00e5ff, 14, 3, 0.35, { up: 0 });
       AR.Mission?.style('dash');
     }
@@ -276,6 +276,7 @@ AR.Player = (() => {
         AR.Fx.emit(AR.Fx.glow, b.pos.x, b.pos.y + 0.1, b.pos.z, 0x9b59ff, 12, 2.5, 0.3, { up: -1 });
       }
     }
+    if (jumped && window.Wardrobe?.ready) window.Wardrobe.bump('jumps');
 
     if (P.dashT <= 0) {
       if (b.onGround && !jumped) {

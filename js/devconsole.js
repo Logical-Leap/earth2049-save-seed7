@@ -116,7 +116,7 @@ const DevConsole = (() => {
 
     switch (cmd.toLowerCase()) {
       case 'help':
-        log('Commands: help | maps | map <id> | gun <id> [rarity] | spawn <enemyId> [elite] | boss <id> | god [on|off] | waves | clear | heal | loadout [all]');
+        log('Commands: help | maps | map <id> | gun <id> [rarity] | spawn <enemyId> [elite] | boss <id> | god [on|off] | waves | clear | heal | loadout [all] | drip [n] | feat <id>');
         break;
       case 'maps':
         log(MAPS.map(m => m.id + ' — ' + m.label).join(' | '));
@@ -159,6 +159,14 @@ const DevConsole = (() => {
         break;
       case 'heal':
         if (typeof G !== 'undefined' && G?.p) { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; log('Healed.'); }
+        break;
+      case 'drip':
+        if (!window.Wardrobe?.ready) { log('Wardrobe not ready.'); break; }
+        window.Wardrobe.addDrip(Number(rest[0]) || 1000, 'dev'); window.persistSave?.(); log('DRIP: ' + window.Wardrobe.drip);
+        break;
+      case 'feat':
+        if (!window.Wardrobe?.ready || !window.Wardrobe.FEATS[rest[0]]) { log('Usage: feat <id>. Ids: ' + Object.keys(window.Wardrobe?.FEATS || {}).join(' ')); break; }
+        { const f = window.Wardrobe.FEATS[rest[0]]; window.Wardrobe.max(f.stat, f.n); window.persistSave?.(); log('Feat done: ' + f.t); }
         break;
       case 'loadout':
         if (!window.AvatarCreator) { log('Avatar creator not loaded.'); break; }

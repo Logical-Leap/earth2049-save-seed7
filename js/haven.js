@@ -10,6 +10,8 @@
  *   crowds       RNG-variant civilians and couch surfers walking a waypoint graph and doing
  *                things at points of interest; dancers locked to the music's bar clock;
  *                the Serverless horde, which shambles to the quarantine fence when you come near
+ *   wardrobe     the Fitting Room: Seam (built from the player avatar kit), the player's own avatar on the dais,
+ *                two mannequins wearing today's Daily Drop; haven feats (walk, hang out, dance, talk) feed js/wardrobe.js
  *   jumbotron    live equaliser from the music, a news ticker, and Turing breaking in
  *   fx           rain through the street grates, barrel fires, the Dreamcaster portal, dust
  *   light        dynamic lights that flicker, pulse and beat with the song; everything that
@@ -382,7 +384,7 @@ const Haven = (() => {
   function buildNPCs(layout) {
     for (const a of layout.actors) {
       const def = HAVEN_NPCS[a.model];
-      if (!def) continue;
+      if (!def || def.avatar) continue;              // avatar-kit NPCs are built in buildWardrobe once the kit loads
       const holo = def.hologram || null;
       const ch = makeChar(def.model, { hologram: holo, yaw: a.yaw, seed: def.seed, scale: a.scale || def.scale || 1 });
       if (!ch) continue;
@@ -435,6 +437,107 @@ const Haven = (() => {
     if (n.tag) n.tag.visible = d < 10 && !S.dialog;
     n.barkT -= dt;
     if (n.barkT <= 0 && d < 7 && !S.dialog && n.def.barks) { n.barkT = rand(14, 26); bark(n.ch, pick(n.def.barks), n.holo ? n.def.hologram : '#ffe9a8'); }
+  }
+
+  /* ------------------------------------------------------------ the Fitting Room */
+  // wrap an AvatarKit avatar so the NPC/animation code can drive it like a model character
+  function avatarChar(L, yaw) {
+    const av = window.AvatarKit.create(L);
+    const obj = new THREE.Group(); obj.add(av.root);
+    const ch = { key: 'avatar', av, obj, root: av.root, mixer: av.mixer, actions: {}, alias: {}, mats: Object.values(av.mats), head: null,   // no head-tracking: kit clips may not key the head
+      cur: null, acc: 0, lightT: 0, yaw: yaw || 0 };
+    ch.play = name => { av.play(name); ch.cur = av.clipName; };
+    ch.play('Idle');
+    return ch;
+  }
+  function mannequinLook(id) {
+    const K = window.AvatarKit;
+    const sex = K.item('m', id) ? (K.item('f', id) && Math.random() < 0.5 ? 'f' : 'm') : 'f';   // NOSONAR - which body models it
+    const L = K.defaultLoadout(sex), it = K.item(sex, id);
+    L.items[it.cat] = id;
+    // dress the rest from the same rarity band so the featured piece reads as an outfit
+    for (const c of K.catalog.categories) {
+      if (c.id === it.cat || Math.random() < 0.4) continue;                                     // NOSONAR
+      const pool = K.itemsIn(sex, c.id).filter(i => Math.abs(i.rarity - it.rarity) <= 1 && i.id !== id);
+      if (pool.length) L.items[c.id] = pick(pool).id;
+    }
+    for (const k of ['prim', 'sec', 'acc', 'glow']) L.colors[k] = pick(K.catalog.palettes[k]).name;
+    return L;
+  }
+  async function buildWardrobe(layout) {
+    if (!window.AvatarKit) return;
+    try { await window.AvatarKit.ready(); } catch (e) { console.warn('[Haven] avatar kit did not load', e); return; }
+    if (!S.active || S.layout !== layout) return;
+    const W = window.Wardrobe;
+    S.statues = [];
+    // Seam and any other avatar-kit NPCs
+    for (const a of layout.actors) {
+      const def = HAVEN_NPCS[a.model];
+      if (!def || !def.avatar) continue;
+      const ch = avatarChar(def.avatar, a.yaw);
+      ch.obj.position.set(a.pos[0], a.pos[1], a.pos[2]); S.group.add(ch.obj);
+      const npc = { id: a.model, def, ch, home: a.yaw, x: a.pos[0], y: a.pos[1], z: a.pos[2], holo: false, intel: false, idleT: rand(4, 10), barkT: rand(2, 8), seen: false, waveT: 0 };
+      npc.tag = textSprite(def.name, '#ffffff', def.title); npc.tag.position.set(0, 2.15, 0); ch.obj.add(npc.tag);
+      S.npcs.push(npc);
+    }
+    // the player's current fit on the dais
+    const dais = layout.markers.find(m => m.kind === 'dais');
+    if (dais) {
+      const ch = avatarChar(window.AvatarKit.load(), dais.yaw);
+      ch.obj.position.set(dais.pos[0], dais.pos[1], dais.pos[2]); S.group.add(ch.obj);
+      ch.tag = textSprite('YOU', '#ff2fd6', 'CURRENT FIT // TALK TO SEAM'); ch.tag.position.set(0, 2.1, 0); ch.obj.add(ch.tag);
+      S.dais = { ch, marker: dais, poseT: 4 };
+      S.statues.push(ch.obj.position);
+    }
+    // mannequins: today's Daily Drop, dressed into an outfit
+    const featured = W?.ready ? W.featured() : [];
+    S.mannequins = [];
+    layout.markers.filter(m => m.kind === 'mannequin').forEach((m, i) => {
+      const id = featured[i]; if (!id) return;
+      const ch = avatarChar(mannequinLook(id), m.yaw);
+      ch.obj.position.set(m.pos[0], m.pos[1], m.pos[2]); S.group.add(ch.obj);
+      ch.play(i ? 'Taunt' : 'Hype'); ch.mixer.timeScale = 0.35;
+      const it = window.AvatarKit.item('m', id) || window.AvatarKit.item('f', id);
+      ch.tag = textSprite('DAILY DROP', '#ffd54f', `${it.name.toUpperCase()} // ◆${W.price(id)}`); ch.tag.position.set(0, 2.05, 0); ch.obj.add(ch.tag);
+      S.mannequins.push({ ch, id });
+      S.statues.push(ch.obj.position);
+    });
+  }
+  function refreshWardrobe() {
+    if (!S.dais || !window.AvatarKit?.loaded) return;
+    const L = window.AvatarKit.load(), d = S.dais;
+    if (L.sex !== d.ch.av.sex) {
+      d.ch.obj.remove(d.ch.av.root); d.ch.av.dispose();
+      const n = avatarChar(L, d.ch.yaw); d.ch.obj.add(n.av.root); Object.assign(d.ch, { av: n.av, root: n.root, mixer: n.mixer, mats: n.mats, play: n.play });
+      d.ch.play('Hype');
+    } else { d.ch.av.apply(L); d.ch.play('Hype'); }
+    d.poseT = 3;
+  }
+  function tickWardrobe(dt) {
+    const d = S.dais;
+    if (d) {
+      d.ch.yaw += dt * 0.45;
+      d.poseT -= dt;
+      if (d.poseT <= 0) { d.poseT = rand(5, 9); d.ch.play(pick(['Idle', 'Idle', 'Hype', 'Dance', 'Taunt', 'Wave', 'Selfie'])); }
+      animate(d.ch, dt);
+      d.ch.tag.visible = Math.hypot(S.player.x - d.marker.pos[0], S.player.z - d.marker.pos[2]) < 9 && !S.dialog;
+    }
+    for (const m of S.mannequins || []) { animate(m.ch, dt); m.ch.tag.visible = Math.hypot(S.player.x - m.ch.obj.position.x, S.player.z - m.ch.obj.position.z) < 10 && !S.dialog; }
+    // haven feats: time spent, ground walked, dancing; flushed every few seconds
+    const W = window.Wardrobe; if (!W?.ready) return;
+    const T = S.track || (S.track = { x: S.player.x, z: S.player.z, s: 0, m: 0, d: 0, t: 0 });
+    const step = Math.hypot(S.player.x - T.x, S.player.z - T.z); T.x = S.player.x; T.z = S.player.z;
+    if (step < 2) T.m += step;                                   // ignore teleports
+    T.s += dt;
+    const dz = S.danceZone;
+    if (dz && S.player.x > dz.min[0] && S.player.x < dz.max[0] && S.player.z > dz.min[2] && S.player.z < dz.max[2]) T.d += dt;
+    T.t += dt;
+    if (T.t >= 5) {
+      T.t = 0;
+      if (T.s) W.bump('havenS', T.s); if (T.m >= 1) W.bump('havenM', T.m); if (T.d) W.bump('danceS', T.d);
+      T.s = 0; T.m = 0; T.d = 0;
+      W.syncGT();
+    }
   }
 
   /* ------------------------------------------------------------ barks */
@@ -797,6 +900,7 @@ const Haven = (() => {
     const box = document.getElementById('havenDlg');
     if (!box) return false;
     S.dialog = { npc: n, onAction };
+    if (!n.intel && window.Wardrobe?.ready) window.Wardrobe.talk(n.id);
     box.querySelector('.who').textContent = def.name;
     box.querySelector('.who').style.color = def.hologram || '#ffe600';
     box.querySelector('.role').textContent = def.title || '';
@@ -857,20 +961,22 @@ const Haven = (() => {
   /* ------------------------------------------------------------ lifecycle */
   async function enter(scene, opts = {}) {
     exit(scene);
-    const layout = await AssetLoader.fetchJson(HAVEN_BASE + 'haven.layout.json');
+    const layout = await AssetLoader.fetchJson(HAVEN_BASE + 'haven.layout.json?v=20261111-wardrobe');
     if (!layout) return false;
     Object.assign(S, { active: true, layout, group: new THREE.Group(), npcs: [], agents: [], barks: [], lights: [], fx: [], hovers: [], spinners: [],
-      sources: [], crackles: [], holoMats: [], t: 0, crowdBarkT: 4, moanT: 3, zone: null, dialog: null, player: { x: 0, y: 0, z: 0 },
+      sources: [], crackles: [], holoMats: [], t: 0, dais: null, mannequins: [], statues: [], track: null, crowdBarkT: 4, moanT: 3, zone: null, dialog: null, player: { x: 0, y: 0, z: 0 },
       lowSpec: !!opts.lowSpec, probes: decodeProbes(layout.probes), graph: buildGraph(layout.waypoints), onAction: opts.onAction });
     S.group.name = 'RebelHaven_Runtime';
     scene.add(S.group);
     const models = new Set(['turing']);
-    for (const a of layout.actors) { const d = HAVEN_NPCS[a.model]; if (d) models.add(d.model); }
+    for (const a of layout.actors) { const d = HAVEN_NPCS[a.model]; if (d?.model) models.add(d.model); }
     for (const z of layout.zones) for (const m of HAVEN_CROWD_MODELS[z.kind === 'market' ? 'wander' : z.kind] || []) models.add(m);
     await Promise.all([...models].map(loadModel));
     if (!S.active) return false;
     await buildProps(layout);
     buildNPCs(layout);
+    S.danceZone = layout.zones.find(z => z.kind === 'dance') || null;
+    buildWardrobe(layout);                               // async: the avatar kit streams in after the Haven is up
     buildCrowds(layout);
     buildLights(layout);
     buildScreen(layout);
@@ -897,11 +1003,14 @@ const Haven = (() => {
     for (const src of S.sources || []) { try { src.stop(); } catch (_) { /* already stopped */ } }
     if (S.amb) { try { S.amb.disconnect(); } catch (_) { /* gone */ } }
     for (const b of S.barks || []) b.spr.material.map.dispose();
+    for (const n of S.npcs || []) if (n.ch.av) n.ch.av.dispose();
+    if (S.dais) S.dais.ch.av.dispose();
+    for (const m of S.mannequins || []) m.ch.av.dispose();
     if (S.screen) { S.screen.rt.dispose(); S.screen.tex.dispose(); }
     (scene || S.group.parent)?.remove(S.group);
     if (S.prevFog !== undefined && scene) scene.fog = S.prevFog;
     Music.setDiegetic(null);
-    Object.assign(S, { active: false, group: null, npcs: [], agents: [], screen: null, amb: null, prevFog: undefined });
+    Object.assign(S, { active: false, group: null, npcs: [], agents: [], screen: null, amb: null, prevFog: undefined, dais: null, mannequins: [], statues: [] });
   }
 
   function tick(dt, player) {
@@ -913,12 +1022,13 @@ const Haven = (() => {
     for (const a of S.agents) { tickAgent(a, dt, beat); animate(a.ch, dt); }
     separate(dt);
     // keep the player out of people
-    for (const list of [S.npcs.map(n => n.ch.obj.position), S.agents.filter(a => a.kind !== 'horde').map(a => a.ch.obj.position)]) {
+    for (const list of [S.npcs.map(n => n.ch.obj.position), S.agents.filter(a => a.kind !== 'horde').map(a => a.ch.obj.position), S.statues || []]) {
       for (const q of list) {
         const dx = player.pos.x - q.x, dz = player.pos.z - q.z, d = Math.hypot(dx, dz);
         if (d < 0.55 && d > 1e-4 && Math.abs((player.pos.y || 0) - q.y) < 1.2) { player.pos.x = q.x + dx / d * 0.55; player.pos.z = q.z + dz / d * 0.55; }
       }
     }
+    tickWardrobe(dt);
     tickBarks(dt);
     tickLights(dt, beat);
     tickFx(dt, beat);
@@ -929,7 +1039,7 @@ const Haven = (() => {
 
   return {
     enter, exit, tick,
-    nearestTalk, openDialog, closeDialog, dialogKey,
+    nearestTalk, openDialog, closeDialog, dialogKey, refreshWardrobe,
     get active() { return S.active; }, get dialogOpen() { return !!S.dialog; },
     probeAt: (x, y, z) => probeAt(x, y, z).clone(),
     debug: () => S,

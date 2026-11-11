@@ -38,6 +38,7 @@ function loadSave() {
   saveWriteBlocked = result.status === 'unsupported-future-version';
   futureSaveRaw = result.futureRaw || null;
   SAVE = result.save || SaveSystem.createDefault(saveCatalogs(), randomId);
+  attachWardrobe();
   if (saveWriteBlocked) console.error('[E2049] Save is from a newer version. Running read-only until import or reset.');
 }
 function randomId() {
@@ -58,6 +59,48 @@ function setProfileName(name) {
   p.name = String(name || 'Purple Operative').trim().slice(0, 24) || 'Purple Operative';
   persist();
   return p;
+}
+
+/* ------------------------------------------------------------ wardrobe (js/wardrobe.js): DRIP, feats, avatar unlocks */
+let wardrobeCatalog = null;
+function attachWardrobe() { if (wardrobeCatalog && window.Wardrobe) Wardrobe.attach(SAVE, wardrobeCatalog); }
+function loadWardrobe() {
+  if (!window.Wardrobe) return;
+  fetch(AVATAR_CATALOG_URL).then(r => r.json()).then(cat => { wardrobeCatalog = cat; attachWardrobe(); updateTitle?.(); })
+    .catch(err => console.warn('[E2049] wardrobe catalog did not load', err));
+  Wardrobe.on((type, d) => {
+    const inArena = state === 'arena' && window.AR?.Hud;
+    if (type === 'unlock' && d.why !== 'buy') {
+      const how = d.why === 'feat' ? `${d.feat} // +${d.bounty} DRIP` : d.why === 'milestone' ? 'COLLECTION REWARD' : 'NEW IN YOUR LOCKER';
+      if (inArena) { AR.Hud.toast(`UNLOCKED // ${d.item.name.toUpperCase()}`, how); AR.Mission?.noteUnlock?.(d.item.name); AR.Sfx?.ui('rank'); }
+      else banner('UNLOCKED: ' + d.item.name.toUpperCase(), how + ' // EQUIP IT AT THE FITTING ROOM');
+      persist();
+    } else if (type === 'license') {
+      if (inArena) AR.Hud.toast(`NOW FOR SALE // ${d.item.name.toUpperCase()}`, 'LICENSE EARNED AT THE FITTING ROOM');
+      else banner('LICENSE EARNED', d.item.name.toUpperCase() + ' IS NOW FOR SALE AT THE FITTING ROOM');
+    } else if (type === 'milestone') {
+      if (inArena) AR.Hud.toast(`COLLECTION ${d.count}`, `+${d.bonus} DRIP`);
+      else banner('COLLECTION ' + d.count, '+' + d.bonus + ' DRIP');
+    }
+  });
+}
+const AVATAR_CATALOG_URL = 'assets/models/ps1/avatar/catalog.json';
+function openWardrobe() {
+  if (!window.AvatarCreator || !window.Wardrobe?.ready) { banner('THE FITTING ROOM', 'STILL UNPACKING. TRY AGAIN IN A SECOND.'); return; }
+  hubOverlayOpen = true; paused = true;
+  document.exitPointerLock?.();
+  hideOverlays();
+  Wardrobe.syncGT();
+  AvatarCreator.open({
+    title: 'THE <em>FITTING ROOM</em> // SEAM', shop: Wardrobe.shop(),
+    onBuy: () => persist(),
+    onClose: L => {
+      hubOverlayOpen = false; paused = false;
+      persist();
+      Haven.refreshWardrobe?.();
+      banner('THE FITTING ROOM', L ? 'LOOKING GOOD. SEAM APPROVES.' : 'COME BACK WHEN YOU HAVE MORE DRIP.');
+    },
+  });
 }
 
 function persist() {
@@ -86,6 +129,8 @@ function ensureAbilityUnlocks(targetSave = SAVE){
 
 /* ============ boot ============ */
 async function boot() {
+  window.persistSave = () => persist();
+  loadWardrobe();
   loadSave();
   isTouch = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
   if (isTouch) document.body.classList.add('touch');
@@ -1397,6 +1442,7 @@ function havenAction(action, npc) {
   if (!G?.hub) return;
   if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }
+  if (action === 'wardrobe') { openWardrobe(); return; }
   if (action === 'snack') { G.p.hp = Math.min(G.p.maxHp, G.p.hp + 15); AudioSys.sfx('pickup'); banner('BUG NOODLES', 'NOURISHED? CLOSE ENOUGH. +15 HP'); return; }
   hubOverlayOpen = true;
   paused = true;
@@ -1844,6 +1890,7 @@ function bankGT() {
   });
   if (!result.ok) return false;
   SAVE = result.save;
+  attachWardrobe();
   return true;
 }
 function doDeath() {
@@ -2211,7 +2258,7 @@ function setPaused(v) {
 }
 function updateTitle() {
   ensureAbilityUnlocks();
-  el('titleGT').textContent = '⬢ ' + SAVE.gt + ' GIGATECH BANKED | CORRUPTION ' + SAVE.corruption + ' | TIER ' + SAVE.simTier;
+  el('titleGT').textContent = '⬢ ' + SAVE.gt + ' GIGATECH BANKED' + (window.Wardrobe?.ready ? ' | ◆ ' + Wardrobe.drip.toLocaleString('en-US') + ' DRIP' : '') + ' | CORRUPTION ' + SAVE.corruption + ' | TIER ' + SAVE.simTier;
   el('titleBest').textContent = SAVE.runs === 0 ? 'FIRST CAST — GOOD LUCK, ELLIOT' :
     'RUNS: ' + SAVE.runs + '  —  BEST: ' + (SAVE.bestD >= 5 ? 'TURING DEFEATED (' + SAVE.wins + 'x)' : 'DISTRICT ' + SAVE.bestD) + '  —  KILLS: ' + SAVE.kills;
 }
@@ -2264,7 +2311,7 @@ function chooseSaveImport() {
     const result = SaveSystem.importSave(await file.text(), localStorage, saveCatalogs(), randomId);
     input.remove();
     if (!result.ok) { alert('Save import failed: ' + result.error); return; }
-    SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'imported'; futureSaveRaw = null;
+    SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'imported'; futureSaveRaw = null; attachWardrobe();
     ensureAbilityUnlocks(); updateTitle(); renderArmory();
   };
   document.body.appendChild(input); input.click();
@@ -2273,7 +2320,7 @@ function resetSaveData() {
   if (!confirm('Reset all Earth 2049 progression? A recovery copy will be kept in this browser.')) return;
   const result = SaveSystem.reset(localStorage, saveCatalogs(), randomId);
   if (!result.ok) { saveLoadStatus = result.status; alert('Save reset failed: ' + result.status + '. Your original save was not replaced.'); renderArmory(); return; }
-  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = result.status; futureSaveRaw = null;
+  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = result.status; futureSaveRaw = null; attachWardrobe();
   ensureAbilityUnlocks(); updateTitle(); renderArmory();
 }
 function renderArmory() { // NOSONAR - static tab renderer avoids framework/bundler dependency

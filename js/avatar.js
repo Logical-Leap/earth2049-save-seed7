@@ -19,8 +19,8 @@
  *                                                   setFirstPerson(on), eyeWorld(v3), dispose() }
  *   AvatarKit.defaultLoadout(sex) / randomLoadout(sex, {ownedOnly})
  *   AvatarKit.encode(L) / decode(code)            short shareable string (send this over the network for co-op)
- *   AvatarKit.load() / save(L)                    the player's saved loadout (localStorage)
- *   AvatarKit.isOwned(id) / grant(id) / owned()   unlocks (Default items are always owned)
+ *   AvatarKit.load() / save(L)                    the player's saved loadout (SAVE.wardrobe.look via Wardrobe; localStorage fallback)
+ *   AvatarKit.isOwned(id) / grant(id) / owned()   unlocks (Default items are always owned; SAVE.wardrobe.owned via Wardrobe)
  */
 (function () {
   'use strict';
@@ -107,16 +107,33 @@
   function decode(code) {
     try { const o = JSON.parse(atob(String(code).trim())); return validate({ sex: o.s, items: o.i, colors: o.c }); } catch (e) { return null; }
   }
-  function load() { return storage(s => decode(s.getItem(STORE)), null) || defaultLoadout('m'); }
-  function save(L) { storage(s => s.setItem(STORE, encode(L))); }
+  // the game's save (SAVE.wardrobe, via window.Wardrobe) owns the look and the unlocks once it is attached;
+  // localStorage is the fallback for the standalone creator and dev pages
+  const WR = () => (window.Wardrobe && window.Wardrobe.ready ? window.Wardrobe : null);
+  function load() {
+    const w = WR();
+    return (w && w.save.look && decode(w.save.look)) || storage(s => decode(s.getItem(STORE)), null) || defaultLoadout('m');
+  }
+  function save(L) {
+    const w = WR();
+    if (w) { w.save.look = encode(L); if (typeof window.persistSave === 'function') window.persistSave(); }
+    storage(s => s.setItem(STORE, encode(L)));
+  }
 
   // ------------------------------------------------------------------ unlocks
-  function owned() { return new Set(storage(s => JSON.parse(s.getItem(OWNED) || '[]'), [])); }
+  function owned() {
+    const w = WR();
+    return new Set(w ? w.save.owned : storage(s => JSON.parse(s.getItem(OWNED) || '[]'), []));
+  }
   function isOwned(id) {
     for (const s of ['m', 'f']) { const it = ITEMS && ITEMS[s][id]; if (it && (it.default || it.unlock === 'Default')) return true; }
     return owned().has(id);
   }
-  function grant(id) { const o = owned(); o.add(id); storage(s => s.setItem(OWNED, JSON.stringify([...o]))); }
+  function grant(id) {
+    const w = WR();
+    if (w) { w.grant(id, 'dev'); return; }
+    const o = owned(); o.add(id); storage(s => s.setItem(OWNED, JSON.stringify([...o])));
+  }
   function lockedIn(L) { return Object.values(L.items).filter(id => !isOwned(id)); }
 
   // ------------------------------------------------------------------ what is on show for a loadout

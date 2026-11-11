@@ -14,16 +14,59 @@ The models come from `Logical-Leap/game-art-pipeline` (`projects/earth2049/chara
 | `js/avatar.js` | `window.AvatarKit`: loads the kit, builds a dressed and tinted avatar, handles loadout codes, saving and unlocks |
 | `js/avatar-creator.js` | `window.AvatarCreator`: the full-screen loadout screen (the "viewer") |
 | `tests/avatar-kit.test.js` | Checks the catalog against the GLBs |
+| `js/wardrobe.js` | `window.Wardrobe`: unlock routes, DRIP economy, feats, Daily Drop, the shop surface the creator renders |
+| `tests/wardrobe.test.js` | Every item has an unlock route, economy pacing, the Fitting Room layout |
 
 Dev console: `loadout` opens the creator with only owned items saveable. `loadout all` opens it in free mode.
 
-## Still to do (in-game logic, not done here)
+## In the game: the Fitting Room and the Wardrobe
 
-- **Customization vendor in the hub:** an NPC or terminal that calls `AvatarCreator.open({ title: 'VENDOR NAME' })`. Pause input while it's open. It exits pointer lock on open.
-- **Unlocks:** call `AvatarKit.grant(itemId)` when an `item.unlock` condition is met (boss kills, levels, Shillz purchases…). Items marked `Default` are always owned.
-  - The owned list currently lives in localStorage (`e2049.avatar.owned.v1`). The saved loadout is in `e2049.avatar.v1`.
-  - Move both into the versioned save (`SAVE_SCHEMA.md`) when you wire this up.
-- **Prices and shop UI** for items, if the vendor sells them.
+**Where:** the Fitting Room, a booth in the north-west corner of the Night Market (built in the pipeline's `maps/haven/build.py`). It has:
+- **Seam**, the tailor (`npc:tailor` in `js/haven-data.js`). Seam is dressed from this kit. Talking to Seam opens `AvatarCreator` in shop mode.
+- **The dais**, where your current fit stands and turns. It re-dresses when you save a new look.
+- **Two mannequins** wearing today's Daily Drop pieces, with the price on a tag.
+
+**Unlocks and economy** live in `js/wardrobe.js` (`window.Wardrobe`), saved in `SAVE.wardrobe`. Every non-default item has one route:
+
+| Route | Count | How |
+|---|---|---|
+| SHOP | 20 | Buy for DRIP. Common ◆75, Uncommon ◆150, Rare ◆350, Epic ◆700 |
+| LICENSE | 30 | A feat opens it for sale at its rarity price (Legendary ◆1,400, Mythic ◆2,600) |
+| FEAT | 26 | Earned only, never sold. The item drops into your locker with a DRIP bounty (◆50 × tier). Every Relic is a feat |
+
+**DRIP** is cosmetic only; GigaTech still buys power. It comes from:
+- Every arena run:
+  - Base: 60 for a win, 20 for a loss.
+  - +12 per grade step, +8 per peak style rank, +5 per relay.
+  - ×(1 + 0.15 × heat).
+  - The **first win of each day pays double**.
+- **DRIP tags** dropped by every elite, worth ◆10 × heat.
+- **One merch crate per run**, hidden on high ground, worth ◆40 × heat.
+- **The cone:** a traffic cone on the far north-east gantry. Finding it unlocks the Traffic Cone and pays ◆100.
+- Feat bounties.
+- **Collection milestones:** every 10 items pays ◆100 × n.
+
+The **Daily Drop** puts three buyable items 35% off. The picks are seeded by the UTC date, so they are the same for everyone and change each day.
+
+**Feats** track lifetime stats (`SAVE.wardrobe.stats`). They count:
+- In the arena: kills by enemy and by weapon, headshots, air and boot kills, relays, bosses, flawless waves, storms, sponsors, dashes, jumps, distance, damage taken, deaths, heat won, grade, peak style, low-HP and clean wins.
+- In the Haven: time spent, distance walked, time on the dance floor, people talked to.
+- Overall: days played, GigaTech held and spent, DRIP earned, items owned.
+
+Stats are bumped live, so unlocks pop mid-run as a HUD toast and are listed on the results screen. Saves from before this change are seeded from `SAVE.arena`, so veterans keep what they earned.
+
+**Storage:**
+- Once `Wardrobe` is attached, `AvatarKit.load/save/isOwned/grant` read and write `SAVE.wardrobe.look` and `SAVE.wardrobe.owned`.
+- Any old localStorage loadout and unlocks are merged in once.
+- The standalone creator still falls back to localStorage.
+
+**Dev console:**
+- `drip [n]` adds DRIP.
+- `feat <id>` completes a feat.
+- `loadout all` opens the creator in free mode.
+
+## Still to do
+
 - **Co-op:** send `AvatarKit.encode(loadout)` (a short base64 string) in the join/hello message. Remote players do `AvatarKit.create(AvatarKit.decode(code))` and drive `avatar.play(...)` from their movement state.
 - **First person in matches:**
   - Create the local player's avatar.
@@ -32,6 +75,7 @@ Dev console: `loadout` opens the creator with only owned items saveable. `loadou
   - Play the clip for the current state ('Idle Combat', 'Run', 'Crouch Walk'…).
   - Looking down then shows the player's own legs and shoes, Halo-style.
   - The gloved viewmodel hands in `gunfeel.js` can switch to the equipped hands item later: the pieces are the `hands_*@hand_L/R` and `@forearm_*` nodes.
+- The catalog's `unlock` strings are the art team's flavor text. The game shows the Wardrobe's rule instead (`Wardrobe.FEATS`).
 
 ## API
 

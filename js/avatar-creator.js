@@ -8,6 +8,9 @@
  *   title       header text (the vendor's name)
  *   onSave(L)   called on SAVE (after AvatarKit.save(L) unless persist: false)
  *   onClose()   called whenever the overlay closes
+ *   shop        optional vendor surface (see js/wardrobe.js Wardrobe.shop()): wallet(), collection(), featured(), closest(n),
+ *               badge(id) html, detail(id) html, action(id) -> {label, enabled} | null, buy(id) -> bool, seen(ids).
+ *               Adds a ★ TODAY tab (daily drop + closest unlocks), price/feat badges on cards and a BUY button.
  * Views: orbit (drag, wheel), per-category camera, first person (head hidden, look down at your arms, legs and
  * shoes), squad lineup (you plus three random players), loadout codes (copy / paste to wear).
  * It has its own renderer and canvas, so the game can pause underneath; everything is disposed on close.
@@ -71,12 +74,27 @@
 #avc .avc-dlg p{margin:0 0 8px;font-size:11px;color:var(--dim)}
 #avc .avc-dlg button{padding:7px 12px;font-size:11px;font-weight:700;margin:8px 6px 0 0}
 #avc .avc-load{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;background:var(--bg);font-size:12px;letter-spacing:.14em}
-#avc .avc-load b{color:var(--hot)}`;
+#avc .avc-load b{color:var(--hot)}
+#avc .avc-wal{display:inline-block;margin-left:10px;color:var(--warn);font-weight:800;letter-spacing:.06em}
+#avc .avc-wal i{font-style:normal;color:var(--dim);font-weight:400;margin-left:8px}
+#avc .avc-b{position:absolute;right:6px;bottom:6px;font-size:9px;font-weight:800;letter-spacing:.04em;padding:1px 4px;border-radius:3px;background:rgba(0,0,0,.45)}
+#avc.shop .avc-card{padding-bottom:20px}
+#avc .avc-b.cost{color:var(--dim)} #avc .avc-b.buy{color:var(--warn)} #avc .avc-b.sale{color:#0b0718;background:var(--warn)}
+#avc .avc-b.feat{color:var(--hot)} #avc .avc-b.new{color:#0b0718;background:#39ff88}
+#avc .avc-card .ct{font-size:9px;color:var(--dim);letter-spacing:.08em}
+#avc .avc-bar2{display:inline-block;width:90px;height:6px;border-radius:3px;background:rgba(255,255,255,.1);vertical-align:middle;overflow:hidden}
+#avc .avc-bar2 i{display:block;height:100%;background:linear-gradient(90deg,var(--hot),var(--warn))}
+#avc .avc-ok{color:#39ff88} #avc .avc-feat{color:var(--hot)} #avc .avc-sale{color:var(--warn);font-weight:800} #avc .avc-short{color:var(--dim)}
+#avc .avc-info s{color:var(--dim)}
+#avc .avc-buy{float:right;margin:2px 0 0 8px;padding:7px 12px;font-size:12px;font-weight:800;border-color:var(--warn)!important;color:var(--warn)!important}
+#avc .avc-buy.flash{background:var(--warn);color:#0b0718!important}
+#avc .avc-toast{position:absolute;top:96px;left:50%;transform:translateX(-50%);z-index:8;padding:8px 14px;border-radius:6px;background:var(--panel2);border:1px solid var(--warn);color:var(--warn);font-size:12px;font-weight:800;letter-spacing:.08em;opacity:0;transition:opacity .25s;pointer-events:none}
+#avc .avc-toast.show{opacity:1}`;
 
   let open = null;
 
   function html(title) {
-    return `<div class="avc-top"><h1>${title}<small>mix, match, grind for the drip</small></h1><div class="avc-bar">
+    return `<div class="avc-top"><h1>${title}<small>mix, match, grind for the drip<span class="avc-wal"></span></small></h1><div class="avc-bar">
 <button data-a="sex">♂ BODY A</button><button data-a="anim">▶ IDLE</button><button data-a="rand">🎲 RANDOM</button>
 <button data-a="fp">👁 FIRST PERSON</button><button data-a="squad">👥 SQUAD</button><button data-a="code">⧉ CODE</button>
 <button data-a="save" class="save">✔ SAVE</button><button data-a="close">✕</button></div></div>
@@ -85,7 +103,7 @@
 <div class="avc-panel"><button class="avc-fold" data-a="fold">☰</button><div class="avc-tabs"></div><div class="avc-grid"></div><div class="avc-info"></div></div>
 <div class="avc-dlg"><div><p>Loadout code. Share it with your squad, or paste one in to wear it.</p><textarea spellcheck="false"></textarea>
 <button data-a="copy">COPY</button><button data-a="wear">WEAR THIS CODE</button><button data-a="dlgx">CLOSE</button></div></div>
-<div class="avc-load">LOADING <b>&nbsp;DRIP</b>…</div>`;
+<div class="avc-toast"></div><div class="avc-load">LOADING <b>&nbsp;DRIP</b>…</div>`;
   }
 
   function stage(renderer) {
@@ -117,7 +135,9 @@
   function openCreator(opts = {}) {
     if (open) return open.promise;
     const ownedOnly = opts.ownedOnly !== false;
+    const shop = opts.shop || null;
     const root = document.createElement('div'); root.id = 'avc';
+    if (opts.shop) root.classList.add('shop');
     const style = document.createElement('style'); style.textContent = CSS;
     root.innerHTML = html(opts.title || 'EARTH <em>2049</em> // LOADOUT');
     document.head.appendChild(style); document.body.appendChild(root);
@@ -129,7 +149,7 @@
     const scene = stage(renderer);
     const camera = new THREE.PerspectiveCamera(32, 1, .02, 60);
     let resolveP; const promise = new Promise(r => { resolveP = r; });
-    const S = { L: null, me: null, squad: [], mode: 'solo', tab: 'top', clipI: 0, saved: null, raf: 0, closed: false,
+    const S = { L: null, me: null, squad: [], mode: 'solo', tab: shop ? 'today' : 'top', viewed: new Set(), clipI: 0, saved: null, raf: 0, closed: false,
       yaw: .35, pitch: .08, dist: 3.2, ty: .95, want: { yaw: .35, pitch: .08, dist: 3.2, y: .95 }, fpYaw: 0, fpPitch: -.6, drag: null };
     open = { promise, close };
 
@@ -163,7 +183,8 @@
     }
     function refresh() {
       const cats = K().catalog.categories, R = K().resolve(S.L);
-      $('.avc-tabs').innerHTML = [...cats.map(c => [c.id, c.label]), ['colors', 'COLOURS']]
+      if (shop) $('.avc-wal').innerHTML = `${shop.wallet()}<i>${shop.collection()}</i>`;
+      $('.avc-tabs').innerHTML = [...(shop ? [['today', '★ TODAY']] : []), ...cats.map(c => [c.id, c.label]), ['colors', 'COLOURS']]
         .map(([id, lab]) => `<button data-tab="${id}" class="${S.tab === id ? 'on' : ''}">${lab}</button>`).join('');
       const locked = ownedOnly ? K().lockedIn(S.L) : [];
       const sv = $('[data-a=save]'); sv.disabled = locked.length > 0;
@@ -177,11 +198,21 @@
         return;
       }
       grid.className = 'avc-grid avc-cards';
-      grid.innerHTML = K().itemsIn(S.L.sex, S.tab).map(i => {
+      const card = (i, withCat) => {
         const lock = ownedOnly && !K().isOwned(i.id);
-        return `<button class="avc-card ${S.L.items[S.tab] === i.id ? 'on' : ''} ${lock ? 'lock' : ''}" data-item="${i.id}" style="--r:${K().RARITY_COLORS[i.rarity]}">` +
-          `${lock ? '<span class="lk">🔒</span>' : ''}<span class="rr">${K().catalog.rarities[i.rarity].toUpperCase()}</span><span class="nm">${i.name}</span></button>`;
-      }).join('');
+        S.viewed.add(i.id);
+        const label = withCat ? `<span class="ct">${cats.find(c => c.id === i.cat).label}</span>` : '';
+        return `<button class="avc-card ${S.L.items[i.cat] === i.id ? 'on' : ''} ${lock ? 'lock' : ''}" data-item="${i.id}" data-cat="${i.cat}" style="--r:${K().RARITY_COLORS[i.rarity]}">` +
+          `${lock ? '<span class="lk">🔒</span>' : ''}<span class="rr">${K().catalog.rarities[i.rarity].toUpperCase()}</span>${label}<span class="nm">${i.name}</span>${shop ? shop.badge(i.id) : ''}</button>`;
+      };
+      if (S.tab === 'today') {
+        const ids = [...new Set([...shop.featured(), ...shop.closest(5)])].map(id => item(id)).filter(Boolean);
+        grid.innerHTML = ids.map(i => card(i, true)).join('');
+        info.innerHTML = '<b>★ TODAY</b> The first three are the <span class="avc-sale">DAILY DROP</span>: 35% off until 00:00 UTC. ' +
+          'The rest are your <span class="avc-feat">closest unlocks</span>. Every run pays DRIP; your first win each day pays double.';
+        return;
+      }
+      grid.innerHTML = K().itemsIn(S.L.sex, S.tab).map(i => card(i, false)).join('');
       const sel = grid.querySelector('.avc-card.on'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       const cur = item(S.L.items[S.tab]), notes = [], hat = R.eq.head, hair = R.eq.hair;
       if (S.tab === 'hair' && hat.hair === 'none') notes.push(`hidden under the ${hat.name}`);
@@ -189,8 +220,10 @@
       if ((cur.blocks || []).length) notes.push('covers ' + cur.blocks.map(b => cats.find(c => c.id === b).label.toLowerCase()).join(', '));
       if (R.blocked.has(S.tab)) notes.push('hidden by what you wear');
       const col = K().RARITY_COLORS[cur.rarity];
-      info.innerHTML = `<b style="color:${col}">${cur.name}</b> <span class="tier" style="color:${col}">${K().catalog.rarities[cur.rarity]}</span>` +
-        `<br>${cur.flavor}<br><span class="un">${ownedOnly && !K().isOwned(cur.id) ? '🔒 ' : '🔓 '}${cur.unlock}</span>` +
+      const act = shop && shop.action(cur.id);
+      info.innerHTML = (act ? `<button class="avc-buy" data-a="buy" data-id="${cur.id}" ${act.enabled ? '' : 'disabled'}>${act.label}</button>` : '') +
+        `<b style="color:${col}">${cur.name}</b> <span class="tier" style="color:${col}">${K().catalog.rarities[cur.rarity]}</span>` +
+        `<br>${cur.flavor}<br>` + (shop ? shop.detail(cur.id) : `<span class="un">${ownedOnly && !K().isOwned(cur.id) ? '🔒 ' : '🔓 '}${cur.unlock}</span>`) +
         (notes.length ? `<br><span class="note">⚠ ${notes.join(' · ')}</span>` : '');
     }
     function setMode(m) {
@@ -218,12 +251,18 @@
       if (S.closed) return; S.closed = true;
       cancelAnimationFrame(S.raf); removeEventListener('resize', resize); removeEventListener('keydown', onKey, true);
       for (const a of S.squad) a.dispose(); if (S.me) S.me.dispose();
+      if (shop) shop.seen([...S.viewed].filter(id => K().isOwned(id)));
       renderer.dispose(); try { renderer.forceContextLoss(); } catch (e) { /* already gone */ }
       root.remove(); style.remove(); open = null;
       if (opts.onClose) opts.onClose(L);
       resolveP(L);
     }
     function close() { finish(null); }
+    let toastT = 0;
+    function toast(text) {
+      const t = $('.avc-toast'); t.textContent = text; t.classList.add('show');
+      clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 1800);
+    }
     function onKey(e) { if (e.key === 'Escape') { e.stopPropagation(); e.preventDefault(); close(); } }
     addEventListener('keydown', onKey, true);
 
@@ -231,7 +270,12 @@
       const b = e.target.closest('button'); if (!b || b.disabled) return;
       const a = b.dataset.a;
       if (b.dataset.tab) { S.tab = b.dataset.tab; $('.avc-grid').scrollLeft = 0; refresh(); focus(); }
-      else if (b.dataset.item) { S.L.items[S.tab] = b.dataset.item; dress(S.L); focus(); }
+      else if (b.dataset.item) { const c = b.dataset.cat || S.tab; if (S.tab === 'today') S.tab = c; S.L.items[c] = b.dataset.item; dress(S.L); focus(); }
+      else if (a === 'buy') {
+        const id = b.dataset.id;
+        if (shop.buy(id)) { toast(`UNLOCKED // ${item(id).name.toUpperCase()}`); b.classList.add('flash'); if (opts.onBuy) opts.onBuy(id); }
+        refresh();
+      }
       else if (b.dataset.col) { S.L.colors[b.dataset.col] = b.dataset.name; S.me.tint(S.L.colors); refresh(); }
       else if (a === 'sex') setSex(S.L.sex === 'm' ? 'f' : 'm');
       else if (a === 'rand') dress(K().randomLoadout(S.L.sex, { ownedOnly }));
@@ -284,7 +328,7 @@
       if (S.closed) return;
       body(opts.loadout || K().load());
       $('.avc-load').remove(); resize(); focus(); frame();
-      open.api = { get L() { return S.L; }, get me() { return S.me; }, setMode, equip: (c, id) => { S.L.items[c] = id; dress(S.L); },
+      open.api = { get L() { return S.L; }, get me() { return S.me; }, setMode, refresh, equip: (c, id) => { S.L.items[c] = id; dress(S.L); },
         set tab(t) { S.tab = t; refresh(); focus(); }, look: (y, p) => { S.fpYaw = y; S.fpPitch = p; },
         view: (y, p, d, h) => { S.want = { yaw: y, pitch: p, dist: d, y: h }; Object.assign(S, { yaw: y, pitch: p, dist: d, ty: h }); } };
     }).catch(err => { $('.avc-load').textContent = 'The avatar kit did not load.'; console.error('[AvatarCreator]', err); });

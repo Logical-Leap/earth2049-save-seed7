@@ -850,7 +850,7 @@ AR.Drops = (() => {
     geo.chip = new THREE.OctahedronGeometry(0.13, 0); geo.box = new THREE.BoxGeometry(0.34, 0.24, 0.34);
   }
   function dispose() { for (const d of list) group.remove(d.obj); list.length = 0; if (group) scene.remove(group); group = null; }
-  const COL = { chip: 0xffd400, ammo: 0x39ff8a, health: 0xff2b6a, armor: 0x4da6ff };
+  const COL = { chip: 0xffd400, ammo: 0x39ff8a, health: 0xff2b6a, armor: 0x4da6ff, drip: 0xff2bd6, crate: 0xff2bd6, cone: 0xff7a1a };
   function spawn(kind, x, y, z, extra = {}) {
     let obj;
     if (kind === 'gun') {
@@ -859,6 +859,22 @@ AR.Drops = (() => {
       const col = new THREE.Color(AR.Arsenal.tierInfo(extra.tier || 0).c);
       const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.3, 5, 8, 1, true), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
       beam.position.y = 1.8; obj.add(beam);
+    } else if (kind === 'crate' || kind === 'cone') {
+      // wardrobe collectibles: a merch crate (every run) or the traffic cone (once). A tall faint beam gives them away.
+      obj = new THREE.Group();
+      const body = kind === 'cone'
+        ? new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.6, 8), new THREE.MeshBasicMaterial({ color: COL.cone }))
+        : new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.45, 0.6), new THREE.MeshBasicMaterial({ color: 0x2a1030 }));
+      if (kind === 'crate') {
+        const stripe = new THREE.Mesh(new THREE.BoxGeometry(0.62, 0.08, 0.62), new THREE.MeshBasicMaterial({ color: COL.crate }));
+        body.add(stripe);
+      } else {
+        const band = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.15, 0.08, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        band.position.y = 0.02; body.add(band);
+      }
+      obj.add(body);
+      const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.25, 8, 8, 1, true), new THREE.MeshBasicMaterial({ color: COL[kind], transparent: true, opacity: kind === 'cone' ? 0.08 : 0.16, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+      beam.position.y = 4; obj.add(beam);
     } else {
       const m = new THREE.Mesh(kind === 'chip' ? geo.chip : geo.box, new THREE.MeshBasicMaterial({ color: COL[kind] }));
       obj = new THREE.Group(); obj.add(m);
@@ -869,7 +885,9 @@ AR.Drops = (() => {
     }
     obj.position.set(x, y, z); group.add(obj);
     const a = Math.random() * 6.28;                                                                          // NOSONAR
-    const d = { kind, obj, pos: V3(x, y, z), vel: V3(Math.cos(a) * rand(1, 3), rand(3, 6), Math.sin(a) * rand(1, 3)), t: 0, life: kind === 'gun' ? 60 : 25, ...extra, magnet: false };
+    const still = !!extra.still;
+    const d = { kind, obj, pos: V3(x, y, z), vel: still ? V3(0, 0, 0) : V3(Math.cos(a) * rand(1, 3), rand(3, 6), Math.sin(a) * rand(1, 3)), t: 0,
+      life: still ? Infinity : kind === 'gun' ? 60 : 25, ...extra, magnet: false };
     list.push(d);
     return d;
   }
@@ -895,6 +913,8 @@ AR.Drops = (() => {
       let tier = lo + (Math.random() < 0.45 ? 1 : 0) + (Math.random() < 0.12 + heat * 0.04 ? 1 : 0);          // NOSONAR
       tier = Math.min(6, tier + Math.floor(heat / 3));
       spawn('gun', b.pos.x, b.pos.y + 0.6, b.pos.z, { gun: AR.pick(AR.PRIMARIES.filter(id => id !== P.guns[1]?.id)), tier });
+      // elites carry merch: a DRIP tag for the wardrobe
+      if (window.Wardrobe?.ready) spawn('drip', b.pos.x, b.pos.y + 1, b.pos.z, { value: window.Wardrobe.dripTag(AR.Mission.heat) });
     }
     void g; void info;
   }
@@ -908,7 +928,8 @@ AR.Drops = (() => {
       d.t += dt; d.life -= dt;
       if (d.life <= 0) { group.remove(d.obj); list.splice(i, 1); continue; }
       const dx = pp.x - d.pos.x, dy = pp.y + 0.45 - d.pos.y, dz = pp.z - d.pos.z, dist = Math.hypot(dx, dy, dz);
-      if (d.kind !== 'gun' && (dist < (d.kind === 'chip' ? 7 : 3.2) && d.t > 0.35 || d.magnet)) {
+      const reach = d.kind === 'chip' || d.kind === 'drip' ? 7 : d.still ? 1.8 : 3.2;
+      if (d.kind !== 'gun' && (dist < reach && d.t > 0.35 || d.magnet)) {
         const full = (d.kind === 'health' && P.hp >= P.maxHp) || (d.kind === 'armor' && P.armor >= P.maxArmor);
         if (!full) {
           d.magnet = true;
@@ -926,6 +947,7 @@ AR.Drops = (() => {
       d.obj.position.copy(d.pos); d.obj.position.y += Math.sin(d.t * 3) * 0.08;
       d.obj.rotation.y += dt * (d.kind === 'chip' ? 5 : 1.6);
       if (d.life < 4) d.obj.visible = Math.sin(d.t * 20) > 0;
+      if (d.still) d.obj.rotation.y += dt * 0.6;
       if (d.kind === 'gun' && dist < 2.2) nearGun = d;
     }
     AR.Hud.prompt(nearGun ? `[E] SWAP FOR ${AR.Arsenal.tierInfo(nearGun.tier || 0).p} ${AR.GUNS[nearGun.gun].name}` : null);
@@ -936,6 +958,8 @@ AR.Drops = (() => {
     else if (d.kind === 'ammo') { AR.Player.addAmmo(0.35); AR.Sfx.pickup('ammo'); AR.Hud.toast('+AMMO', ''); }
     else if (d.kind === 'health') { AR.Player.heal(30); AR.Sfx.pickup('health'); AR.Hud.toast('+30 HP', 'HYPE DOG CONSUMED'); }
     else if (d.kind === 'armor') { P.armor = Math.min(P.maxArmor, P.armor + 25); AR.Sfx.pickup('ammo'); AR.Hud.toast('+25 ARMOR', ''); }
+    else if (d.kind === 'drip' || d.kind === 'crate') { AR.Sfx.pickup('chip'); AR.Mission.addDrip(d.value || 10, d.kind); }
+    else if (d.kind === 'cone') { AR.Sfx.pickup('health'); if (window.Wardrobe?.findCone()) AR.Mission.addDrip(100, 'cone'); }
     AR.Hud.weapon(AR.Player.gun, P);
   }
   function use() {
