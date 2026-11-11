@@ -81,6 +81,17 @@ for (const [dest, groups] of Object.entries(ARENA)) {
     files.push(`${dest}/${name}`);
   }
 }
+// ---- Player avatar kit: base body + item kits per body type, and the catalog the creator reads (js/avatar.js)
+{
+  const dir = `${P}/characters/avatar/models`, dest = 'assets/models/ps1/avatar';
+  const catalog = JSON.parse(fs.readFileSync(path.join(src, dir, 'catalog.json'), 'utf8'));
+  fs.mkdirSync(path.join(process.cwd(), dest), { recursive: true });
+  const names = ['catalog.json', ...['m', 'f'].flatMap(s => ['base', ...catalog.kits].map(k => `avatar_${s}_${k}.glb`))];
+  for (const name of names) {
+    fs.copyFileSync(path.join(src, dir, name), path.join(process.cwd(), dest, name));
+    files.push(`${dest}/${name}`);
+  }
+}
 // every prop either level places (shared prop folder)
 const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json']
   .flatMap(f => JSON.parse(fs.readFileSync(path.join(src, P, 'maps', f), 'utf8')).props.map(p => p.model));

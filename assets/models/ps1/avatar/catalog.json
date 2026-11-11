@@ -1,0 +1,3040 @@
+{
+ "version": 1,
+ "rarities": [
+  "Common",
+  "Uncommon",
+  "Rare",
+  "Epic",
+  "Legendary",
+  "Mythic",
+  "Relic"
+ ],
+ "slots": {
+  "1": "prim",
+  "2": "sec",
+  "3": "acc",
+  "4": "glow",
+  "5": "hair",
+  "6": "skin"
+ },
+ "categories": [
+  {
+   "id": "face",
+   "label": "FACE",
+   "kit": "faces",
+   "priority": 1
+  },
+  {
+   "id": "hair",
+   "label": "HAIR",
+   "kit": "hair",
+   "priority": 1
+  },
+  {
+   "id": "head",
+   "label": "HEADGEAR",
+   "kit": "head",
+   "priority": 1
+  },
+  {
+   "id": "eyes",
+   "label": "FACE GEAR",
+   "kit": "head",
+   "priority": 1
+  },
+  {
+   "id": "top",
+   "label": "TOP",
+   "kit": "tops",
+   "priority": 2
+  },
+  {
+   "id": "hands",
+   "label": "HANDS",
+   "kit": "hands",
+   "priority": 3
+  },
+  {
+   "id": "legs",
+   "label": "LEGS",
+   "kit": "legs",
+   "priority": 2
+  },
+  {
+   "id": "feet",
+   "label": "FEET",
+   "kit": "feet",
+   "priority": 3
+  },
+  {
+   "id": "back",
+   "label": "BACK",
+   "kit": "back",
+   "priority": 1
+  },
+  {
+   "id": "neck",
+   "label": "NECK",
+   "kit": "back",
+   "priority": 1
+  }
+ ],
+ "kits": [
+  "faces",
+  "hair",
+  "head",
+  "tops",
+  "hands",
+  "legs",
+  "feet",
+  "back"
+ ],
+ "palettes": {
+  "prim": [
+   {
+    "name": "black",
+    "t": [
+     0.15,
+     0.15,
+     0.167
+    ]
+   },
+   {
+    "name": "char",
+    "t": [
+     0.283,
+     0.283,
+     0.317
+    ]
+   },
+   {
+    "name": "grey",
+    "t": [
+     0.667,
+     0.667,
+     0.7
+    ]
+   },
+   {
+    "name": "white",
+    "t": [
+     1.417,
+     1.417,
+     1.383
+    ]
+   },
+   {
+    "name": "cream",
+    "t": [
+     1.333,
+     1.25,
+     1.033
+    ]
+   },
+   {
+    "name": "khaki",
+    "t": [
+     0.917,
+     0.8,
+     0.55
+    ]
+   },
+   {
+    "name": "brown",
+    "t": [
+     0.583,
+     0.4,
+     0.267
+    ]
+   },
+   {
+    "name": "olive",
+    "t": [
+     0.433,
+     0.467,
+     0.317
+    ]
+   },
+   {
+    "name": "green",
+    "t": [
+     0.283,
+     0.75,
+     0.417
+    ]
+   },
+   {
+    "name": "teal",
+    "t": [
+     0.2,
+     0.75,
+     0.767
+    ]
+   },
+   {
+    "name": "denim",
+    "t": [
+     0.333,
+     0.467,
+     0.733
+    ]
+   },
+   {
+    "name": "navy",
+    "t": [
+     0.183,
+     0.25,
+     0.483
+    ]
+   },
+   {
+    "name": "gcblue",
+    "t": [
+     0.167,
+     0.367,
+     0.8
+    ]
+   },
+   {
+    "name": "purple",
+    "t": [
+     0.583,
+     0.3,
+     0.867
+    ]
+   },
+   {
+    "name": "pink",
+    "t": [
+     1.25,
+     0.467,
+     0.833
+    ]
+   },
+   {
+    "name": "red",
+    "t": [
+     1.0,
+     0.25,
+     0.25
+    ]
+   },
+   {
+    "name": "orange",
+    "t": [
+     1.333,
+     0.583,
+     0.167
+    ]
+   },
+   {
+    "name": "mustard",
+    "t": [
+     1.25,
+     1.0,
+     0.25
+    ]
+   }
+  ],
+  "sec": [
+   {
+    "name": "black",
+    "t": [
+     0.15,
+     0.15,
+     0.167
+    ]
+   },
+   {
+    "name": "char",
+    "t": [
+     0.283,
+     0.283,
+     0.317
+    ]
+   },
+   {
+    "name": "grey",
+    "t": [
+     0.667,
+     0.667,
+     0.7
+    ]
+   },
+   {
+    "name": "white",
+    "t": [
+     1.417,
+     1.417,
+     1.383
+    ]
+   },
+   {
+    "name": "cream",
+    "t": [
+     1.333,
+     1.25,
+     1.033
+    ]
+   },
+   {
+    "name": "khaki",
+    "t": [
+     0.917,
+     0.8,
+     0.55
+    ]
+   },
+   {
+    "name": "brown",
+    "t": [
+     0.583,
+     0.4,
+     0.267
+    ]
+   },
+   {
+    "name": "olive",
+    "t": [
+     0.433,
+     0.467,
+     0.317
+    ]
+   },
+   {
+    "name": "green",
+    "t": [
+     0.283,
+     0.75,
+     0.417
+    ]
+   },
+   {
+    "name": "teal",
+    "t": [
+     0.2,
+     0.75,
+     0.767
+    ]
+   },
+   {
+    "name": "denim",
+    "t": [
+     0.333,
+     0.467,
+     0.733
+    ]
+   },
+   {
+    "name": "navy",
+    "t": [
+     0.183,
+     0.25,
+     0.483
+    ]
+   },
+   {
+    "name": "gcblue",
+    "t": [
+     0.167,
+     0.367,
+     0.8
+    ]
+   },
+   {
+    "name": "purple",
+    "t": [
+     0.583,
+     0.3,
+     0.867
+    ]
+   },
+   {
+    "name": "pink",
+    "t": [
+     1.25,
+     0.467,
+     0.833
+    ]
+   },
+   {
+    "name": "red",
+    "t": [
+     1.0,
+     0.25,
+     0.25
+    ]
+   },
+   {
+    "name": "orange",
+    "t": [
+     1.333,
+     0.583,
+     0.167
+    ]
+   },
+   {
+    "name": "mustard",
+    "t": [
+     1.25,
+     1.0,
+     0.25
+    ]
+   }
+  ],
+  "acc": [
+   {
+    "name": "black",
+    "t": [
+     0.15,
+     0.15,
+     0.167
+    ]
+   },
+   {
+    "name": "char",
+    "t": [
+     0.283,
+     0.283,
+     0.317
+    ]
+   },
+   {
+    "name": "grey",
+    "t": [
+     0.667,
+     0.667,
+     0.7
+    ]
+   },
+   {
+    "name": "white",
+    "t": [
+     1.417,
+     1.417,
+     1.383
+    ]
+   },
+   {
+    "name": "cream",
+    "t": [
+     1.333,
+     1.25,
+     1.033
+    ]
+   },
+   {
+    "name": "khaki",
+    "t": [
+     0.917,
+     0.8,
+     0.55
+    ]
+   },
+   {
+    "name": "brown",
+    "t": [
+     0.583,
+     0.4,
+     0.267
+    ]
+   },
+   {
+    "name": "olive",
+    "t": [
+     0.433,
+     0.467,
+     0.317
+    ]
+   },
+   {
+    "name": "green",
+    "t": [
+     0.283,
+     0.75,
+     0.417
+    ]
+   },
+   {
+    "name": "teal",
+    "t": [
+     0.2,
+     0.75,
+     0.767
+    ]
+   },
+   {
+    "name": "denim",
+    "t": [
+     0.333,
+     0.467,
+     0.733
+    ]
+   },
+   {
+    "name": "navy",
+    "t": [
+     0.183,
+     0.25,
+     0.483
+    ]
+   },
+   {
+    "name": "gcblue",
+    "t": [
+     0.167,
+     0.367,
+     0.8
+    ]
+   },
+   {
+    "name": "purple",
+    "t": [
+     0.583,
+     0.3,
+     0.867
+    ]
+   },
+   {
+    "name": "pink",
+    "t": [
+     1.25,
+     0.467,
+     0.833
+    ]
+   },
+   {
+    "name": "red",
+    "t": [
+     1.0,
+     0.25,
+     0.25
+    ]
+   },
+   {
+    "name": "orange",
+    "t": [
+     1.333,
+     0.583,
+     0.167
+    ]
+   },
+   {
+    "name": "mustard",
+    "t": [
+     1.25,
+     1.0,
+     0.25
+    ]
+   }
+  ],
+  "glow": [
+   {
+    "name": "cyan",
+    "t": [
+     0.5,
+     1.933,
+     2.0
+    ]
+   },
+   {
+    "name": "pink",
+    "t": [
+     2.125,
+     0.5,
+     1.667
+    ]
+   },
+   {
+    "name": "purple",
+    "t": [
+     1.467,
+     0.667,
+     2.125
+    ]
+   },
+   {
+    "name": "green",
+    "t": [
+     0.5,
+     2.125,
+     1.083
+    ]
+   },
+   {
+    "name": "yellow",
+    "t": [
+     2.125,
+     1.75,
+     0.333
+    ]
+   },
+   {
+    "name": "orange",
+    "t": [
+     2.125,
+     1.167,
+     0.25
+    ]
+   },
+   {
+    "name": "red",
+    "t": [
+     2.125,
+     0.417,
+     0.417
+    ]
+   },
+   {
+    "name": "blue",
+    "t": [
+     0.583,
+     1.25,
+     2.125
+    ]
+   },
+   {
+    "name": "white",
+    "t": [
+     1.958,
+     1.958,
+     2.0
+    ]
+   }
+  ],
+  "hair": [
+   {
+    "name": "black",
+    "t": [
+     0.133,
+     0.125,
+     0.133
+    ]
+   },
+   {
+    "name": "brown",
+    "t": [
+     0.45,
+     0.3,
+     0.2
+    ]
+   },
+   {
+    "name": "blonde",
+    "t": [
+     1.333,
+     1.067,
+     0.617
+    ]
+   },
+   {
+    "name": "red",
+    "t": [
+     1.0,
+     0.4,
+     0.2
+    ]
+   },
+   {
+    "name": "grey",
+    "t": [
+     0.917,
+     0.9,
+     0.883
+    ]
+   },
+   {
+    "name": "white",
+    "t": [
+     1.417,
+     1.4,
+     1.367
+    ]
+   },
+   {
+    "name": "blue",
+    "t": [
+     0.217,
+     0.333,
+     0.75
+    ]
+   },
+   {
+    "name": "pink",
+    "t": [
+     1.417,
+     0.5,
+     1.0
+    ]
+   },
+   {
+    "name": "green",
+    "t": [
+     0.25,
+     0.917,
+     0.583
+    ]
+   },
+   {
+    "name": "purple",
+    "t": [
+     0.667,
+     0.3,
+     1.0
+    ]
+   }
+  ],
+  "skin": [
+   {
+    "name": "tone 1",
+    "t": [
+     1.239,
+     1.265,
+     1.333
+    ]
+   },
+   {
+    "name": "tone 2",
+    "t": [
+     1.134,
+     1.143,
+     1.139
+    ]
+   },
+   {
+    "name": "tone 3",
+    "t": [
+     1.0,
+     1.0,
+     1.0
+    ]
+   },
+   {
+    "name": "tone 4",
+    "t": [
+     0.851,
+     0.816,
+     0.806
+    ]
+   },
+   {
+    "name": "tone 5",
+    "t": [
+     0.672,
+     0.612,
+     0.583
+    ]
+   },
+   {
+    "name": "tone 6",
+    "t": [
+     0.522,
+     0.48,
+     0.472
+    ]
+   }
+  ]
+ },
+ "items": {
+  "m": [
+   {
+    "id": "face_clean",
+    "cat": "face",
+    "name": "Clean",
+    "rarity": 0,
+    "flavor": "The face you were issued.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "face_stubble",
+    "cat": "face",
+    "name": "3-Day Stubble",
+    "rarity": 0,
+    "flavor": "Grew it during the last outage.",
+    "unlock": "Default",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_beard",
+    "cat": "face",
+    "name": "Full Beard",
+    "rarity": 1,
+    "flavor": "Untracked by facial recognition since 2047.",
+    "unlock": "Reach Level 3",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_scar",
+    "cat": "face",
+    "name": "Collapse Scar",
+    "rarity": 2,
+    "flavor": "From the war nobody streams anymore.",
+    "unlock": "Survive 25 runs",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_warpaint",
+    "cat": "face",
+    "name": "Rebel Warpaint",
+    "rarity": 3,
+    "flavor": "Breaks GigaCorp face-scan. Mostly.",
+    "unlock": "Clear District 3",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_cyber",
+    "cat": "face",
+    "name": "Turing Circuitry",
+    "rarity": 4,
+    "flavor": "Lines of light where the implant went in.",
+    "unlock": "Defeat the Turing echo",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "hair_buzz",
+    "cat": "hair",
+    "name": "Buzz Cut",
+    "rarity": 0,
+    "flavor": "Low maintenance. Low bandwidth.",
+    "unlock": "Default",
+    "length": "short",
+    "default": true
+   },
+   {
+    "id": "hair_short",
+    "cat": "hair",
+    "name": "Crew Cut",
+    "rarity": 0,
+    "flavor": "Regulation length, irregular attitude.",
+    "unlock": "Default",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_slick",
+    "cat": "hair",
+    "name": "Middle-Manager Slick",
+    "rarity": 1,
+    "flavor": "Smells like a quarterly review.",
+    "unlock": "Reach Level 2",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_undercut",
+    "cat": "hair",
+    "name": "Undercut",
+    "rarity": 1,
+    "flavor": "Shaved sides for the neural port.",
+    "unlock": "Reach Level 4",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_bob",
+    "cat": "hair",
+    "name": "Bob",
+    "rarity": 1,
+    "flavor": "Sharp enough to cut a contract.",
+    "unlock": "Reach Level 4",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_long",
+    "cat": "hair",
+    "name": "Long Hair",
+    "rarity": 0,
+    "flavor": "Hasn't seen a barber since the Collapse.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_shaggy",
+    "cat": "hair",
+    "name": "Couch Shag",
+    "rarity": 0,
+    "flavor": "Styled by sleeping on it for a year.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_ponytail",
+    "cat": "hair",
+    "name": "Ponytail",
+    "rarity": 0,
+    "flavor": "Practical. Gets caught in exactly one door.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_afro",
+    "cat": "hair",
+    "name": "Afro",
+    "rarity": 1,
+    "flavor": "Volume settings: maximum.",
+    "unlock": "Reach Level 6",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "hair_bun",
+    "cat": "hair",
+    "name": "Top Bun",
+    "rarity": 1,
+    "flavor": "Holds three styluses and a grudge.",
+    "unlock": "Reach Level 6",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "hair_mohawk",
+    "cat": "hair",
+    "name": "Signal Mohawk",
+    "rarity": 2,
+    "flavor": "Doubles as an antenna. Allegedly.",
+    "unlock": "Hijack 10 broadcasts",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "head_none",
+    "cat": "head",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Let the wind decide.",
+    "unlock": "Default",
+    "hair": "all",
+    "default": true
+   },
+   {
+    "id": "head_beanie",
+    "cat": "head",
+    "name": "Beanie",
+    "rarity": 0,
+    "flavor": "Standard issue for sleeping on public transit.",
+    "unlock": "Default",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_cap",
+    "cat": "head",
+    "name": "Backwards Cap",
+    "rarity": 0,
+    "flavor": "The G stands for \"GigaCorp?\" Nobody is sure.",
+    "unlock": "Reach Level 2",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_bandana",
+    "cat": "head",
+    "name": "Rebel Bandana",
+    "rarity": 1,
+    "flavor": "Tied the way the old rebels tied it.",
+    "unlock": "Join a co-op run",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_foil",
+    "cat": "head",
+    "name": "Tinfoil Hat",
+    "rarity": 1,
+    "flavor": "Blocks 98% of targeted ads. The other 2% are about tinfoil.",
+    "unlock": "Get hit by 50 Ad Broadcasts",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_catears",
+    "cat": "head",
+    "name": "Cat-Ear Headset",
+    "rarity": 2,
+    "flavor": "Streams your purring to 4 followers.",
+    "unlock": "Revive 10 teammates",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_tac",
+    "cat": "head",
+    "name": "Tactical Helmet",
+    "rarity": 2,
+    "flavor": "Rated for bullets, rubble and bad takes.",
+    "unlock": "Clear District 2",
+    "hair": "none",
+    "default": false
+   },
+   {
+    "id": "head_cone",
+    "cat": "head",
+    "name": "Traffic Cone",
+    "rarity": 3,
+    "flavor": "The city stopped fixing roads, so the cones went free.",
+    "unlock": "Find it in the Plaza",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_cowboy",
+    "cat": "head",
+    "name": "Data Rancher Hat",
+    "rarity": 3,
+    "flavor": "There will be data.",
+    "unlock": "Extract with 5,000 GigaTech",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_tophat",
+    "cat": "head",
+    "name": "Old Money Top Hat",
+    "rarity": 3,
+    "flavor": "From before money was a subscription.",
+    "unlock": "Spend 10,000 GigaTech",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_recon",
+    "cat": "head",
+    "name": "SEED-7 Recon Helmet",
+    "rarity": 4,
+    "flavor": "Full seal. Gold visor. Zero ads get in.",
+    "unlock": "Clear a run on Hard",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false
+   },
+   {
+    "id": "head_crown",
+    "cat": "head",
+    "name": "Founder's Crown",
+    "rarity": 5,
+    "flavor": "Worn by whoever owned the server you live on.",
+    "unlock": "Defeat Chairman Zhu",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_halo",
+    "cat": "head",
+    "name": "Turing Halo",
+    "rarity": 6,
+    "flavor": "A ring of light that hums when Turing lies.",
+    "unlock": "Break the loop",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "eyes_none",
+    "cat": "eyes",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Raw eyeballs. Brave.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "eyes_shades",
+    "cat": "eyes",
+    "name": "Shades",
+    "rarity": 0,
+    "flavor": "Too cool to see the ads.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "eyes_goggles",
+    "cat": "eyes",
+    "name": "Ski Goggles",
+    "rarity": 1,
+    "flavor": "For a ski season that ended in 2031.",
+    "unlock": "Reach Level 3",
+    "default": false
+   },
+   {
+    "id": "eyes_vr",
+    "cat": "eyes",
+    "name": "Couch VR",
+    "rarity": 1,
+    "flavor": "Reality, but with a 4.2-star rating.",
+    "unlock": "Talk to a Couch Surfer",
+    "default": false
+   },
+   {
+    "id": "eyes_bandana",
+    "cat": "eyes",
+    "name": "Outlaw Bandana",
+    "rarity": 1,
+    "flavor": "Face-scan says: \"User not found.\"",
+    "unlock": "Extract 5 times",
+    "default": false
+   },
+   {
+    "id": "eyes_visor",
+    "cat": "eyes",
+    "name": "Cyber Visor",
+    "rarity": 2,
+    "flavor": "One line of light. Infinite attitude.",
+    "unlock": "Hack 25 terminals",
+    "default": false
+   },
+   {
+    "id": "eyes_monocle",
+    "cat": "eyes",
+    "name": "Monocle",
+    "rarity": 2,
+    "flavor": "For reading the fine print on your soul.",
+    "unlock": "Hold 20,000 GigaTech",
+    "default": false
+   },
+   {
+    "id": "eyes_gasmask",
+    "cat": "eyes",
+    "name": "Smog Filter",
+    "rarity": 3,
+    "flavor": "The air is a premium tier now.",
+    "unlock": "Clear District 4",
+    "default": false
+   },
+   {
+    "id": "eyes_groucho",
+    "cat": "eyes",
+    "name": "Disguise Kit",
+    "rarity": 3,
+    "flavor": "GigaCorp facial recognition hates this one trick.",
+    "unlock": "Fool 3 security drones",
+    "default": false
+   },
+   {
+    "id": "eyes_clown",
+    "cat": "eyes",
+    "name": "Clown Nose",
+    "rarity": 3,
+    "flavor": "Honk if you hate late capitalism.",
+    "unlock": "Get downed 100 times",
+    "default": false
+   },
+   {
+    "id": "eyes_smiley",
+    "cat": "eyes",
+    "name": "LED Smiley Mask",
+    "rarity": 4,
+    "flavor": "Stolen from a Bots node. It still says \"have a nice day\".",
+    "unlock": "Defeat SPYD3R",
+    "default": false
+   },
+   {
+    "id": "top_none",
+    "cat": "top",
+    "name": "Undershirt",
+    "rarity": 0,
+    "flavor": "Clean-ish. Mostly.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "top_tee",
+    "cat": "top",
+    "name": "Touch Grass Tee",
+    "rarity": 0,
+    "flavor": "Merch from the last outdoor festival.",
+    "unlock": "Default",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_hoodie",
+    "cat": "top",
+    "name": "Hoodie",
+    "rarity": 0,
+    "flavor": "Pockets big enough for a whole sandwich.",
+    "unlock": "Default",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_hawaii",
+    "cat": "top",
+    "name": "Vacation Mode Shirt",
+    "rarity": 1,
+    "flavor": "Out of office. Forever.",
+    "unlock": "Take 3 days off (real days)",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_bomber",
+    "cat": "top",
+    "name": "Bomber Jacket",
+    "rarity": 1,
+    "flavor": "Patched by every rebel who owned it before you.",
+    "unlock": "Reach Level 5",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_vest",
+    "cat": "top",
+    "name": "Tac Vest",
+    "rarity": 1,
+    "flavor": "Pockets for ammo, snacks and evidence.",
+    "unlock": "Clear District 1",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_puffer",
+    "cat": "top",
+    "name": "Puffer Jacket",
+    "rarity": 2,
+    "flavor": "Climate-controlled. The climate is not.",
+    "unlock": "Survive a Blackout event",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_trench",
+    "cat": "top",
+    "name": "Trench Coat",
+    "rarity": 2,
+    "flavor": "Cyberpunk dress code, chapter one.",
+    "unlock": "Complete 10 missions",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_suit",
+    "cat": "top",
+    "name": "Middle Management Suit",
+    "rarity": 3,
+    "flavor": "Comes with a pin that schedules meetings for you.",
+    "unlock": "Infiltrate GigaCorp HQ",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_bubble",
+    "cat": "top",
+    "name": "Bubble Wrap Armor",
+    "rarity": 3,
+    "flavor": "Shipping-grade protection. Pop for morale.",
+    "unlock": "Get knocked down 50 times and get up",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_riot",
+    "cat": "top",
+    "name": "Riot Breaker Armor",
+    "rarity": 3,
+    "flavor": "Taken from a riot cop. Repainted. Repurposed.",
+    "unlock": "Defeat 500 GigaCorp troopers",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_nano",
+    "cat": "top",
+    "name": "Nanoweave Suit",
+    "rarity": 4,
+    "flavor": "Lights up when your heart rate does.",
+    "unlock": "Win a run without being hit",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_gilded",
+    "cat": "top",
+    "name": "Gilded Exec Armor",
+    "rarity": 5,
+    "flavor": "Bought with a CEO's stock options. Literally.",
+    "unlock": "Defeat Chairman Zhu on Hard",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_exo",
+    "cat": "top",
+    "name": "Turing-Slayer Exoframe",
+    "rarity": 6,
+    "flavor": "Built to fight the thing that built it.",
+    "unlock": "Break the loop on Nightmare",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_none",
+    "cat": "hands",
+    "name": "Bare Hands",
+    "rarity": 0,
+    "flavor": "Ten fingers, factory default.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "hands_fingerless",
+    "cat": "hands",
+    "name": "Fingerless Gloves",
+    "rarity": 0,
+    "flavor": "Keep your fingers free for typing manifestos.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_tactical",
+    "cat": "hands",
+    "name": "Tactical Gloves",
+    "rarity": 1,
+    "flavor": "Grip, padding and a knuckle plate in your colour.",
+    "unlock": "Reach Level 4",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_mitts",
+    "cat": "hands",
+    "name": "Oven Mitts",
+    "rarity": 2,
+    "flavor": "Barrel heat? What barrel heat?",
+    "unlock": "Overheat the Plasma Lancer 20 times",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_boxing",
+    "cat": "hands",
+    "name": "Boxing Gloves",
+    "rarity": 3,
+    "flavor": "Melee damage +0%. Style +100%.",
+    "unlock": "Punch 100 enemies",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_cyber",
+    "cat": "hands",
+    "name": "Cyber Arm",
+    "rarity": 4,
+    "flavor": "Right arm, chrome, glowing. You don't remember the surgery.",
+    "unlock": "Install 10 mods",
+    "replaces": [
+     "b_forearm_R",
+     "b_hand_R",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_gauntlets",
+    "cat": "hands",
+    "name": "Overclock Gauntlets",
+    "rarity": 5,
+    "flavor": "Gold-plated fists. Vents hiss when you reload.",
+    "unlock": "Get 1,000 kills with one gun",
+    "replaces": [
+     "b_forearm_L",
+     "b_forearm_R",
+     "b_hand_L",
+     "b_hand_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_none",
+    "cat": "legs",
+    "name": "Gym Shorts",
+    "rarity": 0,
+    "flavor": "For the gym you swear you'll go to.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "legs_jeans",
+    "cat": "legs",
+    "name": "Jeans",
+    "rarity": 0,
+    "flavor": "Pre-ripped by the Collapse.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_cargo",
+    "cat": "legs",
+    "name": "Cargo Pants",
+    "rarity": 0,
+    "flavor": "Pockets on the pockets.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_shorts",
+    "cat": "legs",
+    "name": "Cargo Shorts",
+    "rarity": 0,
+    "flavor": "It's always summer in the server farm.",
+    "unlock": "Reach Level 2",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_track",
+    "cat": "legs",
+    "name": "Track Pants",
+    "rarity": 1,
+    "flavor": "Three stripes. Zero sponsors.",
+    "unlock": "Sprint 10 km total",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_kilt",
+    "cat": "legs",
+    "name": "Battle Kilt",
+    "rarity": 2,
+    "flavor": "Maximum airflow, maximum menace.",
+    "unlock": "Win a run with a melee kill",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_hearts",
+    "cat": "legs",
+    "name": "Heart Boxers",
+    "rarity": 3,
+    "flavor": "You forgot your pants. Committed to it anyway.",
+    "unlock": "Extract with 1 HP",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_greaves",
+    "cat": "legs",
+    "name": "Riot Greaves",
+    "rarity": 3,
+    "flavor": "Knee pads rated for kneeling to nobody.",
+    "unlock": "Defeat 500 GigaCorp troopers",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_nano",
+    "cat": "legs",
+    "name": "Nanoweave Leggings",
+    "rarity": 4,
+    "flavor": "Glows in sync with the suit. Or the music.",
+    "unlock": "Win a run without being hit",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_gilded",
+    "cat": "legs",
+    "name": "Gilded Greaves",
+    "rarity": 5,
+    "flavor": "Gold knees. Kneel to nobody, again.",
+    "unlock": "Defeat Chairman Zhu on Hard",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_exo",
+    "cat": "legs",
+    "name": "Exoframe Legs",
+    "rarity": 6,
+    "flavor": "The other half of the Turing-Slayer.",
+    "unlock": "Break the loop on Nightmare",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_none",
+    "cat": "feet",
+    "name": "Socks",
+    "rarity": 0,
+    "flavor": "Mismatched on purpose. Probably.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "feet_sneakers",
+    "cat": "feet",
+    "name": "Sneakers",
+    "rarity": 0,
+    "flavor": "Comfortable. Uncomfortably tracked.",
+    "unlock": "Default",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_boots",
+    "cat": "feet",
+    "name": "Combat Boots",
+    "rarity": 1,
+    "flavor": "Steel toes, steel nerves.",
+    "unlock": "Reach Level 3",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_sandals",
+    "cat": "feet",
+    "name": "Sandals + Socks",
+    "rarity": 1,
+    "flavor": "Fashion is a construct. So is GigaCorp.",
+    "unlock": "Walk 1 km in the Haven",
+    "default": false
+   },
+   {
+    "id": "feet_hightops",
+    "cat": "feet",
+    "name": "Neon High-Tops",
+    "rarity": 2,
+    "flavor": "Light up every step. Stealth -100%.",
+    "unlock": "Dash 500 times",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_slippers",
+    "cat": "feet",
+    "name": "Bunny Slippers",
+    "rarity": 3,
+    "flavor": "Couch Surfer approved.",
+    "unlock": "Sit in the Haven for 10 minutes",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_clown",
+    "cat": "feet",
+    "name": "Clown Shoes",
+    "rarity": 3,
+    "flavor": "Honk. Honk. Honk.",
+    "unlock": "Get downed 100 times",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_mag",
+    "cat": "feet",
+    "name": "Mag Boots",
+    "rarity": 4,
+    "flavor": "Stick to anything except a budget.",
+    "unlock": "Clear the Plaza on Hard",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_gold",
+    "cat": "feet",
+    "name": "Drip Kicks",
+    "rarity": 5,
+    "flavor": "Solid gold, solid flex.",
+    "unlock": "Hold 100,000 GigaTech",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_hover",
+    "cat": "feet",
+    "name": "Hover Boots",
+    "rarity": 6,
+    "flavor": "They don't hover. They glow like they could.",
+    "unlock": "Break the loop",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "back_none",
+    "cat": "back",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Travel light.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "back_pack",
+    "cat": "back",
+    "name": "Go-Bag",
+    "rarity": 0,
+    "flavor": "Snacks, bandages, a spare personality.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "back_antenna",
+    "cat": "back",
+    "name": "Signal Rig",
+    "rarity": 1,
+    "flavor": "Picks up three stations and your neighbour's fridge.",
+    "unlock": "Hijack 5 broadcasts",
+    "default": false
+   },
+   {
+    "id": "back_guitar",
+    "cat": "back",
+    "name": "Protest Guitar",
+    "rarity": 1,
+    "flavor": "Knows one song. It's about GigaCorp.",
+    "unlock": "Play in the Haven",
+    "default": false
+   },
+   {
+    "id": "back_katana",
+    "cat": "back",
+    "name": "Katana",
+    "rarity": 2,
+    "flavor": "Decorative. Absolutely not decorative.",
+    "unlock": "Get 50 melee kills",
+    "default": false
+   },
+   {
+    "id": "back_cape",
+    "cat": "back",
+    "name": "Rebel Cape",
+    "rarity": 2,
+    "flavor": "Dramatic exits included.",
+    "unlock": "Extract 25 times",
+    "default": false
+   },
+   {
+    "id": "back_cushion",
+    "cat": "back",
+    "name": "Couch Cushion",
+    "rarity": 3,
+    "flavor": "Was a Couch Surfer's home. Now it's yours.",
+    "unlock": "Help 10 Couch Surfers",
+    "default": false
+   },
+   {
+    "id": "back_jetpack",
+    "cat": "back",
+    "name": "Jump Jet",
+    "rarity": 4,
+    "flavor": "Cosmetic thrusters. Very convincing.",
+    "unlock": "Jump 1,000 times",
+    "default": false
+   },
+   {
+    "id": "back_server",
+    "cat": "back",
+    "name": "Server Rack",
+    "rarity": 5,
+    "flavor": "Your own data, on your own back. The most rebellious item in the game.",
+    "unlock": "Own 1 TB of server space",
+    "default": false
+   },
+   {
+    "id": "back_wings",
+    "cat": "back",
+    "name": "Glitch Wings",
+    "rarity": 6,
+    "flavor": "Rendered by Turing as an apology. It was not sincere.",
+    "unlock": "Break the loop",
+    "default": false
+   },
+   {
+    "id": "neck_none",
+    "cat": "neck",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "A neck. Unadorned.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "neck_badge",
+    "cat": "neck",
+    "name": "GigaCorp Lanyard",
+    "rarity": 0,
+    "flavor": "\"VISITOR\". Always a visitor.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "neck_headphones",
+    "cat": "neck",
+    "name": "Neck Headphones",
+    "rarity": 0,
+    "flavor": "Noise-cancelling. Propaganda-cancelling.",
+    "unlock": "Reach Level 2",
+    "default": false
+   },
+   {
+    "id": "neck_scarf",
+    "cat": "neck",
+    "name": "Scarf",
+    "rarity": 1,
+    "flavor": "Knitted by a Serverless grandma. She remembers you.",
+    "unlock": "Help 5 Serverless",
+    "default": false
+   },
+   {
+    "id": "neck_bandolier",
+    "cat": "neck",
+    "name": "Shell Bandolier",
+    "rarity": 2,
+    "flavor": "Riptide rounds, worn with pride.",
+    "unlock": "Get 200 shotgun kills",
+    "default": false
+   },
+   {
+    "id": "neck_chain",
+    "cat": "neck",
+    "name": "Gold Chain",
+    "rarity": 3,
+    "flavor": "Real gold. Probably. Don't test it.",
+    "unlock": "Hold 50,000 GigaTech",
+    "default": false
+   },
+   {
+    "id": "neck_crypto",
+    "cat": "neck",
+    "name": "Crypto Bling",
+    "rarity": 5,
+    "flavor": "Worth a fortune on Tuesday. Worth a sandwich on Wednesday.",
+    "unlock": "Win 10 Cryptid raffles",
+    "default": false
+   }
+  ],
+  "f": [
+   {
+    "id": "face_clean",
+    "cat": "face",
+    "name": "Clean",
+    "rarity": 0,
+    "flavor": "The face you were issued.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "face_freckles",
+    "cat": "face",
+    "name": "Freckles",
+    "rarity": 0,
+    "flavor": "Real ones. No filter subscription.",
+    "unlock": "Default",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_glam",
+    "cat": "face",
+    "name": "Influencer Glam",
+    "rarity": 1,
+    "flavor": "Sponsored by a lip gloss that tracks your mood.",
+    "unlock": "Reach Level 3",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_scar",
+    "cat": "face",
+    "name": "Collapse Scar",
+    "rarity": 2,
+    "flavor": "From the war nobody streams anymore.",
+    "unlock": "Survive 25 runs",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_warpaint",
+    "cat": "face",
+    "name": "Rebel Warpaint",
+    "rarity": 3,
+    "flavor": "Breaks GigaCorp face-scan. Mostly.",
+    "unlock": "Clear District 3",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "face_cyber",
+    "cat": "face",
+    "name": "Turing Circuitry",
+    "rarity": 4,
+    "flavor": "Lines of light where the implant went in.",
+    "unlock": "Defeat the Turing echo",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false
+   },
+   {
+    "id": "hair_buzz",
+    "cat": "hair",
+    "name": "Buzz Cut",
+    "rarity": 0,
+    "flavor": "Low maintenance. Low bandwidth.",
+    "unlock": "Default",
+    "length": "short",
+    "default": true
+   },
+   {
+    "id": "hair_short",
+    "cat": "hair",
+    "name": "Crew Cut",
+    "rarity": 0,
+    "flavor": "Regulation length, irregular attitude.",
+    "unlock": "Default",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_slick",
+    "cat": "hair",
+    "name": "Middle-Manager Slick",
+    "rarity": 1,
+    "flavor": "Smells like a quarterly review.",
+    "unlock": "Reach Level 2",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_undercut",
+    "cat": "hair",
+    "name": "Undercut",
+    "rarity": 1,
+    "flavor": "Shaved sides for the neural port.",
+    "unlock": "Reach Level 4",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_bob",
+    "cat": "hair",
+    "name": "Bob",
+    "rarity": 1,
+    "flavor": "Sharp enough to cut a contract.",
+    "unlock": "Reach Level 4",
+    "length": "short",
+    "default": false
+   },
+   {
+    "id": "hair_long",
+    "cat": "hair",
+    "name": "Long Hair",
+    "rarity": 0,
+    "flavor": "Hasn't seen a barber since the Collapse.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_shaggy",
+    "cat": "hair",
+    "name": "Couch Shag",
+    "rarity": 0,
+    "flavor": "Styled by sleeping on it for a year.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_ponytail",
+    "cat": "hair",
+    "name": "Ponytail",
+    "rarity": 0,
+    "flavor": "Practical. Gets caught in exactly one door.",
+    "unlock": "Default",
+    "length": "long",
+    "default": false
+   },
+   {
+    "id": "hair_afro",
+    "cat": "hair",
+    "name": "Afro",
+    "rarity": 1,
+    "flavor": "Volume settings: maximum.",
+    "unlock": "Reach Level 6",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "hair_bun",
+    "cat": "hair",
+    "name": "Top Bun",
+    "rarity": 1,
+    "flavor": "Holds three styluses and a grudge.",
+    "unlock": "Reach Level 6",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "hair_mohawk",
+    "cat": "hair",
+    "name": "Signal Mohawk",
+    "rarity": 2,
+    "flavor": "Doubles as an antenna. Allegedly.",
+    "unlock": "Hijack 10 broadcasts",
+    "length": "tall",
+    "default": false
+   },
+   {
+    "id": "head_none",
+    "cat": "head",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Let the wind decide.",
+    "unlock": "Default",
+    "hair": "all",
+    "default": true
+   },
+   {
+    "id": "head_beanie",
+    "cat": "head",
+    "name": "Beanie",
+    "rarity": 0,
+    "flavor": "Standard issue for sleeping on public transit.",
+    "unlock": "Default",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_cap",
+    "cat": "head",
+    "name": "Backwards Cap",
+    "rarity": 0,
+    "flavor": "The G stands for \"GigaCorp?\" Nobody is sure.",
+    "unlock": "Reach Level 2",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_bandana",
+    "cat": "head",
+    "name": "Rebel Bandana",
+    "rarity": 1,
+    "flavor": "Tied the way the old rebels tied it.",
+    "unlock": "Join a co-op run",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_foil",
+    "cat": "head",
+    "name": "Tinfoil Hat",
+    "rarity": 1,
+    "flavor": "Blocks 98% of targeted ads. The other 2% are about tinfoil.",
+    "unlock": "Get hit by 50 Ad Broadcasts",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_catears",
+    "cat": "head",
+    "name": "Cat-Ear Headset",
+    "rarity": 2,
+    "flavor": "Streams your purring to 4 followers.",
+    "unlock": "Revive 10 teammates",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_tac",
+    "cat": "head",
+    "name": "Tactical Helmet",
+    "rarity": 2,
+    "flavor": "Rated for bullets, rubble and bad takes.",
+    "unlock": "Clear District 2",
+    "hair": "none",
+    "default": false
+   },
+   {
+    "id": "head_cone",
+    "cat": "head",
+    "name": "Traffic Cone",
+    "rarity": 3,
+    "flavor": "The city stopped fixing roads, so the cones went free.",
+    "unlock": "Find it in the Plaza",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_cowboy",
+    "cat": "head",
+    "name": "Data Rancher Hat",
+    "rarity": 3,
+    "flavor": "There will be data.",
+    "unlock": "Extract with 5,000 GigaTech",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_tophat",
+    "cat": "head",
+    "name": "Old Money Top Hat",
+    "rarity": 3,
+    "flavor": "From before money was a subscription.",
+    "unlock": "Spend 10,000 GigaTech",
+    "hair": "short",
+    "default": false
+   },
+   {
+    "id": "head_recon",
+    "cat": "head",
+    "name": "SEED-7 Recon Helmet",
+    "rarity": 4,
+    "flavor": "Full seal. Gold visor. Zero ads get in.",
+    "unlock": "Clear a run on Hard",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false
+   },
+   {
+    "id": "head_crown",
+    "cat": "head",
+    "name": "Founder's Crown",
+    "rarity": 5,
+    "flavor": "Worn by whoever owned the server you live on.",
+    "unlock": "Defeat Chairman Zhu",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "head_halo",
+    "cat": "head",
+    "name": "Turing Halo",
+    "rarity": 6,
+    "flavor": "A ring of light that hums when Turing lies.",
+    "unlock": "Break the loop",
+    "hair": "all",
+    "default": false
+   },
+   {
+    "id": "eyes_none",
+    "cat": "eyes",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Raw eyeballs. Brave.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "eyes_shades",
+    "cat": "eyes",
+    "name": "Shades",
+    "rarity": 0,
+    "flavor": "Too cool to see the ads.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "eyes_goggles",
+    "cat": "eyes",
+    "name": "Ski Goggles",
+    "rarity": 1,
+    "flavor": "For a ski season that ended in 2031.",
+    "unlock": "Reach Level 3",
+    "default": false
+   },
+   {
+    "id": "eyes_vr",
+    "cat": "eyes",
+    "name": "Couch VR",
+    "rarity": 1,
+    "flavor": "Reality, but with a 4.2-star rating.",
+    "unlock": "Talk to a Couch Surfer",
+    "default": false
+   },
+   {
+    "id": "eyes_bandana",
+    "cat": "eyes",
+    "name": "Outlaw Bandana",
+    "rarity": 1,
+    "flavor": "Face-scan says: \"User not found.\"",
+    "unlock": "Extract 5 times",
+    "default": false
+   },
+   {
+    "id": "eyes_visor",
+    "cat": "eyes",
+    "name": "Cyber Visor",
+    "rarity": 2,
+    "flavor": "One line of light. Infinite attitude.",
+    "unlock": "Hack 25 terminals",
+    "default": false
+   },
+   {
+    "id": "eyes_monocle",
+    "cat": "eyes",
+    "name": "Monocle",
+    "rarity": 2,
+    "flavor": "For reading the fine print on your soul.",
+    "unlock": "Hold 20,000 GigaTech",
+    "default": false
+   },
+   {
+    "id": "eyes_gasmask",
+    "cat": "eyes",
+    "name": "Smog Filter",
+    "rarity": 3,
+    "flavor": "The air is a premium tier now.",
+    "unlock": "Clear District 4",
+    "default": false
+   },
+   {
+    "id": "eyes_groucho",
+    "cat": "eyes",
+    "name": "Disguise Kit",
+    "rarity": 3,
+    "flavor": "GigaCorp facial recognition hates this one trick.",
+    "unlock": "Fool 3 security drones",
+    "default": false
+   },
+   {
+    "id": "eyes_clown",
+    "cat": "eyes",
+    "name": "Clown Nose",
+    "rarity": 3,
+    "flavor": "Honk if you hate late capitalism.",
+    "unlock": "Get downed 100 times",
+    "default": false
+   },
+   {
+    "id": "eyes_smiley",
+    "cat": "eyes",
+    "name": "LED Smiley Mask",
+    "rarity": 4,
+    "flavor": "Stolen from a Bots node. It still says \"have a nice day\".",
+    "unlock": "Defeat SPYD3R",
+    "default": false
+   },
+   {
+    "id": "top_none",
+    "cat": "top",
+    "name": "Undershirt",
+    "rarity": 0,
+    "flavor": "Clean-ish. Mostly.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "top_tee",
+    "cat": "top",
+    "name": "Touch Grass Tee",
+    "rarity": 0,
+    "flavor": "Merch from the last outdoor festival.",
+    "unlock": "Default",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_hoodie",
+    "cat": "top",
+    "name": "Hoodie",
+    "rarity": 0,
+    "flavor": "Pockets big enough for a whole sandwich.",
+    "unlock": "Default",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_hawaii",
+    "cat": "top",
+    "name": "Vacation Mode Shirt",
+    "rarity": 1,
+    "flavor": "Out of office. Forever.",
+    "unlock": "Take 3 days off (real days)",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_bomber",
+    "cat": "top",
+    "name": "Bomber Jacket",
+    "rarity": 1,
+    "flavor": "Patched by every rebel who owned it before you.",
+    "unlock": "Reach Level 5",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_vest",
+    "cat": "top",
+    "name": "Tac Vest",
+    "rarity": 1,
+    "flavor": "Pockets for ammo, snacks and evidence.",
+    "unlock": "Clear District 1",
+    "replaces": [
+     "b_torso"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_puffer",
+    "cat": "top",
+    "name": "Puffer Jacket",
+    "rarity": 2,
+    "flavor": "Climate-controlled. The climate is not.",
+    "unlock": "Survive a Blackout event",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_trench",
+    "cat": "top",
+    "name": "Trench Coat",
+    "rarity": 2,
+    "flavor": "Cyberpunk dress code, chapter one.",
+    "unlock": "Complete 10 missions",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_suit",
+    "cat": "top",
+    "name": "Middle Management Suit",
+    "rarity": 3,
+    "flavor": "Comes with a pin that schedules meetings for you.",
+    "unlock": "Infiltrate GigaCorp HQ",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_bubble",
+    "cat": "top",
+    "name": "Bubble Wrap Armor",
+    "rarity": 3,
+    "flavor": "Shipping-grade protection. Pop for morale.",
+    "unlock": "Get knocked down 50 times and get up",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_riot",
+    "cat": "top",
+    "name": "Riot Breaker Armor",
+    "rarity": 3,
+    "flavor": "Taken from a riot cop. Repainted. Repurposed.",
+    "unlock": "Defeat 500 GigaCorp troopers",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_nano",
+    "cat": "top",
+    "name": "Nanoweave Suit",
+    "rarity": 4,
+    "flavor": "Lights up when your heart rate does.",
+    "unlock": "Win a run without being hit",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_gilded",
+    "cat": "top",
+    "name": "Gilded Exec Armor",
+    "rarity": 5,
+    "flavor": "Bought with a CEO's stock options. Literally.",
+    "unlock": "Defeat Chairman Zhu on Hard",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "top_exo",
+    "cat": "top",
+    "name": "Turing-Slayer Exoframe",
+    "rarity": 6,
+    "flavor": "Built to fight the thing that built it.",
+    "unlock": "Break the loop on Nightmare",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_none",
+    "cat": "hands",
+    "name": "Bare Hands",
+    "rarity": 0,
+    "flavor": "Ten fingers, factory default.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "hands_fingerless",
+    "cat": "hands",
+    "name": "Fingerless Gloves",
+    "rarity": 0,
+    "flavor": "Keep your fingers free for typing manifestos.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_tactical",
+    "cat": "hands",
+    "name": "Tactical Gloves",
+    "rarity": 1,
+    "flavor": "Grip, padding and a knuckle plate in your colour.",
+    "unlock": "Reach Level 4",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_mitts",
+    "cat": "hands",
+    "name": "Oven Mitts",
+    "rarity": 2,
+    "flavor": "Barrel heat? What barrel heat?",
+    "unlock": "Overheat the Plasma Lancer 20 times",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_boxing",
+    "cat": "hands",
+    "name": "Boxing Gloves",
+    "rarity": 3,
+    "flavor": "Melee damage +0%. Style +100%.",
+    "unlock": "Punch 100 enemies",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_cyber",
+    "cat": "hands",
+    "name": "Cyber Arm",
+    "rarity": 4,
+    "flavor": "Right arm, chrome, glowing. You don't remember the surgery.",
+    "unlock": "Install 10 mods",
+    "replaces": [
+     "b_forearm_R",
+     "b_hand_R",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "hands_gauntlets",
+    "cat": "hands",
+    "name": "Overclock Gauntlets",
+    "rarity": 5,
+    "flavor": "Gold-plated fists. Vents hiss when you reload.",
+    "unlock": "Get 1,000 kills with one gun",
+    "replaces": [
+     "b_forearm_L",
+     "b_forearm_R",
+     "b_hand_L",
+     "b_hand_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_none",
+    "cat": "legs",
+    "name": "Gym Shorts",
+    "rarity": 0,
+    "flavor": "For the gym you swear you'll go to.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "legs_jeans",
+    "cat": "legs",
+    "name": "Jeans",
+    "rarity": 0,
+    "flavor": "Pre-ripped by the Collapse.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_cargo",
+    "cat": "legs",
+    "name": "Cargo Pants",
+    "rarity": 0,
+    "flavor": "Pockets on the pockets.",
+    "unlock": "Default",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_shorts",
+    "cat": "legs",
+    "name": "Cargo Shorts",
+    "rarity": 0,
+    "flavor": "It's always summer in the server farm.",
+    "unlock": "Reach Level 2",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_track",
+    "cat": "legs",
+    "name": "Track Pants",
+    "rarity": 1,
+    "flavor": "Three stripes. Zero sponsors.",
+    "unlock": "Sprint 10 km total",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_kilt",
+    "cat": "legs",
+    "name": "Battle Kilt",
+    "rarity": 2,
+    "flavor": "Maximum airflow, maximum menace.",
+    "unlock": "Win a run with a melee kill",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_hearts",
+    "cat": "legs",
+    "name": "Heart Boxers",
+    "rarity": 3,
+    "flavor": "You forgot your pants. Committed to it anyway.",
+    "unlock": "Extract with 1 HP",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_greaves",
+    "cat": "legs",
+    "name": "Riot Greaves",
+    "rarity": 3,
+    "flavor": "Knee pads rated for kneeling to nobody.",
+    "unlock": "Defeat 500 GigaCorp troopers",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_nano",
+    "cat": "legs",
+    "name": "Nanoweave Leggings",
+    "rarity": 4,
+    "flavor": "Glows in sync with the suit. Or the music.",
+    "unlock": "Win a run without being hit",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_gilded",
+    "cat": "legs",
+    "name": "Gilded Greaves",
+    "rarity": 5,
+    "flavor": "Gold knees. Kneel to nobody, again.",
+    "unlock": "Defeat Chairman Zhu on Hard",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "legs_exo",
+    "cat": "legs",
+    "name": "Exoframe Legs",
+    "rarity": 6,
+    "flavor": "The other half of the Turing-Slayer.",
+    "unlock": "Break the loop on Nightmare",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_none",
+    "cat": "feet",
+    "name": "Socks",
+    "rarity": 0,
+    "flavor": "Mismatched on purpose. Probably.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "feet_sneakers",
+    "cat": "feet",
+    "name": "Sneakers",
+    "rarity": 0,
+    "flavor": "Comfortable. Uncomfortably tracked.",
+    "unlock": "Default",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_boots",
+    "cat": "feet",
+    "name": "Combat Boots",
+    "rarity": 1,
+    "flavor": "Steel toes, steel nerves.",
+    "unlock": "Reach Level 3",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_sandals",
+    "cat": "feet",
+    "name": "Sandals + Socks",
+    "rarity": 1,
+    "flavor": "Fashion is a construct. So is GigaCorp.",
+    "unlock": "Walk 1 km in the Haven",
+    "default": false
+   },
+   {
+    "id": "feet_hightops",
+    "cat": "feet",
+    "name": "Neon High-Tops",
+    "rarity": 2,
+    "flavor": "Light up every step. Stealth -100%.",
+    "unlock": "Dash 500 times",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_slippers",
+    "cat": "feet",
+    "name": "Bunny Slippers",
+    "rarity": 3,
+    "flavor": "Couch Surfer approved.",
+    "unlock": "Sit in the Haven for 10 minutes",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_clown",
+    "cat": "feet",
+    "name": "Clown Shoes",
+    "rarity": 3,
+    "flavor": "Honk. Honk. Honk.",
+    "unlock": "Get downed 100 times",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_mag",
+    "cat": "feet",
+    "name": "Mag Boots",
+    "rarity": 4,
+    "flavor": "Stick to anything except a budget.",
+    "unlock": "Clear the Plaza on Hard",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_gold",
+    "cat": "feet",
+    "name": "Drip Kicks",
+    "rarity": 5,
+    "flavor": "Solid gold, solid flex.",
+    "unlock": "Hold 100,000 GigaTech",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "feet_hover",
+    "cat": "feet",
+    "name": "Hover Boots",
+    "rarity": 6,
+    "flavor": "They don't hover. They glow like they could.",
+    "unlock": "Break the loop",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false
+   },
+   {
+    "id": "back_none",
+    "cat": "back",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "Travel light.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "back_pack",
+    "cat": "back",
+    "name": "Go-Bag",
+    "rarity": 0,
+    "flavor": "Snacks, bandages, a spare personality.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "back_antenna",
+    "cat": "back",
+    "name": "Signal Rig",
+    "rarity": 1,
+    "flavor": "Picks up three stations and your neighbour's fridge.",
+    "unlock": "Hijack 5 broadcasts",
+    "default": false
+   },
+   {
+    "id": "back_guitar",
+    "cat": "back",
+    "name": "Protest Guitar",
+    "rarity": 1,
+    "flavor": "Knows one song. It's about GigaCorp.",
+    "unlock": "Play in the Haven",
+    "default": false
+   },
+   {
+    "id": "back_katana",
+    "cat": "back",
+    "name": "Katana",
+    "rarity": 2,
+    "flavor": "Decorative. Absolutely not decorative.",
+    "unlock": "Get 50 melee kills",
+    "default": false
+   },
+   {
+    "id": "back_cape",
+    "cat": "back",
+    "name": "Rebel Cape",
+    "rarity": 2,
+    "flavor": "Dramatic exits included.",
+    "unlock": "Extract 25 times",
+    "default": false
+   },
+   {
+    "id": "back_cushion",
+    "cat": "back",
+    "name": "Couch Cushion",
+    "rarity": 3,
+    "flavor": "Was a Couch Surfer's home. Now it's yours.",
+    "unlock": "Help 10 Couch Surfers",
+    "default": false
+   },
+   {
+    "id": "back_jetpack",
+    "cat": "back",
+    "name": "Jump Jet",
+    "rarity": 4,
+    "flavor": "Cosmetic thrusters. Very convincing.",
+    "unlock": "Jump 1,000 times",
+    "default": false
+   },
+   {
+    "id": "back_server",
+    "cat": "back",
+    "name": "Server Rack",
+    "rarity": 5,
+    "flavor": "Your own data, on your own back. The most rebellious item in the game.",
+    "unlock": "Own 1 TB of server space",
+    "default": false
+   },
+   {
+    "id": "back_wings",
+    "cat": "back",
+    "name": "Glitch Wings",
+    "rarity": 6,
+    "flavor": "Rendered by Turing as an apology. It was not sincere.",
+    "unlock": "Break the loop",
+    "default": false
+   },
+   {
+    "id": "neck_none",
+    "cat": "neck",
+    "name": "Nothing",
+    "rarity": 0,
+    "flavor": "A neck. Unadorned.",
+    "unlock": "Default",
+    "default": true
+   },
+   {
+    "id": "neck_badge",
+    "cat": "neck",
+    "name": "GigaCorp Lanyard",
+    "rarity": 0,
+    "flavor": "\"VISITOR\". Always a visitor.",
+    "unlock": "Default",
+    "default": false
+   },
+   {
+    "id": "neck_headphones",
+    "cat": "neck",
+    "name": "Neck Headphones",
+    "rarity": 0,
+    "flavor": "Noise-cancelling. Propaganda-cancelling.",
+    "unlock": "Reach Level 2",
+    "default": false
+   },
+   {
+    "id": "neck_scarf",
+    "cat": "neck",
+    "name": "Scarf",
+    "rarity": 1,
+    "flavor": "Knitted by a Serverless grandma. She remembers you.",
+    "unlock": "Help 5 Serverless",
+    "default": false
+   },
+   {
+    "id": "neck_bandolier",
+    "cat": "neck",
+    "name": "Shell Bandolier",
+    "rarity": 2,
+    "flavor": "Riptide rounds, worn with pride.",
+    "unlock": "Get 200 shotgun kills",
+    "default": false
+   },
+   {
+    "id": "neck_chain",
+    "cat": "neck",
+    "name": "Gold Chain",
+    "rarity": 3,
+    "flavor": "Real gold. Probably. Don't test it.",
+    "unlock": "Hold 50,000 GigaTech",
+    "default": false
+   },
+   {
+    "id": "neck_crypto",
+    "cat": "neck",
+    "name": "Crypto Bling",
+    "rarity": 5,
+    "flavor": "Worth a fortune on Tuesday. Worth a sandwich on Wednesday.",
+    "unlock": "Win 10 Cryptid raffles",
+    "default": false
+   }
+  ]
+ },
+ "defaults": {
+  "prim": "navy",
+  "sec": "char",
+  "acc": "mustard",
+  "glow": "cyan",
+  "hair": "brown",
+  "skin": "tone 3"
+ },
+ "rules": {
+  "nodes": "a kit GLB holds '<item>@<bone>' nodes (hidden, scale 0): clone them onto the base's bone of that name, scale 1",
+  "replaces": "'b_*' entries hide that base body segment; bare bone names (forearm_R) hide pieces on that bone from items of a lower-priority category",
+  "hair": "headgear.hair: 'all' shows any hair, 'short' only hair with length 'short', 'none' no hair (the buzz scalp stays)",
+  "blocks": "an item that blocks a category hides whatever is worn in it (a sealed helmet blocks face gear)",
+  "tint": "texel *= palette tint of slots[mask / 32] for every kit texture, albedo and emissive",
+  "first_person": "hide every node under the head bone; the arms (forearm/hand pieces) are the viewmodel arms and the legs/feet stay visible"
+ }
+}

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-11 — Player avatars and the loadout creator
+
+- New player avatar kit from game-art-pipeline `0b943ef` (`assets/models/ps1/avatar/`): two bodies, ~100 items each
+  across face, hair, headgear, face gear, top, hands, legs, feet, back and neck, each with a rarity, flavor line and
+  unlock. Six colour slots tint the whole outfit. Synced by `scripts/sync-ps1-models.js`.
+- `js/avatar.js` (`AvatarKit`): builds dressed, tinted, animated avatars (hats tuck hair, helmets hide face gear,
+  gloves sit over sleeves), first-person mode (head hidden, arms/legs/shoes visible), loadout codes for co-op,
+  saving, and unlock tracking.
+- `js/avatar-creator.js` (`AvatarCreator.open()`): the loadout screen: category cards with rarity and lock state,
+  colours, random, first-person check, squad lineup, share codes. Dev console: `loadout` / `loadout all`.
+- The hub vendor, unlock rewards and co-op/first-person bodies are not wired yet: see `docs/AVATAR_SYSTEM.md`.
+
 ## 2026-11-11 — Reload timing pass
 
 - Reload times per gun (Common, quick / empty): Volt-9 1.45 / 1.85 s, VX-2 2.05 / 2.55 s, M-52 2.45 / 3.05 s,

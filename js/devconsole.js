@@ -116,7 +116,7 @@ const DevConsole = (() => {
 
     switch (cmd.toLowerCase()) {
       case 'help':
-        log('Commands: help | maps | map <id> | gun <id> [rarity] | spawn <enemyId> [elite] | boss <id> | god [on|off] | waves | clear | heal');
+        log('Commands: help | maps | map <id> | gun <id> [rarity] | spawn <enemyId> [elite] | boss <id> | god [on|off] | waves | clear | heal | loadout [all]');
         break;
       case 'maps':
         log(MAPS.map(m => m.id + ' — ' + m.label).join(' | '));
@@ -159,6 +159,11 @@ const DevConsole = (() => {
         break;
       case 'heal':
         if (typeof G !== 'undefined' && G?.p) { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; log('Healed.'); }
+        break;
+      case 'loadout':
+        if (!window.AvatarCreator) { log('Avatar creator not loaded.'); break; }
+        window.AvatarCreator.open({ ownedOnly: rest[0] !== 'all', title: 'EARTH <em>2049</em> // DEV LOADOUT' })
+          .then(L => log(L ? 'Loadout saved: ' + window.AvatarKit.encode(L) : 'Loadout closed.'));
         break;
       default:
         log('Unknown command. Type help.');
