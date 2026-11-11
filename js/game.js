@@ -125,6 +125,7 @@ async function boot() {
   for (const k of Object.keys(WEAPONS)) gunModels[k] = Assets.buildGun(k);
   // first-person gunplay (js/gunfeel.js): arsenal viewmodels, hands, recoil, ADS, reloads, flashes, casings
   if (window.GunFeel) { GunFeel.init({ camera, scene, gunGroup }); GunFeel.preloadMasks(); }
+  window.Boom?.init?.({ scene, camera });          // grenade and plasma explosions (js/boom.js)
   muzzleSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: Assets.starTex(), color: 0xfff2b0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   muzzleSprite.scale.setScalar(0.34);
   muzzleLight = new THREE.PointLight(0xffca7a, 0, 12, 2); scene.add(muzzleLight);
@@ -997,19 +998,29 @@ function projTick(pr, dt) {
 }
 function explodeProj(pr, x, y, z, directHit) {
   const aoe = pr.aoe || 0;
-  Particles.burst(x, y, z, pr.hex, aoe > 2 ? 34 : 12, aoe > 2 ? 7 : 4, 0.5);
+  // the player's grenades and plasma bolts get the full explosion (fireball, shockwave, debris, smoke, scorch, boom)
+  const big = pr.owner === 'p' && window.Boom && (pr.wid === 'rocket' || pr.wid === 'energy') && aoe > 0;
+  if (big) {
+    const kind = pr.wid === 'rocket' ? 'grenade' : 'plasma';
+    const gy = World.groundHeight ? World.groundHeight(x, z, 0.2, y + 0.5) : 0;
+    const hit = Boom.explode(new THREE.Vector3(x, y, z), { kind, tier: pr.tier, hex: kind === 'grenade' ? RARITIES[pr.tier].hex : pr.hex, radius: aoe, groundY: Math.min(y, gy) });
+    G.shake = Math.min(1, G.shake + hit * 0.9);
+    window.GunFeel?.addPunch?.(hit * (kind === 'grenade' ? 7 : 2));
+    window.GunAudio?.boom?.(kind, pr.tier, Math.hypot(G.p.pos.x - x, G.p.pos.z - z));
+  } else Particles.burst(x, y, z, pr.hex, aoe > 2 ? 34 : 12, aoe > 2 ? 7 : 4, 0.5);
   if (aoe > 0) {
-    spawnShock(x, y, z, pr.hex, aoe * 1.6);
-    explLight.color.setHex(pr.hex); explLight.intensity = aoe > 2 ? 60 : 20;
-    explLight.position.set(x, y + 0.5, z);
+    if (!big) {
+      spawnShock(x, y, z, pr.hex, aoe * 1.6);
+      explLight.color.setHex(pr.hex); explLight.intensity = aoe > 2 ? 60 : 20;
+      explLight.position.set(x, y + 0.5, z);
+    }
     if (pr.owner === 'p') {
       for (const e of G.enemies) {
         if (e.state === 'dying') continue;
         const d = Math.hypot(e.pos.x - x, e.pos.z - z);
         if (d < aoe + e.size * 0.5) damageEnemy(e, pr.dmg * (1 - d / (aoe + 1) * 0.5), false, e.pos);
       }
-      G.shake = Math.min(1, G.shake + (aoe > 2 ? 0.5 : 0.12));
-      AudioSys.sfx(aoe > 2 ? 'expl' : 'hit');
+      if (!big) { G.shake = Math.min(1, G.shake + (aoe > 2 ? 0.5 : 0.12)); AudioSys.sfx(aoe > 2 ? 'expl' : 'hit'); }
     } else {
       if (!directHit) {
         const d = Math.hypot(G.p.pos.x - x, G.p.pos.z - z);
@@ -1081,7 +1092,7 @@ function fireWeapon(dt) {
       x: muzzle.x, y: muzzle.y, z: muzzle.z,
       vx: dir.x * w.projSpd, vy: dir.y * w.projSpd, vz: dir.z * w.projSpd,
       dmg: w.dmg * (1 + p.mods.dmg), owner: 'p', hex: w.id === 'rocket' ? 0xff9040 : rarHex,
-      aoe: w.aoe, life: 4, spd: w.projSpd,
+      aoe: w.aoe, life: 4, spd: w.projSpd, wid: w.id, tier: w.rar | 0,
     });
     return;
   }
@@ -2641,7 +2652,7 @@ function frame(t) {
     if (authority) { waveTick(sdt); directorTick(sdt); }
     Particles.tick(sdt);
     DmgNums.tick(dt);
-    fxTick(sdt);
+    fxTick(sdt); window.Boom?.update?.(sdt);
     tracerTick(dt);
     World.tick(sdt, G.time);
     if (G.hub) Haven.tick(sdt, G.p);

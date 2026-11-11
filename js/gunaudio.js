@@ -120,12 +120,17 @@ const GunAudio = (() => {
       nz(v, t + 0.028, 0.015, 0.22, 'bandpass', 4000, 3000, 2);
       return { verb: 0.2, gain: 0.82, life: 0.9, lp: 12000 };
     },
-    shotgun(v, t) {       // Riptide-12: a wall of low end with a long roar
-      nz(v, t, 0.016, 1.0, 'highpass', 2600); nz(v, t, 0.13, 1.0, 'bandpass', J(1700), 480, 0.7);
-      nz(v, t, 0.36, 1.0, 'lowpass', 1100, 140); tone(v, 'sine', J(84), 30, t, 0.003, 0.48, 1.0);
-      tone(v, 'sawtooth', J(150), 45, t, 0.002, 0.30, 0.34); tone(v, 'triangle', J(210), 70, t, 0.001, 0.16, 0.5);
-      nz(v, t + 0.075, 0.03, 0.3, 'bandpass', 2600, 1800, 1.5); tone(v, 'square', 520, 380, t + 0.075, 0.001, 0.02, 0.12);
-      return { verb: 0.62, gain: 1.0, hard: true, life: 2.2, lp: 7500 };
+    shotgun(v, t) {       // Riptide-12: one huge BOOM. Hard slap, chest-thump sub, a long rolling roar and the room answering back
+      nz(v, t, 0.014, 1.0, 'highpass', 2200);                                         // slap
+      nz(v, t, 0.10, 1.0, 'bandpass', J(1300), 420, 0.6);                             // blast body
+      nz(v, t, 0.55, 1.0, 'lowpass', 900, 70);                                        // the roar
+      tone(v, 'sine', J(62), 24, t, 0.002, 0.62, 1.0);                                // chest thump
+      tone(v, 'sine', J(118), 40, t, 0.002, 0.30, 0.8);
+      tone(v, 'sawtooth', J(96), 34, t, 0.002, 0.36, 0.42);                           // grit
+      tone(v, 'triangle', J(240), 60, t, 0.001, 0.12, 0.55);
+      nz(v, t + 0.20, 0.42, 0.34, 'lowpass', 600, 90, 0.7, 0.05);                     // rolling tail
+      nz(v, t + 0.42, 0.40, 0.16, 'bandpass', 700, 240, 0.7, 0.06);                   // slapback off the walls
+      return { verb: 0.75, gain: 1.12, hard: true, life: 2.6, lp: 6200 };
     },
     ar(v, t) {            // M-52: punchy mid crack, the reference rifle
       nz(v, t, 0.012, 0.85, 'highpass', 5000); nz(v, t, 0.085, 1.0, 'bandpass', J(2400), 900, 0.85);
@@ -147,11 +152,17 @@ const GunAudio = (() => {
       nz(v, t + 0.03, 0.025, 0.16, 'highpass', 4500); nz(v, t + 0.04, 0.02, 0.2, 'bandpass', 2800, 2000, 2);
       return { verb: 0.42, gain: 0.95, hard: true, life: 1.6, lp: 8500 };
     },
-    energy(v, t) {        // Plasma Lancer: a charged zap, a falling sweep and a sub kick
-      tone(v, 'sawtooth', J(1500), 170, t, 0.002, 0.17, 0.45); tone(v, 'square', J(2900), 300, t, 0.001, 0.09, 0.18);
-      tone(v, 'sine', J(150), 58, t, 0.002, 0.22, 0.9); nz(v, t, 0.06, 0.55, 'highpass', 3000);
-      nz(v, t, 0.14, 0.4, 'bandpass', 900, 3800, 3); tone(v, 'sine', J(4200), 2400, t + 0.02, 0.002, 0.12, 0.08);
-      return { verb: 0.48, gain: 0.95, life: 1.6, lp: 14000 };
+    energy(v, t) {        // Plasma Lancer: a heavy THWUMP of released charge, a fat dropping bass sweep, a crackling bolt and a sizzle tail
+      tone(v, 'sine', J(170), 36, t, 0.002, 0.42, 1.0);                               // the thwump
+      tone(v, 'sawtooth', J(440), 52, t, 0.002, 0.30, 0.42);                          // fat sweep, two detuned saws
+      tone(v, 'sawtooth', J(452), 50, t, 0.002, 0.30, 0.36);
+      tone(v, 'square', J(1800), 220, t, 0.001, 0.13, 0.20);                          // the bolt leaving
+      nz(v, t, 0.03, 0.9, 'highpass', 2600);                                          // crack
+      nz(v, t, 0.18, 0.6, 'bandpass', 600, 2400, 2.5);                                // ionised rip
+      for (let i = 0; i < 5; i++) tone(v, 'square', 900 + Math.random() * 3200, null, t + 0.02 + i * 0.018 + Math.random() * 0.01, 0.001, 0.010, 0.10);   // crackle
+      nz(v, t + 0.05, 0.45, 0.22, 'highpass', 5200, 2600, 0.7, 0.03);                 // sizzle
+      tone(v, 'sine', J(3600), 1400, t + 0.01, 0.002, 0.25, 0.07);
+      return { verb: 0.58, gain: 1.05, hard: true, life: 2.0, lp: 13000 };
     },
     rocket(v, t) {        // MGL-6: the thoomp, then the grenade whooshing away
       tone(v, 'sine', J(125), 38, t, 0.002, 0.38, 1.0); nz(v, t, 0.42, 0.85, 'lowpass', 700, 90);
@@ -202,9 +213,18 @@ const GunAudio = (() => {
     rackBack: () => quick((v, t) => { nz(v, t, .07, .35, 'bandpass', 2400, 3600, 1.2); clack(v, t + .06, 3000, .55); }),
     rackFwd: () => quick((v, t) => { clack(v, t, 2600, .8); tone(v, 'sine', 180, 100, t, .001, .05, .35); }),
     slideRelease: () => quick((v, t) => { clack(v, t, 3200, .8); tone(v, 'triangle', 600, 300, t, .001, .03, .2); }),
-    pumpBack: () => quick((v, t) => { nz(v, t, .08, .45, 'bandpass', 1500, 2600, 1.2); clack(v, t + .07, 1700, .6); }),
-    pumpFwd: () => quick((v, t) => { nz(v, t, .06, .35, 'bandpass', 2600, 1500, 1.2); clack(v, t + .05, 1900, .8); tone(v, 'sine', 140, 80, t + .05, .001, .06, .35); }),
-    shellIn: () => quick((v, t) => { nz(v, t, .04, .25, 'bandpass', 2000, 1200, 1.5); clack(v, t + .035, 1500, .45); }),
+    // pump: CHK (back: steel on steel, the spent hull kicked out) - CHK (home: the bolt slams into battery)
+    pumpBack: () => quick((v, t) => { clack(v, t, 2100, .55); nz(v, t + .006, .09, .55, 'bandpass', 1300, 2900, 1.4); clack(v, t + .085, 1500, 1.0);
+                                       tone(v, 'sine', 150, 90, t + .085, .001, .07, .5); nz(v, t + .085, .05, .4, 'lowpass', 1400, 400); }, .2, 1.0),
+    pumpFwd: () => quick((v, t) => { nz(v, t, .07, .5, 'bandpass', 2800, 1400, 1.4); clack(v, t + .065, 1800, 1.2); clack(v, t + .072, 3200, .5);
+                                      tone(v, 'sine', 125, 70, t + .065, .001, .09, .65); nz(v, t + .065, .06, .45, 'lowpass', 1200, 300); }, .2, 1.0),
+    shellIn: () => quick((v, t) => { nz(v, t, .05, .22, 'bandpass', 1800, 1100, 1.5); clack(v, t + .045, 1300, .55); nz(v, t + .05, .05, .2, 'bandpass', 900, 600, 1.2);
+                                      tone(v, 'triangle', 260, 200, t + .05, .001, .05, .25); }, .1, .9),
+    // spent shotgun hulls: a hollow plastic tok with a tiny brass tick, nothing like a rifle casing's ring
+    hullDrop: () => quick((v, t) => { nz(v, t, .03, .32, 'bandpass', 1100, 800, 2.2); tone(v, 'triangle', 330, 290, t, .001, .045, .22);
+                                       tone(v, 'sine', 2900, 2800, t + .004, .001, .05, .03); nz(v, t + .07, .02, .14, 'bandpass', 1300, 900, 2.2); }, .12, .8),
+    hullBounce: () => quick((v, t) => { nz(v, t, .022, .2, 'bandpass', 1250, 900, 2.4); tone(v, 'triangle', 360, 320, t, .001, .03, .12); }, .1, .7),
+    beltOut: () => quick((v, t) => { for (let i = 0; i < 4; i++) nz(v, t + i * .03, .025, .15, 'bandpass', 2600 - i * 150, 2000, 2); clack(v, t + .12, 1600, .3); }),
     boltUp: () => quick((v, t) => { clack(v, t, 2900, .5); }),
     boltBack: () => quick((v, t) => { nz(v, t, .08, .4, 'bandpass', 2600, 4200, 1.2); clack(v, t + .07, 3300, .4); }),
     boltFwd: () => quick((v, t) => { nz(v, t, .06, .35, 'bandpass', 4200, 2600, 1.2); clack(v, t + .055, 2600, .7); }),
@@ -230,9 +250,42 @@ const GunAudio = (() => {
   };
   function foley(name, tier) { const f = FOLEY[name]; if (f) try { f(tier || 0); } catch (_) {} }
 
+  /* ------------------------------------------------ explosions
+     kind 'grenade': a bomb going off. Instant crack, a body-blow sub drop, a long roar that rolls away, debris
+     rattling down and the city echoing it back. 'plasma': a hot energy burst. dist (m) darkens and delays it. */
+  function boom(kind, tier, dist) {
+    if (!ok()) return;
+    const d = Math.max(0, dist || 0), t = (at ?? ctx.currentTime) + 0.002 + Math.min(.12, d / 340);
+    const far = Math.min(1, d / 45), tierK = 1 + (tier | 0) * .05;
+    const v = voice(t, { verb: (kind === 'grenade' ? .8 : .55) + far * .3, gain: (1.25 - far * .5) * tierK, hard: true, life: 3.2, lp: 9000 - far * 6000 });
+    if (kind === 'grenade') {
+      nz(v, t, 0.02, 1.0, 'highpass', 1800);                                          // crack
+      nz(v, t, 0.18, 1.0, 'bandpass', 900, 260, 0.6);                                 // blast
+      tone(v, 'sine', 70, 22, t, 0.003, 0.95, 1.0);                                   // body blow
+      tone(v, 'sine', 140, 38, t, 0.002, 0.45, 0.7);
+      tone(v, 'sawtooth', 80, 28, t, 0.002, 0.5, 0.35);
+      nz(v, t, 1.3, 1.0, 'lowpass', 1400, 50, 0.7, 0.01);                             // the roar
+      nz(v, t + 0.25, 1.1, 0.45, 'lowpass', 500, 60, 0.7, 0.15);                      // rolling away
+      for (let i = 0; i < 9; i++) {                                                   // debris coming down
+        const dt2 = .35 + Math.random() * .9;
+        nz(v, t + dt2, .03, .08 + Math.random() * .1, 'bandpass', 1200 + Math.random() * 2800, 900, 2);
+      }
+      nz(v, t + 0.55, 0.6, 0.18, 'bandpass', 600, 200, 0.7, 0.1);                     // echo off the buildings
+      if (tier >= 4) tone(v, 'sine', 46, 26, t + 0.02, 0.02, 1.2, 0.4);               // Legendary up: more weight
+      if (tier >= 6) for (let i = 0; i < 4; i++) tone(v, 'square', 300 + Math.random() * 2000, null, t + .05 + i * .03, .001, .02, .12);
+    } else {
+      tone(v, 'sine', 160, 40, t, 0.002, 0.35, 0.9);
+      tone(v, 'sawtooth', 900, 120, t, 0.002, 0.22, 0.3);
+      nz(v, t, 0.04, 0.9, 'highpass', 2400);
+      nz(v, t, 0.35, 0.6, 'bandpass', 2400, 500, 1.5);
+      nz(v, t + .03, .5, .25, 'highpass', 4000, 1800, .7, .03);
+      for (let i = 0; i < 5; i++) tone(v, 'square', 800 + Math.random() * 3000, null, t + .03 + i * .025, .001, .012, .1);
+    }
+  }
+
   // tests / audio previews: route everything into another context (e.g. an OfflineAudioContext)
   function _use(c, dest) { ctx = null; init(c, dest); }
-  return { init, shot, foley, _use, set _at(t) { at = t; }, get ready() { return !!ctx; } };
+  return { init, shot, foley, boom, _use, set _at(t) { at = t; }, get ready() { return !!ctx; } };
 })();
 
 if (typeof window !== 'undefined') window.GunAudio = GunAudio;

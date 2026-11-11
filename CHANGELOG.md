@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-11-11 — Gunplay pass 2: every gun works its own way
+
+- **Riptide-12 is now a pump-action shotgun.** One huge boom per shot, then the support hand racks the pump and a red
+  plastic hull flies out and bounces with its own hollow plastic sound. Reloads tilt the gun and thumb shells one at a
+  time into the loading port (6 rounds, 8 with the extended tube from Rare up); a dry gun is racked at the end. Firing
+  stops a reload once a shell is in. Bigger FOV punch and heavier kick.
+- **LRX-7 Harbinger:** after every shot the scope drops and the firing hand leaves the grip, lifts and rips the bolt
+  back (the casing flies out, the next round rises from the magazine), drives it home and locks it. Faster scope-in
+  for quick-scoping and almost no spread once scoped.
+- **Compliance Saw:** the belt now runs from the box/drum into the feed tray and steps forward one link per shot.
+  Reloads open the cover, swap the box, lay the new belt in the tray and slap the cover shut; no charging handle.
+- **Optics:** red dots and holo sights are clear glass with a red dot or an EOTech ring reticle on the sight line, so
+  aiming never blocks the view. Scopes keep their zoom and overlay.
+- Reload hands go where each gun's parts really are (pistol slide, SMG/AR charging handle on the visible side);
+  the Plasma Lancer vents its coil instead of racking anything.
+- **Explosions (new `js/boom.js`):** MGL-6 grenades go off with a flash and light pop, a boiling fireball that chars
+  to smoke, ground and air shockwaves, debris and embers, a smoke column and a scorch mark, plus camera shake, an FOV
+  punch and a layered explosion sound. Plasma bolts burst in hot blue. Rarity colours the fire from Epic up.
+- Plasma Lancer shot rebuilt: a heavy thwump, a fat dropping bass sweep, a crackling bolt and a sizzle tail.
+- Weapon models synced from game-art-pipeline `e0db064`.
+
 ## 2026-11-11 — Gunplay: weight, reloads, ADS, sound, and seven real rarities
 
 - New `js/gunfeel.js` drives first-person weapons: one viewmodel per gun and rarity from the game-art-pipeline arsenal
