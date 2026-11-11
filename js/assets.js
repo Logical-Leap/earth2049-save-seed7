@@ -47,6 +47,7 @@ const Assets = (() => {
     dmr:     gunDef(1.75),
     energy:  gunDef(1.3),
     rocket:  gunDef(1.25),
+    lmg:     gunDef(1.45),
   };
 
   function cv(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }

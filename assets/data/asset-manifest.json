@@ -22,6 +22,7 @@
     "weapon.ar": "assets/models/ps1/weapons/m52_revenant.glb",
     "weapon.dmr": "assets/models/ps1/weapons/lrx7_harbinger.glb",
     "weapon.energy": "assets/models/ps1/weapons/plasma_lancer.glb",
-    "weapon.rocket": "assets/models/ps1/weapons/mgl6_thunderer.glb"
+    "weapon.rocket": "assets/models/ps1/weapons/mgl6_thunderer.glb",
+    "weapon.lmg": "assets/models/ps1/weapons/compliance_saw.glb"
   }
 }

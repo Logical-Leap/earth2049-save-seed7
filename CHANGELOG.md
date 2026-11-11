@@ -1,5 +1,57 @@
 # Changelog
 
+## 2026-11-11 — Reload timing pass
+
+- Reload times per gun (Common, quick / empty): Volt-9 1.45 / 1.85 s, VX-2 2.05 / 2.55 s, M-52 2.45 / 3.05 s,
+  Harbinger 3.0 / 3.2 s (+ working the bolt when empty), Plasma Lancer 2.9 / 3.6 s, Compliance Saw 5.8 / 6.4 s
+  (the slowest), Riptide 0.58 s per shell, MGL-6 0.95 s per grenade. Rarity now speeds reloads up by at most 18%
+  (it was 28%), separately from aiming and drawing.
+- Magazine reloads are a real sequence: grab, pull it out, then either stow it in the pouch (quick reload) or let it
+  drop (empty reload: the old mag falls, tumbles and clatters on the floor), the hand goes to the pouch, a fresh mag
+  comes up angled, lines up, seats and gets a tap. Plasma cells pop out of the top when empty. The LMG stows its box
+  and fetches a new one; the MGL-6 brings each grenade up from the bandolier. The support hand now follows the
+  magazine it's holding. New sounds: mag release, stow, pouch flap, empty mag on the floor, cell eject.
+
+## 2026-11-11 — Gunplay pass 2: every gun works its own way
+
+- **Riptide-12 is now a pump-action shotgun.** One huge boom per shot, then the support hand racks the pump and a red
+  plastic hull flies out and bounces with its own hollow plastic sound. Reloads tilt the gun and thumb shells one at a
+  time into the loading port (6 rounds, 8 with the extended tube from Rare up); a dry gun is racked at the end. Firing
+  stops a reload once a shell is in. Bigger FOV punch and heavier kick.
+- **LRX-7 Harbinger:** after every shot the scope drops and the firing hand leaves the grip, lifts and rips the bolt
+  back (the casing flies out, the next round rises from the magazine), drives it home and locks it. Faster scope-in
+  for quick-scoping and almost no spread once scoped.
+- **Compliance Saw:** the belt now runs from the box/drum into the feed tray and steps forward one link per shot.
+  Reloads open the cover, swap the box, lay the new belt in the tray and slap the cover shut; no charging handle.
+- **Optics:** red dots and holo sights are clear glass with a red dot or an EOTech ring reticle on the sight line, so
+  aiming never blocks the view. Scopes keep their zoom and overlay.
+- Reload hands go where each gun's parts really are (pistol slide, SMG/AR charging handle on the visible side);
+  the Plasma Lancer vents its coil instead of racking anything.
+- **Explosions (new `js/boom.js`):** MGL-6 grenades go off with a flash and light pop, a boiling fireball that chars
+  to smoke, ground and air shockwaves, debris and embers, a smoke column and a scorch mark, plus camera shake, an FOV
+  punch and a layered explosion sound. Plasma bolts burst in hot blue. Rarity colours the fire from Epic up.
+- Plasma Lancer shot rebuilt: a heavy thwump, a fat dropping bass sweep, a crackling bolt and a sizzle tail.
+- Weapon models synced from game-art-pipeline `e0db064`.
+
+## 2026-11-11 — Gunplay: weight, reloads, ADS, sound, and seven real rarities
+
+- New `js/gunfeel.js` drives first-person weapons: one viewmodel per gun and rarity from the game-art-pipeline arsenal
+  GLBs (attachments and finish per rarity), gloved hands, spring recoil (viewmodel and camera, with partial climb),
+  bob/sway/strafe tilt/landing dip, draw animation, muzzle flashes coloured by rarity from Epic up, ejected casings
+  that bounce and tink, and moving parts (slide, bolt, bolt-action cycle, pump, LMG feed cover, launcher drum, energy coil).
+- Magazines and reloads: `R` reloads (tactical and slower empty reloads with a rack/pump/slide release/vent), the LMG
+  opens its feed cover, the Plasma Lancer swaps its cell, the MGL-6 loads shell by shell (firing interrupts it).
+  Empty trigger pulls auto-reload. HUD shows `clip / reserve`. The second active ability moved from `R` to `C`.
+- Aim down sights on right mouse: per-optic sight lines (iron, red dot, holo, scope), FOV zoom, slower aim
+  sensitivity, tighter spread; scoped optics switch to a scope overlay (thermal tinted).
+- New `js/gunaudio.js`: layered synthesized gunshots (transient, crack, body, sub, signature, mechanics, convolution
+  room tail) through a compressed, soft-clipped gun bus; full reload and handling foley. Rarity adds layers: more sub
+  from Uncommon, bite from Rare, an energy sweep at Epic, a thunder layer at Legendary, a gold chime at Mythic and
+  Turing glitch bursts at Relic.
+- Rarity now changes how a gun handles: less recoil, faster reload/aim/draw, bigger magazines (per attachment), bigger
+  flashes and coloured impact sparks from Epic up.
+- The Compliance Saw LMG now has a PS1 model (weapon.lmg); weapon GLBs synced from game-art-pipeline `d072cac`+.
+
 ## 2026-11-08 — Every enemy is PS1
 
 - Bots node, Bots sentinel ("Ad Broadcaster") and Cryptid drone now use new PS1 models from game-art-pipeline, so no procedural enemies remain. The node is a full humanoid15 character (face-screen smiley, all clips); the sentinel and drone are props-kit units whose `leg_*` / `spin_*` nodes the game animates (new 4-leg diagonal gait).

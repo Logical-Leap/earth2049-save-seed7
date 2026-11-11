@@ -123,6 +123,9 @@ async function boot() {
   gunGroup.visible = false;
   camera.add(gunGroup);
   for (const k of Object.keys(WEAPONS)) gunModels[k] = Assets.buildGun(k);
+  // first-person gunplay (js/gunfeel.js): arsenal viewmodels, hands, recoil, ADS, reloads, flashes, casings
+  if (window.GunFeel) { GunFeel.init({ camera, scene, gunGroup }); GunFeel.preloadMasks(); }
+  window.Boom?.init?.({ scene, camera });          // grenade and plasma explosions (js/boom.js)
   muzzleSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: Assets.starTex(), color: 0xfff2b0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   muzzleSprite.scale.setScalar(0.34);
   muzzleLight = new THREE.PointLight(0xffca7a, 0, 12, 2); scene.add(muzzleLight);
@@ -410,6 +413,10 @@ function makeWeapon(id, rarity) { // NOSONAR - weapon mastery shaping is data-lo
   }
   if (ml >= 5) { gun.dmg *= 1.08; if (gun.ammoMax !== Infinity) { gun.ammoMax = Math.round(gun.ammoMax * 1.12); gun.ammo = gun.ammoMax; } }
   if (ml >= 10) { gun.dmg *= 1.12; gun.rpm *= 1.08; }
+  // magazine: the loaded rounds come out of the reserve
+  const mag = window.GunFeel ? GunFeel.magSize(id, rarity) : 30;
+  gun.clip = gun.ammo === Infinity ? mag : Math.min(mag, gun.ammo);
+  if (gun.ammo !== Infinity) gun.ammo -= gun.clip;
   return gun;
 }
 
@@ -425,7 +432,7 @@ function resetRunWorld() {
   if (turingT) { clearTimeout(turingT); turingT = null; }
   const turingBox = el('turingBox');
   if (turingBox) turingBox.classList.remove('show');
-  if (gunGroup) gunGroup.visible = false;
+  if (gunGroup) { gunGroup.visible = false; window.GunFeel?.setVisible?.(gunGroup.visible); }
 }
 
 async function newRun(opts = {}) {
@@ -485,7 +492,7 @@ async function newRun(opts = {}) {
     if (World.group) World.group.traverse(o => { if (o.isLight) o.visible = false; });   // the Haven brings its own light
     banner('REBEL HAVEN', 'THE UNDERCROFT — WEAPONS SAFE // COMBAT DISABLED');
     setState('run');
-    if (gunGroup) gunGroup.visible = false;
+    if (gunGroup) { gunGroup.visible = false; window.GunFeel?.setVisible?.(gunGroup.visible); }
     return;
   }
   Haven.exit(scene);
@@ -991,19 +998,29 @@ function projTick(pr, dt) {
 }
 function explodeProj(pr, x, y, z, directHit) {
   const aoe = pr.aoe || 0;
-  Particles.burst(x, y, z, pr.hex, aoe > 2 ? 34 : 12, aoe > 2 ? 7 : 4, 0.5);
+  // the player's grenades and plasma bolts get the full explosion (fireball, shockwave, debris, smoke, scorch, boom)
+  const big = pr.owner === 'p' && window.Boom && (pr.wid === 'rocket' || pr.wid === 'energy') && aoe > 0;
+  if (big) {
+    const kind = pr.wid === 'rocket' ? 'grenade' : 'plasma';
+    const gy = World.groundHeight ? World.groundHeight(x, z, 0.2, y + 0.5) : 0;
+    const hit = Boom.explode(new THREE.Vector3(x, y, z), { kind, tier: pr.tier, hex: kind === 'grenade' ? RARITIES[pr.tier].hex : pr.hex, radius: aoe, groundY: Math.min(y, gy) });
+    G.shake = Math.min(1, G.shake + hit * 0.9);
+    window.GunFeel?.addPunch?.(hit * (kind === 'grenade' ? 7 : 2));
+    window.GunAudio?.boom?.(kind, pr.tier, Math.hypot(G.p.pos.x - x, G.p.pos.z - z));
+  } else Particles.burst(x, y, z, pr.hex, aoe > 2 ? 34 : 12, aoe > 2 ? 7 : 4, 0.5);
   if (aoe > 0) {
-    spawnShock(x, y, z, pr.hex, aoe * 1.6);
-    explLight.color.setHex(pr.hex); explLight.intensity = aoe > 2 ? 60 : 20;
-    explLight.position.set(x, y + 0.5, z);
+    if (!big) {
+      spawnShock(x, y, z, pr.hex, aoe * 1.6);
+      explLight.color.setHex(pr.hex); explLight.intensity = aoe > 2 ? 60 : 20;
+      explLight.position.set(x, y + 0.5, z);
+    }
     if (pr.owner === 'p') {
       for (const e of G.enemies) {
         if (e.state === 'dying') continue;
         const d = Math.hypot(e.pos.x - x, e.pos.z - z);
         if (d < aoe + e.size * 0.5) damageEnemy(e, pr.dmg * (1 - d / (aoe + 1) * 0.5), false, e.pos);
       }
-      G.shake = Math.min(1, G.shake + (aoe > 2 ? 0.5 : 0.12));
-      AudioSys.sfx(aoe > 2 ? 'expl' : 'hit');
+      if (!big) { G.shake = Math.min(1, G.shake + (aoe > 2 ? 0.5 : 0.12)); AudioSys.sfx(aoe > 2 ? 'expl' : 'hit'); }
     } else {
       if (!directHit) {
         const d = Math.hypot(G.p.pos.x - x, G.p.pos.z - z);
@@ -1027,49 +1044,64 @@ function fireWeapon(dt) {
   if (G?.hub) return;
   const p = G.p, w = curWeapon();
   if (!w || p.fireT > 0 || p.swapT > 0 || !curGunObj) return;
-  if (w.ammo <= 0) { AudioSys.sfx('nammo'); swapWeapon(0); return; }
+  const feel = window.GunFeel?.active;
+  if (feel) {
+    if (!GunFeel.canFire(w)) return;
+    if (w.clip <= 0) {                       // empty: reload if there's reserve, otherwise click and fall back to the sidearm
+      if (!GunFeel.reload(w)) { GunFeel.dryFire(); p.fireT = 0.3; if (w.ammo !== Infinity && w.ammo <= 0 && p.cur !== 0) swapWeapon(0); }
+      return;
+    }
+  } else if (w.ammo <= 0) { AudioSys.sfx('nammo'); swapWeapon(0); return; }
   const rate = (1 + p.mods.rate) * (p.adrenalT > 0 ? 1.3 : 1);
   p.fireT = 60 / (w.rpm * rate);
-  if (w.ammo !== Infinity) w.ammo--;
+  if (feel) w.clip--; else if (w.ammo !== Infinity) w.ammo--;
   const kick = KICK[w.id] || 0.5;
-  p.recoil = Math.min(1.6, p.recoil + kick);
-  p.slideK = 1;
-  G.shake = Math.min(1, G.shake + 0.03 + kick * 0.05);
-  AudioSys.sfx('shot_' + w.id);
-  muzzleSprite.material.opacity = 1;
-  muzzleSprite.material.rotation = Math.random() * Math.PI;
-  muzzleSprite.scale.setScalar(0.09 + kick * 0.1 + Math.random() * 0.04);
-  muzzleLight.intensity = 5 + kick * 6;
+  const tier = w.rar | 0;
+  G.shake = Math.min(1, G.shake + 0.03 + kick * 0.05 + tier * 0.004);
+  if (feel) {
+    const k = GunFeel.fire(w);
+    p.pitch = clamp(p.pitch + k.pitch, -1.45, 1.45); p.yaw += k.yaw;
+  } else {
+    p.recoil = Math.min(1.6, p.recoil + kick); p.slideK = 1;
+    AudioSys.sfx('shot_' + w.id);
+    muzzleSprite.material.opacity = 1;
+    muzzleSprite.material.rotation = Math.random() * Math.PI;
+    muzzleSprite.scale.setScalar(0.09 + kick * 0.1 + Math.random() * 0.04);
+  }
+  muzzleLight.color.setHex(tier >= 3 ? RARITIES[tier].hex : 0xffca7a);
+  muzzleLight.intensity = 5 + kick * 6 + tier * 0.8;
   const muzzle = new THREE.Vector3();
   curGunObj.tip.getWorldPosition(muzzle);
   camera.getWorldDirection(_fwd);
-  muzzleLight.position.copy(camera.position).addScaledVector(_fwd, 2.2);
-  // shell eject for ballistic weapons
-  if (w.id !== 'energy' && w.id !== 'rocket') Particles.burst(muzzle.x, muzzle.y - 0.05, muzzle.z, 0xffc860, 1, 1.6, 0.5, 2);
+  muzzleLight.position.copy(camera.position).addScaledVector(_fwd, 1.2);
+  // shell eject for ballistic weapons (gunfeel throws real casings)
+  if (!feel && w.id !== 'energy' && w.id !== 'rocket') Particles.burst(muzzle.x, muzzle.y - 0.05, muzzle.z, 0xffc860, 1, 1.6, 0.5, 2);
 
   camera.getWorldDirection(_fwd);
   const right = new THREE.Vector3(_fwd.z, 0, -_fwd.x).normalize();
   const up = new THREE.Vector3().crossVectors(right, _fwd).normalize();
   const camPos = camera.position;
 
+  const spreadK = window.GunFeel?.active ? GunFeel.spreadMul : 1;
   if (w.type === 'proj') {
-    const sp = (Math.random() + Math.random() - 1) * w.spread * 0.017;
-    const sp2 = (Math.random() + Math.random() - 1) * w.spread * 0.017;
+    const sp = (Math.random() + Math.random() - 1) * w.spread * 0.017 * spreadK;
+    const sp2 = (Math.random() + Math.random() - 1) * w.spread * 0.017 * spreadK;
     const dir = _fwd.clone().addScaledVector(right, sp).addScaledVector(up, sp2).normalize();
     const rarHex = RARITIES[w.rar].hex;
     spawnProj({
       x: muzzle.x, y: muzzle.y, z: muzzle.z,
       vx: dir.x * w.projSpd, vy: dir.y * w.projSpd, vz: dir.z * w.projSpd,
       dmg: w.dmg * (1 + p.mods.dmg), owner: 'p', hex: w.id === 'rocket' ? 0xff9040 : rarHex,
-      aoe: w.aoe, life: 4, spd: w.projSpd,
+      aoe: w.aoe, life: 4, spd: w.projSpd, wid: w.id, tier: w.rar | 0,
     });
     return;
   }
   // precompute pellet directions before raycasting (shared temp vectors get reused inside hitscan)
   const dirs = [];
   for (let pel = 0; pel < w.pellets; pel++) {
-    const sp = (Math.random() + Math.random() - 1) * w.spread * 0.0175;
-    const sp2 = (Math.random() + Math.random() - 1) * w.spread * 0.0175;
+    const pk = w.pellets > 1 ? Math.max(spreadK, 0.7) : spreadK;     // shotguns keep most of their pattern in ADS
+    const sp = (Math.random() + Math.random() - 1) * w.spread * 0.0175 * pk;
+    const sp2 = (Math.random() + Math.random() - 1) * w.spread * 0.0175 * pk;
     dirs.push(_fwd.clone().addScaledVector(right, sp).addScaledVector(up, sp2).normalize());
   }
   for (const dir of dirs) hitscan(camPos, dir, w, muzzle);
@@ -1112,6 +1144,8 @@ function hitscan(o, dir, w, muzzle) {
   if (nHits === 0) {
     if (wall) {
       Particles.burst(wall.x, wall.y, wall.z, FACTIONS[G.theme.fac].neon, 5, 2.4, 0.35);
+      // better guns hit harder on screen too: hot sparks from Legendary, rarity-coloured from Epic
+      if (w.rar >= 3) Particles.burst(wall.x, wall.y, wall.z, RARITIES[w.rar].hex, 2 + w.rar, 3 + w.rar * 0.4, 0.3, 2.2);
     }
     return;
   }
@@ -1555,8 +1589,9 @@ function playerTick(dt) {
     if (p.bleedT <= 0) { p.coopState = 'dead'; doDeath(); return; }
   }
   // look
-  p.yaw = InputSafety.normalizeYaw(p.yaw - Input.lookDX * 0.0034 * SAVE.opts.sens);
-  p.pitch = clamp(p.pitch - Input.lookDY * 0.0034 * SAVE.opts.sens, -1.45, 1.45);
+  const sensK = window.GunFeel?.active ? GunFeel.sensMul : 1;
+  p.yaw = InputSafety.normalizeYaw(p.yaw - Input.lookDX * 0.0034 * SAVE.opts.sens * sensK);
+  p.pitch = clamp(p.pitch - Input.lookDY * 0.0034 * SAVE.opts.sens * sensK, -1.45, 1.45);
   Input.lastLookX += Input.lookDX; Input.lastLookY += Input.lookDY;
   Input.lookDX = 0; Input.lookDY = 0;
 
@@ -1615,12 +1650,19 @@ function playerTick(dt) {
   const bobY = Math.abs(Math.sin(p.bobT)) * 0.05, bobX = Math.sin(p.bobT) * 0.03;
   camera.position.set(p.pos.x + bobX * cy, p.pos.y + 1.62 + bobY, p.pos.z - bobX * sy);
   const shk = G.shake * 0.05;
-  camera.rotation.y = p.yaw + rnd(-shk, shk) * 0.5;
-  camera.rotation.x = p.pitch + p.recoil * 0.035 + rnd(-shk, shk);
-  camera.rotation.z = rnd(-shk, shk) * 0.4;
+  const feel = window.GunFeel?.active, ck = feel ? GunFeel.cam : null;
+  camera.rotation.y = p.yaw + rnd(-shk, shk) * 0.5 + (ck ? ck.yaw : 0);
+  camera.rotation.x = p.pitch + (ck ? ck.pitch : p.recoil * 0.035) + rnd(-shk, shk);
+  camera.rotation.z = rnd(-shk, shk) * 0.4 + (ck ? ck.roll : 0);
 
-  // viewmodel: bob + sway + recoil + slide cycling
-  if (curGunObj) {
+  // viewmodel: gunfeel (arsenal guns) or the legacy bob + sway + recoil
+  if (feel) {
+    GunFeel.update(dt, { ads: Input.ads, move: kl, strafe: clamp(Input.moveX, -1, 1), onGround: p.onGround, dash: p.dashT > 0,
+      lookX: Input.lastLookX, lookY: Input.lastLookY, feetY: p.pos.y });
+    const fov = GunFeel.fov;
+    if (Math.abs(camera.fov - fov) > 0.05) { camera.fov = fov; camera.updateProjectionMatrix(); }
+    const cw = el('crossWrap'); if (cw) cw.style.opacity = String(1 - GunFeel.adsK);
+  } else if (curGunObj) {
     p.swayX += (clamp(-Input.lastLookX * 0.0012, -0.03, 0.03) - p.swayX) * Math.min(1, dt * 10);
     p.swayY += (clamp(Input.lastLookY * 0.0012, -0.03, 0.03) - p.swayY) * Math.min(1, dt * 10);
     gunGroup.position.set(
@@ -1661,7 +1703,12 @@ function swapWeapon(to) {
 }
 function equipGun() {
   const w = curWeapon();
-  if (curGunObj) gunGroup.remove(curGunObj.root);
+  if (curGunObj && !curGunObj.external) gunGroup.remove(curGunObj.root);
+  if (curGunObj?.root?.parent === gunGroup) gunGroup.remove(curGunObj.root);
+  const fv = window.GunFeel?.equip?.(w);
+  if (fv) { curGunObj = fv; muzzleSprite.material.opacity = 0; return; }
+  // legacy viewmodel (no arsenal GLB loaded)
+  gunGroup.scale.setScalar(0.52); gunGroup.rotation.set(0, 0.035, 0);
   curGunObj = gunModels[w.id];
   curGunObj.acc.emissive.setHex(RARITIES[w.rar].hex);
   curGunObj.tip.add(muzzleSprite);
@@ -1977,7 +2024,11 @@ function hudTick() {
   el('wpnName').textContent = w.name;
   el('wpnName').style.color = RARITIES[w.rar].color;
   el('wpnClass').textContent = w.cls + (p.weapons[1] && p.cur === 0 ? '  —  [Q] ' + p.weapons[1].cls : '');
-  el('ammoText').innerHTML = w.ammo === Infinity ? '&#8734;' : w.ammo;
+  if (w.clip !== undefined && window.GunFeel?.active) {
+    el('ammoText').innerHTML = w.clip + '<span style="font-size:.5em;opacity:.7"> / ' + (w.ammo === Infinity ? '&#8734;' : w.ammo) + '</span>';
+    const ar = el('ammoRes');
+    if (ar) ar.textContent = GunFeel.reloading ? 'RELOADING' : (w.clip === 0 ? (w.ammo === 0 ? 'EMPTY — [Q] SWAP' : '[R] RELOAD') : (w.clip <= Math.ceil(GunFeel.magSize(w.id, w.rar) * .25) ? '[R] RELOAD' : '[Q] SWAP'));
+  } else el('ammoText').innerHTML = w.ammo === Infinity ? '&#8734;' : w.ammo;
   el('gtText').innerHTML = '&#11042; ' + p.gt + ' GIGATECH';
   if (G.hub) {
     el('distText').textContent = 'REBEL HAVEN — THE UNDERCROFT';
@@ -1992,7 +2043,7 @@ function hudTick() {
   const aw = el('abilityHud');
   aw.innerHTML = SAVE.equippedAbilities.map((id, i) => {
     const a = ABILITIES[id], cd = Math.ceil(abilityCooldown(id));
-    return '<span class="abilpill ' + (cd > 0 ? 'cool' : '') + '">' + (i === 0 ? 'F' : 'R') + ': ' + a.name + (cd > 0 ? ' ' + cd + 's' : ' READY') + '</span>';
+    return '<span class="abilpill ' + (cd > 0 ? 'cool' : '') + '">' + (i === 0 ? 'F' : 'C') + ': ' + a.name + (cd > 0 ? ' ' + cd + 's' : ' READY') + '</span>';
   }).join('');
   updateMissionHud();
   const cb = el('comboBox');
@@ -2012,7 +2063,7 @@ function hudTick() {
 }
 
 /* ============ input ============ */
-const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, dash: false, jump: false, interact: false, keys: {} };
+const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, ads: false, dash: false, jump: false, interact: false, keys: {} };
 function initInput() {
   const cv = el('c');
   // desktop
@@ -2026,7 +2077,8 @@ function initInput() {
     if (e.code === 'Digit2') swapWeapon(1);
     if (e.code === 'KeyE') { Input.interact = true; if (!nearestDownedTeammate()) takeCrate(); }
     if (e.code === 'KeyF') activeAbility(0);
-    if (e.code === 'KeyR') activeAbility(1);
+    if (e.code === 'KeyR') { const w = curWeapon(); if (window.GunFeel?.active && w) GunFeel.reload(w); }
+    if (e.code === 'KeyC') activeAbility(1);
   });
   addEventListener('keyup', e => { Input.keys[e.code] = false; if (e.code === 'KeyE') Input.interact = false; });
   // Sandboxed iframes (claude.ai previews, some web portals) can refuse pointer
@@ -2050,8 +2102,9 @@ function initInput() {
       return;
     }
     if (e.button === 0) Input.fire = true;
+    if (e.button === 2) Input.ads = true;
   });
-  addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; });
+  addEventListener('mouseup', e => { if (e.button === 0) Input.fire = false; if (e.button === 2) Input.ads = false; });
   addEventListener('mousemove', e => {
     if ((document.pointerLockElement === cv || acceptanceInputEnabled || (freeLook && e.target === cv)) && state === 'run' && !paused) {
       Input.lookDX = InputSafety.accumulateLookDelta(Input.lookDX, e.movementX * 0.65);
@@ -2141,7 +2194,7 @@ function setState(s) {
   if (s === 'title' && Haven.active) Haven.exit(scene);
   state = s;
   document.body.classList.toggle('inrun', s === 'run');
-  if (gunGroup) gunGroup.visible = (s === 'run' || s === 'og');
+  if (gunGroup) { gunGroup.visible = (s === 'run' || s === 'og'); window.GunFeel?.setVisible?.(gunGroup.visible); }
   checkRotateHint();
 }
 function setPaused(v) {
@@ -2619,7 +2672,7 @@ function frame(t) {
     if (authority) { waveTick(sdt); directorTick(sdt); }
     Particles.tick(sdt);
     DmgNums.tick(dt);
-    fxTick(sdt);
+    fxTick(sdt); window.Boom?.update?.(sdt);
     tracerTick(dt);
     World.tick(sdt, G.time);
     if (G.hub) Haven.tick(sdt, G.p);
