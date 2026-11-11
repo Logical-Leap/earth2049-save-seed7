@@ -24,7 +24,7 @@ const CHARACTERS = {
 };
 // Non-humanoid units built with the props kit (named leg_/spin_ nodes, no clips).
 const UNITS = ['cryptid_drone', 'bots_sentinel'];
-const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer'];
+const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer', 'compliance_saw'];
 
 if (!fs.existsSync(path.join(src, P))) {
   console.error(`game-art-pipeline not found at ${src}`);
@@ -68,10 +68,24 @@ for (const [dest, groups] of Object.entries(HAVEN)) {
     files.push(`${dest}/${to}`);
   }
 }
-// every prop the Haven layout places
-const layout = JSON.parse(fs.readFileSync(path.join(src, P, 'maps/haven/models/haven.layout.json'), 'utf8'));
+// ---- Operation: Unsubscribe — the Engagement Plaza arena and its enemy variant bases
+const ARENA = {
+  'assets/maps/plaza': [[`${P}/maps/plaza/models`, ['plaza.glb', 'plaza.layout.json']]],
+  'assets/models/arena': [[`${P}/characters/enemies/models`, ['shill_m.glb', 'shill_f.glb', 'hypebeast_m.glb', 'cdrone_x.glb', 'enforcer_x.glb']],
+    [`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
+};
+for (const [dest, groups] of Object.entries(ARENA)) {
+  fs.mkdirSync(path.join(process.cwd(), dest), { recursive: true });
+  for (const [dir, names] of groups) for (const name of names) {
+    fs.copyFileSync(path.join(src, dir, name), path.join(process.cwd(), dest, name));
+    files.push(`${dest}/${name}`);
+  }
+}
+// every prop either level places (shared prop folder)
+const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json']
+  .flatMap(f => JSON.parse(fs.readFileSync(path.join(src, P, 'maps', f), 'utf8')).props.map(p => p.model));
 fs.mkdirSync(path.join(process.cwd(), 'assets/models/haven/props'), { recursive: true });
-for (const m of new Set(layout.props.map(p => p.model))) {
+for (const m of new Set(layoutProps)) {
   fs.copyFileSync(path.join(src, P, 'props/models', m + '.glb'), path.join(process.cwd(), 'assets/models/haven/props', m + '.glb'));
   files.push(`assets/models/haven/props/${m}.glb`);
 }

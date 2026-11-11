@@ -977,6 +977,13 @@ const Assets = (() => {
     const g = new THREE.Group();
     const model = cloneExternalScene(gltf.scene);
     model.name = 'GLB_gun_' + clsKey;
+    // Arsenal GLBs carry every rarity's attachments: show the Common loadout only
+    const W = gltf.scene.userData;
+    if (W?.weapon && W.options) {
+      const show = new Set(W.rarities?.[0]?.show || []);
+      for (const n of Object.values(W.options).flat()) { const o = model.getObjectByName(n); if (o) o.visible = show.has(n); }
+      for (const n of ['shell', 'round']) { const o = model.getObjectByName(n); if (o) o.visible = false; }
+    }
     ps1Materials(model, null, true);
     g.add(model);
     model.updateMatrixWorld(true);

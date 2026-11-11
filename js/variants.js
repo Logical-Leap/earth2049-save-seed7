@@ -66,7 +66,7 @@ const Variants = (() => {
   }
 
   /** Apply seed's variant to a cloned instance. Materials on root must already be per-instance. */
-  function roll(gltf, root, seed) {
+  function roll(gltf, root, seed, type) {
     const rec = base.get(gltf);
     if (!rec) return null;
     const d = rec.d, r = mulberry32(seed | 0), pick = a => a[Math.floor(r() * a.length)];
@@ -78,7 +78,8 @@ const Variants = (() => {
     let hair = pick(hairs); if (blocked.has(hair)) hair = pick(hairs.filter(h => !blocked.has(h)));
     on.push(hair);
     const split = a => a.flatMap(x => (x || '').split('+')).filter(Boolean);
-    const shown = new Set(split(on)), nodes = new Set(split([...hairs, ...Object.values(acc).flat()]));
+    const forced = (d.types && type && d.types[type]?.force) || [];
+    const shown = new Set(split([...on, ...forced])), nodes = new Set(split([...hairs, ...Object.values(acc).flat(), ...forced]));
     for (const n of nodes) { const o = root.getObjectByName(n); if (o) o.scale.setScalar(shown.has(n) ? 1 : 0); }
     const map = tinted(rec.mapData, rec.mask, tint);
     const em = rec.emData ? tinted(rec.emData, rec.mask, tint) : null;
