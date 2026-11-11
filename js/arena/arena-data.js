@@ -119,12 +119,13 @@ AR.PERKS = [
   { id: 'paywall', n: 'PAYWALL', s: 'NFT PAWN', r: 0, stack: 3, d: '+50% GigaTech chips from kills.', fx: S => { S.chips += 0.5; } },
   { id: 'fomo', n: 'FOMO', s: 'HYPE DOGS', r: 0, stack: 2, d: 'Style drains 45% slower.', fx: S => { S.styleDrain *= 0.55; } },
   { id: 'hops', n: 'BUNNY HOP SUBSCRIPTION', s: 'JUMP+ PREMIUM', r: 1, stack: 2, d: '+1 air jump.', fx: S => { S.airJumps += 1; } },
-  { id: 'dash', n: 'DASH CHARGE', s: 'ZOOMER FUEL', r: 1, stack: 2, d: '+1 dash charge. Dashes recharge 20% faster.', fx: S => { S.dashes += 1; S.dashCd *= 0.8; } },
+  { id: 'jetdash', n: 'JET DASH', s: 'ZOOMER FUEL', r: 1, stack: 1, boost: 2.2, d: 'SHIFT / L3 now DASHES instead of sprinting: 2 charges, a burst of i-frames, +8% move speed.', fx: S => { S.dashMode = true; } },
+  { id: 'dash', n: 'DASH CHARGE', s: 'ZOOMER FUEL', r: 1, stack: 2, needs: 'dashMode', d: '+1 dash charge. Dashes recharge 20% faster.', fx: S => { S.dashes += 1; S.dashCd *= 0.8; } },
   { id: 'ricochet', n: 'COMMENT SECTION', s: 'REPLY GUYS LLC', r: 1, stack: 3, d: 'Hits bounce to a nearby enemy for 45% damage.', fx: S => { S.ricochet += 1; } },
   { id: 'clickbait', n: 'CLICKBAIT', s: 'YOU WONT BELIEVE', r: 1, stack: 2, d: 'Kills explode for 40 damage in 3.5 m.', fx: S => { S.volatile += 1; } },
   { id: 'ragebait', n: 'RAGE BAIT', s: 'OUTRAGE.FM', r: 1, stack: 2, d: 'Each kill within 2.5 s of another: +8% damage (stacks to x10).', fx: S => { S.ragebait += 1; } },
   { id: 'engage', n: 'ENGAGEMENT FARMING', s: 'SHILLZ X GIGACORP', r: 1, stack: 2, d: 'Headshot kills refund 4 rounds into the mag.', fx: S => { S.headRefund += 4; } },
-  { id: 'boot', n: 'BIG BOOT', s: 'KICKSTARTER', r: 1, stack: 2, d: 'Kick deals x3 damage and resets a dash charge on hit.', fx: S => { S.kick += 2; S.kickDash = true; } },
+  { id: 'boot', n: 'BIG BOOT', s: 'KICKSTARTER', r: 1, stack: 2, d: 'Kick deals x3 damage (and resets a dash charge with JET DASH).', fx: S => { S.kick += 2; S.kickDash = true; } },
   { id: 'slidedm', n: 'SLIDE INTO DMS', s: 'THIRST TRAP INC', r: 1, stack: 1, d: 'Sliding through enemies deals 45 damage and launches them.', fx: S => { S.slideHit = true; } },
   { id: 'copium', n: 'COPIUM', s: 'DENIAL WELLNESS', r: 1, stack: 1, d: 'Below 35% HP: +40% damage and 2x kill heals.', fx: S => { S.copium = true; } },
   { id: 'hottake', n: 'HOT TAKE', s: 'SPICY OPINIONS', r: 1, stack: 2, d: 'Hits set enemies on fire (12 dmg/s for 3 s).', fx: S => { S.burn += 12; } },
@@ -172,6 +173,7 @@ AR.CHAT = {
   death: ['F', 'F', 'F in chat', 'he is gone', 'L', 'back to the lobby lmao', 'run it back'],
   idle: ['is he lost', 'hello???', 'boring', 'fast forward', 'someone tell him the objective', 'lag'],
   pick: ['sponsored', 'nice pick', 'ad read time', 'he sold out lol', 'we love a brand deal'],
+  levelup: ['LEVEL UP LETS GOOO', 'HES SCALING', 'ding!', 'the grind is real', 'GLOW UP', 'POV: you farmed the chips', 'numbers going up', 'W LEVEL', 'hes evolving'],
   elite: ['VERIFIED?? on our stream??', 'blue check spotted', 'thats a real one', 'paid for verification lmao'],
 };
 

@@ -14,11 +14,13 @@
 AR.Player = (() => {
   const { V3, clamp, rand, damp } = AR;
   const DEG = Math.PI / 180;
-  const G = -24, JUMP = 8.4, AIRJUMP = 7.8, MAXSPD = 8.4, ACCEL = 11, AIRACCEL = 2.4, FRICTION = 8, STOP = 3.2;
+  const G = -24, JUMP = 8.4, AIRJUMP = 7.8, MAXSPD = 7.4, ACCEL = 11, AIRACCEL = 2.4, FRICTION = 8, STOP = 3.2;
+  const SPRINT = 1.45;               // SHIFT sprints by default; the JET DASH sponsor swaps sprint for the dash
   const EYE = 1.62, CROUCH_EYE = 0.98;
 
   const keys = {};
-  const I = { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0 };
+  const I = { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0,
+    padX: 0, padZ: 0, padSprint: false };
   let camera = null, vmScene = null, vmCam = null, vmPass = null, vmRoot = null, vmLight = null, vmAmb = null, boot = null;
   let P = null, S = null;
   const guns = {};          // 'id:tier' -> first-person model from AR.Arsenal
@@ -77,7 +79,7 @@ AR.Player = (() => {
       if (!on()) return;
       switch (e.code) {
         case 'Space': I.jump = 0.14; e.preventDefault(); break;
-        case 'ShiftLeft': case 'ShiftRight': I.dash = true; break;
+        case 'ShiftLeft': case 'ShiftRight': if (S?.dashMode) I.dash = true; break;
         case 'ControlLeft': case 'KeyC': I.crouch = true; e.preventDefault(); break;
         case 'KeyR': I.reload = true; break;
         case 'KeyF': case 'KeyV': I.kick = true; break;
@@ -109,11 +111,11 @@ AR.Player = (() => {
     });
     addEventListener('wheel', e => { if (on()) I.swap = -1; }, { passive: true });
   }
-  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0 }); }
+  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0, padX: 0, padZ: 0, padSprint: false }); }
 
   /* ================================================================== run state */
   function newStats() {
-    return { dmg: 0, rate: 0, crit: 0.04, mag: 0, reload: 1, leech: 0, speed: 0, chips: 0, styleDrain: 1, airJumps: 1, dashes: 2, dashCd: 1,
+    return { dmg: 0, rate: 0, crit: 0.04, mag: 0, reload: 1, leech: 0, speed: 0, chips: 0, styleDrain: 1, airJumps: 1, dashes: 2, dashCd: 1, dashMode: false,
       ricochet: 0, volatile: 0, ragebait: 0, headRefund: 0, kick: 1, kickDash: false, slideHit: false, copium: false, burn: 0, split: false,
       cancel: false, buddy: 0, viral: false, overshield: 0 };
   }
@@ -219,11 +221,18 @@ AR.Player = (() => {
   }
   function move(dt) {
     const b = P.body, v = b.vel;
-    const mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0), mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0);
+    let mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX, mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0) + I.padZ;
+    const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
     const sy = Math.sin(P.yaw), cy = Math.cos(P.yaw);
     let wx = mx * cy - mz * sy, wz = -mx * sy - mz * cy;
     const wl = Math.hypot(wx, wz); if (wl > 0) { wx /= wl; wz /= wl; }
-    const maxSpd = MAXSPD * (1 + S.speed) * (P.ads > 0.5 ? 0.72 : 1) * (P.crouching && P.slideT <= 0 ? 0.5 : 1);
+    const analog = Math.min(1, wl);                                     // a half-pushed stick walks
+    // sprint: hold SHIFT (or click the left stick) while moving forward; firing, aiming, crouching or reloading breaks it
+    const wantSprint = !S.dashMode && (keys.ShiftLeft || keys.ShiftRight || I.padSprint) && mz > 0.35 && !I.ads && !I.fire && !P.crouching && !gun()?.reloading;
+    P.sprinting = wantSprint && (b.onGround || P.sprinting);
+    if (!wantSprint) I.padSprint = I.padSprint && mz > 0.35 && !I.fire;
+    P.sprintK = damp(P.sprintK || 0, P.sprinting ? 1 : 0, 8, dt);
+    const maxSpd = MAXSPD * (1 + S.speed + (S.dashMode ? 0.08 : 0)) * (1 + (SPRINT - 1) * P.sprintK) * Math.max(0.35, analog) * (P.ads > 0.5 ? 0.72 : 1) * (P.crouching && P.slideT <= 0 ? 0.5 : 1);
     const wasGround = b.onGround;
 
     // timers
@@ -234,7 +243,7 @@ AR.Player = (() => {
     P.slideCd -= dt; P.padT -= dt; P.iframes -= dt;
 
     // dash
-    if (I.dash && P.dashCharges > 0) {
+    if (I.dash && S.dashMode && P.dashCharges > 0) {
       P.dashCharges--; if (P.dashRe <= 0) P.dashRe = 1.45 * S.dashCd;
       let dx = wx, dz = wz;
       if (!wl) { dx = -sy; dz = -cy; }
@@ -362,7 +371,7 @@ AR.Player = (() => {
     P.fovPunch = damp(P.fovPunch, 0, 7, rdt);
     const g = gun();
     const adsK = gfOn() ? GunFeel.fov / 75 : 1 - P.ads * (1 - (g?.d.ads || 0.8));
-    const fov = (AR.fov + Math.max(0, P.speed - MAXSPD) * 0.9 + P.fovPunch) * adsK;
+    const fov = (AR.fov + Math.max(0, P.speed - MAXSPD * SPRINT) * 0.9 + (P.sprintK || 0) * 6 + P.fovPunch) * adsK;
     if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
     vmCam.aspect = camera.aspect; vmCam.updateProjectionMatrix();
     // listener for positional audio
@@ -738,11 +747,67 @@ AR.Player = (() => {
     cameraTick(dt, rdt);
     viewmodelTick(rdt);
     if (gfOn()) {
-      const mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0), mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0);
+      const mx = AR.clamp((keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX, -1, 1);
       GunFeel.update(rdt, { ads: I.ads && P.slideT <= 0 && P.kickT <= 0 && P.alive, move: Math.min(1, P.speed / 8), strafe: mx, onGround: P.body.onGround,
-        dash: P.dashT > 0, lookX: -P.swayX / 0.0009, lookY: P.swayY / 0.0009, feetY: P.body.pos.y });
-      void mz;
+        dash: P.dashT > 0, sprint: P.sprinting, lookX: -P.swayX / 0.0009, lookY: P.swayY / 0.0009, feetY: P.body.pos.y });
     }
+    // your own body under the camera: look down to see your fit (arms come from GunFeel's hands)
+    if (window.FPBody && P.alive) {
+      const b = P.body;
+      FPBody.update(rdt, { x: b.pos.x, y: b.pos.y, z: b.pos.z, yaw: P.yaw, pitch: P.pitch, speed: P.speed, onGround: b.onGround, crouch: P.crouching, slide: P.slideT > 0, arms: false });
+    }
+  }
+
+  /* ================================================================== gamepad (js/gamepad.js polls; this maps it)
+   * LS move · RS look (with aim assist) · RT fire · LT aim · A jump · B crouch/slide (hold) · X pick up / reload
+   * Y swap · RB or R3 kick · LB grenade · L3 sprint (dash with JET DASH) · D-pad left/right swap */
+  const _eye = V3(), _to = V3(), _aim = V3();
+  function padTick(pad, rdt) {
+    if (!P || !P.alive) { I.padX = 0; I.padZ = 0; return; }
+    const B = Pad.BTN;
+    I.padX = pad.lx; I.padZ = -pad.ly;
+    // look: response curve, then aim assist (slow down over a target, a gentle pull toward its head)
+    const curve = v => Math.sign(v) * Math.pow(Math.abs(v), 1.8);
+    let lx = curve(pad.rx) * 3.4, ly = curve(pad.ry) * 2.3;                   // rad/s at full tilt
+    const sens = SAVE?.opts?.padSens || 1;
+    const t = assistTarget();
+    if (t && (Math.abs(pad.rx) > 0.05 || Math.abs(pad.ry) > 0.05 || P.speed > 1)) {
+      const k = 0.45 + 0.55 * Math.min(1, t.ang / 0.07);                      // friction: up to 55% slower on target
+      lx *= k; ly *= k;
+      const pull = (P.ads > 0.4 ? 0.9 : 0.45) * rdt;                           // magnetism, stronger while aiming
+      P.yaw += AR.clamp(t.dYaw, -pull, pull); P.pitch = AR.clamp(P.pitch + AR.clamp(t.dPitch, -pull, pull), -1.5, 1.5);
+    }
+    I.lookX += lx * sens * rdt / 0.0021 / (SAVE?.opts?.sens || 1);
+    I.lookY += ly * sens * rdt / 0.0021 / (SAVE?.opts?.sens || 1);
+    I.fire = pad.rt > 0.35;
+    I.ads = pad.lt > 0.35;
+    if (pad.down(B.A)) I.jump = 0.14;
+    I.crouch = pad.held(B.B) || keys.ControlLeft || keys.KeyC || false;
+    if (pad.down(B.X)) { if (!AR.Drops.use()) I.reload = true; }
+    if (pad.down(B.Y) || pad.down(B.LEFT) || pad.down(B.RIGHT)) I.swap = -1;
+    if (pad.down(B.RB) || pad.down(B.R3)) I.kick = true;
+    if (pad.down(B.LB)) I.nade = true;
+    if (pad.down(B.L3)) { if (S.dashMode) I.dash = true; else I.padSprint = !I.padSprint; }
+  }
+  function assistTarget() {
+    if (!AR.Enemies?.list) return null;
+    eyePos(_eye); aimDir(_aim);
+    let best = null;
+    for (const e of AR.Enemies.list) {
+      if (e.dying || e.relay) continue;
+      const h = e.headPos || e.body.pos;
+      _to.set(h.x - _eye.x, h.y - 0.25 - _eye.y, h.z - _eye.z);
+      const d = _to.length(); if (d > 45 || d < 1) continue;
+      _to.divideScalar(d);
+      const ang = Math.acos(Math.min(1, _to.dot(_aim)));
+      const cone = 0.09 + 0.6 / d;                                            // wider up close
+      if (ang > cone || (best && ang >= best.ang)) continue;
+      if (AR.World.los && !AR.World.los(_eye.x, _eye.y, _eye.z, h.x, h.y - 0.25, h.z)) continue;
+      const wantYaw = Math.atan2(-_to.x, -_to.z), wantPitch = Math.asin(_to.y);
+      let dYaw = wantYaw - P.yaw; dYaw = Math.atan2(Math.sin(dYaw), Math.cos(dYaw));
+      best = { ang, dYaw, dPitch: wantPitch - P.pitch };
+    }
+    return best;
   }
 
   function giveGun(id, tier = 0) {
@@ -765,7 +830,7 @@ AR.Player = (() => {
   }
 
   return {
-    init, reset, tick, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, padTick, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };

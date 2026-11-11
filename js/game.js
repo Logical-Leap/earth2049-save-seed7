@@ -66,7 +66,7 @@ let wardrobeCatalog = null;
 function attachWardrobe() { if (wardrobeCatalog && window.Wardrobe) Wardrobe.attach(SAVE, wardrobeCatalog); }
 function loadWardrobe() {
   if (!window.Wardrobe) return;
-  fetch(AVATAR_CATALOG_URL).then(r => r.json()).then(cat => { wardrobeCatalog = cat; attachWardrobe(); updateTitle?.(); })
+  fetch(AVATAR_CATALOG_URL).then(r => r.json()).then(cat => { wardrobeCatalog = cat; attachWardrobe(); updateTitle?.(); window.FPBody?.refresh(); })
     .catch(err => console.warn('[E2049] wardrobe catalog did not load', err));
   Wardrobe.on((type, d) => {
     const inArena = state === 'arena' && window.AR?.Hud;
@@ -98,6 +98,7 @@ function openWardrobe() {
       hubOverlayOpen = false; paused = false;
       persist();
       Haven.refreshWardrobe?.();
+      window.FPBody?.refresh();
       banner('THE FITTING ROOM', L ? 'LOOKING GOOD. SEAM APPROVES.' : 'COME BACK WHEN YOU HAVE MORE DRIP.');
     },
   });
@@ -171,6 +172,7 @@ async function boot() {
   for (const k of Object.keys(WEAPONS)) gunModels[k] = Assets.buildGun(k);
   // first-person gunplay (js/gunfeel.js): arsenal viewmodels, hands, recoil, ADS, reloads, flashes, casings
   if (window.GunFeel) { GunFeel.init({ camera, scene, gunGroup }); GunFeel.preloadMasks(); }
+  window.FPBody?.attach(scene);                       // your own body under the camera (js/fp-body.js)
   window.Boom?.init?.({ scene, camera });          // grenade and plasma explosions (js/boom.js)
   muzzleSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: Assets.starTex(), color: 0xfff2b0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   muzzleSprite.scale.setScalar(0.34);
@@ -1398,7 +1400,7 @@ function updateHubPrompt() {
     prompt.style.display = 'block';
     el('pickupName').textContent = d.name;
     el('pickupName').style.color = d.hologram || '#ffe600';
-    el('pickupKey').textContent = (isTouch ? 'TAP [TALK] — ' : 'PRESS [E] — ') + (d.intel ? 'READ INTEL' : 'TALK');
+    el('pickupKey').textContent = (isTouch ? 'TAP [TALK] — ' : (window.Pad?.active ? 'PRESS [X] — ' : 'PRESS [E] — ')) + (d.intel ? 'READ INTEL' : 'TALK');
     el('btnPick').textContent = 'TALK';
     el('btnPick').style.display = isTouch ? 'flex' : 'none';
     return;
@@ -1416,7 +1418,7 @@ function updateHubPrompt() {
   prompt.style.display = 'block';
   el('pickupName').textContent = name;
   el('pickupName').style.color = '#b884ff';
-  el('pickupKey').textContent = isTouch ? 'TAP [USE] — ' + action : 'PRESS [E] — ' + action;
+  el('pickupKey').textContent = isTouch ? 'TAP [USE] — ' + action : (window.Pad?.active ? 'PRESS [X] — ' : 'PRESS [E] — ') + action;
   el('btnPick').textContent = 'USE';
   el('btnPick').style.display = isTouch ? 'flex' : 'none';
 }
@@ -1496,7 +1498,7 @@ function updateMapMarkerPrompt() {
   prompt.style.display = 'block';
   el('pickupName').textContent = extracting ? 'EXTRACTION READY' : 'LOYALTY BROADCAST TERMINAL';
   el('pickupName').style.color = extracting ? '#9b59ff' : '#ffe600';
-  el('pickupKey').textContent = isTouch ? 'TAP [USE]' : 'PRESS [E] — ' + (extracting ? 'RETURN TO REBEL HAVEN' : 'DISABLE PROPAGANDA FEED');
+  el('pickupKey').textContent = isTouch ? 'TAP [USE]' : (window.Pad?.active ? 'PRESS [X] — ' : 'PRESS [E] — ') + (extracting ? 'RETURN TO REBEL HAVEN' : 'DISABLE PROPAGANDA FEED');
   el('btnPick').textContent = 'USE';
   el('btnPick').style.display = isTouch ? 'flex' : 'none';
   return true;
@@ -1538,7 +1540,7 @@ function updateCratePrompt() {
     const rc = RARITIES[nearCrate.weapon.rar];
     el('pickupName').textContent = nearCrate.weapon.name;
     el('pickupName').style.color = rc.color;
-    el('pickupKey').textContent = isTouch ? 'TAP [TAKE]' : 'PRESS [E] — ' + rc.name.toUpperCase() + ' ' + nearCrate.weapon.cls.toUpperCase();
+    el('pickupKey').textContent = isTouch ? 'TAP [TAKE]' : (window.Pad?.active ? 'PRESS [X] — ' : 'PRESS [E] — ') + rc.name.toUpperCase() + ' ' + nearCrate.weapon.cls.toUpperCase();
     el('btnPick').textContent = 'TAKE';
     el('btnPick').style.display = isTouch ? 'flex' : 'none';
   } else {
@@ -1627,6 +1629,25 @@ function tickTeammateRevive() {
   if (held >= 1800) CoopRoom.completeRevive?.(target.id);
 }
 
+/* controller in the Haven and the district runs (js/gamepad.js): LS move · RS look · RT fire · LT aim · A jump
+   X interact · Y swap · RB reload · LB ability 1 · B ability 2 · L3 sprint (dash with Ghost Protocol) · START pause */
+function padGameplay(dt) {
+  if (!window.Pad?.active || Pad.inMenu) return;
+  const B = Pad.BTN, curve = v => Math.sign(v) * Math.pow(Math.abs(v), 1.8);
+  Input.moveX = clamp(Input.moveX + Pad.lx, -1, 1); Input.moveZ = clamp(Input.moveZ - Pad.ly, -1, 1);
+  const k = (SAVE.opts.padSens || 1) / (0.0034 * (SAVE.opts.sens || 1));
+  Input.lookDX += curve(Pad.rx) * 3.2 * dt * k; Input.lookDY += curve(Pad.ry) * 2.2 * dt * k;
+  Input.fire = Pad.rt > 0.35; Input.ads = Pad.lt > 0.35;
+  if (Pad.down(B.A)) Input.jump = true;
+  if (Pad.down(B.L3)) { if (G?.p?.mods?.dash) Input.dash = true; else Input.sprintPad = !Input.sprintPad; }
+  const tap = code => { Pad.key(code); Pad.key(code, 'keyup'); };
+  if (Pad.down(B.X)) Pad.key('KeyE'); if (Pad.up(B.X)) Pad.key('KeyE', 'keyup');
+  if (Pad.down(B.Y)) tap('KeyQ');
+  if (Pad.down(B.RB)) tap('KeyR');
+  if (Pad.down(B.LB)) tap('KeyF');
+  if (Pad.down(B.B)) tap('KeyC');
+  if (Pad.down(B.START)) setPaused(true);
+}
 function playerTick(dt) {
   const p = G.p;
   if (CoopRoom?.isCoop && p.coopState === 'alive') tickTeammateRevive();
@@ -1649,12 +1670,17 @@ function playerTick(dt) {
   const sy = Math.sin(p.yaw), cy = Math.cos(p.yaw);
   let wx = (ix * cy - iz * sy), wz = (-ix * sy - iz * cy);
 
-  const spd = CFG.BASE_SPEED * (1 + p.mods.spd) * (p.coopState === 'downed' ? 0.28 : 1);
+  // SHIFT / L3 sprints; Ghost Protocol (p.mods.dash) swaps the sprint for the dash
+  const sprintHeld = Input.keys.ShiftLeft || Input.keys.ShiftRight || Input.sprintPad;
+  p.sprinting = !p.mods.dash && sprintHeld && iz > 0.3 && !Input.fire && !Input.ads && p.coopState !== 'downed';
+  if (!p.sprinting && Input.sprintPad && iz <= 0.3) Input.sprintPad = false;
+  p.sprintK = (p.sprintK || 0) + ((p.sprinting ? 1 : 0) - (p.sprintK || 0)) * Math.min(1, dt * 8);
+  const spd = CFG.BASE_SPEED * (1 + p.mods.spd) * (1 + 0.55 * p.sprintK) * (p.coopState === 'downed' ? 0.28 : 1);
   let mvx = wx * spd, mvz = wz * spd;
 
-  // dash
+  // dash (Ghost Protocol only)
   p.dashCdT -= dt;
-  if (Input.dash && p.dashCdT <= 0) {
+  if (Input.dash && p.mods.dash && p.dashCdT <= 0) {
     let ddx = wx, ddz = wz;
     if (!ddx && !ddz) { ddx = -sy; ddz = -cy; }
     const dl = Math.hypot(ddx, ddz) || 1;
@@ -1701,12 +1727,20 @@ function playerTick(dt) {
   camera.rotation.y = p.yaw + rnd(-shk, shk) * 0.5 + (ck ? ck.yaw : 0);
   camera.rotation.x = p.pitch + (ck ? ck.pitch : p.recoil * 0.035) + rnd(-shk, shk);
   camera.rotation.z = rnd(-shk, shk) * 0.4 + (ck ? ck.roll : 0);
+  if (!feel && (p.sprintK > 0.01 || camera.userData.sprintFov)) {      // sprint widens the view a little
+    const base = feel ? GunFeel.fov : 75, want = base + p.sprintK * 7;
+    if (Math.abs(camera.fov - want) > 0.05) { camera.fov = want; camera.updateProjectionMatrix(); }
+    camera.userData.sprintFov = p.sprintK > 0.01;
+  }
+  // your own body: look down to see your fit (in the Haven your arms hang free; with a gun out GunFeel draws them)
+  window.FPBody?.update(dt, { x: p.pos.x, y: p.pos.y, z: p.pos.z, yaw: p.yaw, pitch: p.pitch, speed: Math.hypot(mvx, mvz) * (kl > 0.05 ? 1 : 0),
+    onGround: p.onGround, crouch: false, arms: !(gunGroup && gunGroup.visible) });
 
   // viewmodel: gunfeel (arsenal guns) or the legacy bob + sway + recoil
   if (feel) {
-    GunFeel.update(dt, { ads: Input.ads, move: kl, strafe: clamp(Input.moveX, -1, 1), onGround: p.onGround, dash: p.dashT > 0,
+    GunFeel.update(dt, { ads: Input.ads, move: kl, strafe: clamp(Input.moveX, -1, 1), onGround: p.onGround, dash: p.dashT > 0, sprint: p.sprinting,
       lookX: Input.lastLookX, lookY: Input.lastLookY, feetY: p.pos.y });
-    const fov = GunFeel.fov;
+    const fov = GunFeel.fov + (p.sprintK || 0) * 7;
     if (Math.abs(camera.fov - fov) > 0.05) { camera.fov = fov; camera.updateProjectionMatrix(); }
     const cw = el('crossWrap'); if (cw) cw.style.opacity = String(1 - GunFeel.adsK);
   } else if (curGunObj) {
@@ -2111,7 +2145,7 @@ function hudTick() {
 }
 
 /* ============ input ============ */
-const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, ads: false, dash: false, jump: false, interact: false, keys: {} };
+const Input = { moveX: 0, moveZ: 0, lookDX: 0, lookDY: 0, lastLookX: 0, lastLookY: 0, fire: false, ads: false, dash: false, jump: false, interact: false, sprintPad: false, keys: {} };
 function initInput() {
   const cv = el('c');
   // desktop
@@ -2161,7 +2195,7 @@ function initInput() {
   });
   document.addEventListener('pointerlockchange', () => {
     Input.lookDX = 0; Input.lookDY = 0;
-    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused) setPaused(true);
+    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused && !window.Pad?.active) setPaused(true);
   });
 
   // touch
@@ -2241,6 +2275,7 @@ function keyMove() {
 function setState(s) {
   if (s === 'title' && Haven.active) Haven.exit(scene);
   state = s;
+  window.FPBody?.show(s === 'run' || s === 'arena');
   document.body.classList.toggle('inrun', s === 'run');
   if (gunGroup) { gunGroup.visible = (s === 'run' || s === 'og'); window.GunFeel?.setVisible?.(gunGroup.visible); }
   checkRotateHint();
@@ -2478,6 +2513,8 @@ function wireMenus() {
   });
   el('optSens').value = SAVE.opts.sens * 100;
   el('optSens').oninput = e => { SAVE.opts.sens = e.target.value / 100; persist(); };
+  if (el('optPadSens')) { el('optPadSens').value = (SAVE.opts.padSens || 1) * 100; el('optPadSens').oninput = e => { SAVE.opts.padSens = e.target.value / 100; persist(); }; }
+  if (SAVE.opts.rumble === undefined) SAVE.opts.rumble = true;
   const tog = (id, key, fn) => {
     const b = el(id);
     const upd = () => { b.textContent = SAVE.opts[key] ? 'ON' : 'OFF'; b.classList.toggle('on', SAVE.opts[key]); };
@@ -2486,6 +2523,7 @@ function wireMenus() {
   };
   tog('optMusic', 'music', v => AudioSys.setMusic(v));
   tog('optSfx', 'sfx', v => AudioSys.setSfx(v));
+  if (el('optRumble')) tog('optRumble', 'rumble', v => { if (v) window.Pad?.rumble(0.6, 0.6, 200); });
   el('btnAuto').textContent = 'AUTO: ' + (SAVE.opts.auto ? 'ON' : 'OFF');
   el('btnAuto').classList.toggle('on', SAVE.opts.auto);
 }
@@ -2678,6 +2716,7 @@ function frame(t) {
   let dt = Math.min((t - lastT) / 1000, 0.05); lastT = t;
   if (dt <= 0) return;
   adaptQuality(dt);
+  window.Pad?.poll(dt);
 
   // Pausing in co-op is a local input/menu state. The shared simulation and
   // network stream must keep running, especially when the authority pauses.
@@ -2687,7 +2726,8 @@ function frame(t) {
     G.time += sdt;
     G.shake = Math.max(0, G.shake - dt * 2.4);
 
-    if (!paused) { keyMove(); playerTick(sdt); }
+    if (!paused) { keyMove(); padGameplay(dt); playerTick(sdt); }
+    else if (window.Pad?.active && !Pad.inMenu && Pad.down(Pad.BTN.START)) setPaused(false);
     CoopRoom?.tick?.(sdt);
     flowT -= sdt;
     if (flowT <= 0) { flowT = 0.35; World.computeFlow(G.p.pos.x, G.p.pos.z); }
@@ -2727,6 +2767,10 @@ function frame(t) {
     hudTick();
     AudioSys.setIntensity(G.phase === 'boss' ? 0.95 : 0.35 + G.district * 0.1 + Math.min(0.25, G.enemies.length * 0.03));
   } else if (state === 'arena') {
+    if (window.Pad?.active && AR.active && !Pad.inMenu && !AR.paused && !AR.menu) {
+      if (Pad.down(Pad.BTN.START) || Pad.down(Pad.BTN.BACK)) Arena.pause(true);
+      else AR.Player.padTick(Pad, dt);
+    }
     Arena.tick(dt);
   } else if (state === 'og') {
     World.tick(dt * 0.2, G ? G.time : 0);

@@ -954,7 +954,7 @@ AR.Drops = (() => {
   }
   function collect(d) {
     const P = AR.Player.P;
-    if (d.kind === 'chip') { AR.Mission.addChips(d.value || 1); AR.Sfx.pickup('chip'); }
+    if (d.kind === 'chip') { AR.Mission.addChips(d.value || 1); AR.Sfx.gem(); }
     else if (d.kind === 'ammo') { AR.Player.addAmmo(0.35); AR.Sfx.pickup('ammo'); AR.Hud.toast('+AMMO', ''); }
     else if (d.kind === 'health') { AR.Player.heal(30); AR.Sfx.pickup('health'); AR.Hud.toast('+30 HP', 'HYPE DOG CONSUMED'); }
     else if (d.kind === 'armor') { P.armor = Math.min(P.maxArmor, P.armor + 25); AR.Sfx.pickup('ammo'); AR.Hud.toast('+25 ARMOR', ''); }

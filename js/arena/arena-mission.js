@@ -36,6 +36,7 @@ AR.Mission = (() => {
       lines: [], lineT: 0, chatT: 0, lastChat: '', bossE: null, done: false, beatLights: [], jumbo: null, ring: null, startT: performance.now(),
       longest: 0, airKills: 0, reroll: 15, rerolls: 0, maxStreakName: '',
       boots: 0, dripTags: 0, crateDrip: 0, dist: 0, distAcc: 0, unlocks: [],
+      xp: 0, level: 1, xpNeed: xpNeed(1), levelQueue: 0, leveling: false, shownLevel: 1,
     };
     save.runs = (save.runs || 0) + 1;
     M.heatMul = 1 + M.heat * 0.08;
@@ -49,6 +50,7 @@ AR.Mission = (() => {
     placeCollectibles();
     AR.Sfx.ambience(true);
     AR.Hud.score(0, 0, M.viewers);
+    AR.Hud.xp(1, 0, 0, false);
     AR.Hud.style(0, 0.3, '');
     AR.Hud.objective('<b>CAST IN</b> // ENGAGEMENT PLAZA, SHILLZ CENTRAL');
     // intro sequence
@@ -347,8 +349,9 @@ AR.Mission = (() => {
     chatBurst('pick', 2);
   }
   function rollPerks() {
-    const pool = AR.PERKS.filter(p => (M.perks[p.id] || 0) < p.stack);
-    const w = p => [1, 0.55 + M.heat * 0.05, 0.22 + M.heat * 0.03][p.r];
+    const S = AR.Player.S;
+    const pool = AR.PERKS.filter(p => (M.perks[p.id] || 0) < p.stack && (!p.needs || S[p.needs]));
+    const w = p => [1, 0.55 + M.heat * 0.05, 0.22 + M.heat * 0.03][p.r] * (p.boost || 1);
     const out = [];
     while (out.length < 3 && pool.length) {
       const tot = pool.reduce((a, p) => a + w(p), 0);
@@ -359,26 +362,76 @@ AR.Mission = (() => {
     return out;
   }
   function offerPerks(next) {
+    showOffer({ title: 'SPONSOR OFFERS', sub: 'A BRAND WANTS TO WORK WITH YOU // PICK ONE', kind: 'sponsor', heal: 25, refill: true,
+      after: () => setTimeout(() => { if (!M) return; if (next === 'act2') startAct2(); else if (next === 'act3') startAct3(); else startBoss(); }, 700) });
+  }
+  // the three-card pick, for sponsor breaks and level-ups alike
+  function showOffer(o) {
     const offer = rollPerks();
     const names = ['COMMON', 'RARE', 'LEGENDARY'];
-    const h = AR.Hud.cards('SPONSOR OFFERS', 'PICK ONE BRAND DEAL', offer.map(p => ({
-      r: p.r, html: `<div class="r" style="color:${['#3a6', '#48f', '#f2b'][p.r]}">${names[p.r]}${M.perks[p.id] ? ' // OWNED x' + M.perks[p.id] : ''}</div>
+    const h = AR.Hud.cards(o.title, o.sub, offer.map(p => ({
+      r: p.r, html: `<div class="r" style="color:${['#3f6', '#4af', '#f3c'][p.r]}">${names[p.r]}${M.perks[p.id] ? ' // OWNED x' + M.perks[p.id] : ''}</div>
         <div class="n">${p.n}</div><div class="s">SPONSORED BY ${p.s}</div><div class="d">${p.d}</div>`,
     })), i => {
       const p = offer[i];
       M.perks[p.id] = (M.perks[p.id] || 0) + 1; M.picks++; WR('bump', 'perks');
       p.fx(AR.Player.S, AR.Player.P);
-      AR.Sfx.ui('pick'); AR.Hud.toast(p.n, 'SPONSORED BY ' + p.s);
+      AR.Hud.toast(p.n, 'SPONSORED BY ' + p.s);
       chat(pick(AR.CHAT_USERS), pick(AR.CHAT.pick));
       AR.menu = false; AR.menuClosed?.(); AR.lockPointer();
-      AR.Player.refillMags();
-      AR.Player.heal(25);
+      if (o.refill) AR.Player.refillMags();
+      AR.Player.heal(o.heal || 0);
       if (AR.Player.S.buddy && !M.buddy) makeBuddy();
-      setTimeout(() => { if (!M) return; if (next === 'act2') startAct2(); else if (next === 'act3') startAct3(); else startBoss(); }, 700);
+      const P = AR.Player.P;
+      AR.Fx.emit(AR.Fx.glow, P.body.pos.x, P.body.pos.y + 1, P.body.pos.z, [0x39ff8a, 0x4da6ff, 0xff2bd6][p.r], 40 + p.r * 30, 5, 0.7, { up: 3 });
+      o.after?.(p);
     }, [{ t: `REROLL (${M.reroll} GIGATECH)`, fn: () => {
       if (M.chips < M.reroll) { AR.Sfx.dry(); return; }
-      M.chips -= M.reroll; M.reroll += 10; h.close(); AR.Sfx.ui('card'); offerPerks(next);
-    } }]);
+      M.chips -= M.reroll; M.reroll += 10; h.close(); AR.Sfx.ui('card'); showOffer(o);
+    } }], { kind: o.kind, level: o.level });
+  }
+
+  /* ================================================================== XP: the yellow GigaTech chips level you up (Vampire Survivors style)
+   * Every chip you vacuum up is 1 XP (relays and clean waves add a bonus). Each level stops the stream for a
+   * fanfare and a three-card sponsor pick. Chips still bank as GigaTech and still pay for rerolls. */
+  function xpNeed(L) { return Math.round(8 + L * 5 + L * L * 0.6); }
+  function addXp(n) {
+    if (!M || M.phase === 'results') return;
+    M.xp += n;
+    let up = 0;
+    while (M.xp >= M.xpNeed) { M.xp -= M.xpNeed; M.level++; M.xpNeed = xpNeed(M.level); M.levelQueue++; up++; }
+    AR.Hud.xp(M.level, M.xp / M.xpNeed, n, up > 0);
+    if (up) tryLevelUp();
+  }
+  const LEVEL_OK = ['act1', 'act2', 'act3', 'boss'];
+  function tryLevelUp() {
+    if (!M || M.leveling || M.levelQueue <= 0 || AR.menu || !LEVEL_OK.includes(M.phase) || M.done) return;
+    M.leveling = true;
+    const lv = ++M.shownLevel, P = AR.Player.P, b = P.body.pos;
+    // the fanfare: slow-mo, a pillar of light, a shockwave, the sting, the screen burst, the chat losing it
+    AR.Sfx.levelUp(lv);
+    AR.Hud.levelUp(lv);
+    AR.slowmo(1.1, 0.18);
+    AR.Player.addTrauma(0.22); P.fovPunch += 14;
+    AR.Player.heal(10);
+    AR.Fx.flash(b.x, b.y + 1, b.z, 0xffe680, 6, 0.35);
+    AR.Fx.shock(b.x, b.y + 0.05, b.z, 0xffd400, 9, 0.7);
+    AR.Fx.light(b.x, b.y + 2, b.z, 0xffd400, 10, 16, 0.9);
+    for (let k = 0; k < 4; k++) setTimeout(() => { if (M) AR.Fx.emit(AR.Fx.glow, b.x, b.y + 0.2 + k * 0.6, b.z, k % 2 ? 0x00e5ff : 0xffd400, 36, 3 + k, 1.0, { up: 7 }); }, k * 90);
+    window.Pad?.rumble(0.8, 1, 500);
+    chatBurst('levelup', 4);
+    M.viewers += 6000;
+    setTimeout(() => {
+      if (!M) return;
+      if (AR.menu || !LEVEL_OK.includes(M.phase) || M.done) { M.leveling = false; M.shownLevel--; return; }     // try again when the break ends
+      AR.Enemies.clearEnemyProjs();
+      AR.menu = true; AR.unlockPointer();
+      showOffer({ title: `LEVEL ${lv}`, sub: 'YOUR CLOUT LEVELLED UP // PICK A BRAND DEAL', kind: 'level', level: lv, heal: 15,
+        after: () => {
+          M.levelQueue--; M.leveling = false;
+          if (M.levelQueue > 0) setTimeout(tryLevelUp, 450);
+        } });
+    }, 1150);
   }
 
   /* ================================================================== spawning */
@@ -527,7 +580,11 @@ AR.Mission = (() => {
   }
 
   /* ================================================================== events from the other systems */
-  function onShot() { M.idleT = 0; }
+  function onShot(g) {
+    M.idleT = 0;
+    const k = g?.d ? Math.min(1, (g.d.dmg * (g.d.pellets || 1)) / 140) : 0.2;           // heavier guns kick the hands harder
+    window.Pad?.rumble(0.08 + k * 0.5, 0.2 + k * 0.4, 45 + k * 60);
+  }
   function onDamage(e, amt, info) {
     void info;
     if (!e.relay && !e.boss) return;
@@ -537,7 +594,7 @@ AR.Mission = (() => {
   function onKill(e, info, gib) {
     const P = AR.Player.P, S = AR.Player.S;
     if (e.relay) {
-      M.relaysDown++; WR('bump', 'relays');
+      M.relaysDown++; WR('bump', 'relays'); addXp(12);
       if (e.light) { e.light.intensity = 0; e.light = null; }
       AR.hitstop(0.12); AR.Player.addTrauma(0.5);
       AR.Enemies.explode(e.body.pos.x, e.body.pos.y + 3, e.body.pos.z, 5, 25, 'enemy', 8);
@@ -607,6 +664,7 @@ AR.Mission = (() => {
     M.chips += 0;                                          // chips come from pickups
     // feedback
     AR.Hud.hitmark(true, true);
+    window.Pad?.rumble(e.d.hp > 300 || e.elite ? 0.5 : 0.12, 0.35, e.elite ? 160 : 70);
     AR.Sfx.kill(Math.min(10, M.multi - 1), e.d.hp > 300);
     if (head) AR.Sfx.headshot();
     AR.hitstop(e.d.hp > 300 || e.elite ? 0.09 : head ? 0.05 : 0.035);
@@ -635,13 +693,14 @@ AR.Mission = (() => {
     M.waveLive = false;
     const clean = M.waveHurt < 1;
     AR.Hud.banner('WAVE CLEAR', clean ? 'NO DAMAGE BONUS +2500' : '', 1.8);
-    if (clean) { addScore(2500 * rankMult()); WR('bump', 'flawless'); }
+    if (clean) { addScore(2500 * rankMult()); WR('bump', 'flawless'); addXp(6); }
     AR.Sfx.ui('objective');
     nextWave();
   }
   function onHurt(amount) {
     M.hurtTotal += amount; M.waveHurt += amount;
     WR('bump', 'hits'); WR('bump', 'dmg', amount);
+    window.Pad?.rumble(Math.min(1, 0.3 + amount / 50), 0.45, 140);
     M.styleV = Math.max(0, M.styleV - Math.min(0.9, 0.25 + amount / 40));
     rankUpdate();
     if (Math.random() < 0.3) chat(pick(AR.CHAT_USERS), pick(AR.Player.P.hp < 30 ? AR.CHAT.low : AR.CHAT.hurt));   // NOSONAR
@@ -655,7 +714,7 @@ AR.Mission = (() => {
     queueLines(AR.LINES.death);
     setTimeout(() => finish(false), 2600);
   }
-  function addChips(n) { M.chips += n; }
+  function addChips(n) { M.chips += n; addXp(n); }
   /* ================================================================== wardrobe: DRIP tags, the merch crate, the cone */
   function WR(fn, ...a) { const W = window.Wardrobe; if (W?.ready) return W[fn](...a); return undefined; }
   function addDrip(n, kind) {
@@ -728,7 +787,7 @@ AR.Mission = (() => {
       ['BEST STREAK', M.bestMulti >= 2 ? `${M.maxStreakName} (x${M.bestMulti})` : '—'], ['PEAK STYLE', `${AR.RANKS[M.maxRank].k} // ${AR.RANKS[M.maxRank].n}`],
       ['AIR KILLS', M.airKills], ['LONGEST KILL', Math.round(M.longest) + ' M'], ['DAMAGE TAKEN', Math.round(M.hurtTotal)],
       ['SPONSORS', Object.keys(M.perks).length ? Object.entries(M.perks).map(([id, n]) => AR.PERKS.find(p => p.id === id).n + (n > 1 ? ' x' + n : '')).join(', ') : '—'],
-      ['HEAT', M.heat],
+      ['HEAT', M.heat], ['LEVEL', `${M.level}  (${Object.values(M.perks).reduce((a, n) => a + n, 0)} BRAND DEALS)`],
     ];
     if (drip) {
       const extra = drip.rows.filter(r => /FIRST WIN|TAGS|CRATE/.test(r[0])).map(r => r[0].replace(' x2', '') + ' +' + r[1]);
@@ -753,6 +812,7 @@ AR.Mission = (() => {
     linesTick(rdt);
     stageTick(dt);
     if (M.phase === 'results') return;
+    if (M.levelQueue > 0 && !M.leveling) tryLevelUp();
     // distance covered (wardrobe feat), flushed once a second
     const pv = AR.Player.P.body.vel;
     if (pv) { M.distAcc += Math.hypot(pv.x, pv.z) * dt; if (M.distAcc >= 25) { WR('bump', 'arenaM', Math.round(M.distAcc)); M.distAcc = 0; } }
@@ -810,7 +870,7 @@ AR.Mission = (() => {
     dmgMult: () => (M ? 1 + (M.rank >= 3 ? 0.1 : 0) + M.rage * 0.08 : 1),
     adrenal: () => (M && M.rank >= 4 ? 1.15 : 1),
     incomingMult: () => 1,
-    get heat() { return M?.heat || 0; }, get heatMul() { return M?.heatMul || 1; }, get speedMul() { return M?.speedMul || 1; }, get fireMul() { return M?.fireMul || 1; },
+    get heat() { return M?.heat || 0; }, addXp, get heatMul() { return M?.heatMul || 1; }, get speedMul() { return M?.speedMul || 1; }, get fireMul() { return M?.fireMul || 1; },
     get projMul() { return M?.projMul || 1; }, get swarmSpeed() { return M?.phase === 'extract' ? 1.3 : 1; }, get rank() { return M?.rank || 0; }, get phase() { return M?.phase; },
     get M() { return M; },
   };

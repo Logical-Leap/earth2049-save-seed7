@@ -224,9 +224,78 @@ AR.Sfx = (() => {
     else if (kind === 'pick') { for (let i = 0; i < 4; i++) tone(b, t + i * 0.05, 0.12, 'square', 523 * Math.pow(2, i * 4 / 12), 523 * Math.pow(2, i * 4 / 12), 0.12); }
     else if (kind === 'rank') { tone(b, t, 0.3, 'square', 392, 392, 0.12); tone(b, t + 0.1, 0.3, 'square', 523, 523, 0.12); tone(b, t + 0.2, 0.5, 'square', 784, 784, 0.12); }
     else if (kind === 'alarm') { for (let i = 0; i < 3; i++) tone(b, t + i * 0.22, 0.18, 'square', 880, 660, 0.12); }
+    else if (kind === 'hover') { tone(b, t, 0.035, 'square', 1900, 1800, 0.06); }
     else if (kind === 'objective') { tone(b, t, 0.2, 'triangle', 660, 660, 0.25); tone(b, t + 0.15, 0.35, 'triangle', 990, 990, 0.25); }
     else tone(b, t, 0.05, 'square', 1200, 1100, 0.1);
   }
+  /* ------------------------------------------------------------------ the dopamine department */
+  const hz = n => 440 * Math.pow(2, (n - 69) / 12);                         // midi note -> Hz
+  // a detuned saw stack through a sweeping lowpass: the "choir" under a fanfare chord
+  function padChord(dest, t, notes, dur, peak, sweep = [700, 5200]) {
+    const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.Q.value = 2;
+    f.frequency.setValueAtTime(sweep[0], t); f.frequency.exponentialRampToValueAtTime(sweep[1], t + dur * 0.35); f.frequency.exponentialRampToValueAtTime(sweep[0] * 1.4, t + dur);
+    const g = ctx.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + 0.04); g.gain.setValueAtTime(peak * 0.8, t + dur * 0.5); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    f.connect(g); g.connect(dest);
+    for (const n of notes) for (const det of [-9, 0, 8]) {
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = hz(n); o.detune.value = det;
+      const lfo = ctx.createOscillator(), lg = ctx.createGain(); lfo.frequency.value = 5.5; lg.gain.value = 6; lfo.connect(lg); lg.connect(o.detune);
+      o.connect(f); o.start(t); o.stop(t + dur + 0.05); lfo.start(t); lfo.stop(t + dur + 0.05);
+    }
+  }
+  function levelUp(level = 2) {
+    if (!ok()) return;
+    const b = voiceBus(0.85, 0, 0.55), t = now(), up = Math.min(5, Math.floor(level / 3));            // keys climb every few levels
+    const root = 60 + up;
+    tone(b, t, 0.7, 'sine', 140, 38, 0.9, 0.003);                           // the floor drops out
+    noise(b, t, 0.5, 'lowpass', 1800, 80, 0.7, 0.5, 0.002);
+    noise(b, t, 0.35, 'highpass', 900, 9000, 0.6, 0.25, 0.25, 'lin');       // whoosh up
+    const arp = [0, 4, 7, 12, 16, 19, 24];
+    arp.forEach((n, i) => {                                                   // the ding ding ding ding
+      tone(b, t + 0.05 + i * 0.055, 0.22, 'square', hz(root + 12 + n), hz(root + 12 + n), 0.13);
+      tone(b, t + 0.05 + i * 0.055, 0.3, 'triangle', hz(root + 24 + n), hz(root + 24 + n), 0.07);
+    });
+    padChord(b, t + 0.42, [root, root + 4, root + 7, root + 12, root + 16], 1.5, 0.11);           // the big major chord
+    tone(b, t + 0.42, 1.4, 'sine', hz(root - 12), hz(root - 12), 0.35, 0.01);                       // sub under it
+    for (let i = 0; i < 9; i++) {                                                                  // sparkles falling over the top
+      const n = root + 31 + [0, 4, 7, 12][i % 4] - (i > 4 ? 12 : 0);
+      tone(b, t + 0.5 + i * 0.09 + R(0, 0.03), 0.25, 'triangle', hz(n), hz(n), 0.06);
+    }
+    noise(b, t + 0.42, 1.2, 'highpass', 7000, 9000, 0.3, 0.05, 0.02);        // shimmer
+  }
+  let gemN = 0, gemT = 0;
+  function gem() {
+    // every chip in a quick run of pickups chimes a little higher, like coins in a combo
+    if (!ok()) return;
+    const t = now();
+    gemN = t - gemT < 0.55 ? Math.min(gemN + 1, 24) : 0; gemT = t;
+    const b = voiceBus(0.28, 0, 0.25), f = hz(84 + [0, 2, 4, 7, 9, 12, 14, 16, 19, 21, 24, 26, 28, 31, 33, 36][Math.min(15, Math.floor(gemN * 0.66))]);
+    tone(b, t, 0.07, 'square', f, f, 0.1); tone(b, t + 0.03, 0.12, 'triangle', f * 2, f * 2, 0.07);
+  }
+  function cardDeal(i, r = 0) {
+    if (!ok()) return;
+    const b = voiceBus(0.5, (i - 1) * 0.5, 0.35), t = now();
+    noise(b, t, 0.2, 'bandpass', 2400, 400, 1.2, 0.35, 0.01);                // whoosh in
+    tone(b, t + 0.08, 0.06, 'square', 1600, 1500, 0.1);                       // the card lands
+    if (r === 1) { tone(b, t + 0.12, 0.25, 'triangle', hz(84), hz(84), 0.15); tone(b, t + 0.2, 0.35, 'triangle', hz(91), hz(91), 0.13); }
+    if (r === 2) {                                                            // legendary: a choir and a bell
+      padChord(b, t + 0.1, [76, 80, 83, 88], 1.1, 0.06, [1200, 7000]);
+      [88, 92, 95, 100].forEach((n, k) => tone(b, t + 0.14 + k * 0.07, 0.5, 'triangle', hz(n), hz(n), 0.09));
+    }
+  }
+  function cardHover() {
+    if (!ok()) return;
+    const b = voiceBus(0.22, 0, 0.1), t = now();
+    tone(b, t, 0.04, 'square', 2200, 2000, 0.07);
+  }
+  function cardPick(r = 0) {
+    if (!ok()) return;
+    const b = voiceBus(0.8, 0, 0.5), t = now(), root = 64 + r * 2;
+    tone(b, t, 0.35, 'sine', 110, 45, 0.7, 0.002);                            // stamp
+    noise(b, t, 0.18, 'lowpass', 3000, 200, 0.8, 0.5, 0.002);
+    [0, 7, 12, 16, 19, 24].forEach((n, k) => tone(b, t + 0.06 + k * 0.04, 0.2, 'square', hz(root + 12 + n), hz(root + 12 + n), 0.1));
+    padChord(b, t + 0.28, [root, root + 4, root + 7, root + 12], 0.9 + r * 0.4, 0.08 + r * 0.02);
+  }
+
   function heartbeat(level) {
     if (!ok()) return;
     const b = voiceBus(0.5 * level, 0, 0), t = now();
@@ -256,7 +325,7 @@ AR.Sfx = (() => {
   return {
     ambience,
     init, gun, dry: dry_, reload, hit, kill, headshot, hurt, shieldBreak, step, jump, land, dash, slide, pad, kick, pickup,
-    explosion, enemyShot, telegraph, enemyHurt, groan, relayHum, ui, heartbeat, listener,
+    explosion, enemyShot, telegraph, enemyHurt, groan, relayHum, ui, heartbeat, listener, levelUp, gem, cardDeal, cardHover, cardPick,
     set enabled(v) { enabled = v; },
   };
 })();
