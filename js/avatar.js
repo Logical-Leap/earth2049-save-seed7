@@ -9,6 +9,8 @@
  *  - item.replaces: 'b_*' hides that body segment; a bare bone name hides that bone's pieces from items of a
  *    lower-priority category (gloves over sleeves, boots over trouser cuffs)
  *  - headgear.hair: 'all' any hair, 'short' only short hair, 'none' no hair (the buzz scalp stays)
+ *  - headgear.cut: the hat covers the crown; hair above its rim is clipped away (renderer.localClippingEnabled must be
+ *    true) and tall styles are tucked away. headgear.fit grows bands to sit on the hair; headgear.clear lifts floaters
  *  - item.blocks: hides a whole category (sealed helmets hide face gear)
  *  - tint: image 2 of every kit is a slot mask (value = slot * 32); texel *= the player's colour for that slot
  *  - first person: hide everything under the head bone; arms, legs and feet stay visible
@@ -142,7 +144,8 @@
     for (const c of CAT.categories) eq[c.id] = ITEMS[L.sex][L.items[c.id]] || ITEMS[L.sex][defaultItem(L.sex, c.id)];
     const blocked = new Set(Object.values(eq).flatMap(i => i.blocks || []));
     const hat = eq.head, hair = eq.hair;
-    const hairOk = !hat.hair || hat.hair === 'all' || (hat.hair === 'short' && hair.length === 'short');
+    // hats that cover the crown trim the hair above their rim (fitHat) but tuck tall styles (afro, bun, mohawk) away
+    const hairOk = (!hat.hair || hat.hair === 'all' || (hat.hair === 'short' && hair.length === 'short')) && !(hat.cut && hair.length === 'tall');
     const show = {}, baseHide = new Set(), pieceHide = [];
     for (const c of CAT.categories) show[c.id] = !blocked.has(c.id) && !(c.id === 'hair' && !hairOk);
     for (const c of CAT.categories) {
@@ -184,6 +187,10 @@
         if (o.material.name !== 'prop' && o.material.name !== 'glow') o.material = this.mats.base;
       });
       this.worn = {}; this.firstPerson = false; this.action = null;
+      // rest pose: hat cut planes are given in rest body space; keep them in the head bone's space so they follow it
+      this.root.updateMatrixWorld(true);
+      this.headRestInv = this.head.matrixWorld.clone().invert();
+      this.cutLocal = null; this.cutPlane = new THREE.Plane();
       this.apply(L);
     }
     apply(L) {
@@ -210,9 +217,31 @@
           target.add(n); this.worn[c.id].push(n);
         }
       }
+      this.fitHat(R);
       this.tint(L.colors);
       if (this.firstPerson) this.setFirstPerson(true);
       return this;
+    }
+    // hats vs hair (catalog.rules.hat_fit): hats over the crown clip the hair above their rim (needs
+    // renderer.localClippingEnabled), bands grow to sit on the hair, floating pieces rise above tall hair
+    fitHat(R) {
+      const hat = R.eq.head, hair = R.show.hair ? R.eq.hair : ITEMS[this.sex].hair_buzz;
+      const hm = this.mats.hair;
+      if (hat.cut && R.show.hair) {
+        const [yf, yb] = hat.cut;
+        const n = new THREE.Vector3(0, -.2, yf - yb).normalize();
+        this.cutLocal = new THREE.Plane().setFromNormalAndCoplanarPoint(n, new THREE.Vector3(0, yf, .1)).applyMatrix4(this.headRestInv);
+        hm.clippingPlanes = [this.cutPlane]; this.updateCut();
+      } else { this.cutLocal = null; hm.clippingPlanes = []; }
+      hm.needsUpdate = true;
+      const s = hat.fit ? (hat.fit[hair.id] || 1) : 1;
+      const lift = hat.clear != null ? Math.max(0, (hair.top || 0) + .015 - hat.clear) : 0;
+      for (const n of this.worn.head || []) { n.scale.set(s, 1, s); n.position.y = lift; }
+    }
+    updateCut() {
+      if (!this.cutLocal) return;
+      this.head.updateWorldMatrix(true, false);
+      this.cutPlane.copy(this.cutLocal).applyMatrix4(this.head.matrixWorld);
     }
     tint(colors) {
       const t = [[1, 1, 1]];
@@ -237,7 +266,7 @@
       a.reset().fadeIn(fade).play(); if (this.action) this.action.fadeOut(fade);
       this.action = a; this.clipName = clip.name; return a;
     }
-    update(dt) { this.mixer.update(dt); }
+    update(dt) { this.mixer.update(dt); this.updateCut(); }
     // first person: hide the head and everything worn on it; arms, legs and feet stay so the player sees their fit
     setFirstPerson(on) {
       this.firstPerson = !!on;

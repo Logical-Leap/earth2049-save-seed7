@@ -814,7 +814,8 @@
     "flavor": "Low maintenance. Low bandwidth.",
     "unlock": "Default",
     "length": "short",
-    "default": true
+    "default": true,
+    "top": 0.006
    },
    {
     "id": "hair_short",
@@ -824,7 +825,8 @@
     "flavor": "Regulation length, irregular attitude.",
     "unlock": "Default",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.008
    },
    {
     "id": "hair_slick",
@@ -834,7 +836,8 @@
     "flavor": "Smells like a quarterly review.",
     "unlock": "Reach Level 2",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.011
    },
    {
     "id": "hair_undercut",
@@ -844,7 +847,8 @@
     "flavor": "Shaved sides for the neural port.",
     "unlock": "Reach Level 4",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.017
    },
    {
     "id": "hair_bob",
@@ -854,7 +858,8 @@
     "flavor": "Sharp enough to cut a contract.",
     "unlock": "Reach Level 4",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.006
    },
    {
     "id": "hair_long",
@@ -864,7 +869,8 @@
     "flavor": "Hasn't seen a barber since the Collapse.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.006
    },
    {
     "id": "hair_shaggy",
@@ -874,7 +880,8 @@
     "flavor": "Styled by sleeping on it for a year.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.009
    },
    {
     "id": "hair_ponytail",
@@ -884,7 +891,8 @@
     "flavor": "Practical. Gets caught in exactly one door.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.007
    },
    {
     "id": "hair_afro",
@@ -894,7 +902,8 @@
     "flavor": "Volume settings: maximum.",
     "unlock": "Reach Level 6",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.083
    },
    {
     "id": "hair_bun",
@@ -904,7 +913,8 @@
     "flavor": "Holds three styluses and a grudge.",
     "unlock": "Reach Level 6",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.079
    },
    {
     "id": "hair_mohawk",
@@ -914,7 +924,8 @@
     "flavor": "Doubles as an antenna. Allegedly.",
     "unlock": "Hijack 10 broadcasts",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.108
    },
    {
     "id": "head_none",
@@ -933,8 +944,12 @@
     "rarity": 0,
     "flavor": "Standard issue for sleeping on public transit.",
     "unlock": "Default",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.66,
+     1.588
+    ]
    },
    {
     "id": "head_cap",
@@ -943,8 +958,12 @@
     "rarity": 0,
     "flavor": "The G stands for \"GigaCorp?\" Nobody is sure.",
     "unlock": "Reach Level 2",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.623,
+     1.588
+    ]
    },
    {
     "id": "head_bandana",
@@ -954,7 +973,20 @@
     "flavor": "Tied the way the old rebels tied it.",
     "unlock": "Join a co-op run",
     "hair": "all",
-    "default": false
+    "default": false,
+    "fit": {
+     "hair_buzz": 1.202,
+     "hair_short": 1.207,
+     "hair_slick": 1.239,
+     "hair_undercut": 1.209,
+     "hair_bob": 1.285,
+     "hair_long": 1.333,
+     "hair_shaggy": 1.279,
+     "hair_ponytail": 1.207,
+     "hair_afro": 1.839,
+     "hair_bun": 1.207,
+     "hair_mohawk": 1.234
+    }
    },
    {
     "id": "head_foil",
@@ -963,8 +995,12 @@
     "rarity": 1,
     "flavor": "Blocks 98% of targeted ads. The other 2% are about tinfoil.",
     "unlock": "Get hit by 50 Ad Broadcasts",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.668,
+     1.618
+    ]
    },
    {
     "id": "head_catears",
@@ -974,7 +1010,21 @@
     "flavor": "Streams your purring to 4 followers.",
     "unlock": "Revive 10 teammates",
     "hair": "all",
-    "default": false
+    "default": false,
+    "clear": 0.008,
+    "fit": {
+     "hair_buzz": 1.263,
+     "hair_short": 1.269,
+     "hair_slick": 1.266,
+     "hair_undercut": 1.263,
+     "hair_bob": 1.376,
+     "hair_long": 1.429,
+     "hair_shaggy": 1.372,
+     "hair_ponytail": 1.269,
+     "hair_afro": 2.198,
+     "hair_bun": 1.269,
+     "hair_mohawk": 1.263
+    }
    },
    {
     "id": "head_tac",
@@ -983,8 +1033,12 @@
     "rarity": 2,
     "flavor": "Rated for bullets, rubble and bad takes.",
     "unlock": "Clear District 2",
-    "hair": "none",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.598,
+     1.548
+    ]
    },
    {
     "id": "head_cone",
@@ -993,8 +1047,12 @@
     "rarity": 3,
     "flavor": "The city stopped fixing roads, so the cones went free.",
     "unlock": "Find it in the Plaza",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.648,
+     1.648
+    ]
    },
    {
     "id": "head_cowboy",
@@ -1003,8 +1061,12 @@
     "rarity": 3,
     "flavor": "There will be data.",
     "unlock": "Extract with 5,000 GigaTech",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.652,
+     1.652
+    ]
    },
    {
     "id": "head_tophat",
@@ -1013,8 +1075,12 @@
     "rarity": 3,
     "flavor": "From before money was a subscription.",
     "unlock": "Spend 10,000 GigaTech",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.652,
+     1.652
+    ]
    },
    {
     "id": "head_recon",
@@ -1037,7 +1103,20 @@
     "flavor": "Worn by whoever owned the server you live on.",
     "unlock": "Defeat Chairman Zhu",
     "hair": "all",
-    "default": false
+    "default": false,
+    "fit": {
+     "hair_buzz": 1.183,
+     "hair_short": 1.188,
+     "hair_slick": 1.221,
+     "hair_undercut": 1.294,
+     "hair_bob": 1.241,
+     "hair_long": 1.278,
+     "hair_shaggy": 1.376,
+     "hair_ponytail": 1.19,
+     "hair_afro": 1.835,
+     "hair_bun": 1.19,
+     "hair_mohawk": 1.292
+    }
    },
    {
     "id": "head_halo",
@@ -1047,7 +1126,8 @@
     "flavor": "A ring of light that hums when Turing lies.",
     "unlock": "Break the loop",
     "hair": "all",
-    "default": false
+    "default": false,
+    "clear": 0.085
    },
    {
     "id": "eyes_none",
@@ -1137,6 +1217,15 @@
     "rarity": 3,
     "flavor": "Honk if you hate late capitalism.",
     "unlock": "Get downed 100 times",
+    "default": false
+   },
+   {
+    "id": "eyes_patch",
+    "cat": "eyes",
+    "name": "Legendary Eyepatch",
+    "rarity": 4,
+    "flavor": "Kept you waiting, huh? Cardboard box sold separately.",
+    "unlock": "Hide in the cardboard box in the Haven",
     "default": false
    },
    {
@@ -1956,7 +2045,8 @@
     "flavor": "Low maintenance. Low bandwidth.",
     "unlock": "Default",
     "length": "short",
-    "default": true
+    "default": true,
+    "top": 0.006
    },
    {
     "id": "hair_short",
@@ -1966,7 +2056,8 @@
     "flavor": "Regulation length, irregular attitude.",
     "unlock": "Default",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.008
    },
    {
     "id": "hair_slick",
@@ -1976,7 +2067,8 @@
     "flavor": "Smells like a quarterly review.",
     "unlock": "Reach Level 2",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.011
    },
    {
     "id": "hair_undercut",
@@ -1986,7 +2078,8 @@
     "flavor": "Shaved sides for the neural port.",
     "unlock": "Reach Level 4",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.017
    },
    {
     "id": "hair_bob",
@@ -1996,7 +2089,8 @@
     "flavor": "Sharp enough to cut a contract.",
     "unlock": "Reach Level 4",
     "length": "short",
-    "default": false
+    "default": false,
+    "top": 0.006
    },
    {
     "id": "hair_long",
@@ -2006,7 +2100,8 @@
     "flavor": "Hasn't seen a barber since the Collapse.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.006
    },
    {
     "id": "hair_shaggy",
@@ -2016,7 +2111,8 @@
     "flavor": "Styled by sleeping on it for a year.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.009
    },
    {
     "id": "hair_ponytail",
@@ -2026,7 +2122,8 @@
     "flavor": "Practical. Gets caught in exactly one door.",
     "unlock": "Default",
     "length": "long",
-    "default": false
+    "default": false,
+    "top": 0.007
    },
    {
     "id": "hair_afro",
@@ -2036,7 +2133,8 @@
     "flavor": "Volume settings: maximum.",
     "unlock": "Reach Level 6",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.083
    },
    {
     "id": "hair_bun",
@@ -2046,7 +2144,8 @@
     "flavor": "Holds three styluses and a grudge.",
     "unlock": "Reach Level 6",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.079
    },
    {
     "id": "hair_mohawk",
@@ -2056,7 +2155,8 @@
     "flavor": "Doubles as an antenna. Allegedly.",
     "unlock": "Hijack 10 broadcasts",
     "length": "tall",
-    "default": false
+    "default": false,
+    "top": 0.108
    },
    {
     "id": "head_none",
@@ -2075,8 +2175,12 @@
     "rarity": 0,
     "flavor": "Standard issue for sleeping on public transit.",
     "unlock": "Default",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.655,
+     1.583
+    ]
    },
    {
     "id": "head_cap",
@@ -2085,8 +2189,12 @@
     "rarity": 0,
     "flavor": "The G stands for \"GigaCorp?\" Nobody is sure.",
     "unlock": "Reach Level 2",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.618,
+     1.583
+    ]
    },
    {
     "id": "head_bandana",
@@ -2096,7 +2204,20 @@
     "flavor": "Tied the way the old rebels tied it.",
     "unlock": "Join a co-op run",
     "hair": "all",
-    "default": false
+    "default": false,
+    "fit": {
+     "hair_buzz": 1.203,
+     "hair_short": 1.207,
+     "hair_slick": 1.231,
+     "hair_undercut": 1.212,
+     "hair_bob": 1.29,
+     "hair_long": 1.341,
+     "hair_shaggy": 1.284,
+     "hair_ponytail": 1.207,
+     "hair_afro": 1.934,
+     "hair_bun": 1.207,
+     "hair_mohawk": 1.239
+    }
    },
    {
     "id": "head_foil",
@@ -2105,8 +2226,12 @@
     "rarity": 1,
     "flavor": "Blocks 98% of targeted ads. The other 2% are about tinfoil.",
     "unlock": "Get hit by 50 Ad Broadcasts",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.663,
+     1.613
+    ]
    },
    {
     "id": "head_catears",
@@ -2116,7 +2241,21 @@
     "flavor": "Streams your purring to 4 followers.",
     "unlock": "Revive 10 teammates",
     "hair": "all",
-    "default": false
+    "default": false,
+    "clear": 0.008,
+    "fit": {
+     "hair_buzz": 1.199,
+     "hair_short": 1.207,
+     "hair_slick": 1.203,
+     "hair_undercut": 1.199,
+     "hair_bob": 1.312,
+     "hair_long": 1.367,
+     "hair_shaggy": 1.309,
+     "hair_ponytail": 1.207,
+     "hair_afro": 2.198,
+     "hair_bun": 1.207,
+     "hair_mohawk": 1.199
+    }
    },
    {
     "id": "head_tac",
@@ -2125,8 +2264,12 @@
     "rarity": 2,
     "flavor": "Rated for bullets, rubble and bad takes.",
     "unlock": "Clear District 2",
-    "hair": "none",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.593,
+     1.543
+    ]
    },
    {
     "id": "head_cone",
@@ -2135,8 +2278,12 @@
     "rarity": 3,
     "flavor": "The city stopped fixing roads, so the cones went free.",
     "unlock": "Find it in the Plaza",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.643,
+     1.643
+    ]
    },
    {
     "id": "head_cowboy",
@@ -2145,8 +2292,12 @@
     "rarity": 3,
     "flavor": "There will be data.",
     "unlock": "Extract with 5,000 GigaTech",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.647,
+     1.647
+    ]
    },
    {
     "id": "head_tophat",
@@ -2155,8 +2306,12 @@
     "rarity": 3,
     "flavor": "From before money was a subscription.",
     "unlock": "Spend 10,000 GigaTech",
-    "hair": "short",
-    "default": false
+    "hair": "all",
+    "default": false,
+    "cut": [
+     1.647,
+     1.647
+    ]
    },
    {
     "id": "head_recon",
@@ -2179,7 +2334,20 @@
     "flavor": "Worn by whoever owned the server you live on.",
     "unlock": "Defeat Chairman Zhu",
     "hair": "all",
-    "default": false
+    "default": false,
+    "fit": {
+     "hair_buzz": 1.128,
+     "hair_short": 1.133,
+     "hair_slick": 1.161,
+     "hair_undercut": 1.263,
+     "hair_bob": 1.186,
+     "hair_long": 1.234,
+     "hair_shaggy": 1.376,
+     "hair_ponytail": 1.135,
+     "hair_afro": 1.835,
+     "hair_bun": 1.135,
+     "hair_mohawk": 1.262
+    }
    },
    {
     "id": "head_halo",
@@ -2189,7 +2357,8 @@
     "flavor": "A ring of light that hums when Turing lies.",
     "unlock": "Break the loop",
     "hair": "all",
-    "default": false
+    "default": false,
+    "clear": 0.085
    },
    {
     "id": "eyes_none",
@@ -2279,6 +2448,15 @@
     "rarity": 3,
     "flavor": "Honk if you hate late capitalism.",
     "unlock": "Get downed 100 times",
+    "default": false
+   },
+   {
+    "id": "eyes_patch",
+    "cat": "eyes",
+    "name": "Legendary Eyepatch",
+    "rarity": 4,
+    "flavor": "Kept you waiting, huh? Cardboard box sold separately.",
+    "unlock": "Hide in the cardboard box in the Haven",
     "default": false
    },
    {
@@ -3032,7 +3210,8 @@
  "rules": {
   "nodes": "a kit GLB holds '<item>@<bone>' nodes (hidden, scale 0): clone them onto the base's bone of that name, scale 1",
   "replaces": "'b_*' entries hide that base body segment; bare bone names (forearm_R) hide pieces on that bone from items of a lower-priority category",
-  "hair": "headgear.hair: 'all' shows any hair, 'short' only hair with length 'short', 'none' no hair (the buzz scalp stays)",
+  "hair": "headgear.hair: 'all' shows any hair, 'short' only hair with length 'short', 'none' no hair (the buzz scalp stays); hats with a cut tuck away 'tall' hair",
+  "hat_fit": "headgear.cut [yf, yb]: clip the hair kit above the plane through (y=yf, z=.1) and (y=yb, z=-.1) in rest-pose body space (convert once into the head bone's rest space, then follow the head every frame; needs renderer.localClippingEnabled). headgear.fit {hairId: s}: scale that hat's x/z by s so the band sits on the worn hair. headgear.clear: lift the hat by max(0, hair.top + .015 - clear).",
   "blocks": "an item that blocks a category hides whatever is worn in it (a sealed helmet blocks face gear)",
   "tint": "texel *= palette tint of slots[mask / 32] for every kit texture, albedo and emissive",
   "first_person": "hide every node under the head bone; the arms (forearm/hand pieces) are the viewmodel arms and the legs/feet stay visible"

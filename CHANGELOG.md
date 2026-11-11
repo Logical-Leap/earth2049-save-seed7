@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-11 — Avatar: eyepatch, hats fit over hair
+
+- New Legendary Eyepatch (face gear), worn over the right eye. Unlock text: "Hide in the cardboard box in the Haven"
+  (not wired yet).
+- Hats no longer clip through hair: hats that cover the crown trim the hair above their rim, so any hair hangs out
+  from under them (tall styles tuck away); bandanas, crowns and cat ears grow to sit on the hair; the halo and cat
+  ears float above tall hair. `renderer.localClippingEnabled` is now on. Avatar kit synced from game-art-pipeline
+  `c97d2da` (avatar files only).
+
 ## 2026-11-11 — The Fitting Room: avatar customisation in the Haven
 
 - **New Haven area: the Fitting Room.** It sits in the Night Market's north-west corner, visible from the concourse, and is built by game-art-pipeline `maps/haven/build.py`. It has:

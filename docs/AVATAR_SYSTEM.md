@@ -114,5 +114,10 @@ Items are referenced by id, and colours by palette name.
   - `all`: any hair shows.
   - `short`: only short hair shows; longer hair is tucked away.
   - `none`: no hair shows; the buzz scalp stays.
+- **Hats vs hair:**
+  - `cut` hats (beanie, cap, foil, helmet, cowboy, top hat, cone) clip the hair above their rim. The clip plane follows the head bone; call `avatar.update(dt)` every frame. Any hair length hangs out underneath, and tall styles tuck away.
+  - The game renderer must have `renderer.localClippingEnabled = true`. It is set in `game.js` and in the creator.
+  - `fit` bands (bandana, crown, cat ears) are scaled per hairstyle so they sit on the hair.
+  - `clear` items (halo, cat ears) lift above tall hair.
 - **`blocks`:** an item that blocks a category hides it. The recon helmet hides face gear.
 - **Tint:** image 2 of each kit is a slot mask. Each texel is multiplied by the palette tint for its slot (prim, sec, acc, glow, hair, skin). Gold, chrome and novelty prints are painted to ignore the tint.

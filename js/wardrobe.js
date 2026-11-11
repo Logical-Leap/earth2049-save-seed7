@@ -82,6 +82,7 @@
     drip10k:    { stat: 'earned', n: 10000, t: 'Earn 10,000 DRIP all-time' },
     own60:      { stat: 'owned', n: 60, t: 'Own 60 wardrobe items' },
     cone:       { stat: 'cone', n: 1, t: 'Find the cone. It is in the Plaza. Somewhere high.' },
+    box:        { stat: 'boxed', n: 1, t: 'Hide in the cardboard box in the Haven' },
   };
 
   /* ------------------------------------------------------------------ how every non-default item unlocks
@@ -94,6 +95,7 @@
     head_crown: ['F', 'heat7'], head_halo: ['F', 'heat10'],
     eyes_goggles: ['S'], eyes_vr: ['F', 'talk6'], eyes_bandana: ['L', 'win5'], eyes_visor: ['L', 'heads250'], eyes_monocle: ['L', 'gtHold'],
     eyes_gasmask: ['L', 'heat4'], eyes_groucho: ['L', 'drones100'], eyes_clown: ['F', 'deaths10'], eyes_smiley: ['F', 'boss10'],
+    eyes_patch: ['F', 'box'],
     top_hawaii: ['F', 'days3'], top_bomber: ['S'], top_vest: ['F', 'win1'], top_puffer: ['L', 'storm1'], top_trench: ['L', 'runs10'],
     top_suit: ['S'], top_bubble: ['F', 'dmg10k'], top_riot: ['L', 'kills500'], top_nano: ['F', 'cleanWin'], top_gilded: ['L', 'heat6'],
     top_exo: ['F', 'kills5000'],

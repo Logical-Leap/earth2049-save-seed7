@@ -145,6 +145,7 @@
     const $ = s => root.querySelector(s);
     const renderer = new THREE.WebGLRenderer({ antialias: false });
     renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.localClippingEnabled = true;              // hats trim the hair under them
     root.insertBefore(renderer.domElement, root.firstChild);
     const scene = stage(renderer);
     const camera = new THREE.PerspectiveCamera(32, 1, .02, 60);
@@ -216,7 +217,7 @@
       const sel = grid.querySelector('.avc-card.on'); if (sel) sel.scrollIntoView({ block: 'nearest', inline: 'nearest' });
       const cur = item(S.L.items[S.tab]), notes = [], hat = R.eq.head, hair = R.eq.hair;
       if (S.tab === 'hair' && hat.hair === 'none') notes.push(`hidden under the ${hat.name}`);
-      if (S.tab === 'hair' && hat.hair === 'short' && hair.length !== 'short') notes.push(`too much hair for the ${hat.name}: tucked away`);
+      if (S.tab === 'hair' && ((hat.hair === 'short' && hair.length !== 'short') || (hat.cut && hair.length === 'tall'))) notes.push(`too much hair for the ${hat.name}: tucked away`);
       if ((cur.blocks || []).length) notes.push('covers ' + cur.blocks.map(b => cats.find(c => c.id === b).label.toLowerCase()).join(', '));
       if (R.blocked.has(S.tab)) notes.push('hidden by what you wear');
       const col = K().RARITY_COLORS[cur.rarity];

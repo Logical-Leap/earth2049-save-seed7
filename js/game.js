@@ -140,6 +140,7 @@ async function boot() {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.08;
   renderer.outputEncoding = THREE.sRGBEncoding;
+  renderer.localClippingEnabled = true;            // player avatars: hats clip the hair under them (js/avatar.js)
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, innerWidth / innerHeight, 0.08, 260);
