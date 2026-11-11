@@ -490,7 +490,13 @@ const World = (() => {
           const ms = Array.isArray(o.material) ? o.material : [o.material];
           for (const m of ms) {
             const k = m?.userData?.lightScale;
-            if (k && m.color) { m.color.multiplyScalar(k); if (m.userData.emissive) m.toneMapped = false; }
+            // the GLB's materials are shared by every visit to the Hub: scale from the original colour once,
+            // never compound it (a second visit used to come out 16x, then 64x, too bright)
+            if (k && m.color) {
+              if (!m.userData.baseColor) m.userData.baseColor = m.color.clone();
+              m.color.copy(m.userData.baseColor).multiplyScalar(k);
+              if (m.userData.emissive) m.toneMapped = false;
+            }
           }
           o.matrixAutoUpdate = false; o.updateMatrix();
         });
