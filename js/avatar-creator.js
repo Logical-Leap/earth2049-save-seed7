@@ -329,7 +329,7 @@
       if (S.closed) return;
       body(opts.loadout || K().load());
       $('.avc-load').remove(); resize(); focus(); frame();
-      open.api = { get L() { return S.L; }, get me() { return S.me; }, setMode, refresh, equip: (c, id) => { S.L.items[c] = id; dress(S.L); },
+      open.api = { get L() { return S.L; }, get me() { return S.me; }, setMode, refresh, spin: d => { if (S.mode === 'fp') S.fpYaw -= d; else S.want.yaw -= d; }, equip: (c, id) => { S.L.items[c] = id; dress(S.L); },
         set tab(t) { S.tab = t; refresh(); focus(); }, look: (y, p) => { S.fpYaw = y; S.fpPitch = p; },
         view: (y, p, d, h) => { S.want = { yaw: y, pitch: p, dist: d, y: h }; Object.assign(S, { yaw: y, pitch: p, dist: d, ty: h }); } };
     }).catch(err => { $('.avc-load').textContent = 'The avatar kit did not load.'; console.error('[AvatarCreator]', err); });

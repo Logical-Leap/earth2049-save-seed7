@@ -119,6 +119,67 @@ AR.Hud = (() => {
   #arHud .style{top:30%}#arHud .subs{font-size:12px;bottom:70px}.arres .grade{font-size:30px}.arres table{font-size:11px}.arres td{padding:2px 4px}
   .arcard{width:180px;min-height:170px;padding:10px}.arcard .n{font-size:15px}.arcard .d{font-size:11px;margin-top:8px}.arov h1{font-size:22px}}
 .arov{overflow:auto}
+/* XP bar: chips are XP */
+#arHud .xp{position:absolute;left:50%;bottom:14px;width:min(46vw,560px);transform:translateX(-50%);display:flex;align-items:center;gap:8px}
+#arHud .xp .lv{font-size:15px;font-weight:bold;color:#ffd400;min-width:58px;text-align:right;transition:transform .15s}
+#arHud .xp .lv.pop{transform:scale(1.6);color:#fff}
+#arHud .xpbar{flex:1;height:10px;background:rgba(0,0,0,.65);border:1px solid rgba(255,212,0,.55);position:relative;overflow:hidden;box-shadow:0 0 8px rgba(255,212,0,.25)}
+#arHud .xpbar i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#ff9d00,#ffd400 60%,#fff6a8);transition:width .18s ease-out;box-shadow:0 0 10px #ffd400}
+#arHud .xpbar.gain{border-color:#fff;box-shadow:0 0 16px #ffd400}
+#arHud .xpbar.full i{background:#fff}
+#arHud .xp .xg{font-size:11px;color:#fff6a8;min-width:40px;opacity:0}
+#arHud .xp .xg.on{animation:arXg .5s}
+@keyframes arXg{0%{opacity:1;transform:translateY(0)}100%{opacity:0;transform:translateY(-10px)}}
+/* level-up burst */
+#arHud .lvup{position:absolute;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;overflow:hidden}
+#arHud .lvup.on{display:flex}
+#arHud .lvup .flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 55%,rgba(255,250,200,.95),rgba(255,212,0,.55) 30%,rgba(255,43,214,.15) 60%,rgba(0,0,0,0) 80%);animation:arLvFlash 1.2s forwards}
+#arHud .lvup .ring{position:absolute;left:50%;top:55%;width:40px;height:40px;margin:-20px;border:6px solid #ffd400;border-radius:50%;box-shadow:0 0 30px #ffd400,inset 0 0 20px #ffd400;animation:arLvRing .9s ease-out forwards}
+#arHud .lvup .ring.r2{border-color:#00e5ff;box-shadow:0 0 30px #00e5ff;animation-delay:.12s;opacity:0}
+#arHud .lvup .rays{position:absolute;left:50%;top:55%;width:180vmax;height:180vmax;margin:-90vmax;background:repeating-conic-gradient(rgba(255,212,0,.22) 0 6deg,rgba(0,0,0,0) 6deg 18deg);animation:arLvRays 1.3s forwards;
+  -webkit-mask:radial-gradient(circle,#000 0,#000 18%,transparent 55%);mask:radial-gradient(circle,#000 0,#000 18%,transparent 55%)}
+#arHud .lvup .big{position:relative;font-size:min(13vw,120px);font-weight:900;font-style:italic;letter-spacing:.06em;line-height:1;color:#fff;
+  text-shadow:4px 0 0 #ff2bd6,-4px 0 0 #00e5ff,0 0 30px #ffd400,0 6px 0 #000;animation:arLvBig 1.25s cubic-bezier(.2,1.6,.4,1) forwards}
+#arHud .lvup .num{position:relative;font-size:min(6vw,52px);font-weight:bold;color:#ffd400;letter-spacing:.3em;margin-top:6px;animation:arLvNum 1.25s forwards}
+#arHud .lvup .spark{position:absolute;width:6px;height:6px;background:#fff;box-shadow:0 0 10px #ffd400,0 0 4px #fff;animation:arSpark 1.1s ease-out forwards}
+@keyframes arLvFlash{0%{opacity:0}8%{opacity:1}100%{opacity:0}}
+@keyframes arLvRing{0%{transform:scale(.2);opacity:1}100%{transform:scale(22);opacity:0}}
+@keyframes arLvRays{0%{opacity:0;transform:rotate(0) scale(.6)}15%{opacity:1}100%{opacity:0;transform:rotate(40deg) scale(1.1)}}
+@keyframes arLvBig{0%{transform:scale(3) skewX(-12deg);opacity:0;filter:blur(8px)}18%{transform:scale(.9) skewX(-8deg);opacity:1;filter:none}28%{transform:scale(1.08) skewX(-8deg)}75%{transform:scale(1) skewX(-8deg);opacity:1}100%{transform:scale(1.25) skewX(-8deg) translateY(-40px);opacity:0}}
+@keyframes arLvNum{0%,15%{opacity:0;transform:translateY(20px)}30%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0}}
+@keyframes arSpark{0%{transform:translate(0,0) scale(1.4);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(.2);opacity:0}}
+/* the card screen: light rays, flip-in cards, rarity glows, a pick that lands */
+.arov.fx{background:radial-gradient(ellipse at 50% 45%,rgba(60,20,90,.88),rgba(4,2,10,.95) 70%);perspective:1100px}
+.arov.fx .rays{position:absolute;left:50%;top:46%;width:200vmax;height:200vmax;margin:-100vmax;pointer-events:none;z-index:-1;
+  background:repeating-conic-gradient(rgba(255,212,0,.07) 0 5deg,rgba(0,0,0,0) 5deg 15deg);animation:arSpin 26s linear infinite}
+.arov.fx.level .rays{background:repeating-conic-gradient(rgba(255,212,0,.14) 0 5deg,rgba(255,43,214,.05) 5deg 10deg,rgba(0,0,0,0) 10deg 15deg)}
+@keyframes arSpin{to{transform:rotate(360deg)}}
+.arov.fx h1{font-size:46px;font-style:italic;background:linear-gradient(90deg,#ffd400,#fff,#ff2bd6,#00e5ff,#ffd400);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:arTitle 2.4s linear infinite,arTitleIn .55s cubic-bezier(.2,1.6,.4,1);filter:drop-shadow(0 4px 0 #000)}
+@keyframes arTitle{to{background-position:300% 0}}
+@keyframes arTitleIn{from{transform:scale(2.2);opacity:0}to{transform:none;opacity:1}}
+.arov.fx .arcards{transform-style:preserve-3d}
+.arov.fx .arcard{overflow:hidden;transition:transform .5s cubic-bezier(.2,1.3,.4,1),opacity .35s,border-color .12s}
+.arov.fx .arcard.pre{opacity:0;transform:translateY(90px) rotateY(100deg) scale(.7)}
+.arov.fx .arcard:after{content:'';position:absolute;top:0;bottom:0;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-18deg);animation:arShine 1.6s .5s ease-out;pointer-events:none}
+@keyframes arShine{from{left:-60%}to{left:140%}}
+.arov.fx .arcard.r1{box-shadow:0 0 22px rgba(68,170,255,.45);animation:arPulseB 1.6s 1s infinite}
+@keyframes arPulseB{50%{box-shadow:0 0 36px rgba(68,170,255,.85)}}
+.arov.fx .arcard.r2{border-color:transparent;background:linear-gradient(180deg,#2a0f38,#0b0714) padding-box,conic-gradient(from var(--a,0deg),#ff2bd6,#ffd400,#39ff8a,#00e5ff,#9b59ff,#ff2bd6) border-box;
+  box-shadow:0 0 34px rgba(255,43,214,.6);animation:arHue 3s linear infinite}
+@property --a{syntax:'<angle>';inherits:false;initial-value:0deg}
+@keyframes arHue{to{--a:360deg}}
+.arov.fx .arcard.r2 .r{text-shadow:0 0 10px #ff2bd6}
+.arov.fx .arcard:hover,.arov.fx .arcard.sel{transform:translateY(-10px) scale(1.06) rotateX(4deg)}
+.arov.fx .arcard.chosen{animation:arChosen .6s forwards!important;z-index:3}
+.arov.fx .arcard.gone{animation:arGone .45s forwards!important}
+@keyframes arChosen{0%{transform:scale(1.06)}30%{transform:scale(1.22);filter:brightness(2.2);box-shadow:0 0 80px #fff}100%{transform:scale(1.12);filter:brightness(1.2)}}
+@keyframes arGone{to{opacity:0;transform:translateY(120px) rotate(8deg) scale(.8)}}
+.arcard .stamp{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-14deg) scale(3);opacity:0;font-size:28px;font-weight:900;color:#ffd400;border:4px solid #ffd400;padding:4px 10px;
+  text-shadow:0 0 12px #ffd400;animation:arStamp .35s .12s cubic-bezier(.2,1.6,.4,1) forwards;background:rgba(0,0,0,.55)}
+@keyframes arStamp{to{opacity:1;transform:translate(-50%,-50%) rotate(-14deg) scale(1)}}
+.arov.fx .sp{position:absolute;width:5px;height:5px;background:#ffd400;box-shadow:0 0 8px #ffd400;pointer-events:none;animation:arFloat linear infinite;opacity:.8}
+@keyframes arFloat{from{transform:translateY(0)}to{transform:translateY(-110vh)}}
 #arLetter{position:fixed;left:0;right:0;z-index:38;pointer-events:none}
 #arLetter:before,#arLetter:after{content:'';position:fixed;left:0;right:0;height:0;background:#000;transition:height .5s}
 #arLetter:before{top:0}#arLetter:after{bottom:0}
@@ -139,11 +200,14 @@ AR.Hud = (() => {
       <div class="chat"><div class="hd"><b>LIVE</b>RIYA VEX // CONTROLLED RIOT</div><div class="msgs"></div></div>
       <div class="bossbar"><div class="bn"></div><div class="bs"></div><div class="bar"><i></i></div></div>
       <div class="banner"><div class="bm"></div><div class="bsu"></div></div>
-      <div class="toast"></div><div class="subs"></div><div class="prompt"></div>
+      <div class="toast"></div><div class="subs"></div><div class="prompt"></div><div class="lvup"></div>
+      <div class="xp"><span class="xg"></span><b class="lv">LV 1</b><div class="xpbar"><i></i></div><span class="xg"></span></div>
       <div class="bl"><div class="hpnum">100</div><div class="bar sh" style="display:none"><i></i></div><div class="bar hp"><i></i><span>HP</span></div><div class="bar ar"><i></i><span>ARMOR</span></div>
-        <div class="pips"><span class="dashp"></span> DASH &nbsp; <span class="nadep"></span> HYPE NADE</div></div>
+        <div class="pips"><span class="dashp"></span> &nbsp; <span class="nadep"></span> HYPE NADE</div></div>
       <div class="br"><div class="ammo">12<small> / ∞</small></div><div class="reload"></div><div class="wname">VOLT-9</div><div class="wtag"></div><div class="other"></div></div>`;
     document.body.appendChild(root);
+    N.xpLv = root.querySelector('.xp .lv'); N.xpBar = root.querySelector('.xpbar'); N.xpFill = root.querySelector('.xpbar i'); N.xpG = root.querySelectorAll('.xp .xg')[1];
+    N.lvup = root.querySelector('.lvup');
     for (const k of ['score', 'chips', 'viewers', 'obj', 'rank', 'rankn', 'mult', 'streak', 'msgs', 'bossbar', 'banner', 'toast', 'subs', 'prompt', 'hpnum', 'ammo', 'reload', 'wname', 'wtag', 'other', 'vig', 'low', 'dashfx', 'dir', 'wps', 'hm', 'ch', 'dashp', 'nadep'])
       N[k] = root.querySelector('.' + k);
     N.meter = root.querySelector('.meter i'); N.hp = root.querySelector('.bar.hp i'); N.ar = root.querySelector('.bar.ar i'); N.sh = root.querySelector('.bar.sh');
@@ -177,7 +241,9 @@ AR.Hud = (() => {
     dashT = Math.max(0, dashT - dt * 4); N.dashfx.style.opacity = dashT;
     // pips
     const S = AR.Player.S;
-    let dp = ''; for (let i = 0; i < S.dashes; i++) dp += `<b class="${i < P.dashCharges ? '' : 'off'}"></b>`;
+    let dp = '';
+    if (S.dashMode) { dp = 'DASH '; for (let i = 0; i < S.dashes; i++) dp += `<b class="${i < P.dashCharges ? '' : 'off'}"></b>`; }
+    else dp = `<span style="color:${P.sprinting ? '#00e5ff' : 'rgba(255,255,255,.55)'}">${P.sprinting ? '» SPRINTING' : 'SPRINT'}</span>`;
     if (N.dashp._h !== dp) { N.dashp.innerHTML = dp; N.dashp._h = dp; }
     let np = ''; for (let i = 0; i < 2; i++) np += `<b class="n ${i < P.nades ? '' : 'off'}"></b>`;
     if (N.nadep._h !== np) { N.nadep.innerHTML = np; N.nadep._h = np; }
@@ -260,6 +326,7 @@ AR.Hud = (() => {
   }
   function prompt(t) {
     if (!N.prompt) return;
+    if (t && window.Pad?.active) t = t.replace('[E]', '[X]');
     if (t) { if (N.prompt.textContent !== t) N.prompt.textContent = t; N.prompt.style.display = 'block'; } else N.prompt.style.display = 'none';
   }
   let subT = null;
@@ -302,30 +369,77 @@ AR.Hud = (() => {
   function letterbox(on) { el('arLetter').classList.toggle('on', on); }
 
   /* ------------------------------------------------------------------ overlays */
-  function cards(title, sub, items, onPick, extra) {
+  function cards(title, sub, items, onPick, extra, o = {}) {
     const ov = el('arCards');
-    ov.innerHTML = `<h1>${title}</h1><h2>${sub}</h2><div class="arcards"></div><div class="arbtns"></div><div style="margin-top:14px;font-size:11px;opacity:.6">CLICK A CARD OR PRESS 1 / 2 / 3</div>`;
+    const fx = o.kind === 'level' || o.kind === 'sponsor';
+    ov.className = 'arov' + (fx ? ' fx ' + o.kind : '');
+    const hint = window.Pad?.active ? 'D-PAD TO CHOOSE // A TO SIGN' : 'CLICK A CARD OR PRESS 1 / 2 / 3';
+    ov.innerHTML = `${fx ? '<div class="rays"></div>' : ''}<h1>${title}</h1><h2>${sub}</h2><div class="arcards"></div><div class="arbtns"></div><div style="margin-top:14px;font-size:11px;opacity:.6">${hint}</div>`;
+    if (o.kind === 'level') for (let i = 0; i < 26; i++) {
+      const p = document.createElement('i'); p.className = 'sp';
+      p.style.left = (Math.random() * 100) + '%'; p.style.top = (100 + Math.random() * 30) + '%';                  // NOSONAR - decoration
+      p.style.animationDuration = (3 + Math.random() * 4) + 's'; p.style.animationDelay = (-Math.random() * 6) + 's';  // NOSONAR
+      if (i % 3 === 0) { p.style.background = '#ff2bd6'; p.style.boxShadow = '0 0 8px #ff2bd6'; }
+      ov.appendChild(p);
+    }
     const wrap = ov.querySelector('.arcards');
+    let ready = !fx;
     items.forEach((it, i) => {
       const c = document.createElement('div');
       c.className = 'arcard r' + (it.r ?? 0);
       c.style.pointerEvents = 'auto';
+      if (fx) { c.classList.add('pre'); setTimeout(() => c.classList.remove('pre'), 180 + i * 130); }
       c.innerHTML = it.html;
       c.onclick = () => done(i);
+      c.onmouseenter = () => { if (ready) AR.Sfx.cardHover?.(); };
       wrap.appendChild(c);
+      if (fx) setTimeout(() => AR.Sfx.cardDeal?.(i, it.r ?? 0), (180 + i * 130));
     });
+    // a short lockout: the trigger finger from the fight shouldn't sign the first card it lands on
+    if (fx) setTimeout(() => { ready = true; }, 180 + items.length * 130 + 260);
     const btns = ov.querySelector('.arbtns');
-    if (extra) for (const b of extra) { const x = document.createElement('button'); x.className = 'arbtn'; x.textContent = b.t; x.onclick = b.fn; btns.appendChild(x); }
+    if (extra) for (const b of extra) { const x = document.createElement('button'); x.className = 'arbtn'; x.textContent = b.t; x.onclick = () => { if (ready) b.fn(); }; btns.appendChild(x); }
     let closed = false;
     const key = e => { if (['Digit1', 'Digit2', 'Digit3'].includes(e.code)) { e.stopPropagation(); done(+e.code.slice(-1) - 1); } };
     function done(i) {
-      if (closed || !items[i]) return; closed = true;
+      if (closed || !items[i] || !ready) return; closed = true;
       removeEventListener('keydown', key, true);
-      ov.classList.remove('on'); onPick(i);
+      if (!fx) { ov.classList.remove('on'); onPick(i); return; }
+      const cs = [...wrap.children];
+      cs.forEach((c, k) => c.classList.add(k === i ? 'chosen' : 'gone'));
+      const st = document.createElement('div'); st.className = 'stamp'; st.textContent = 'SIGNED'; cs[i].appendChild(st);
+      AR.Sfx.cardPick?.(items[i].r ?? 0);
+      window.Pad?.rumble(0.5, 0.8, 220);
+      setTimeout(() => { ov.classList.remove('on'); onPick(i); }, 620);
     }
     addEventListener('keydown', key, true);
     ov.classList.add('on');
     return { close: () => { closed = true; removeEventListener('keydown', key, true); ov.classList.remove('on'); } };
+  }
+  /* XP bar + level-up burst */
+  let xpPopT = null;
+  function xp(level, frac, gained, leveled) {
+    if (!N.xpBar) return;
+    const t = `LV ${level}`;
+    if (N.xpLv.textContent !== t) { N.xpLv.textContent = t; }
+    N.xpFill.style.width = (Math.max(0, Math.min(1, frac)) * 100) + '%';
+    if (gained) {
+      N.xpBar.classList.add('gain'); clearTimeout(xpPopT); xpPopT = setTimeout(() => N.xpBar.classList.remove('gain'), 140);
+      N.xpG.textContent = '+' + gained + ' XP'; N.xpG.classList.remove('on'); void N.xpG.offsetWidth; N.xpG.classList.add('on');
+    }
+    if (leveled) { N.xpLv.classList.add('pop'); setTimeout(() => N.xpLv.classList.remove('pop'), 300); }
+  }
+  let lvT = null;
+  function levelUp(level) {
+    if (!N.lvup) return;
+    let sp = '';
+    for (let i = 0; i < 34; i++) {
+      const a = Math.random() * Math.PI * 2, d = 160 + Math.random() * 420;                                     // NOSONAR - decoration
+      sp += `<i class="spark" style="left:50%;top:55%;--dx:${Math.cos(a) * d}px;--dy:${Math.sin(a) * d}px;animation-delay:${(Math.random() * 0.15).toFixed(2)}s;${i % 3 ? '' : 'background:#ffd400'}"></i>`;  // NOSONAR
+    }
+    N.lvup.innerHTML = `<div class="flash"></div><div class="rays"></div><div class="ring"></div><div class="ring r2"></div>${sp}<div class="big">LEVEL UP!</div><div class="num">LV ${level}</div>`;
+    N.lvup.classList.remove('on'); void N.lvup.offsetWidth; N.lvup.classList.add('on');
+    clearTimeout(lvT); lvT = setTimeout(() => N.lvup.classList.remove('on'), 1350);
   }
   function results(data, onRetry, onHaven) {
     const ov = el('arResults');
@@ -342,12 +456,13 @@ AR.Hud = (() => {
     if (!on) { ov.classList.remove('on'); return; }
     ov.innerHTML = `<h1>PAUSED</h1><h2>THE STREAM IS STILL LIVE</h2>
       <div style="font-size:12px;line-height:1.9;text-align:left;opacity:.85;text-transform:none;letter-spacing:.02em">
-      WASD move &middot; SPACE jump (again in the air) &middot; SHIFT dash &middot; CTRL / C slide (while running)<br>
-      LMB fire &middot; RMB aim &middot; R reload &middot; Q / wheel / 1 2 swap &middot; F kick &middot; G hype grenade &middot; E pick up</div>
+      WASD move &middot; SPACE jump (again in the air) &middot; SHIFT sprint (dash with JET DASH) &middot; CTRL / C slide (while sprinting)<br>
+      LMB fire &middot; RMB aim &middot; R reload &middot; Q / wheel / 1 2 swap &middot; F kick &middot; G hype grenade &middot; E pick up<br>
+      <b>CONTROLLER</b>: LS move &middot; RS look &middot; RT fire &middot; LT aim &middot; A jump &middot; B crouch / slide &middot; X pick up / reload &middot; Y swap &middot; RB kick &middot; LB grenade &middot; L3 sprint &middot; START pause</div>
       <div class="arbtns"><button class="arbtn y" id="arRes">RESUME</button><button class="arbtn" id="arQuit">ABANDON RUN</button></div>`;
     ov.querySelector('#arRes').onclick = onResume; ov.querySelector('#arQuit').onclick = onQuit;
     ov.classList.add('on');
   }
 
-  return { build, show, update, hitmark, hurt, flash, weapon, toast, banner, prompt, say, chat, score, objective, style, boss, warn, letterbox, cards, results, pause };
+  return { build, show, update, hitmark, hurt, flash, weapon, toast, banner, prompt, say, chat, score, objective, style, boss, warn, letterbox, cards, results, pause, xp, levelUp };
 })();

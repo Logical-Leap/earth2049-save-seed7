@@ -71,7 +71,7 @@ const GunFeel = (() => {
   const S = { p: [0, 0, 0], pv: [0, 0, 0], r: [0, 0, 0], rv: [0, 0, 0], c: [0, 0, 0], cv: [0, 0, 0] };
   const st = { adsK: 0, ads: false, drawT: 1, reload: null, bobT: 0, land: 0, wasGround: true, swayX: 0, swayY: 0, tiltZ: 0,
                flashT: 0, partT: 9, spin: 0, spinV: 0, drumA: 0, drumTo: 0, fov: 75, punch: 0,
-               cycleT: 9, cycleCues: 0, beltPhase: 0, beltTarget: 0, rHand: 0 };
+               cycleT: 9, cycleCues: 0, beltPhase: 0, beltTarget: 0, rHand: 0, sprintK: 0 };
   const shells = [];
 
   /* ---------------------------------------------------------------- textures and hands */
@@ -471,7 +471,7 @@ const GunFeel = (() => {
     const cyc = g.cycle ? g.cycle * R_HANDLE[tier] : 0, ck = cyc ? clamp01(st.cycleT / cyc) : 1, inCycle = cyc && st.cycleT < cyc;
     const boltCycle = inCycle && g.fire === 'boltaction';
     // ADS (not while reloading, drawing, or working a bolt)
-    const wantAds = !!s.ads && !st.reload && st.drawT >= 1 && !s.dash && !boltCycle;
+    const wantAds = !!s.ads && !st.reload && st.drawT >= 1 && !s.dash && !s.sprint && !boltCycle;
     if (wantAds !== st.ads) { st.ads = wantAds; GunAudio?.foley?.(wantAds ? 'adsIn' : 'adsOut'); }
     const adsT = g.ads * R_HANDLE[tier];
     st.adsK += ((st.ads ? 1 : 0) - st.adsK) * Math.min(1, dt / Math.max(.04, adsT * .45));
@@ -606,15 +606,17 @@ const GunFeel = (() => {
     const hip = g.hip, ads = [-vm.sight.x, -vm.sight.y, -vm.eyeD - vm.sight.z];
     const px = hip[0] + (ads[0] - hip[0]) * aK, py = hip[1] + (ads[1] - hip[1]) * aK, pz = hip[2] + (ads[2] - hip[2]) * aK;
     const dashDip = s.dash ? 1 : 0;
+    st.sprintK += ((s.sprint && !s.ads ? 1 : 0) - st.sprintK) * Math.min(1, dt * 9);
+    const spK = st.sprintK * (1 - aK);
     for (let i = 0; i < 6; i++) pose[i] += actionPose[i] * (1 - aK * .6);
     gunGroup.position.set(
       px + bx + st.swayX * (1 - aK * .7) + pose[0] + S.p[0] - dK * .05,
-      py + by + st.swayY * (1 - aK * .7) + pose[1] + S.p[1] + landY + breathe - dK * .22 - dashDip * .03,
+      py + by + st.swayY * (1 - aK * .7) + pose[1] + S.p[1] + landY + breathe - dK * .22 - dashDip * .03 - spK * .07,
       pz + pose[2] + S.p[2]);
     gunGroup.rotation.set(
-      S.r[0] + pose[3] - dK * .9 + st.swayY * 1.2 * (1 - aK) - dashDip * .1,
+      S.r[0] + pose[3] - dK * .9 + st.swayY * 1.2 * (1 - aK) - dashDip * .1 - spK * .55,
       S.r[1] + pose[4] + st.swayX * 1.5 * (1 - aK) + .03 * (1 - aK) - dK * .3,
-      S.r[2] + pose[5] + st.tiltZ * (1 - aK * .6) + st.swayX * .8 + dK * .4 + dashDip * .12);
+      S.r[2] + pose[5] + st.tiltZ * (1 - aK * .6) + st.swayX * .8 + dK * .4 + dashDip * .12 + spK * .45);
 
     // ---- moving parts
     st.partT += dt;
@@ -686,9 +688,46 @@ const GunFeel = (() => {
       default: return L(vm.fore);
     }
   }
+  /* the player's own gloves and sleeves (js/fp-body.js builds them from the Fitting Room look):
+     { L: { hand, fore, foreLen }, R: {...} } -- groups in avatar bone space, the arm hanging down local -Y */
+  function setArms(parts) {
+    const U = armsRoot?.userData; if (!U) return;
+    for (const k of ['L', 'R']) {
+      const old = U.custom && U.custom[k];
+      if (old) { armsRoot.remove(old.hand); armsRoot.remove(old.fore); }
+    }
+    U.custom = parts && parts.L && parts.R ? parts : null;
+    for (const k of ['L', 'R']) {
+      const own = !!U.custom;
+      U[k].hand.visible = !own; U[k].sleeve.visible = !own;
+      if (own) { armsRoot.add(U.custom[k].hand); armsRoot.add(U.custom[k].fore); }
+    }
+  }
+  const _bx = new THREE.Vector3(), _by = new THREE.Vector3(), _bz = new THREE.Vector3(), _bm = new THREE.Matrix4();
+  // point an avatar limb piece's local -Y along `down`, its outer side (L: +X, R: -X) toward `outward`
+  function orientLimb(obj, down, outward, side) {
+    _by.copy(down).negate().normalize();
+    _bx.copy(outward).addScaledVector(_by, -outward.dot(_by)).normalize();
+    if (side === 'R') _bx.negate();
+    _bz.crossVectors(_bx, _by);
+    _bm.makeBasis(_bx, _by, _bz); obj.quaternion.setFromRotationMatrix(_bm);
+  }
+  const OUT = { R: new THREE.Vector3(.75, .66, 0), L: new THREE.Vector3(-.45, -.9, .1) };
   function placeHand(side, worldPos, elbowCam, reach) {
     const H = armsRoot.userData[side];
     const p = camera.worldToLocal(worldPos.clone());
+    const C = armsRoot.userData.custom && armsRoot.userData.custom[side];
+    if (C) {
+      const e = new THREE.Vector3(...elbowCam);
+      e.y += gunGroup.position.y * .5; e.x += gunGroup.position.x * .3;
+      const toElbow = e.clone().sub(p).normalize();
+      const wrist = p.clone().addScaledVector(toElbow, .06);               // the grip sits in the palm, ~6 cm past the wrist
+      const out = OUT[side].clone(); if (side === 'R' && reach) out.lerp(new THREE.Vector3(-.2, 1, 0), reach * .8);
+      C.hand.position.copy(wrist); orientLimb(C.hand, toElbow.clone().negate(), out, side);
+      C.fore.position.copy(e); orientLimb(C.fore, wrist.clone().sub(e), out, side);
+      C.fore.scale.set(1, wrist.distanceTo(e) / (C.foreLen || .245), 1);
+      return;
+    }
     H.hand.position.copy(p);
     H.hand.quaternion.copy(gunGroup.quaternion);
     if (side === 'L') H.hand.rotateZ(-1.2);
@@ -821,7 +860,7 @@ const GunFeel = (() => {
   const _update = update;
 
   return {
-    init, equip, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
+    init, equip, setArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
     get fov() { return st.fov; }, get adsK() { return st.adsK; }, get reloading() { return !!st.reload; },
     get spreadMul() { return 1 - st.adsK * (vm && SCOPED.has(vm.sightName) ? .96 : .65); },
     get sensMul() { return 1 - st.adsK * (vm ? (1 - vm.fov / 75) * .9 : 0); },

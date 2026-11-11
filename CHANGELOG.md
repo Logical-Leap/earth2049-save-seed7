@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-11-11 — Your own body, controller support, sprint, and level-ups
+
+- **Your Fitting Room look in first person** (`js/fp-body.js`):
+  - The gun hands now wear your equipped gloves and sleeves (bare forearms with a tee, mitts, cyber arm…) instead of the generic black glove.
+  - Look down in the arena or the Haven and you see your top, then your legs and shoes.
+  - Saving a new look in the Fitting Room re-dresses both straight away.
+- **Full controller support** (`js/gamepad.js`, standard-mapping pads: Xbox, PlayStation, Switch Pro, 8BitDo).
+  - **Combat:** LS move, RS look with aim assist (slowdown over targets, gentle pull), RT fire, LT aim, A jump, B crouch/slide, X pick up/reload, Y swap, RB kick, LB grenade, L3 sprint, START pause.
+  - **Haven and districts:** X talks and interacts, LB/B use abilities, RB reloads.
+  - **Every menu works on the pad:** title, armory, pause, Haven dialogue, the Fitting Room (LB/RB switch tabs, X buys, Y saves, RS turns the model), arena cards and results.
+    - A glowing focus follows the D-pad or left stick; B backs out.
+  - Rumble on shots, hits, kills, level-ups and card picks.
+  - New options: Controller Look sensitivity and a Rumble toggle.
+  - The pad never needs pointer lock, and prompts switch to [X].
+- **SHIFT now sprints by default** (the left stick click does the same), with a sprint gun pose and a wider view while sprinting.
+  - Arena: the dash is now the **JET DASH** sponsor perk. It swaps sprint for the dash and adds +8% move speed. DASH CHARGE only appears once you have it.
+  - Districts: Ghost Protocol unlocks the dash.
+- **Yellow chips are now XP** (Vampire Survivors style).
+  - Every chip fills an XP bar; relays and flawless waves add bonus XP. Chips still bank as GigaTech and still pay for rerolls.
+  - **Each level-up gets a fanfare:** slow-mo, a pillar of light, a shockwave, a full-screen LEVEL UP burst, a synthesised arpeggio and choir chord, rumble and the chat going off.
+  - **Then a three-card pick.** It gets light rays, cards flipping in one after another with their own sounds, glows by rarity (Rare pulses, Legendary gets a rainbow border and a choir), and a SIGNED stamp when you choose. Sponsor breaks use the same treatment.
+  - Chip pickups chime higher as you chain them.
+  - The results screen shows the level you reached.
+
 ## 2026-11-11 — Avatar: eyepatch, hats fit over hair
 
 - New Legendary Eyepatch (face gear), worn over the right eye. Unlock text: "Hide in the cardboard box in the Haven"

@@ -130,7 +130,7 @@ const AUGMENTS = [
   { id:'vital',     n:'Vital Boost',       t:'Survival', d:'+40 Max HP. Heal 40.',                   ap:p=>{p.maxHp+=40;p.hp=Math.min(p.maxHp,p.hp+40);} },
   { id:'plating',   n:'Kinetic Plating',   t:'Survival', d:'+50 Max Armor. Armor refilled.',         ap:p=>{p.maxArmor+=50;p.armor=p.maxArmor;} },
   { id:'scraps',    n:'Armor Scraps',      t:'Survival', d:'+6 Armor per kill.',                     ap:p=>{p.mods.scraps+=6;} },
-  { id:'ghost',     n:'Ghost Protocol',    t:'Mobility', d:'Dash recharges 40% faster, longer i-frames.', ap:p=>{p.mods.dashCd*=0.6;p.mods.iframe+=0.15;} },
+  { id:'ghost',     n:'Ghost Protocol',    t:'Mobility', d:'SHIFT dashes instead of sprinting. Dash recharges 40% faster, longer i-frames.', ap:p=>{p.mods.dash=true;p.mods.dashCd*=0.6;p.mods.iframe+=0.15;} },
   { id:'reflex',    n:'Neuro Reflex',      t:'Mobility', d:'+12% move speed.',                       ap:p=>{p.mods.spd+=0.12;} },
   { id:'adrenal',   n:'Adrenal Loop',      t:'Tempo',    d:'Kills grant +30% fire rate for 3s.',     ap:p=>{p.mods.adrenal=true;} },
   { id:'siphon',    n:'Data Siphon',       t:'Economy',  d:'+40% GigaTech gain.',                    ap:p=>{p.mods.gt+=0.40;} },

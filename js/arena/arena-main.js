@@ -13,7 +13,7 @@ const Arena = (() => {
   AR.slowmo = (t, k) => { slowT = t; slowK = k; };
   AR.pointerLocked = () => document.pointerLockElement === AR.el('c');
   AR.lockPointer = () => {
-    if (AR.freeLook || window.acceptanceInputEnabled) return;
+    if (AR.freeLook || window.acceptanceInputEnabled || window.Pad?.active) return;      // a controller needs no pointer lock
     try {
       const r = AR.el('c').requestPointerLock();
       if (r && typeof r.catch === 'function') r.catch(() => { AR.freeLook = true; });
@@ -27,7 +27,7 @@ const Arena = (() => {
     if (AR.pointerLocked()) { if (AR.paused && AR.pausedByLock) pause(false); return; }
     // an unlock we asked for (opening a menu) can arrive after the menu already closed again: ignore it
     if (AR.menu || performance.now() - menuT < 800) return;
-    if (!AR.paused && AR.Player.P?.alive) { pause(true); AR.pausedByLock = true; }
+    if (!AR.paused && AR.Player.P?.alive && !window.Pad?.active) { pause(true); AR.pausedByLock = true; }
   });
   AR.menuClosed = () => { menuT = performance.now(); };
   addEventListener('keydown', e => {
