@@ -241,9 +241,48 @@ AR.Mission = (() => {
       const e = AR.Enemies.spawn('relay', m.pos[0], m.pos[1], m.pos[2], { yaw: rand(0, 6.28), hpMul: 1 + M.heat * 0.15 });
       if (!e) continue;
       e.relay = m; e.label = m.name; M.relays.push(e);
+      dressRelay(e);
       const pl = M.relayLights[M.relays.length - 1]; if (pl) { pl.position.set(m.pos[0], m.pos[1] + 5, m.pos[2]); pl.intensity = 2.5; e.light = pl; }
     }
     updateRelayObjective();
+  }
+  /** Relays must read as targets from anywhere: a signal beam into the sky, a spinning dish ring and a health bar. */
+  function dressRelay(e) {
+    const g = new THREE.Group(), h = e.body.h, k = 1 / (e.scale || 1);          // e.obj children live in the scaled root's parent
+    const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.5, 60, 8, 1, true), new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+    beam.position.y = h + 30;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(1.1, 0.09, 6, 24), new THREE.MeshBasicMaterial({ color: 0xff2bd6 }));
+    ring.position.y = h + 0.5; ring.rotation.x = Math.PI / 2;
+    const ring2 = ring.clone(); ring2.scale.setScalar(0.6); ring2.position.y = h + 1.2;
+    const c = document.createElement('canvas'); c.width = 96; c.height = 20;
+    const tex = new THREE.CanvasTexture(c);
+    const bar = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, depthTest: false, transparent: true }));
+    bar.scale.set(2.6, 0.55, 1); bar.position.y = h + 2.2; bar.renderOrder = 31;
+    g.add(beam, ring, ring2, bar);
+    g.scale.setScalar(1); void k;
+    e.obj.add(g);
+    e.dress = { g, beam, ring, ring2, bar, c, tex, shown: -1 };
+    drawRelayBar(e);
+  }
+  function drawRelayBar(e) {
+    const D = e.dress; if (!D) return;
+    const f = Math.max(0, e.hp / e.maxHp), pct = Math.ceil(f * 100);
+    if (pct === D.shown) return;
+    D.shown = pct;
+    const x = D.c.getContext('2d');
+    x.clearRect(0, 0, 96, 20);
+    x.fillStyle = 'rgba(0,0,0,.75)'; x.fillRect(0, 0, 96, 20);
+    x.fillStyle = f > 0.5 ? '#ffd400' : f > 0.25 ? '#ff8c00' : '#ff2b4a'; x.fillRect(2, 2, 92 * f, 9);
+    x.fillStyle = '#fff'; x.font = 'bold 8px Consolas, monospace'; x.textAlign = 'center'; x.fillText('SIGNAL RELAY ' + pct + '%', 48, 18);
+    D.tex.needsUpdate = true;
+  }
+  function relayTick(dt) {
+    for (const r of M.relays) {
+      const D = r.dress; if (!D || r.dying) continue;
+      D.ring.rotation.z += dt * 2.2; D.ring2.rotation.z -= dt * 3.1;
+      D.beam.material.opacity = 0.22 + Math.sin(M.t * 5 + r.id) * 0.1 + (r.flash || 0) * 0.5;
+      drawRelayBar(r);
+    }
   }
   function updateRelayObjective() { AR.Hud.objective(`<b>ACT II</b> // BURN THE RELAYS — ${M.relaysDown}/3 DOWN`); }
   function startAct3() {
@@ -683,8 +722,9 @@ AR.Mission = (() => {
     if (M.t - (M.lastChatT || 0) > rand(3, 6)) chat(pick(AR.CHAT_USERS), pick(M.idleT > 12 ? AR.CHAT.idle : AR.CHAT.kill.concat(AR.CHAT.start)));
     if (['act1', 'act2', 'act3', 'boss', 'extract'].includes(M.phase)) { spawnTick(dt); directorTick(dt); }
     if (M.phase === 'act1' && M.waveLive) checkWave();
-    // relays: pulse
+    // relays: pulse, beams, health bars
     for (const r of M.relays) if (r.light && !r.dying) r.light.intensity = 2 + Math.sin(M.t * 6 + r.id) * 1.2;
+    relayTick(dt);
     buddyTick(dt);
   }
 
@@ -696,7 +736,7 @@ AR.Mission = (() => {
       const left = AR.Enemies.list.filter(e => !e.dying && !e.relay && !e.boss);
       if (left.length && left.length <= 4) for (const e of left) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'STRAGGLER', cls: 'warn' });
     }
-    if (M.phase === 'act2') for (const r of M.relays) if (!r.dying) out.push({ x: r.body.pos.x, y: r.body.pos.y + 5.6, z: r.body.pos.z, label: 'RELAY', cls: 'warn' });
+    if (M.phase === 'act2') for (const r of M.relays) if (!r.dying) out.push({ x: r.body.pos.x, y: r.body.pos.y + 5.6, z: r.body.pos.z, label: `RELAY ${Math.ceil(Math.max(0, r.hp / r.maxHp) * 100)}%`, cls: 'warn' });
     if (M.phase === 'extract') out.push({ x: M.extraction.pos[0], y: M.extraction.pos[1] + 2, z: M.extraction.pos[2], label: 'LOG OFF', cls: 'ex' });
     return out;
   }

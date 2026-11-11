@@ -232,6 +232,10 @@ AR.Enemies = (() => {
       }
     }
     if (e.stun > 0) amt *= 1.5;
+    if (e.relay) {
+      if (info.src === 'explosion' || info.src === 'volatile') amt *= 1.6;          // grenades and launchers burn relays fast
+      AR.Fx.emit(AR.Fx.glow, info.x ?? e.body.pos.x, info.y ?? e.body.pos.y + 2.5, info.z ?? e.body.pos.z, 0xffd400, 4, 4, 0.3);
+    }
     if (e.boss) { amt = AR.Boss.filterDamage(e, amt, info); if (amt <= 0) return; }
     e.hp -= amt;
     e.flash = Math.min(1, e.flash + (info.shielded ? 0.2 : 0.8));

@@ -13,7 +13,7 @@
 
 AR.ENEMIES.riya = { name: 'RIYA VEX', models: ['riya'], hp: 5600, walk: 3, run: 6, r: 0.6, h: 1.75, scale: 1.4, ai: 'boss', score: 25000,
   chips: [40, 60], knock: 0, flinch: 0, gib: [0xffd400, 0xff2bd6, 0x00e5ff] };
-AR.ENEMIES.relay = { name: 'SIGNAL RELAY', models: ['relay'], hp: 1150, r: 0.75, h: 3.4, scale: 1.5, ai: 'static', unit: true, score: 1500,
+AR.ENEMIES.relay = { name: 'SIGNAL RELAY', models: ['relay'], hp: 900, r: 0.75, h: 3.4, scale: 1.5, ai: 'static', unit: true, score: 1500,
   chips: [8, 12], knock: 0, flinch: 0, gib: [0xffd400, 0x303030, 0xff2bd6] };
 
 AR.Boss = (() => {

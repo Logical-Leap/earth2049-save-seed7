@@ -75,3 +75,10 @@ test('music cues exist and loop points sit on the bar grid', () => {
     }
   }
 });
+
+test('the Hub scales its baked light from the original colour, so repeat visits never compound brightness', () => {
+  const world = read('js/world.js').toString();
+  assert.match(world, /m\.userData\.baseColor = m\.color\.clone\(\)/);
+  assert.match(world, /m\.color\.copy\(m\.userData\.baseColor\)\.multiplyScalar\(k\)/);
+  assert.doesNotMatch(world, /m\.color\.multiplyScalar\(k\)/);
+});
