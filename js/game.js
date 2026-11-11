@@ -1386,7 +1386,7 @@ async function startArena(opts = {}) {
   setState('arena');
   paused = false;
   G = null;
-  await Arena.start({ scene, camera, renderer, composer, heat: opts.heat ?? SAVE.arena?.heat ?? 0, onExit: () => {
+  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, onExit: () => {
     if (World.group) World.group.visible = true;
     setState('loading');
     newRun({ hub:true });

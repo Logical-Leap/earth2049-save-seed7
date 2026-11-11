@@ -165,7 +165,7 @@ AR.Hud = (() => {
     const sp = AR.Player.spread();
     const px = Math.max(3, Math.tan(sp) / Math.tan(AR.camera.fov * Math.PI / 360) * innerHeight / 2);
     N.chL.style.left = (-px - 7) + 'px'; N.chR.style.left = px + 'px'; N.chT.style.top = (-px - 7) + 'px'; N.chB.style.top = px + 'px';
-    N.ch.style.opacity = P.ads > 0.6 && AR.Player.gun?.d.scope ? 0 : 1 - P.ads * 0.5;
+    N.ch.style.opacity = AR.Player.gunFeel ? 1 - P.ads : (P.ads > 0.6 && AR.Player.gun?.d.scope ? 0 : 1 - P.ads * 0.5);
     hmT -= dt; if (hmT <= 0) N.hm.style.opacity = 0;
     // health
     N.hpnum.textContent = Math.ceil(P.hp);
@@ -188,7 +188,7 @@ AR.Hud = (() => {
       const txt = `${g.ammo}<small> / ${g.reserve === Infinity ? '∞' : g.reserve}</small>`;
       if (N.ammo._h !== txt) { N.ammo.innerHTML = txt; N.ammo._h = txt; }
       N.ammo.classList.toggle('low', g.ammo <= Math.ceil(mag * 0.25));
-      N.reload.style.width = g.reloading ? (g.d.shellReload ? g.ammo / mag * 120 : (1 - g.reloadT / (g.d.reload * S.reload)) * 120) + 'px' : '0';
+      N.reload.style.width = g.reloading ? (g.d.shellReload || AR.Player.gunFeel ? g.ammo / mag * 120 : (1 - g.reloadT / (g.d.reload * S.reload)) * 120) + 'px' : '0';
     }
     // damage direction arcs fade
     dirs.forEach((d, i) => { d.t -= dt; const n = N.dir.children[i]; if (n) { n.style.opacity = Math.max(0, d.t); n.style.transform = `rotate(${P.yaw - d.a}rad)`; } });

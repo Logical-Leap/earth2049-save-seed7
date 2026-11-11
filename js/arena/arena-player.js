@@ -138,15 +138,36 @@ AR.Player = (() => {
     showGun();
   }
 
+  /* ================================================================== the art department's first-person rig
+   * When js/gunfeel.js is loaded (gloved hands, draw, per-gun reload choreography, pump/bolt cycling, casings,
+   * layered rarity audio), it drives the viewmodel. The arena keeps ballistics, damage and feel on the camera.
+   * Its weapon object uses clip/ammo/rar; this adapter maps those onto the arena gun (ammo = mag, reserve, tier). */
+  let GF = null;
+  const gfOn = () => !!(GF && window.GunFeel && GunFeel.active);
+  function gfWeapon(g) {
+    if (!g.gf) g.gf = { id: g.id, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
+      get ammo() { return g.reserve; }, set ammo(v) { g.reserve = v; } };
+    return g.gf;
+  }
+  function useGunFeel(gunGroup) {
+    if (!window.GunFeel || !gunGroup || !AssetLoader?.getModel?.('weapon.ar')?.scene?.userData?.weapon) { GF = null; return false; }
+    GF = { gunGroup };
+    return true;
+  }
+
   /* ================================================================== helpers */
   const gun = () => P.guns[P.cur];
   function eyePos(out) { return out.set(P.body.pos.x, P.body.pos.y + P.eye, P.body.pos.z); }
   function aimDir(out) {
-    const yaw = P.yaw + P.punchY, pitch = P.pitch + P.punchP;
+    const c = gfOn() ? GunFeel.cam : null;
+    const yaw = P.yaw + P.punchY + (c ? c.yaw : 0), pitch = P.pitch + P.punchP + (c ? c.pitch : 0);
     return out.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
   }
   function addTrauma(t) { P.trauma = Math.min(1, P.trauma + t); }
-  function magSize(g) { return Math.max(1, Math.round(g.d.mag * (1 + S.mag + (g.tier || 0) * 0.08))); }
+  function magSize(g) {
+    if (GF && window.GunFeel) return GunFeel.magSize(g.id, g.tier || 0);           // the gun's real magazine for its rarity
+    return Math.max(1, Math.round(g.d.mag * (1 + S.mag + (g.tier || 0) * 0.08)));
+  }
   /** First-person model for a gun instance: the Arsenal GLB at its rarity (cached per gun + tier). */
   function vmOf(g) {
     const k = g.id + ':' + g.tier;
@@ -162,6 +183,13 @@ AR.Player = (() => {
   function showGun() {
     for (const k of Object.keys(guns)) guns[k].root.visible = false;
     const g = gun(); if (!g) return;
+    if (GF) {
+      if (g.ammo > magSize(g)) { const x = g.ammo - magSize(g); g.ammo = magSize(g); if (g.reserve !== Infinity) g.reserve += x; }
+      GF.gunGroup.visible = true;
+      const r = GunFeel.equip(gfWeapon(g));
+      GunFeel.setVisible(true);
+      if (r) { GF.tip = r.tip; AR.Hud?.weapon(g, P); return; }
+    }
     const v = vmOf(g); if (!v) return;
     v.root.visible = true;
     v.tip.add(muzzle);
@@ -297,7 +325,7 @@ AR.Player = (() => {
 
   /* ================================================================== look + camera */
   function look(rdt) {
-    const sens = 0.0021 * (SAVE?.opts?.sens || 1) * (1 - P.ads * (1 - (gun()?.d.ads || 0.8)) * 0.9);
+    const sens = 0.0021 * (SAVE?.opts?.sens || 1) * (gfOn() ? GunFeel.sensMul : (1 - P.ads * (1 - (gun()?.d.ads || 0.8)) * 0.9));
     P.yaw -= I.lookX * sens; P.pitch = clamp(P.pitch - I.lookY * sens, -1.5, 1.5);
     P.swayX = AR.damp(P.swayX, clamp(-I.lookX * 0.0009, -0.05, 0.05), 14, rdt);
     P.swayY = AR.damp(P.swayY, clamp(I.lookY * 0.0009, -0.05, 0.05), 14, rdt);
@@ -327,11 +355,12 @@ AR.Player = (() => {
     P.trauma = Math.max(0, P.trauma - rdt * 1.6);
     const sh = P.trauma * P.trauma, t = performance.now() / 1000;
     const nx = Math.sin(t * 61) * 0.6 + Math.sin(t * 23.7) * 0.4, ny = Math.sin(t * 53 + 1) * 0.6 + Math.sin(t * 31.3) * 0.4, nz = Math.sin(t * 47 + 2);
-    camera.rotation.set(P.pitch + P.punchP + ny * sh * 0.05, P.yaw + P.punchY + nx * sh * 0.05, P.tilt + nz * sh * 0.06);
+    const gc = gfOn() ? GunFeel.cam : { pitch: 0, yaw: 0, roll: 0 };
+    camera.rotation.set(P.pitch + P.punchP + gc.pitch + ny * sh * 0.05, P.yaw + P.punchY + gc.yaw + nx * sh * 0.05, P.tilt + gc.roll + nz * sh * 0.06);
     // FOV: base + speed + punches, ADS zoom
     P.fovPunch = damp(P.fovPunch, 0, 7, rdt);
     const g = gun();
-    const adsK = 1 - P.ads * (1 - (g?.d.ads || 0.8));
+    const adsK = gfOn() ? GunFeel.fov / 75 : 1 - P.ads * (1 - (g?.d.ads || 0.8));
     const fov = (AR.fov + Math.max(0, P.speed - MAXSPD) * 0.9 + P.fovPunch) * adsK;
     if (Math.abs(camera.fov - fov) > 0.01) { camera.fov = fov; camera.updateProjectionMatrix(); }
     vmCam.aspect = camera.aspect; vmCam.updateProjectionMatrix();
@@ -358,6 +387,12 @@ AR.Player = (() => {
   }
   function viewmodelTick(dt) {
     const g = gun(); if (!g) return;
+    if (gfOn()) {
+      vmRoot.visible = false;
+      if (scopeEl) scopeEl.classList.remove('on');
+      bootTick();
+      return;
+    }
     const v = vmOf(g), vm = P.vm;
     if (!v) return;
     spring(vm, dt);
@@ -425,7 +460,9 @@ AR.Player = (() => {
     const scoped = g.d.scope && ads > 0.85;
     vmRoot.visible = !scoped;
     if (scopeEl) scopeEl.classList.toggle('on', !!scoped);
-    // kick boot
+    bootTick();
+  }
+  function bootTick() {
     if (P.kickT > 0) {
       const t = 1 - P.kickT / 0.32, k = Math.sin(Math.min(1, t * 1.6) * Math.PI);
       boot.visible = true;
@@ -449,6 +486,7 @@ AR.Player = (() => {
     g.fireT -= dt;
     g.bloom = Math.max(0, g.bloom - d.bloomRecover * dt * (g.fireT < -0.1 ? 1.5 : 1));
     if (performance.now() - g.lastShot > 320) g.shot = 0;
+    if (gfOn()) { gfFireTick(g, d, dt); return; }
     // reload
     if (I.reload) { I.reload = false; startReload(g); }
     if (g.reloading) {
@@ -484,6 +522,27 @@ AR.Player = (() => {
     shoot(g);
     if (g.ammo === 0 && g.reserve > 0) setTimeout(() => { if (P && gun() === g && g.ammo === 0) startReload(g); }, 160);
   }
+  function gfFireTick(g, d, dt) {
+    const w = gfWeapon(g);
+    g.reloading = GunFeel.reloading;
+    if (I.reload) { I.reload = false; GunFeel.reload(w); }
+    if (!I.fire || P.swapT > 0 || P.kickT > 0.1 || g.fireT > 0) return;
+    if (!GunFeel.canFire(w)) return;
+    if (g.ammo <= 0) {
+      if (!GunFeel.reload(w)) {
+        GunFeel.dryFire(); g.fireT = 0.3;
+        if (g.reserve <= 0 && P.cur === 1) { swapTo(0); AR.Hud.toast('PRIMARY DRY', 'SIDEARM OUT // FIND AMMO'); }
+      }
+      return;
+    }
+    const interval = 60 / (d.rpm * (1 + S.rate) * (AR.Mission?.adrenal() || 1));
+    g.fireT += interval; if (g.fireT < -interval) g.fireT = 0;
+    g.ammo--; g.lastShot = performance.now();
+    shoot(g);
+    const k = GunFeel.fire(w);                                 // hands, flash, casings, rarity audio; returns the climb
+    P.pitch = clamp(P.pitch + k.pitch, -1.5, 1.5); P.yaw += k.yaw;
+    void dt;
+  }
   function startReload(g) {
     if (g.reloading || g.ammo >= magSize(g) || g.reserve <= 0) return;
     g.reloading = true; g.inPlayed = false;
@@ -498,6 +557,7 @@ AR.Player = (() => {
     return out;
   }
   function muzzleWorld(out) {
+    if (gfOn() && GF.tip) return GF.tip.getWorldPosition(out);
     const v = vmOf(gun());
     v.tip.getWorldPosition(out);                                    // in viewmodel space
     // map viewmodel-space point to the world: viewmodel camera sits at the origin looking -Z, same as the camera
@@ -533,10 +593,17 @@ AR.Player = (() => {
     g.shot++;
     g.bloom = Math.min(d.bloomMax, g.bloom + d.bloom);
     const adsK = 1 - P.ads * 0.45;
-    P.punchVP += d.kick * DEG * 12 * adsK * rand(0.85, 1.1);
-    P.punchVY += (pattern * d.kickYaw * 2.2 + rand(-1, 1) * d.kickYaw) * DEG * 12 * adsK;
+    if (!gfOn()) {
+      P.punchVP += d.kick * DEG * 12 * adsK * rand(0.85, 1.1);
+      P.punchVY += (pattern * d.kickYaw * 2.2 + rand(-1, 1) * d.kickYaw) * DEG * 12 * adsK;
+    } else if (d.pattern) P.punchVY += pattern * d.kickYaw * DEG * 8;
     P.fovPunch += d.fovKick;
     addTrauma(d.shake * (1 - P.ads * 0.5));
+    if (gfOn()) {
+      AR.Fx.light(mz.x, mz.y, mz.z, d.proj ? d.proj.color : 0xffb060, 2.4, 9, 0.05);
+      AR.Mission?.onShot(g);
+      return;
+    }
     const vm = P.vm;
     vm.vpz += d.vmKick * 22 * (1 - P.ads * 0.4); vm.vrx += d.vmRot * 26 * (1 - P.ads * 0.5); vm.vry += rand(-1, 1) * d.vmRot * 6; vm.vrz += rand(-1, 1) * d.vmRot * 8; vm.vpy += d.vmKick * 3;
     g.slideK = 1;
@@ -655,7 +722,8 @@ AR.Player = (() => {
       // ADS
       const g = gun();
       const wantAds = I.ads && !g?.reloading && P.swapT <= 0 && P.slideT <= 0 && P.kickT <= 0 ? 1 : 0;
-      P.ads = AR.clamp(P.ads + (wantAds ? 1 : -1) * rdt / (g?.d.adsTime || 0.14), 0, 1);
+      if (gfOn()) P.ads = GunFeel.adsK;
+      else P.ads = AR.clamp(P.ads + (wantAds ? 1 : -1) * rdt / (g?.d.adsTime || 0.14), 0, 1);
       if (I.swap) {
         if (I.swap === -1) swapTo(P.cur === 0 ? 1 : 0); else swapTo(I.swap - 1);
         I.swap = 0;
@@ -668,6 +736,12 @@ AR.Player = (() => {
     }
     cameraTick(dt, rdt);
     viewmodelTick(rdt);
+    if (gfOn()) {
+      const mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0), mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0);
+      GunFeel.update(rdt, { ads: I.ads && P.slideT <= 0 && P.kickT <= 0 && P.alive, move: Math.min(1, P.speed / 8), strafe: mx, onGround: P.body.onGround,
+        dash: P.dashT > 0, lookX: -P.swayX / 0.0009, lookY: P.swayY / 0.0009, feetY: P.body.pos.y });
+      void mz;
+    }
   }
 
   function giveGun(id, tier = 0) {
@@ -684,12 +758,13 @@ AR.Player = (() => {
 
   function dispose(composer) {
     detachPass(composer);
+    if (GF) { GunFeel.setVisible(false); GF.gunGroup.visible = false; }
     if (scopeEl) scopeEl.classList.remove('on');
     P = null;
   }
 
   return {
-    init, reset, tick, takeDamage, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };

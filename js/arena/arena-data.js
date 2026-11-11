@@ -5,7 +5,7 @@
  */
 'use strict';
 
-AR.VERSION = '20261111-unsub';
+AR.VERSION = '20261111-arena-gf';
 
 /* ====================================================================== GUNS */
 AR.GUNS = {
@@ -61,7 +61,7 @@ AR.GUNS = {
     ads: 0.85, adsTime: 0.14,
   },
   lmg: {
-    name: 'COMPLIANCE SAW', cls: 'lmg', sfx: 'lmg', tag: 'LMG // BELT-FED // 80 ROUNDS OF OPINIONS',
+    name: 'COMPLIANCE SAW', cls: 'lmg', sfx: 'lmg', tag: 'LMG // BELT-FED // 100 ROUNDS OF OPINIONS',
     dmg: 18, pellets: 1, rpm: 740, mag: 80, reserve: 320, reload: 2.5,
     spread: 2.0, adsSpread: 0.7, bloom: 0.1, bloomMax: 3.2, bloomRecover: 6,
     kick: 0.75, kickYaw: 0.5, recover: 8, shake: 0.06, fovKick: 0.5, vmKick: 0.045, vmRot: 0.08,
