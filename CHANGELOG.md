@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-11-11 — The Fitting Room: avatar customisation in the Haven
+
+- **New Haven area: the Fitting Room.** It sits in the Night Market's north-west corner, visible from the concourse, and is built by game-art-pipeline `maps/haven/build.py`. It has:
+  - Seam the tailor, dressed from the avatar kit.
+  - A dais where your current fit stands and turns.
+  - Two mannequins wearing today's Daily Drop.
+  - Clothing racks and a mirror wall.
+- **Talk to Seam** to open the loadout screen as a shop. It gains:
+  - A ★ TODAY tab: the Daily Drop plus your closest unlocks.
+  - Price, licence and feat badges on every card, and NEW tags.
+  - Progress bars and a BUY button.
+- **`js/wardrobe.js`: unlock routes for all 76 non-default items.**
+  - 20 are sold for DRIP.
+  - 30 are licensed: a feat opens them for sale.
+  - 26 are feat rewards that are never sold, including every Relic.
+- **DRIP** is a new cosmetic currency (GigaTech still buys power). It comes from:
+  - Every run, scaled by result, grade, style, relays and heat. The first win of the day pays double.
+  - DRIP tags dropped by elites.
+  - A merch crate hidden high in every run.
+  - A once-only traffic cone on the far gantry.
+  - Feat bounties and collection milestones.
+- **Feats count lifetime stats from the arena and the Haven.** Unlocks pop mid-run, appear on the results screen, and are announced in the hub.
+- Older saves are seeded from their arena record.
+- The look and unlocks now live in the versioned save (`SAVE.wardrobe`).
+- Dev console: `drip [n]` and `feat <id>`.
+
 ## 2026-11-11 — Player avatars and the loadout creator
 
 - New player avatar kit from game-art-pipeline `0b943ef` (`assets/models/ps1/avatar/`): two bodies, ~100 items each
@@ -10,7 +36,7 @@
   saving, and unlock tracking.
 - `js/avatar-creator.js` (`AvatarCreator.open()`): the loadout screen: category cards with rarity and lock state,
   colours, random, first-person check, squad lineup, share codes. Dev console: `loadout` / `loadout all`.
-- The hub vendor, unlock rewards and co-op/first-person bodies are not wired yet: see `docs/AVATAR_SYSTEM.md`.
+- The hub vendor and unlock rewards were wired in later the same day (the Fitting Room, above). Co-op and first-person bodies are still to do: see `docs/AVATAR_SYSTEM.md`.
 
 ## 2026-11-11 — Reload timing pass
 

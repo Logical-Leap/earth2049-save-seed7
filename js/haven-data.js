@@ -2,7 +2,8 @@
  *
  * Models resolve through HAVEN_MODELS (files synced from game-art-pipeline).
  * Dialogue: each NPC has greet text, options (each either replies or runs an action), and barks
- * (lines they say unprompted when you walk by). Actions: deploy, armory, heal, briefing, train, snack.
+ * (lines they say unprompted when you walk by). Actions: deploy, armory, heal, briefing, train, snack, wardrobe.
+ * An NPC with `avatar` (a loadout) is built from the player avatar kit instead of a model file.
  * Turing never swears. Everyone else may.
  */
 'use strict';
@@ -137,6 +138,23 @@ const HAVEN_NPCS = {
     ],
     barks: ['Your face is in fourteen ad campaigns right now. Smile.', 'Encrypt your thoughts. Seriously. They have a beta for that.', 'I can get you off the grid. Not the couch grid, though. Those guys are rated.'],
   },
+  'npc:tailor': {
+    name: 'SEAM', title: 'TAILOR // THE FITTING ROOM',
+    // Seam is dressed from the same kit the player wears: the shop window is the shopkeeper
+    avatar: { sex: 'f', items: { face: 'face_glam', hair: 'hair_bun', head: 'head_none', eyes: 'eyes_monocle', top: 'top_trench', hands: 'hands_fingerless',
+      legs: 'legs_cargo', feet: 'feet_hightops', back: 'back_none', neck: 'neck_chain' },
+      colors: { prim: 'purple', sec: 'black', acc: 'mustard', glow: 'pink', hair: 'pink', skin: 'tone 4' } },
+    greet: "Welcome to the Fitting Room. I used to write GigaCorp's outfit algorithm. It dressed four billion people to match whatever ads were unsold that week. Now I dress you, by hand, for DRIP. Step on the dais, darling.",
+    options: [
+      { t: "Let's change my look.", action: 'wardrobe' },
+      { t: 'What is DRIP?', reply: "Merch tags. Every elite Riya sends at you is wearing sponsored merch with a tag on it. Rip it off, bring it here. I also pay for every run you survive, more for style, double for your first win of the day. And somebody keeps hiding crates of the stuff up on the Plaza gantries." },
+      { t: 'Why are some things not for sale?', reply: "Because you can't buy respect, sweetie. The crown, the halo, the boots that hover: you earn those out there and they turn up in your locker. Licensed pieces I'll sell you, once you've proven you can carry them. The rest is cash and carry." },
+      { t: 'Any loot boxes?', reply: "Box would unplug me. Fixed prices, no gambling, no 'surprise mechanics'. Three things go on sale every day. That's the only surprise I do." },
+      { t: 'Bye, Seam.' },
+    ],
+    barks: ['That outfit is giving "default skin."', 'Fixed prices. No algorithm. No returns. Some rules.', "Today's drop is on the mannequins. Touch nothing with GigaTech on your fingers.",
+      'Rip the tags off the elites. Bring me the tags.', 'Somebody found a traffic cone up on the Plaza gantry and wore it home. Icon behavior.', 'Step on the dais. Let me see the fit.'],
+  },
   'holo:riya': { model: 'riya', name: 'RIYA VEX', title: 'INTEL // SHILLZ', hologram: '#ffe600', intel: "Riya Vex. The biggest influencer in Seed 7 and GigaCorp's loudest fan. Her followers think it's a movement. It's a sponsorship." },
   'holo:magnus': { model: 'magnus', name: 'MAGNUS TARKON', title: 'INTEL // MUSKERS', hologram: '#00e5ff', intel: "Magnus Tarkon. Former advisor to Ellen Musk, now running the Muskers. Half his skull is upgrades. The other half is regret." },
   'holo:spyder': { model: 'spyder', name: 'SPYD3R', title: 'INTEL // THE BOTS', hologram: '#39ff14', intel: "SPYD3R runs the Bots. Every ad you saw this year, one of his nodes A/B tested on your face first." },
@@ -175,6 +193,7 @@ const HAVEN_TICKER = [
 const HAVEN_ZONES = [
   { name: 'DREAMCASTER RIG', sub: 'OG DEVICE // DEPLOY POINT', x0: -10, x1: 10, z0: 17, z1: 28 },
   { name: 'THE CONCOURSE', sub: 'FORMERLY GIGAMETRO LINE 7', x0: -20, x1: 20, z0: -14, z1: 14 },
+  { name: 'THE FITTING ROOM', sub: 'NO ALGORITHM PICKED THIS OUTFIT', x0: 20.5, x1: 26, z0: -14, z1: -9.5 },
   { name: 'NIGHT MARKET', sub: 'CASH, BARTER, NO RECEIPTS', x0: 20.5, x1: 36, z0: -14, z1: 14 },
   { name: 'COUCH COMMONS', sub: 'RATED 4.1 STARS', x0: -36, x1: -20.5, z0: -2, z1: 14 },
   { name: "NINJ'S CLINIC", sub: 'NO INSURANCE. NO QUESTIONS.', x0: -36, x1: -20.5, z0: -14, z1: -2 },

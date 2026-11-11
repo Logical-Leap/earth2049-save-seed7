@@ -35,6 +35,7 @@ AR.Mission = (() => {
       relays: [], relaysDown: 0, guards: {}, perks: {}, picks: 0, methods: [], idleT: 0, stormT: 0, extractT: 0, extractHold: 0,
       lines: [], lineT: 0, chatT: 0, lastChat: '', bossE: null, done: false, beatLights: [], jumbo: null, ring: null, startT: performance.now(),
       longest: 0, airKills: 0, reroll: 15, rerolls: 0, maxStreakName: '',
+      boots: 0, dripTags: 0, crateDrip: 0, dist: 0, distAcc: 0, unlocks: [],
     };
     save.runs = (save.runs || 0) + 1;
     M.heatMul = 1 + M.heat * 0.08;
@@ -45,6 +46,7 @@ AR.Mission = (() => {
     M.extraction = AR.World.markers('extraction')[0];
     M.spawns = AR.World.markers('spawn');
     buildStage();
+    placeCollectibles();
     AR.Sfx.ambience(true);
     AR.Hud.score(0, 0, M.viewers);
     AR.Hud.style(0, 0.3, '');
@@ -364,7 +366,7 @@ AR.Mission = (() => {
         <div class="n">${p.n}</div><div class="s">SPONSORED BY ${p.s}</div><div class="d">${p.d}</div>`,
     })), i => {
       const p = offer[i];
-      M.perks[p.id] = (M.perks[p.id] || 0) + 1; M.picks++;
+      M.perks[p.id] = (M.perks[p.id] || 0) + 1; M.picks++; WR('bump', 'perks');
       p.fx(AR.Player.S, AR.Player.P);
       AR.Sfx.ui('pick'); AR.Hud.toast(p.n, 'SPONSORED BY ' + p.s);
       chat(pick(AR.CHAT_USERS), pick(AR.CHAT.pick));
@@ -459,6 +461,7 @@ AR.Mission = (() => {
         for (const e of AR.Enemies.list) if (!e.dying && !e.boss) { setTimeout(() => AR.Enemies.damage(e, 99999, { src: 'explosion', dir: V3(0, 1, 0) }), 120 * k++); }
         AR.Enemies.clearEnemyProjs();
         addScore(5000 * (1 + M.heat * 0.25), 'STORM SURVIVED');
+        WR('bump', 'storms');
         perk('boss');
       }
     } else if (M.phase === 'extract') {
@@ -497,6 +500,7 @@ AR.Mission = (() => {
       const up = r > M.rank;
       M.rank = r;
       if (up) {
+        WR('max', 'rank', r);
         AR.Sfx.ui('rank');
         if (r >= 4) chatBurst('rankS', 2); else chat(pick(AR.CHAT_USERS), pick(AR.CHAT.rankUp));
         if (r > M.maxRank) M.maxRank = r;
@@ -533,7 +537,7 @@ AR.Mission = (() => {
   function onKill(e, info, gib) {
     const P = AR.Player.P, S = AR.Player.S;
     if (e.relay) {
-      M.relaysDown++;
+      M.relaysDown++; WR('bump', 'relays');
       if (e.light) { e.light.intensity = 0; e.light = null; }
       AR.hitstop(0.12); AR.Player.addTrauma(0.5);
       AR.Enemies.explode(e.body.pos.x, e.body.pos.y + 3, e.body.pos.z, 5, 25, 'enemy', 8);
@@ -550,6 +554,7 @@ AR.Mission = (() => {
     }
     if (e.boss) {
       addScore(AR.ENEMIES.riya.score * rankMult() * (1 + M.heat * 0.25), 'RIYA VEX DEPLATFORMED');
+      WR('bump', 'boss');
       style('kill', 1.5);
       return;
     }
@@ -560,6 +565,14 @@ AR.Mission = (() => {
     // multi-kill window
     if (now - M.multiT < 1.4) M.multi++; else M.multi = 1;
     M.multiT = now;
+    if (window.Wardrobe?.ready) {
+      const Wd = window.Wardrobe;
+      Wd.bump('kills'); Wd.bump('k_' + e.type);
+      if (info.weapon && AR.GUNS[info.weapon]) Wd.bump('w_' + info.weapon);
+      if (info.head) Wd.bump('heads');
+      if (info.src === 'kick') { Wd.bump('boots'); M.boots++; }
+      if (P.body.onGround === false && P.airT > 0.25) Wd.bump('air');
+    }
     if (M.multi > M.bestMulti) { M.bestMulti = M.multi; M.maxStreakName = STREAK[Math.min(STREAK.length - 1, M.multi)]; }
     // rage bait stacks
     if (S.ragebait) { M.rage = Math.min(10, (now - M.rageT < 2.5 ? M.rage + S.ragebait : S.ragebait)); M.rageT = now; }
@@ -622,12 +635,13 @@ AR.Mission = (() => {
     M.waveLive = false;
     const clean = M.waveHurt < 1;
     AR.Hud.banner('WAVE CLEAR', clean ? 'NO DAMAGE BONUS +2500' : '', 1.8);
-    if (clean) addScore(2500 * rankMult());
+    if (clean) { addScore(2500 * rankMult()); WR('bump', 'flawless'); }
     AR.Sfx.ui('objective');
     nextWave();
   }
   function onHurt(amount) {
     M.hurtTotal += amount; M.waveHurt += amount;
+    WR('bump', 'hits'); WR('bump', 'dmg', amount);
     M.styleV = Math.max(0, M.styleV - Math.min(0.9, 0.25 + amount / 40));
     rankUpdate();
     if (Math.random() < 0.3) chat(pick(AR.CHAT_USERS), pick(AR.Player.P.hp < 30 ? AR.CHAT.low : AR.CHAT.hurt));   // NOSONAR
@@ -642,7 +656,26 @@ AR.Mission = (() => {
     setTimeout(() => finish(false), 2600);
   }
   function addChips(n) { M.chips += n; }
+  /* ================================================================== wardrobe: DRIP tags, the merch crate, the cone */
+  function WR(fn, ...a) { const W = window.Wardrobe; if (W?.ready) return W[fn](...a); return undefined; }
+  function addDrip(n, kind) {
+    if (kind === 'crate') { M.crateDrip += n; AR.Hud.toast(`+${n} DRIP`, 'MERCH CRATE LOOTED // SPEND IT AT THE FITTING ROOM'); }
+    else if (kind === 'cone') { AR.Hud.banner('YOU FOUND THE CONE', 'TRAFFIC CONE UNLOCKED // +100 DRIP', 3); }
+    else { M.dripTags += n; AR.Hud.toast(`+${n} DRIP`, 'MERCH TAG'); }
+    AR.Sfx.ui('objective');
+  }
+  function placeCollectibles() {
+    if (!window.Wardrobe?.ready) return;
+    const nodes = AR.World.layout?.meta?.nav?.nodes || [];
+    const st = AR.World.markers('playerStart')[0]?.pos || [0, 0, 0];
+    // one merch crate per run, somewhere high and away from the drop-in
+    const high = nodes.filter(p => p[1] > 3.5 && Math.hypot(p[0] - st[0], p[2] - st[2]) > 30);
+    if (high.length) { const p = AR.pick(high); AR.Drops.spawn('crate', p[0], p[1] + 0.4, p[2], { value: window.Wardrobe.crateValue(M.heat), still: true }); }
+    // the cone: once per save, on the far gantry corner
+    if (!window.Wardrobe.save.cone) AR.Drops.spawn('cone', AR.CONE_SPOT[0], AR.CONE_SPOT[1] + 0.3, AR.CONE_SPOT[2], { still: true });
+  }
   function use() { AR.Drops.use(); }
+  function noteUnlock(name) { if (M) M.unlocks.push(name); }
 
   /* ================================================================== buddy drone (DEAD INTERNET perk) */
   function makeBuddy() {
@@ -683,6 +716,10 @@ AR.Mission = (() => {
     if (won) { save.wins = (save.wins || 0) + 1; save.maxHeat = Math.max(save.maxHeat || 0, M.heat + 1); }
     SAVE.gt = (SAVE.gt || 0) + gt;
     SAVE.kills = (SAVE.kills || 0) + M.kills;
+    const gi = AR.RESULT_GRADES.findIndex(g => g[1] === grade);
+    const drip = WR('runEnd', { won, heat: M.heat, grade: gi, rank: M.maxRank, relays: M.relaysDown, kills: M.kills, heads: M.heads, boots: M.boots,
+      hurt: M.hurtTotal, hp: AR.Player.P.hp, tags: M.dripTags, crate: M.crateDrip, score });
+    WR('syncGT');
     try { persist(); } catch (err) { console.warn('[E2049] arena save failed', err); }
     const mmss = `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
     const rows = [
@@ -693,6 +730,12 @@ AR.Mission = (() => {
       ['SPONSORS', Object.keys(M.perks).length ? Object.entries(M.perks).map(([id, n]) => AR.PERKS.find(p => p.id === id).n + (n > 1 ? ' x' + n : '')).join(', ') : '—'],
       ['HEAT', M.heat],
     ];
+    if (drip) {
+      const extra = drip.rows.filter(r => /FIRST WIN|TAGS|CRATE/.test(r[0])).map(r => r[0].replace(' x2', '') + ' +' + r[1]);
+      rows.push(['DRIP EARNED', `◆ ${drip.total}${extra.length ? '  // ' + extra.join(' // ') : ''}`]);
+      rows.push(['WALLET', `◆ ${drip.wallet.toLocaleString('en-US')} // SEAM IS AT THE FITTING ROOM`]);
+    }
+    if (M.unlocks.length) rows.push(['UNLOCKED', M.unlocks.join(', ')]);
     setTimeout(() => {
       AR.menu = true; AR.unlockPointer();
       const nextHeat = won ? Math.min(10, M.heat + 1) : M.heat;
@@ -710,6 +753,9 @@ AR.Mission = (() => {
     linesTick(rdt);
     stageTick(dt);
     if (M.phase === 'results') return;
+    // distance covered (wardrobe feat), flushed once a second
+    const pv = AR.Player.P.body.vel;
+    if (pv) { M.distAcc += Math.hypot(pv.x, pv.z) * dt; if (M.distAcc >= 25) { WR('bump', 'arenaM', Math.round(M.distAcc)); M.distAcc = 0; } }
     // style decay
     const drain = (0.09 + M.rank * 0.05) * AR.Player.S.styleDrain;
     if (M.phase !== 'perk' && M.phase !== 'loadout' && M.phase !== 'intro') { M.styleV = Math.max(0, M.styleV - drain * dt); rankUpdate(); }
@@ -758,7 +804,7 @@ AR.Mission = (() => {
   }
 
   return {
-    start, tick, dispose, style, say, onShot, onDamage, onKill, onHurt, onDeath, nearMiss, addChips, use, padAt, waypoints, summonAround,
+    start, tick, dispose, style, say, onShot, onDamage, onKill, onHurt, onDeath, nearMiss, addChips, addDrip, noteUnlock, use, padAt, waypoints, summonAround,
     bossPhase, bossDead, ringCrash, nextBeatIn, headline,
     dev: { act1: () => startAct1(), act2: () => startAct2(), act3: () => startAct3(), boss: () => startBoss(), extract: () => { M.phase = 'bossdead'; startExtract(); } },
     dmgMult: () => (M ? 1 + (M.rank >= 3 ? 0.1 : 0) + M.rage * 0.08 : 1),

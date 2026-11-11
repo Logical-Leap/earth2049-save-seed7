@@ -5,7 +5,7 @@
  */
 'use strict';
 
-AR.VERSION = '20261111-fix1';
+AR.VERSION = '20261111-wardrobe';
 
 /* ====================================================================== GUNS */
 AR.GUNS = {
@@ -136,6 +136,9 @@ AR.PERKS = [
 ];
 
 /* ====================================================================== STYLE RANKS */
+/* the hidden traffic cone (wardrobe feat): far north-east gantry corner, the furthest high ground from the drop-in */
+AR.CONE_SPOT = [43, 4.6, -39];
+
 AR.RANKS = [
   { k: 'D', n: 'LURKER', mult: 1.0, col: '#8a8aa0' },
   { k: 'C', n: 'FOLLOWER', mult: 1.25, col: '#5bd6ff' },
