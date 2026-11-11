@@ -476,18 +476,19 @@ async function newRun(opts = {}) {
       faction: REBEL_HAVEN_HUB.faction,
     });
     const hs = World.playerStart();
-    // The authored marker is the safe arrival pad. Offsetting it six metres
-    // north places fresh runs between the center hall and the sandbag line.
-    G.p.pos.set(hs.x, 0, hs.z);
+    G.p.pos.set(hs.x, World.groundHeight?.(hs.x, hs.z) || 0, hs.z);
     G.p.velY = 0;
     G.p.yaw = hs.yaw ?? 0;
     G.mission = null;
     el('missionBox').style.display = 'none';
-    banner('REBEL HAVEN', 'HAVEN COMMONS — WEAPONS SAFE // COMBAT DISABLED');
+    await Haven.enter(scene, { worldGroup: World.group, onAction: havenAction, lowSpec: isTouch });
+    if (World.group) World.group.traverse(o => { if (o.isLight) o.visible = false; });   // the Haven brings its own light
+    banner('REBEL HAVEN', 'THE UNDERCROFT — WEAPONS SAFE // COMBAT DISABLED');
     setState('run');
     if (gunGroup) gunGroup.visible = false;
     return;
   }
+  Haven.exit(scene);
   await startDistrict(opts.district || 0);
   banner('SIMULATION #' + SAVE.runs, 'OPERATION DREAMCASTER — CAST INITIATED');
   setState('run');
@@ -1307,8 +1308,22 @@ function hubServiceLabel(point) {
   if (role === 'trainer') return ['TRAINING COURTYARD', 'WEAPONS REMAIN SAFE IN HAVEN'];
   return ['REBEL HAVEN CONTACT', 'SPEAK'];
 }
+let nearHavenNpc = null;
 function updateHubPrompt() {
   nearHubService = null;
+  nearHavenNpc = Haven.active && !Haven.dialogOpen ? Haven.nearestTalk() : null;
+  if (nearHavenNpc) {
+    const prompt = el('pickupPrompt');
+    const d = nearHavenNpc.def;
+    prompt.style.display = 'block';
+    el('pickupName').textContent = d.name;
+    el('pickupName').style.color = d.hologram || '#ffe600';
+    el('pickupKey').textContent = (isTouch ? 'TAP [TALK] — ' : 'PRESS [E] — ') + (d.intel ? 'READ INTEL' : 'TALK');
+    el('btnPick').textContent = 'TALK';
+    el('btnPick').style.display = isTouch ? 'flex' : 'none';
+    return;
+  }
+  if (Haven.dialogOpen) { el('pickupPrompt').style.display = 'none'; el('btnPick').style.display = 'none'; return; }
   let best = 3.1;
   for (const point of World.interactionPoints || []) {
     const vertical = Math.abs((G.p.pos.y || 0) - (point.y || 0));
@@ -1325,7 +1340,26 @@ function updateHubPrompt() {
   el('btnPick').textContent = 'USE';
   el('btnPick').style.display = isTouch ? 'flex' : 'none';
 }
+/* Rebel Haven NPC dialogue actions -> the hub's services. */
+function havenAction(action, npc) {
+  if (!G?.hub) return;
+  if (action === 'deploy') { Music.stinger('deploy'); newRun({ district:0, fromHub:true }); return; }
+  if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }
+  if (action === 'snack') { G.p.hp = Math.min(G.p.maxHp, G.p.hp + 15); AudioSys.sfx('pickup'); banner('BUG NOODLES', 'NOURISHED? CLOSE ENOUGH. +15 HP'); return; }
+  hubOverlayOpen = true;
+  paused = true;
+  document.exitPointerLock?.();
+  hideOverlays();
+  if (action === 'briefing') { renderBriefing(); el('ovHelp').classList.add('show'); }
+  else if (action === 'armory') { renderArmory(); el('ovArmory').classList.add('show'); }
+  else { hubOverlayOpen = false; paused = false; }
+}
 function activateHubService() {
+  if (Haven.active && nearHavenNpc && !Haven.dialogOpen) {
+    for (const k of Object.keys(Input.keys)) Input.keys[k] = false;
+    Input.moveX = 0; Input.moveZ = 0; Input.interact = false;
+    return Haven.openDialog(nearHavenNpc, havenAction);
+  }
   const point = nearHubService;
   if (!G?.hub || !point) return false;
   const role = point.userData?.npcRole;
@@ -1928,7 +1962,7 @@ function hudTick() {
   el('ammoText').innerHTML = w.ammo === Infinity ? '&#8734;' : w.ammo;
   el('gtText').innerHTML = '&#11042; ' + p.gt + ' GIGATECH';
   if (G.hub) {
-    el('distText').textContent = 'REBEL HAVEN — HAVEN COMMONS';
+    el('distText').textContent = 'REBEL HAVEN — THE UNDERCROFT';
     el('waveText').textContent = 'HUB LOBBY';
     el('hostText').textContent = 'COMBAT DISABLED';
   } else {
@@ -2086,6 +2120,7 @@ function keyMove() {
 
 /* ============ menus / state ============ */
 function setState(s) {
+  if (s === 'title' && Haven.active) Haven.exit(scene);
   state = s;
   document.body.classList.toggle('inrun', s === 'run');
   if (gunGroup) gunGroup.visible = (s === 'run' || s === 'og');
@@ -2460,6 +2495,9 @@ function acceptanceSnapshot() {
     objective: G?.authoredObjective ? { x:G.authoredObjective.x, y:G.authoredObjective.y, z:G.authoredObjective.z } : null,
     extraction: G?.authoredExtraction ? { x:G.authoredExtraction.x, y:G.authoredExtraction.y, z:G.authoredExtraction.z } : null,
     prompt: promptName ? { name:promptName, key:el('pickupKey')?.textContent || null } : null,
+    hubStart: G?.hub ? World.playerStart() : null,
+    hubLaunch: G?.hub ? (World.interactionPoints || []).find(p => p.gameplayType === 'missionLaunch') || null : null,
+    haven: G?.hub && Haven.active ? { npcs: Haven.debug().npcs.length, crowd: Haven.debug().agents.length } : null,
     save: SAVE ? { schemaVersion:SAVE.schemaVersion, runs:SAVE.runs, gt:SAVE.gt, bestD:SAVE.bestD, upgrades:{ ...SAVE.up }, shillzIntel:SAVE.intel?.shillz?.points || 0, shillzLeaders:SAVE.intel?.shillz?.leaders || 0 } : null,
   };
 }
@@ -2490,6 +2528,27 @@ function adaptQuality(dt) {
     composer.setSize(innerWidth, innerHeight);
   }
 }
+
+/* ============ music: pick the cue for what the player is doing ============ */
+function musicDirector() {
+  if (!AudioSys.ctx || !SAVE?.opts?.music) return;
+  let want = null;
+  if (state === 'title') want = 'title';
+  else if ((state === 'run' || state === 'og') && G) want = G.hub ? 'hub' : (G.phase === 'boss' ? 'boss' : 'combat');
+  else if (state === 'victory') want = 'outro';
+  if (state === 'dead') { if (Music.current) Music.stop(2.5); return; }
+  if (want && want !== Music.current && !musicDirector.pending) {
+    musicDirector.pending = true;
+    Music.play(want, { onBar: want === 'boss' || want === 'combat', fade: want === 'hub' ? 2.5 : 1.4 }).finally(() => { musicDirector.pending = false; });
+  }
+}
+addEventListener('pointerdown', () => { AudioSys.init(); AudioSys.resume(); }, { once: false, passive: true });
+// Dialogue owns the keyboard while it is open (capture phase runs before the game's handlers).
+addEventListener('keydown', e => {
+  if (!Haven.dialogOpen) return;
+  Haven.dialogKey(e.code);
+  e.stopImmediatePropagation(); e.preventDefault();
+}, true);
 
 /* ============ main loop ============ */
 let lastT = 0, flowT = 0, titleT = 0;
@@ -2543,6 +2602,7 @@ function frame(t) {
     fxTick(sdt);
     tracerTick(dt);
     World.tick(sdt, G.time);
+    if (G.hub) Haven.tick(sdt, G.p);
     hudTick();
     AudioSys.setIntensity(G.phase === 'boss' ? 0.95 : 0.35 + G.district * 0.1 + Math.min(0.25, G.enemies.length * 0.03));
   } else if (state === 'og') {
@@ -2557,6 +2617,7 @@ function frame(t) {
     World.tick(dt * 0.3, G ? G.time : 0);
   }
 
+  musicDirector();
   composer.render();
 }
 

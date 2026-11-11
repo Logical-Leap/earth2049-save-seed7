@@ -49,6 +49,33 @@ for (const w of WEAPONS) {
   const to = path.join(out, 'weapons', `${w}.glb`);
   fs.copyFileSync(from, to); files.push(path.relative(process.cwd(), to));
 }
+// ---- Rebel Haven: the level, its music, and everyone who lives there
+const HAVEN = {
+  'assets/maps/haven': [[`${P}/maps/haven/models`, ['haven.glb', 'haven.layout.json', 'haven.scene.json']]],
+  'assets/audio/music': [[`${P}/audio/music`, ['cues.json', 'title.m4a', 'hub.m4a', 'combat.m4a', 'boss.m4a', 'deploy.m4a', 'outro.m4a']]],
+  'assets/models/haven/npcs': [[`${P}/characters/npcs/models`, ['civ_worker_m', 'civ_vendor_m', 'civ_hacker_f', 'civ_fan_m', 'civ_punk_m',
+    'civ_student_f', 'civ_courier_f', 'civ_hoodie_m', 'civ_muskfan_f', 'civ_runner_m', 'civ_commuter_f'].map(n => n + '.glb')]],
+  'assets/models/haven/crowd': [[`${P}/characters/crowd/models`, ['couch_m.glb', 'couch_f.glb', 'serverless_m.glb', 'serverless_f.glb']],
+    [`${P}/characters/enemies/models`, ['broker_f.glb']]],
+  'assets/models/haven/chars': [[`${P}/characters/catsci/models`, ['catsci_ps1.glb:catsci.glb']], [`${P}/characters/catop/models`, ['catop_ps1.glb:catop.glb']],
+    [`${P}/characters/rebel/models`, ['rebel_ps1.glb:rebel.glb']], [`${P}/characters/zhu/models`, ['zhu_ps1.glb:zhu.glb']]],
+};
+for (const [dest, groups] of Object.entries(HAVEN)) {
+  fs.mkdirSync(path.join(process.cwd(), dest), { recursive: true });
+  for (const [dir, names] of groups) for (const spec of names) {
+    const [from, to = from] = spec.split(':');
+    fs.copyFileSync(path.join(src, dir, from), path.join(process.cwd(), dest, to));
+    files.push(`${dest}/${to}`);
+  }
+}
+// every prop the Haven layout places
+const layout = JSON.parse(fs.readFileSync(path.join(src, P, 'maps/haven/models/haven.layout.json'), 'utf8'));
+fs.mkdirSync(path.join(process.cwd(), 'assets/models/haven/props'), { recursive: true });
+for (const m of new Set(layout.props.map(p => p.model))) {
+  fs.copyFileSync(path.join(src, P, 'props/models', m + '.glb'), path.join(process.cwd(), 'assets/models/haven/props', m + '.glb'));
+  files.push(`assets/models/haven/props/${m}.glb`);
+}
+
 let commit = 'unknown';
 try {
   commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: src }).toString().trim();

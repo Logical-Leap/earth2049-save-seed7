@@ -53,14 +53,17 @@ async function main() {
   const snap = () => page.evaluate(() => window.__E2049_ACCEPTANCE__.snapshot());
 
   await page.click('#btnHub');
+  // The Hub's spawn pad and Dreamcaster rig come from the level, not hard-coded coordinates.
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.state === 'run' && s.hub === true && Math.abs(s.player.z - 48) < 0.6;
-  }, null, { timeout:30000 });
+    return s?.state === 'run' && s.hub === true && s.hubStart && s.hubLaunch &&
+      Math.hypot(s.player.x - s.hubStart.x, s.player.z - s.hubStart.z) < 0.6;
+  }, null, { timeout:180000 });
   const initial = await snap();
   assert.equal(initial.save.runs, 0);
+  assert.ok(initial.haven && initial.haven.npcs > 0, 'Rebel Haven runtime populated the hub');
 
-  await navigate(page, snap, { x:0, z:46 }, 3, 20000);
+  await navigate(page, snap, { x:initial.hubLaunch.x, z:initial.hubLaunch.z - 1.2 }, 1.4, 60000);
   await page.keyboard.press('KeyE');
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
