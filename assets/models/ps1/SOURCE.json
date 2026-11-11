@@ -1,6 +1,6 @@
 {
   "repo": "Logical-Leap/game-art-pipeline",
-  "commit": "e0db0642564db8520f34eb5c795013f5a6a33f0a",
+  "commit": "c8afd884da9dec6dc23dc626b949a0162d40bd72",
   "synced": "2026-11-11",
   "files": [
     "assets/models/ps1/characters/shillz.glb",
@@ -55,6 +55,15 @@
     "assets/models/haven/chars/catop.glb",
     "assets/models/haven/chars/rebel.glb",
     "assets/models/haven/chars/zhu.glb",
+    "assets/maps/plaza/plaza.glb",
+    "assets/maps/plaza/plaza.layout.json",
+    "assets/models/arena/shill_m.glb",
+    "assets/models/arena/shill_f.glb",
+    "assets/models/arena/hypebeast_m.glb",
+    "assets/models/arena/cdrone_x.glb",
+    "assets/models/arena/enforcer_x.glb",
+    "assets/models/arena/serverless_m.glb",
+    "assets/models/arena/serverless_f.glb",
     "assets/models/haven/props/shillz_speaker_tower.glb",
     "assets/models/haven/props/bench.glb",
     "assets/models/haven/props/trash_bin.glb",
@@ -89,6 +98,7 @@
     "assets/models/haven/props/rebel_comms_relay.glb",
     "assets/models/haven/props/rebel_dirt_bike.glb",
     "assets/models/haven/props/gigacorp_sentinel_drone.glb",
-    "assets/models/haven/props/gigacorp_riot_shield.glb"
+    "assets/models/haven/props/gigacorp_riot_shield.glb",
+    "assets/models/haven/props/bollard.glb"
   ]
 }

@@ -81,7 +81,9 @@ test('Hub exposes a ground-level mission launch fallback when authored launch po
 
 test('Hub services launch ShillZ and post-run primary actions return to Haven', () => {
   assert.match(game, /DEPLOY TO SHILLZ CENTRAL/);
-  assert.match(game, /newRun\(\{ district:0, fromHub:true \}\)/);
+  // the Haven's deploy now casts into Operation: Unsubscribe (the arena runtime); classic districts stay for co-op
+  assert.match(game, /action === 'deploy'\) \{ Music\.stinger\('deploy'\); startArena\(\)/);
+  assert.match(game, /async function startArena/);
   assert.match(game, /CampaignProgression\.recordLeaderDefeat/);
   assert.match(html, /id="btnRetry">Return to Rebel Haven/);
   assert.match(html, /id="btnVictRetry">Return to Rebel Haven/);

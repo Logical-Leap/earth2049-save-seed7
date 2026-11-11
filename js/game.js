@@ -1375,9 +1375,27 @@ function updateHubPrompt() {
   el('btnPick').style.display = isTouch ? 'flex' : 'none';
 }
 /* Rebel Haven NPC dialogue actions -> the hub's services. */
+/* Operation: Unsubscribe — the combat arena runtime (js/arena/) takes over the renderer for the mission.
+ * The classic district runs stay available to co-op via newRun({ district:0, fromHub:true }). */
+async function startArena(opts = {}) {
+  if (state === 'arena') return;
+  if (Haven.active) Haven.exit(scene);
+  resetRunWorld();
+  if (World.group) World.group.visible = false;
+  hideOverlays();
+  setState('arena');
+  paused = false;
+  G = null;
+  await Arena.start({ scene, camera, renderer, composer, heat: opts.heat ?? SAVE.arena?.heat ?? 0, onExit: () => {
+    if (World.group) World.group.visible = true;
+    setState('loading');
+    newRun({ hub:true });
+  } });
+}
+
 function havenAction(action, npc) {
   if (!G?.hub) return;
-  if (action === 'deploy') { Music.stinger('deploy'); newRun({ district:0, fromHub:true }); return; }
+  if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }
   if (action === 'snack') { G.p.hp = Math.min(G.p.maxHp, G.p.hp + 15); AudioSys.sfx('pickup'); banner('BUG NOODLES', 'NOURISHED? CLOSE ENOUGH. +15 HP'); return; }
   hubOverlayOpen = true;
@@ -1400,7 +1418,7 @@ function activateHubService() {
   AudioSys.sfx('ui');
   if (point.gameplayType === 'missionLaunch' || point.gameplayType === 'travelGate') {
     nearHubService = null;
-    newRun({ district:0, fromHub:true });
+    startArena();
     return true;
   }
   if (role === 'service') {
@@ -2372,7 +2390,7 @@ function prepJoinCoopFlow() {
 function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
   el('btnHub').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun({ hub:true }); };
-  el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun(); };
+  el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); startArena(); };
   el('btnHostCoop').onclick = async () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); await hostCoopFlow(); };
   el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
   el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); updateTitle(); show('ovTitle'); };
@@ -2536,6 +2554,7 @@ function acceptanceSnapshot() {
   return {
     state,
     paused,
+    arena: state === 'arena' ? Arena.snapshot() : null,
     hub: !!G?.hub,
     district: G?.district ?? null,
     phase: G?.phase ?? null,
@@ -2589,6 +2608,7 @@ function musicDirector() {
   if (state === 'title') want = 'title';
   else if ((state === 'run' || state === 'og') && G) want = G.hub ? 'hub' : (G.phase === 'boss' ? 'boss' : 'combat');
   else if (state === 'victory') want = 'outro';
+  else if (state === 'arena') { want = Arena.musicCue(); if (!want) { if (Music.current) Music.stop(2); return; } }
   if (state === 'dead') { if (Music.current) Music.stop(2.5); return; }
   if (want && want !== Music.current && !musicDirector.pending) {
     musicDirector.pending = true;
@@ -2658,6 +2678,8 @@ function frame(t) {
     if (G.hub) Haven.tick(sdt, G.p);
     hudTick();
     AudioSys.setIntensity(G.phase === 'boss' ? 0.95 : 0.35 + G.district * 0.1 + Math.min(0.25, G.enemies.length * 0.03));
+  } else if (state === 'arena') {
+    Arena.tick(dt);
   } else if (state === 'og') {
     World.tick(dt * 0.2, G ? G.time : 0);
   } else if (state === 'title') {

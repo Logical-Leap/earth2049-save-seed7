@@ -65,25 +65,19 @@ async function main() {
 
   await navigate(page, snap, { x:initial.hubLaunch.x, z:initial.hubLaunch.z - 1.2 }, 1.4, 60000);
   await page.keyboard.press('KeyE');
+  // the Haven's Dreamcaster rig casts into Operation: Unsubscribe (the arena runtime)
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.state === 'run' && !s.hub && s.phase === 'objective' && Math.abs(s.player.z - 37) < 0.8;
-  }, null, { timeout:30000 });
-  const deployed = await snap();
-  assert.equal(deployed.save.runs, 1);
-
-  await page.click('#c');
-  await navigate(page, snap, deployed.objective, 2.5, 45000);
-  await page.keyboard.press('KeyE');
+    return s?.state === 'arena' && s.arena?.phase === 'loadout';
+  }, null, { timeout:120000 });
+  await page.keyboard.press('Digit1');                       // pick the first primary
   await page.waitForFunction(() => {
     const s = window.__E2049_ACCEPTANCE__?.snapshot();
-    return s?.phase === 'wave' && s.wave === 1 && (s.pendingEnemies + s.liveEnemies) > 0;
-  }, null, { timeout:20000 });
-  const waveStarted = await snap();
-  assert.equal(waveStarted.save.runs, 1);
-  assert.equal(waveStarted.wave, 1);
-  assert.ok(waveStarted.pendingEnemies + waveStarted.liveEnemies > 0);
-  assert.ok(Math.hypot(waveStarted.player.x - deployed.player.x, waveStarted.player.z - deployed.player.z) > 10);
+    return s?.arena?.phase === 'act1' && s.arena.gun !== 'pistol' && (s.arena.enemies + s.arena.pending) > 0;
+  }, null, { timeout:60000 });
+  const waveStarted = (await snap()).arena;
+  assert.ok(waveStarted.enemies + waveStarted.pending > 0);
+  assert.equal(waveStarted.wave, 0);
 
   await page.screenshot({ path:SHOT, fullPage:true });
   assert.deepEqual(errors, []);
@@ -93,9 +87,9 @@ async function main() {
   assert.deepEqual(unexpectedHttpErrors, []);
   console.log(JSON.stringify({
     ok:true,
-    scope:'real-input Hub deployment, authored ShillZ movement, objective activation, and wave-start smoke',
+    scope:'real-input Hub deployment into Operation: Unsubscribe, loadout pick and wave-start smoke',
     wave:waveStarted.wave,
-    hostiles:waveStarted.pendingEnemies + waveStarted.liveEnemies,
+    hostiles:waveStarted.pending + waveStarted.enemies,
     player:waveStarted.player,
     optionalFallbacks:httpErrors,
     screenshot:SHOT,
