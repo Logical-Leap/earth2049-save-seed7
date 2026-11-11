@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-11-11 — Gunplay: weight, reloads, ADS, sound, and seven real rarities
+
+- New `js/gunfeel.js` drives first-person weapons: one viewmodel per gun and rarity from the game-art-pipeline arsenal
+  GLBs (attachments and finish per rarity), gloved hands, spring recoil (viewmodel and camera, with partial climb),
+  bob/sway/strafe tilt/landing dip, draw animation, muzzle flashes coloured by rarity from Epic up, ejected casings
+  that bounce and tink, and moving parts (slide, bolt, bolt-action cycle, pump, LMG feed cover, launcher drum, energy coil).
+- Magazines and reloads: `R` reloads (tactical and slower empty reloads with a rack/pump/slide release/vent), the LMG
+  opens its feed cover, the Plasma Lancer swaps its cell, the MGL-6 loads shell by shell (firing interrupts it).
+  Empty trigger pulls auto-reload. HUD shows `clip / reserve`. The second active ability moved from `R` to `C`.
+- Aim down sights on right mouse: per-optic sight lines (iron, red dot, holo, scope), FOV zoom, slower aim
+  sensitivity, tighter spread; scoped optics switch to a scope overlay (thermal tinted).
+- New `js/gunaudio.js`: layered synthesized gunshots (transient, crack, body, sub, signature, mechanics, convolution
+  room tail) through a compressed, soft-clipped gun bus; full reload and handling foley. Rarity adds layers: more sub
+  from Uncommon, bite from Rare, an energy sweep at Epic, a thunder layer at Legendary, a gold chime at Mythic and
+  Turing glitch bursts at Relic.
+- Rarity now changes how a gun handles: less recoil, faster reload/aim/draw, bigger magazines (per attachment), bigger
+  flashes and coloured impact sparks from Epic up.
+- The Compliance Saw LMG now has a PS1 model (weapon.lmg); weapon GLBs synced from game-art-pipeline `d072cac`+.
+
 ## 2026-11-08 — Every enemy is PS1
 
 - Bots node, Bots sentinel ("Ad Broadcaster") and Cryptid drone now use new PS1 models from game-art-pipeline, so no procedural enemies remain. The node is a full humanoid15 character (face-screen smiley, all clips); the sentinel and drone are props-kit units whose `leg_*` / `spin_*` nodes the game animates (new 4-leg diagonal gait).

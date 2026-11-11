@@ -24,7 +24,7 @@ const CHARACTERS = {
 };
 // Non-humanoid units built with the props kit (named leg_/spin_ nodes, no clips).
 const UNITS = ['cryptid_drone', 'bots_sentinel'];
-const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer'];
+const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer', 'compliance_saw'];
 
 if (!fs.existsSync(path.join(src, P))) {
   console.error(`game-art-pipeline not found at ${src}`);

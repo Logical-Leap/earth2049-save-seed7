@@ -1,6 +1,6 @@
 {
   "repo": "Logical-Leap/game-art-pipeline",
-  "commit": "12a877603fd04a4ab1e882364d04ce35411f8197",
+  "commit": "d072cac9b92950d7b83ee9bad4a2eeda7f956112",
   "synced": "2026-11-11",
   "files": [
     "assets/models/ps1/characters/shillz.glb",
@@ -24,6 +24,7 @@
     "assets/models/ps1/weapons/lrx7_harbinger.glb",
     "assets/models/ps1/weapons/plasma_lancer.glb",
     "assets/models/ps1/weapons/mgl6_thunderer.glb",
+    "assets/models/ps1/weapons/compliance_saw.glb",
     "assets/maps/haven/haven.glb",
     "assets/maps/haven/haven.layout.json",
     "assets/maps/haven/haven.scene.json",
