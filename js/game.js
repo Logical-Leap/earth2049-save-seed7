@@ -84,7 +84,7 @@ function loadWardrobe() {
     }
   });
 }
-const AVATAR_CATALOG_URL = 'assets/models/ps1/avatar/catalog.json';
+const AVATAR_CATALOG_URL = 'assets/models/ps1/avatar/catalog.json?v=' + (window.AvatarKit ? window.AvatarKit.KIT_V : Date.now());   // models are cached immutable
 function openWardrobe() {
   if (!window.AvatarCreator || !window.Wardrobe?.ready) { banner('THE FITTING ROOM', 'STILL UNPACKING. TRY AGAIN IN A SECOND.'); return; }
   hubOverlayOpen = true; paused = true;

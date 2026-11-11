@@ -107,6 +107,13 @@ try {
 } catch (err) {
   console.warn('could not read the pipeline commit:', err.message);
 }
+// the avatar kit is cached as immutable: stamp the commit into js/avatar.js so players fetch the new files
+{
+  const js = path.join(process.cwd(), 'js/avatar.js');
+  if (fs.existsSync(js) && commit !== 'unknown') {
+    fs.writeFileSync(js, fs.readFileSync(js, 'utf8').replace(/const KIT_V = '[^']*';/, `const KIT_V = '${commit.slice(0, 7)}';`));
+  }
+}
 fs.writeFileSync(path.join(out, 'SOURCE.json'), JSON.stringify({
   repo: 'Logical-Leap/game-art-pipeline', commit, synced: new Date().toISOString().slice(0, 10), files,
 }, null, 2) + '\n');

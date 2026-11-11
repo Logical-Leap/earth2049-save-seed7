@@ -27,6 +27,9 @@
 (function () {
   'use strict';
   const BASE = 'assets/models/ps1/avatar/';
+  // /assets/models/* is served "immutable" for a week, so every kit file is fetched with this version.
+  // scripts/sync-ps1-models.js rewrites it to the art-pipeline commit on every sync: new items show up at once.
+  const KIT_V = 'c97d2da';
   const STORE = 'e2049.avatar.v1';
   const OWNED = 'e2049.avatar.owned.v1';
   const RARITY_COLORS = ['#a7b0c2', '#4fd17a', '#42a5f5', '#b65cff', '#ff9800', '#ffd54f', '#00e5ff'];
@@ -48,7 +51,7 @@
   }
 
   async function loadKit(sex, kit) {
-    const g = await loadGLB(`${BASE}avatar_${sex}_${kit}.glb`);
+    const g = await loadGLB(`${BASE}avatar_${sex}_${kit}.glb?v=${KIT_V}`);
     let map = null, emi = null;
     g.scene.traverse(o => { if (o.isMesh && o.material.map && !map) { map = o.material.map; emi = o.material.emissiveMap; } });
     const mt = await g.parser.getDependency('texture', 2).catch(() => null);
@@ -61,7 +64,7 @@
   function ready() {
     if (loading) return loading;
     loading = (async () => {
-      const r = await fetch(BASE + 'catalog.json');
+      const r = await fetch(`${BASE}catalog.json?v=${KIT_V}`);
       CAT = await r.json();
       ITEMS = { m: {}, f: {} };
       for (const s of ['m', 'f']) for (const it of CAT.items[s]) ITEMS[s][it.id] = it;
@@ -286,7 +289,7 @@
   }
 
   window.AvatarKit = {
-    BASE, RARITY_COLORS, EYE,
+    BASE, KIT_V, RARITY_COLORS, EYE,
     ready, get catalog() { return CAT; }, get loaded() { return !!CAT && !!KITS.f.base; },
     item: (sex, id) => ITEMS && ITEMS[sex][id],
     itemsIn: (sex, cat) => byCat(sex, cat),
