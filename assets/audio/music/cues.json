@@ -1,0 +1,57 @@
+{
+  "source": "earth2069_main_theme.m4a",
+  "bpm": 120.0,
+  "offset": 0.028,
+  "barSeconds": 2.0,
+  "crossfadeSeconds": 0.03,
+  "cues": {
+    "title": {
+      "file": "title.m4a",
+      "note": "intro once, then the build loops",
+      "startsAt": 0.5,
+      "loop": true,
+      "loopStart": 16.5,
+      "loopEnd": 64.5,
+      "bars": 24
+    },
+    "hub": {
+      "file": "hub.m4a",
+      "note": "bright mid section; Rebel Haven",
+      "startsAt": 0.5,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 48.5,
+      "bars": 24
+    },
+    "combat": {
+      "file": "combat.m4a",
+      "note": "full groove; ends on its own turnaround",
+      "startsAt": 0.5,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 64.5,
+      "bars": 32
+    },
+    "boss": {
+      "file": "boss.m4a",
+      "note": "second high section",
+      "startsAt": 0.5,
+      "loop": true,
+      "loopStart": 0.5,
+      "loopEnd": 48.5,
+      "bars": 24
+    },
+    "deploy": {
+      "file": "deploy.m4a",
+      "note": "first two bars of the drop, one-shot stinger",
+      "startsAt": 0.5,
+      "loop": false
+    },
+    "outro": {
+      "file": "outro.m4a",
+      "note": "the natural ending, one-shot",
+      "startsAt": 0.5,
+      "loop": false
+    }
+  }
+}

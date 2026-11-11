@@ -63,7 +63,8 @@ test('runtime exposes authored interactions, objective and extraction markers', 
 });
 
 test('fresh Hub run starts on the authored player marker instead of the sealed arrival-yard pocket', () => {
-  assert.match(game, /G\.p\.pos\.set\(hs\.x, 0, hs\.z\)/);
+  // Spawn on the authored marker, standing on its floor (the Haven's arrival rig is raised).
+  assert.match(game, /G\.p\.pos\.set\(hs\.x, World\.groundHeight\?\.\(hs\.x, hs\.z\) \|\| 0, hs\.z\)/);
   assert.doesNotMatch(game, /hs\.z\s*-\s*6/);
 });
 

@@ -29,10 +29,11 @@ const FACTIONS = {
 };
 
 const REBEL_HAVEN_HUB = Object.freeze({
-  name: 'REBEL HAVEN — HAVEN COMMONS',
-  sceneUrl: 'assets/scenes/districts/rebel-hub-haven-commons-final.scene.json?v=20260712-real-hub',
-  modelUrl: 'assets/models/rebel-hub-haven-commons-final/rebel-hub-haven-commons-final.glb?v=20260712-clipping-fix-v2',
-
+  name: 'REBEL HAVEN — THE UNDERCROFT',
+  // Built by game-art-pipeline (projects/earth2049/maps/haven): baked-light level GLB, collision/marker scene,
+  // and the layout js/haven.js populates (props, NPCs, crowds, lights, fx, sound).
+  sceneUrl: 'assets/maps/haven/haven.scene.json?v=20261111-haven',
+  modelUrl: 'assets/maps/haven/haven.glb?v=20261111-haven',
   faction: 'rebels',
   gameMode: 'hubLobby',
   combatDisabled: true,

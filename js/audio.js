@@ -117,6 +117,8 @@ const AudioSys = (() => {
     musicStep++;
   }
   function musicStart() {
+    // Authored music cues (js/music.js) take over when they are loaded; the synth is the fallback.
+    if (window.Music?.owns?.()) return;
     if (!ctx || musicTimer) return;
     musicStep = 0;
     musicTimer = setInterval(() => { if (musOn && ctx.state === 'running') schedStep(); }, musicInt * 1000);
@@ -127,7 +129,8 @@ const AudioSys = (() => {
     init, resume, sfx,
     musicStart, musicStop,
     setIntensity(v) { intensity = v; },
-    setSfx(v) { sfxOn = v; }, setMusic(v) { musOn = v; if (!v) musicStop(); else musicStart(); },
+    setSfx(v) { sfxOn = v; }, setMusic(v) { musOn = v; window.Music?.setEnabled?.(v); if (!v) musicStop(); else musicStart(); },
+    get ctx() { return ctx; }, get master() { return master; }, get sfxBus() { return sfxBus; },
     get sfxOn() { return sfxOn; }, get musOn() { return musOn; },
   };
 })();

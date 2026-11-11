@@ -483,6 +483,17 @@ const World = (() => {
       if (authoredVisualModel) editorScene.traverse(obj => { if (obj.isMesh) obj.visible = false; });
       if (authoredVisualModel) {
         authoredVisualModel.name = 'RebelHavenHub_ProductionVisuals';
+        // forge.maps levels are prelit: vertex colours hold baked light at 1/lightScale (see the pipeline's
+        // forge/maps). Unlit materials times lightScale reproduce it; nothing here needs scene lights.
+        authoredVisualModel.traverse(o => {
+          if (!o.isMesh) return;
+          const ms = Array.isArray(o.material) ? o.material : [o.material];
+          for (const m of ms) {
+            const k = m?.userData?.lightScale;
+            if (k && m.color) { m.color.multiplyScalar(k); if (m.userData.emissive) m.toneMapped = false; }
+          }
+          o.matrixAutoUpdate = false; o.updateMatrix();
+        });
         group.add(authoredVisualModel);
       }
     }
