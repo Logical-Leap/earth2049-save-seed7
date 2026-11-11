@@ -61,6 +61,7 @@ const Arena = (() => {
     opts.scene.background = new THREE.Color(...fog);
     AR.Fx.init(opts.scene); AR.Enemies.init(opts.scene); AR.Drops.init(opts.scene);
     if (!AR.Player.ready) { AR.Player.init(opts.camera, opts.composer); AR.Player.ready = true; } else AR.Player.attachPass(opts.composer);
+    AR.Player.useGunFeel(opts.gunGroup);                  // the art department's first-person rig, if it is loaded
     begin(opts.heat);
     if (ls) ls.style.display = 'none';
     loading = false;
