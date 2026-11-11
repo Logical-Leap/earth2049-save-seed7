@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-11 — Reload timing pass
+
+- Reload times per gun (Common, quick / empty): Volt-9 1.45 / 1.85 s, VX-2 2.05 / 2.55 s, M-52 2.45 / 3.05 s,
+  Harbinger 3.0 / 3.2 s (+ working the bolt when empty), Plasma Lancer 2.9 / 3.6 s, Compliance Saw 5.8 / 6.4 s
+  (the slowest), Riptide 0.58 s per shell, MGL-6 0.95 s per grenade. Rarity now speeds reloads up by at most 18%
+  (it was 28%), separately from aiming and drawing.
+- Magazine reloads are a real sequence: grab, pull it out, then either stow it in the pouch (quick reload) or let it
+  drop (empty reload: the old mag falls, tumbles and clatters on the floor), the hand goes to the pouch, a fresh mag
+  comes up angled, lines up, seats and gets a tap. Plasma cells pop out of the top when empty. The LMG stows its box
+  and fetches a new one; the MGL-6 brings each grenade up from the bandolier. The support hand now follows the
+  magazine it's holding. New sounds: mag release, stow, pouch flap, empty mag on the floor, cell eject.
+
 ## 2026-11-11 — Gunplay pass 2: every gun works its own way
 
 - **Riptide-12 is now a pump-action shotgun.** One huge boom per shot, then the support hand racks the pump and a red

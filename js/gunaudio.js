@@ -224,6 +224,15 @@ const GunAudio = (() => {
     hullDrop: () => quick((v, t) => { nz(v, t, .03, .32, 'bandpass', 1100, 800, 2.2); tone(v, 'triangle', 330, 290, t, .001, .045, .22);
                                        tone(v, 'sine', 2900, 2800, t + .004, .001, .05, .03); nz(v, t + .07, .02, .14, 'bandpass', 1300, 900, 2.2); }, .12, .8),
     hullBounce: () => quick((v, t) => { nz(v, t, .022, .2, 'bandpass', 1250, 900, 2.4); tone(v, 'triangle', 360, 320, t, .001, .03, .12); }, .1, .7),
+    // reload handling: mag release button, stowing in the pouch, the pouch flap, an empty mag hitting the floor
+    magRelease: () => quick((v, t) => { clack(v, t, 3000, .35); nz(v, t + .01, .08, .2, 'bandpass', 1400, 700, 1); }),
+    magStow: () => quick((v, t) => { nz(v, t, .14, .16, 'bandpass', 900, 500, .8, .03); clack(v, t + .12, 900, .25); }, .08, .7),
+    pouch: () => quick((v, t) => { for (let i = 0; i < 7; i++) nz(v, t + i * .016 + Math.random() * .006, .014, .14, 'bandpass', 2600 + Math.random() * 2400, 2000, 1.4);
+                                   nz(v, t + .16, .12, .12, 'bandpass', 800, 1400, .8, .03); }, .06, .75),
+    magFloor: () => quick((v, t) => { clack(v, t, 1500, .7); tone(v, 'triangle', 1900, 1750, t, .001, .09, .12); nz(v, t + .09, .03, .25, 'bandpass', 1200, 800, 2);
+                                      clack(v, t + .16, 1700, .3); tone(v, 'triangle', 2300, 2200, t + .16, .001, .05, .06); }, .2, .8),
+    cellEject: () => quick((v, t) => { clack(v, t, 1800, .5); tone(v, 'sine', 320, 900, t, .005, .08, .3); nz(v, t + .02, .45, .4, 'highpass', 3500, 1400, .7, .03);
+                                       tone(v, 'sawtooth', 1200, 140, t + .02, .002, .3, .12); }, .25, .9),
     beltOut: () => quick((v, t) => { for (let i = 0; i < 4; i++) nz(v, t + i * .03, .025, .15, 'bandpass', 2600 - i * 150, 2000, 2); clack(v, t + .12, 1600, .3); }),
     boltUp: () => quick((v, t) => { clack(v, t, 2900, .5); }),
     boltBack: () => quick((v, t) => { nz(v, t, .08, .4, 'bandpass', 2600, 4200, 1.2); clack(v, t + .07, 3300, .4); }),

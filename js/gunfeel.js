@@ -35,21 +35,21 @@ const GunFeel = (() => {
      hip: grip position in camera space; ads: seconds to aim; draw: seconds; flash: size / kind;
      shell: casing kind; punch: FOV kick in degrees; cycle: seconds for the pump / bolt after a shot */
   const GUN = {
-    pistol:  { mag: { std: 12, ext: 18 }, reload: [1.15, 1.45], style: 'mag', rack: 'slide', kick: [1.1, .35], vm: [.045, .16, .05],
+    pistol:  { mag: { std: 12, ext: 18 }, reload: [1.45, 1.85], style: 'mag', rack: 'slide', kick: [1.1, .35], vm: [.045, .16, .05],
                hip: [.150, -.165, -.300], ads: .16, draw: .32, flash: [.9, 'star'], shell: 'pistol', fire: 'slide', punch: .6 },
-    smg:     { mag: { std: 32, ext: 48, drum: 64 }, reload: [1.55, 1.95], style: 'mag', rack: 'bolt', kick: [.42, .38], vm: [.020, .05, .03],
+    smg:     { mag: { std: 32, ext: 48, drum: 64 }, reload: [2.05, 2.55], style: 'mag', rack: 'bolt', kick: [.42, .38], vm: [.020, .05, .03],
                hip: [.160, -.185, -.290], ads: .18, draw: .38, flash: [.85, 'star'], shell: 'pistol', fire: 'bolt', punch: .25 },
-    shotgun: { mag: { std: 6, ext: 8 }, reload: [.50, .50], style: 'tube', rack: 'pump', kick: [5.0, .7], vm: [.15, .42, .10],
+    shotgun: { mag: { std: 6, ext: 8 }, reload: [.58, .58], style: 'tube', rack: 'pump', kick: [5.0, .7], vm: [.15, .42, .10],
                hip: [.165, -.195, -.300], ads: .24, draw: .5, flash: [2.1, 'wide'], shell: 'hull', fire: 'pump', punch: 5.5, cycle: .50 },
-    ar:      { mag: { std: 30, ext: 45, drum: 60 }, reload: [1.75, 2.2], style: 'mag', rack: 'bolt', kick: [.72, .32], vm: [.028, .07, .03],
+    ar:      { mag: { std: 30, ext: 45, drum: 60 }, reload: [2.45, 3.05], style: 'mag', rack: 'bolt', kick: [.72, .32], vm: [.028, .07, .03],
                hip: [.165, -.190, -.300], ads: .22, draw: .45, flash: [1.05, 'star'], shell: 'rifle', fire: 'bolt', punch: .35 },
-    dmr:     { mag: { std: 5, ext: 8 }, reload: [2.2, 2.4], style: 'mag', rack: 'boltaction', kick: [4.2, .5], vm: [.11, .4, .06],
+    dmr:     { mag: { std: 5, ext: 8 }, reload: [3.0, 3.2], style: 'mag', rack: 'boltaction', kick: [4.2, .5], vm: [.11, .4, .06],
                hip: [.165, -.190, -.310], ads: .20, draw: .55, flash: [1.5, 'star'], shell: 'rifle', fire: 'boltaction', punch: 3, cycle: .90 },
-    lmg:     { mag: { box: 100, drum: 150 }, reload: [3.6, 3.6], style: 'cover', rack: 'none', kick: [.58, .48], vm: [.024, .06, .04],
+    lmg:     { mag: { box: 100, drum: 150 }, reload: [5.8, 6.4], style: 'cover', rack: 'none', kick: [.58, .48], vm: [.024, .06, .04],
                hip: [.170, -.215, -.300], ads: .34, draw: .65, flash: [1.2, 'star'], shell: 'rifle', fire: 'belt', punch: .4 },
-    energy:  { mag: { cell: 24, heavy: 36 }, reload: [1.6, 2.0], style: 'cell', rack: 'vent', kick: [1.3, .35], vm: [.055, .13, .05],
+    energy:  { mag: { cell: 24, heavy: 36 }, reload: [2.9, 3.6], style: 'cell', rack: 'vent', kick: [1.3, .35], vm: [.055, .13, .05],
                hip: [.165, -.195, -.300], ads: .24, draw: .45, flash: [1.3, 'plasma'], shell: 'none', fire: 'coil', punch: 1.2 },
-    rocket:  { mag: { shell: 6 }, reload: [.5, .5], style: 'single', rack: 'drum', kick: [4.4, .6], vm: [.13, .42, .07],
+    rocket:  { mag: { shell: 6 }, reload: [.95, .95], style: 'single', rack: 'drum', kick: [4.4, .6], vm: [.13, .42, .07],
                hip: [.175, -.215, -.310], ads: .3, draw: .6, flash: [1.9, 'boom'], shell: 'none', fire: 'drum', punch: 3.5 },
   };
   // aim-down-sights: eye distance to the sight and the zoomed field of view, per optic
@@ -58,7 +58,8 @@ const GunFeel = (() => {
   const GLASS = new Set(['reddot', 'holo']);
   // rarity scaling (tier 0..6): recoil, reload and aim speed, flash size
   const R_RECOIL = [1, .93, .86, .79, .73, .67, .6];
-  const R_HANDLE = [1, .95, .9, .85, .8, .76, .72];
+  const R_HANDLE = [1, .95, .9, .85, .8, .76, .72];          // aim, draw, bolt / pump cycling
+  const R_RELOAD = [1, .97, .94, .91, .88, .85, .82];         // reloads speed up less, so no gun ever reloads unrealistically fast
   const R_FLASH = [1, 1.05, 1.1, 1.2, 1.35, 1.45, 1.6];
   const TIER_COL = [0xffc870, 0x9fd0ff, 0xd28cff, 0xffa63c, 0xff5a4a, 0xffd85a, 0x40f0ff];
 
@@ -234,6 +235,11 @@ const GunFeel = (() => {
     for (const n of ['slide', 'bolt', 'pump', 'cover', 'drum', 'mag', 'shell', 'round', 'spin_coil', 'spin_halo', 'spin_barrel']) {
       const o = v.node(n); if (o) v.rest[n] = { p: o.position.clone(), r: o.rotation.clone() };
     }
+    if (v.node('mag')) {
+      const mn = v.node('mag'), o = new THREE.Object3D(); mn.add(o);
+      o.position.copy(mn.worldToLocal(root.localToWorld(new THREE.Vector3(...(A.mag || [0, 0, 0])))));
+      v.magGrip = o;
+    }
     for (const k of ['shell', 'round']) { const o = v.node(k); if (o) { o.scale.setScalar(1); o.visible = false; } }   // stored hidden (scale 0) for static displays
     // belt: rounds placed along the path (in the mag node's space) so the belt can feed
     if (man.belt) {
@@ -278,36 +284,52 @@ const GunFeel = (() => {
   const ss = t => t * t * (3 - 2 * t);
   const clamp01 = t => Math.min(1, Math.max(0, t));
   function track(style, empty, rack) {
-    const T = [];
-    T.push({ t: 0, pose: [0, 0, 0, 0, 0, 0], mag: [0, 0, 0], hand: 'fore' });
+    // mag offsets are [x, y, z, tilt] relative to the seated magazine; vis: 0 while the support hand is empty
+    const T = [], key = (t, pose, mag, hand, o) => T.push({ t, pose, mag, hand, ...(o || {}) });
+    key(0, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], 'fore');
     if (style === 'cover') {
-      // LMG: cover up, lift the old belt, box off, new box on, lay the belt in the tray, slap the cover shut
-      T.push({ t: .10, pose: [-.02, .02, .03, .16, 0, -.30], mag: [0, 0, 0], hand: 'hand_cover', cue: 'coverOpen', cover: 1 });
-      T.push({ t: .20, pose: [-.02, .02, .03, .18, 0, -.34], mag: [0, 0, 0], hand: 'tray', cover: 1, cue: 'beltOut', belt: 1 });
-      T.push({ t: .30, pose: [-.02, .02, .03, .18, 0, -.36], mag: [0, 0, 0], hand: 'mag', cover: 1, cue: 'magOut', belt: 1 });
-      T.push({ t: .46, pose: [-.03, -.02, .03, .20, 0, -.40], mag: [.03, -.30, .02], hand: 'below', cover: 1, swap: true, belt: 0 });
-      T.push({ t: .60, pose: [-.02, .0, .03, .20, 0, -.36], mag: [0, -.02, 0], hand: 'mag', cover: 1, belt: 0 });
-      T.push({ t: .66, pose: [-.02, .01, .03, .19, 0, -.36], mag: [0, 0, 0], hand: 'mag', cover: 1, cue: 'magIn', kick: .015, belt: .15 });
-      T.push({ t: .78, pose: [-.02, .02, .03, .18, 0, -.34], mag: [0, 0, 0], hand: 'tray', cover: 1, cue: 'beltIn', belt: 1 });
-      T.push({ t: .86, pose: [0, .01, .02, .08, 0, -.18], mag: [0, 0, 0], hand: 'hand_cover', cover: 0, cue: 'coverClose', kick: .03, belt: 1 });
+      // LMG: cover up, lift the belt off the tray, box off and away, a fresh box from the pouch, belt laid in the tray,
+      // slap the cover shut. Slow and deliberate: this is the gun's big downside.
+      const P = [-.02, .02, .03, .18, 0, -.34];
+      key(.08, [-.02, .02, .03, .16, 0, -.30], [0, 0, 0, 0], 'hand_cover', { cue: 'coverOpen', cover: 1 });
+      key(.15, P, [0, 0, 0, 0], 'tray', { cover: 1, cue: 'beltOut', belt: 1 });
+      key(.24, P, [0, 0, 0, 0], 'mag', { cover: 1, cue: 'magOut', belt: 1 });
+      key(.30, [-.025, .01, .03, .19, 0, -.37], [.01, -.07, .01, .10], 'mag', { cover: 1, belt: .4 });
+      key(.40, [-.03, -.02, .03, .20, 0, -.40], [.05, -.34, .06, .40], 'mag', { cover: 1, belt: 0, cue: 'magStow' });
+      key(.46, [-.03, -.02, .03, .20, 0, -.40], [.05, -.34, .06, .40], 'mag', { cover: 1, belt: 0, cue: 'pouch', swap: true });
+      key(.54, [-.03, -.02, .03, .20, 0, -.40], [.05, -.34, .06, .40], 'mag', { cover: 1, belt: 0 });
+      key(.64, [-.02, .0, .03, .20, 0, -.37], [.01, -.06, .01, .12], 'mag', { cover: 1, belt: 0 });
+      key(.69, [-.02, .01, .03, .19, 0, -.36], [0, 0, 0, 0], 'mag', { cover: 1, cue: 'magIn', kick: .02, belt: .15 });
+      key(.82, P, [0, 0, 0, 0], 'tray', { cover: 1, cue: 'beltIn', belt: 1 });
+      key(.90, [0, .01, .02, .08, 0, -.18], [0, 0, 0, 0], 'hand_cover', { cover: 0, cue: 'coverClose', kick: .03, belt: 1 });
     } else {
-      const lift = style === 'cell';
-      T.push({ t: .14, pose: [-.015, .02, .02, .16, -.05, lift ? .25 : -.42], mag: [0, 0, 0], hand: 'mag' });
-      T.push({ t: .26, pose: [-.015, .02, .02, .16, -.05, lift ? .25 : -.42], mag: lift ? [0, .05, -.01] : [0, -.05, .01], hand: 'mag', cue: lift ? 'cellOut' : 'magOut' });
-      T.push({ t: .44, pose: [-.02, -.01, .02, .18, -.05, lift ? .25 : -.45], mag: lift ? [.02, .13, .03] : [-.04, -.32, .04], hand: 'below', swap: true, cue: empty && !lift ? 'magDrop' : null });
-      T.push({ t: .60, pose: [-.015, .01, .02, .16, -.05, lift ? .25 : -.42], mag: lift ? [0, .05, -.01] : [0, -.04, .01], hand: 'mag' });
-      T.push({ t: .70, pose: [-.012, .02, .015, .12, -.04, lift ? .2 : -.38], mag: [0, 0, 0], hand: 'mag', cue: lift ? 'cellIn' : 'magIn', kick: .02 });
-      T.push({ t: .77, pose: [-.01, .022, .015, .10, -.04, lift ? .18 : -.34], mag: [0, 0, 0], hand: 'mag', cue: lift ? null : 'tap', kick: .012 });
+      // box magazine (down out of the magwell) or energy cell (up out of its slot)
+      const up = style === 'cell', r = up ? .25 : -.42;
+      const P = (dy, roll) => [-.015, .02 + (dy || 0), .02, .16, -.05, roll ?? r];
+      const pouch = [-.07, -.36, .09, up ? -.6 : .7];
+      key(.10, P(), [0, 0, 0, 0], 'mag');                                                          // grab it
+      key(.18, P(), up ? [0, .05, -.01, 0] : [0, -.04, .01, 0], 'mag', { cue: up ? 'cellOut' : 'magOut' });
+      key(.25, P(-.01), up ? [.01, .11, 0, -.2] : [0, -.10, .02, .15], 'mag',
+          empty ? { cue: up ? 'cellEject' : 'magRelease', drop: 1, vis: 0 } : null);                      // empty: let it go
+      if (up) key(.32, P(-.02), [-.09, .02, .04, -.4], empty ? 'below' : 'mag', empty ? { vis: 0 } : null);
+      key(.40, P(-.03, up ? .3 : -.45), pouch, empty ? 'below' : 'mag', empty ? { vis: 0 } : { cue: 'magStow' });   // old one away (or dropped)
+      key(.44, P(-.03, up ? .3 : -.45), pouch, 'mag', { cue: 'pouch', swap: true });                 // into the pouch for a fresh one
+      key(.52, P(-.03, up ? .3 : -.45), pouch, 'mag');
+      if (up) key(.58, P(-.01), [-.09, .0, .04, -.4], 'mag');
+      key(up ? .64 : .62, P(), up ? [.01, .10, 0, -.2] : [-.01, -.11, .03, .35], 'mag');             // the new one comes into view
+      key(.69, P(), up ? [0, .03, -.005, 0] : [0, -.022, .006, .08], 'mag');                        // lined up with the well
+      key(.73, P(.003, r * .9), [0, 0, 0, 0], 'mag', { cue: up ? 'cellIn' : 'magIn', kick: .025 }); // seated
+      key(.79, P(.004, r * .82), [0, 0, 0, 0], 'mag', up ? null : { cue: 'tap', kick: .014 });
       if (empty && rack === 'vent') {
         // energy cell: nothing to rack; the coil vents its heat while the support hand stays on the cell
-        T.push({ t: .86, pose: [.0, .03, .01, .14, .06, .30], mag: [0, 0, 0], hand: 'mag', cue: 'vent', vent: 1 });
+        key(.88, [.0, .03, .01, .14, .06, .30], [0, 0, 0, 0], 'mag', { cue: 'vent', vent: 1 });
       } else if (empty && (rack === 'slide' || rack === 'bolt')) {
         const h = rack === 'slide' ? 'hand_slide' : 'hand_bolt';
-        T.push({ t: .84, pose: [.0, .01, .01, .05, .1, .25], mag: [0, 0, 0], hand: h, cue: 'rackBack', rack: 1 });
-        T.push({ t: .92, pose: [.0, .0, .01, .03, .04, .1], mag: [0, 0, 0], hand: h, cue: rack === 'slide' ? 'slideRelease' : 'rackFwd', rack: 0, kick: .02 });
+        key(.86, [.0, .01, .01, .05, .1, .25], [0, 0, 0, 0], h, { cue: 'rackBack', rack: 1 });
+        key(.93, [.0, .0, .01, .03, .04, .1], [0, 0, 0, 0], h, { cue: rack === 'slide' ? 'slideRelease' : 'rackFwd', rack: 0, kick: .02 });
       }
     }
-    T.push({ t: 1, pose: [0, 0, 0, 0, 0, 0], mag: [0, 0, 0], hand: 'fore' });
+    key(1, [0, 0, 0, 0, 0, 0], [0, 0, 0, 0], 'fore');
     return T;
   }
   function sampleTrack(T, t) {
@@ -316,19 +338,19 @@ const GunFeel = (() => {
     const L = (x, y) => x.map((v, j) => v + (y[j] - v) * k);
     const n = (key, d) => (a[key] ?? d) + ((b[key] ?? d) - (a[key] ?? d)) * k;
     return { pose: L(a.pose, b.pose), mag: L(a.mag, b.mag), handA: a.hand, handB: b.hand, k, cover: n('cover', 0), rack: n('rack', 0),
-             belt: n('belt', 1), vent: n('vent', 0), swapped: T.some(x => x.swap && x.t <= t) };
+             belt: n('belt', 1), vent: n('vent', 0), vis: a.vis ?? 1, swapped: T.some(x => x.swap && x.t <= t) };
   }
 
   function reload(w) {
     if (!vm || !w || st.reload || st.drawT < 1 || cycling()) return false;
     const mag = vm.magSize;
     if (w.clip >= mag || (w.ammo !== Infinity && w.ammo <= 0)) return false;
-    const tierK = R_HANDLE[vm.tier] * (1 - (window.G?.p?.mods?.reload || 0));
+    const tierK = R_RELOAD[vm.tier] * (1 - (window.G?.p?.mods?.reload || 0));
     const empty = w.clip === 0;
     if (vm.g.style === 'single' || vm.g.style === 'tube') {
       const tube = vm.g.style === 'tube';
-      st.reload = { single: true, tube, t: 0, dur: vm.g.reload[0] * tierK, w, n: 0, open: (tube ? .24 : .28) * tierK, empty,
-                    closing: -1, close: (tube && empty ? .55 : .2) * tierK, cues: 0 };
+      st.reload = { single: true, tube, t: 0, dur: vm.g.reload[0] * tierK, w, n: 0, open: (tube ? .30 : .45) * tierK, empty,
+                    closing: -1, close: (tube && empty ? .60 : .3) * tierK, cues: 0 };
       GunAudio?.foley?.(tube ? 'adsOut' : 'drumOpen');
       return true;
     }
@@ -475,7 +497,7 @@ const GunFeel = (() => {
 
     // ---- reload
     let pose = [0, 0, 0, 0, 0, 0], magOff = [0, 0, 0], handA = defaultHand(), handB = handA, handK = 0, cover = 0, rack = 0, belt = 1, vent = 0;
-    let shellOff = null, swapped = false;
+    let shellOff = null, swapped = false, magVis = 1;
     const R = st.reload;
     if (R) {
       R.t += dt;
@@ -523,16 +545,19 @@ const GunFeel = (() => {
             R.n = c; commitOne(R.w); GunAudio?.foley?.('grenadeIn'); st.drumTo += Math.PI / 3; GunAudio?.foley?.('drumClick'); S.rv[0] += .3;
             if (R.w.clip >= vm.magSize || (R.w.ammo !== Infinity && R.w.ammo <= 0)) { st.reload = null; GunAudio?.foley?.('drumClose'); S.rv[0] -= .6; }
           }
-          magOff = [0, -.18 * (1 - ss(Math.min(1, ph * 1.6))), -.05 * (1 - ph)];
-          handA = 'mag'; handB = 'mag'; handK = 1;
+          // a grenade from the bandolier: hand down, grenade up into the open chamber, pushed home
+          const rise = ss(Math.min(1, ph * 1.5));
+          magOff = [.02 * (1 - rise), -.24 * (1 - rise), -.06 * (1 - ph), .5 * (1 - rise)];
+          handA = 'below'; handB = 'mag'; handK = Math.min(1, ph * 3);
         }
       } else {
         const t = Math.min(1, R.t / R.dur), sm = sampleTrack(R.T, t);
         pose = sm.pose; magOff = sm.mag; handA = sm.handA; handB = sm.handB; handK = sm.k; cover = sm.cover; rack = sm.rack;
-        belt = sm.belt; vent = sm.vent; swapped = sm.swapped;
+        belt = sm.belt; vent = sm.vent; swapped = sm.swapped; magVis = sm.vis;
         for (const k of R.T) if (k.t <= t && !R.fired.has(k)) {
           R.fired.add(k);
           if (k.cue) GunAudio?.foley?.(k.cue);
+          if (k.drop) dropMag(g.style === 'cell');
           if (k.kick) S.pv[1] -= k.kick * 8;
           if (k.cue === 'magIn' || k.cue === 'cellIn') commitAmmo(R.w);
         }
@@ -611,6 +636,8 @@ const GunFeel = (() => {
     if (P.mag) {
       const mg = n('mag');
       mg.position.set(P.mag.p.x - magOff[0], P.mag.p.y + magOff[1], P.mag.p.z - magOff[2]);   // GLB space (x, z flipped by the root)
+      mg.rotation.x = P.mag.r.x + (magOff[3] || 0);
+      mg.visible = magVis > 0;
     }
     if (P.shell) {
       const sh = n('shell'); sh.visible = !!shellOff;
@@ -633,6 +660,7 @@ const GunFeel = (() => {
     const pa = handTarget(handA), pb = handTarget(handB);
     placeHand('L', pa.lerp(pb, handK), [-.22, -.44, .10], 0);
     shellTick(dt, s.feetY || 0);
+    dropTick(dt, s.feetY || 0);
     // scoped optics: past the halfway point of the raise the eye is in the scope; swap to the scope overlay
     const scoped = SCOPED.has(vm.sightName);
     const inScope = scoped && aK > .62;
@@ -649,8 +677,8 @@ const GunFeel = (() => {
     const L = p => vm.model.localToWorld(p.clone());
     if (name && name.startsWith('hand_')) { const o = vm.hands[name.slice(5)]; if (o) return o.getWorldPosition(new THREE.Vector3()); return L(vm.fore); }
     switch (name) {
-      case 'mag': return L(vm.magA.clone().add(new THREE.Vector3(0, .02, 0)));
-      case 'below': return L(vm.magA.clone().add(new THREE.Vector3(-.06, -.26, .05)));
+      case 'mag': return vm.magGrip ? vm.magGrip.getWorldPosition(new THREE.Vector3()) : L(vm.magA.clone().add(new THREE.Vector3(0, .02, 0)));
+      case 'below': return L(vm.magA.clone().add(new THREE.Vector3(-.07, -.30, .09)));         // the mag pouch, out of view
       case 'bag': return L(vm.load.clone().add(new THREE.Vector3(-.01, -.095, .04)));            // shell pouch on the belt
       case 'shell': { const o = vm.node('shell'); return o ? vm.model.localToWorld(vm.model.worldToLocal(o.getWorldPosition(new THREE.Vector3())).add(new THREE.Vector3(0, -.016, .045))) : L(vm.load); }
       case 'tray': return L(vm.tray);
@@ -691,6 +719,39 @@ const GunFeel = (() => {
       node.position.set(a.x + (b.x - a.x) * k + shake, a.y + (b.y - a.y) * k, a.z);
       node.rotation.z = Math.atan2(b.y - a.y, b.x - a.x) - Math.PI / 2;
     });
+  }
+
+  /* ---------------------------------------------------------------- dropped magazines
+     An empty reload lets the old magazine go: a copy of it falls out of the gun (or the spent cell pops out
+     of the top), tumbles, clatters on the floor and stays there a few seconds. */
+  const drops = [];
+  function dropMag(up) {
+    const src = vm.node('mag'); if (!src) return;
+    vm.model.updateMatrixWorld(true);
+    const c = src.clone(true);
+    src.matrixWorld.decompose(c.position, c.quaternion, c.scale);
+    c.traverse(o => { if (o.isMesh) { o.frustumCulled = false; o.renderOrder = 0; } });
+    scene.add(c);
+    const q = camera.quaternion, dir = (x, y, z) => new THREE.Vector3(x, y, z).applyQuaternion(q);
+    const v = up ? dir(.6 + Math.random() * .4, 2.4, .5) : dir(-.2 + Math.random() * .3, -1.4, .2);
+    const spin = new THREE.Vector3((Math.random() - .5) * (up ? 14 : 6), (Math.random() - .5) * 6, (Math.random() - .5) * (up ? 10 : 5));
+    drops.push({ o: c, v, spin, life: 4, hit: 0 });
+    if (drops.length > 6) { const d = drops.shift(); scene.remove(d.o); }
+    if (up) for (let i = 0; i < 6; i++) ventPuff();
+  }
+  function dropTick(dt, feetY) {
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i]; d.life -= dt;
+      if (d.life <= 0) { scene.remove(d.o); drops.splice(i, 1); continue; }
+      if (d.rest) continue;
+      d.v.y -= 9.8 * dt; d.o.position.addScaledVector(d.v, dt);
+      d.o.rotation.x += d.spin.x * dt; d.o.rotation.y += d.spin.y * dt; d.o.rotation.z += d.spin.z * dt;
+      if (d.o.position.y < feetY + .03 && d.v.y < 0) {
+        d.o.position.y = feetY + .03; d.v.y *= -.25; d.v.x *= .4; d.v.z *= .4; d.spin.multiplyScalar(.35);
+        if (d.hit++ < 2) GunAudio?.foley?.(d.hit === 1 ? 'magFloor' : 'tap');
+        if (d.hit > 2 || Math.abs(d.v.y) < .3) d.rest = true;
+      }
+    }
   }
 
   /* ---------------------------------------------------------------- energy vent puffs */
