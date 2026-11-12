@@ -174,6 +174,8 @@ async function boot() {
   // first-person gunplay (js/gunfeel.js): arsenal viewmodels, hands, recoil, ADS, reloads, flashes, casings
   if (window.GunFeel) { GunFeel.init({ camera, scene, gunGroup }); GunFeel.preloadMasks(); }
   window.FPBody?.attach(scene);                       // your own body under the camera (js/fp-body.js)
+  window.VR?.init({ renderer, scene, camera });      // native WebXR (js/vr.js)
+  if (window.VR) wireVR();
   window.Boom?.init?.({ scene, camera });          // grenade and plasma explosions (js/boom.js)
   muzzleSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: Assets.starTex(), color: 0xfff2b0, transparent: true, opacity: 0, blending: THREE.AdditiveBlending, depthWrite: false, depthTest: false }));
   muzzleSprite.scale.setScalar(0.34);
@@ -194,7 +196,7 @@ async function boot() {
   await World.build(scene, 0);
   el('loadScreen').style.display = 'none';
   updateTitle();
-  requestAnimationFrame(frame);
+  renderer.setAnimationLoop(frame);                // WebXR needs the renderer's loop (window rAF stops inside a headset)
 }
 
 function onResize() {
@@ -1089,6 +1091,11 @@ function killProj(pr) {
 /* ============ combat: player ============ */
 function curWeapon() { return G.p.weapons[G.p.cur]; }
 const KICK = { pistol: 0.45, smg: 0.32, shotgun: 1.0, ar: 0.42, dmr: 0.95, lmg: 0.38, energy: 0.5, rocket: 1.0 };
+const _aimPos = new THREE.Vector3();
+function aimRay(pos, dir) {
+  if (window.VR?.active && VR.aim(pos, dir)) return pos;
+  pos.copy(camera.position); camera.getWorldDirection(dir); return pos;
+}
 function fireWeapon(dt) {
   if (G?.hub) return;
   const p = G.p, w = curWeapon();
@@ -1126,10 +1133,10 @@ function fireWeapon(dt) {
   // shell eject for ballistic weapons (gunfeel throws real casings)
   if (!feel && w.id !== 'energy' && w.id !== 'rocket') Particles.burst(muzzle.x, muzzle.y - 0.05, muzzle.z, 0xffc860, 1, 1.6, 0.5, 2);
 
-  camera.getWorldDirection(_fwd);
+  const camPos = aimRay(_aimPos, _fwd);                // the camera, or in VR the gun in your hand
   const right = new THREE.Vector3(_fwd.z, 0, -_fwd.x).normalize();
   const up = new THREE.Vector3().crossVectors(right, _fwd).normalize();
-  const camPos = camera.position;
+  if (window.VR?.active) VR.recoil(Math.min(1, 0.25 + (w.kick || 0.4) * 0.5));
 
   const spreadK = window.GunFeel?.active ? GunFeel.spreadMul : 1;
   if (w.type === 'proj') {
@@ -1563,6 +1570,7 @@ function takeCrate() {
 
 /* ============ player ============ */
 function damagePlayer(dmg, src) {
+  if (window.VR?.active) VR.hurt(Math.min(0.8, 0.2 + dmg / 60));
   const p = G.p;
   if (devGodMode) return;
   if (state !== 'run' || p.iframesT > 0 || p.dashT > 0) return;
@@ -1630,6 +1638,89 @@ function tickTeammateRevive() {
   if (held >= 1800) CoopRoom.completeRevive?.(target.id);
 }
 
+/* ============ VR (js/vr.js) ============
+   Haven and district runs: left stick moves (where you look), right stick snap-turns, A jump, right trigger fire,
+   grip or X interact/reload, Y swap (hold Y: pause), left trigger ability 1, B ability 2, left stick click sprint. */
+let vrYHold = 0;
+function vrPauseHeld(dt) {
+  if (VR.held('left', VR.BTN.B)) { vrYHold += dt; if (vrYHold > 0.6) { vrYHold = -99; return true; } }
+  else { if (vrYHold > 0 && vrYHold <= 0.6) vrYTap = true; vrYHold = 0; }
+  return false;
+}
+let vrYTap = false;
+function vrGameplay(dt) {
+  if (!window.VR?.active || VR.inMenu) return;
+  const B = VR.BTN, L = VR.stick('left');
+  Input.moveX = clamp(Input.moveX + L.x, -1, 1); Input.moveZ = clamp(Input.moveZ - L.y, -1, 1);
+  Input.fire = VR.trigger('right') > 0.4; Input.ads = false;
+  if (VR.down('right', B.A)) Input.jump = true;
+  if (VR.down('left', B.STICK)) { if (G?.p?.mods?.dash) Input.dash = true; else Input.sprintPad = !Input.sprintPad; }
+  const tap = code => { Pad.key(code); Pad.key(code, 'keyup'); };
+  if (VR.down('right', B.GRIP) || VR.down('left', B.GRIP) || VR.down('left', B.A)) { Pad.key('KeyE'); tap('KeyR'); }
+  if (VR.up('right', B.GRIP) || VR.up('left', B.GRIP) || VR.up('left', B.A)) Pad.key('KeyE', 'keyup');
+  if (VR.trigger('left') > 0.6 && !vrGameplay.lt) { vrGameplay.lt = true; tap('KeyF'); } else if (VR.trigger('left') < 0.3) vrGameplay.lt = false;
+  if (VR.down('right', B.B)) tap('KeyC');
+  if (vrPauseHeld(dt)) setPaused(true);
+  if (vrYTap) { vrYTap = false; tap('KeyQ'); }
+}
+function wireVR() {
+  for (const id of ['btnVR', 'btnVRPause']) {
+    const b = el(id); if (!b) continue;
+    b.onclick = async () => {
+      AudioSys.init(); AudioSys.sfx('ui');
+      if (VR.active) { VR.exit(); return; }
+      VR.startYaw = state === 'arena' ? AR.Player.P?.yaw || 0 : G?.p?.yaw || 0;
+      if (await VR.enter()) { if (paused && state === 'run') setPaused(false); }
+      else banner('VR', 'NO HEADSET FOUND. OPEN THE GAME IN YOUR QUEST BROWSER.');
+    };
+  }
+  const vrLabel = t => { for (const id of ['btnVR', 'btnVRPause']) if (el(id)) el(id).innerHTML = t; };
+  VR.onStart(() => {
+    document.exitPointerLock?.(); window.FPBody?.refresh(); VR.refreshHands(); vrLabel('Exit VR');
+    // the flat title diorama renders its own scene through the composer: in a headset you stand over the live city instead
+    if (state === 'title') { window.TitleScreen?.leave?.(); window.TitleScreen?.toMenu?.(); }
+  });
+  VR.onEnd(() => { vrLabel('Enter VR'); if (state === 'run' && !paused) setPaused(true); });
+  // the wrist: health, ammo, level, the objective
+  VR.hud = () => {
+    if (state === 'arena' && window.AR?.Player?.P) {
+      const P = AR.Player.P, g = AR.Player.gun, M = AR.Mission.M;
+      return { hp: P.hp, maxHp: P.maxHp, armor: P.armor, maxArmor: P.maxArmor, ammo: g ? `${g.ammo}/${g.reserve === Infinity ? '∞' : g.reserve ?? ''}` : '',
+        gun: g ? (AR.GUNS[g.id]?.n || g.id) : '', level: M?.level, xp: M ? M.xp / M.xpNeed : 0,
+        lines: [{ t: (document.querySelector('#arHud .obj')?.innerText || '').replace(/\s+/g, ' '), c: '#00e5ff' }, { t: `SCORE ${Math.round(M?.score || 0).toLocaleString('en-US')}  ◆ ${M?.chips || 0} GT`, c: '#ffd400' }] };
+    }
+    if (state === 'run' && G?.p) {
+      const p = G.p, w = G.hub ? null : curWeapon();
+      return { hp: p.hp, maxHp: p.maxHp, armor: p.armor || 0, maxArmor: p.maxArmor, ammo: w ? `${w.clip ?? ''}/${w.ammo === Infinity ? '∞' : w.ammo ?? ''}` : '', gun: w ? (w.name || w.n || w.id || '') : '',
+        lines: [{ t: G.hub ? 'REBEL HAVEN' : 'DISTRICT ' + (G.district + 1), c: '#00e5ff' }, { t: `⬢ ${SAVE.gt} GT` + (window.Wardrobe?.ready ? `  ◆ ${Wardrobe.drip} DRIP` : ''), c: '#ffd400' }] };
+    }
+    return null;
+  };
+  // the floating strip: banners, toasts, subtitles, prompts
+  const vis = n => n && n.offsetParent !== null && getComputedStyle(n).opacity > 0.05;
+  const txt = n => (n?.innerText || '').replace(/\s+/g, ' ').trim();
+  const vrKeys = s => s.replace(/\[(E|X)\]/g, '[GRIP]');
+  VR.feed = () => {
+    const out = [];
+    if (state === 'arena') {
+      const H = document.getElementById('arHud');
+      if (H?.querySelector('.lvup.on')) out.push({ t: 'LEVEL UP!', c: '#ffd400', size: 72 });
+      const b = H?.querySelector('.banner.on'); if (b) out.push({ t: txt(b.querySelector('.bm')), c: '#fff', size: 46 }, { t: txt(b.querySelector('.bsu')), c: '#ff2bd6', size: 28 });
+      const t = H?.querySelector('.toast'); if (t && txt(t)) out.push({ t: txt(t), c: '#ffd400', size: 30 });
+      const sb = H?.querySelector('.subs'); if (sb && txt(sb)) out.push({ t: txt(sb), c: '#e8e0ff', size: 26, bold: false });
+      const pr = H?.querySelector('.prompt'); if (vis(pr) && txt(pr)) out.push({ t: vrKeys(txt(pr)), c: '#00e5ff', size: 28 });
+    } else if (state === 'run') {
+      const b = el('banner'); if (b?.classList.contains('show')) out.push({ t: txt(el('bannerMain')), c: '#fff', size: 44 }, { t: txt(el('bannerSub')), c: '#ff2bd6', size: 26 });
+      const pp = el('pickupPrompt'); if (vis(pp)) out.push({ t: txt(el('pickupName')), c: '#ffe600', size: 30 }, { t: vrKeys(txt(el('pickupKey'))), c: '#00e5ff', size: 26 });
+    }
+    return out;
+  };
+  VR.rayHit = (o, d) => {
+    if (state === 'arena' && AR.World?.raycast) { const h = AR.World.raycast(o.x, o.y, o.z, d.x, d.y, d.z, 80); return h ? h.t : 80; }
+    return 0;
+  };
+}
+
 /* controller in the Haven and the district runs (js/gamepad.js): LS move · RS look · RT fire · LT aim · A jump
    X interact · Y swap · RB reload · LB ability 1 · B ability 2 · L3 sprint (dash with Ghost Protocol) · START pause */
 function padGameplay(dt) {
@@ -1661,6 +1752,7 @@ function playerTick(dt) {
   const sensK = window.GunFeel?.active ? GunFeel.sensMul : 1;
   p.yaw = InputSafety.normalizeYaw(p.yaw - Input.lookDX * 0.0034 * SAVE.opts.sens * sensK);
   p.pitch = clamp(p.pitch - Input.lookDY * 0.0034 * SAVE.opts.sens * sensK, -1.45, 1.45);
+  if (window.VR?.active) { p.yaw = InputSafety.normalizeYaw(VR.headYaw); p.pitch = clamp(VR.headPitch, -1.45, 1.45); }   // your head is the camera
   Input.lastLookX += Input.lookDX; Input.lastLookY += Input.lookDY;
   Input.lookDX = 0; Input.lookDY = 0;
 
@@ -1695,7 +1787,8 @@ function playerTick(dt) {
   Input.dash = false;
   if (p.dashT > 0) { p.dashT -= dt; mvx = p.dashX * CFG.DASH_SPEED; mvz = p.dashZ * CFG.DASH_SPEED; }
 
-  const r = World.movePlayerCircle(p.pos.x, p.pos.z, mvx * dt, mvz * dt, CFG.PLAYER_R, p.pos.y);
+  const walk = window.VR?.active ? VR.consumeWalk() : null;          // steps you take in your room, through the same collision
+  const r = World.movePlayerCircle(p.pos.x, p.pos.z, mvx * dt + (walk ? walk.x : 0), mvz * dt + (walk ? walk.z : 0), CFG.PLAYER_R, p.pos.y);
   p.pos.x = r.x; p.pos.z = r.z;
 
   // gravity / jump, including reachable ShillZ cover tops.
@@ -1720,7 +1813,14 @@ function playerTick(dt) {
   if (!firing && isTouch && G.autoFire) firing = autoAimCheck();
   if (firing) fireWeapon(dt);
 
-  // camera
+  // camera (in VR the headset owns it: slide the rig so your head is over the player)
+  if (window.VR?.active) {
+    VR.place({ x: p.pos.x, y: p.pos.y, z: p.pos.z });
+    if (window.GunFeel?.active && gunGroup.visible) GunFeel.update(dt, { ads: false, move: 0, strafe: 0, onGround: p.onGround, dash: false, sprint: false, lookX: 0, lookY: 0, feetY: p.pos.y });
+    if (gunGroup.visible) VR.holdGun(gunGroup); else VR.releaseGun();
+    window.FPBody?.update(dt, { x: p.pos.x, y: p.pos.y, z: p.pos.z, yaw: p.yaw, pitch: -1.5, speed: Math.hypot(mvx, mvz), onGround: p.onGround, crouch: VR.crouched, arms: false });
+    return;
+  }
   const bobY = Math.abs(Math.sin(p.bobT)) * 0.05, bobX = Math.sin(p.bobT) * 0.03;
   camera.position.set(p.pos.x + bobX * cy, p.pos.y + 1.62 + bobY, p.pos.z - bobX * sy);
   const shk = G.shake * 0.05;
@@ -2196,7 +2296,7 @@ function initInput() {
   });
   document.addEventListener('pointerlockchange', () => {
     Input.lookDX = 0; Input.lookDY = 0;
-    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused && !window.Pad?.active) setPaused(true);
+    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused && !window.Pad?.active && !window.VR?.active) setPaused(true);
   });
 
   // touch
@@ -2527,6 +2627,9 @@ function wireMenus() {
   tog('optMusic', 'music', v => AudioSys.setMusic(v));
   tog('optSfx', 'sfx', v => AudioSys.setSfx(v));
   if (el('optRumble')) tog('optRumble', 'rumble', v => { if (v) window.Pad?.rumble(0.6, 0.6, 200); });
+  if (SAVE.opts.vrVignette === undefined) SAVE.opts.vrVignette = true;
+  if (el('optVrSmooth')) tog('optVrSmooth', 'vrSmoothTurn', () => {});
+  if (el('optVrVig')) tog('optVrVig', 'vrVignette', () => {});
   el('btnAuto').textContent = 'AUTO: ' + (SAVE.opts.auto ? 'ON' : 'OFF');
   el('btnAuto').classList.toggle('on', SAVE.opts.auto);
 }
@@ -2715,11 +2818,11 @@ addEventListener('keydown', e => {
 /* ============ main loop ============ */
 let lastT = 0, flowT = 0, titleT = 0;
 function frame(t) {
-  requestAnimationFrame(frame);
   let dt = Math.min((t - lastT) / 1000, 0.05); lastT = t;
   if (dt <= 0) return;
   adaptQuality(dt);
   window.Pad?.poll(dt);
+  window.VR?.poll(dt);
 
   // Pausing in co-op is a local input/menu state. The shared simulation and
   // network stream must keep running, especially when the authority pauses.
@@ -2729,7 +2832,7 @@ function frame(t) {
     G.time += sdt;
     G.shake = Math.max(0, G.shake - dt * 2.4);
 
-    if (!paused) { keyMove(); padGameplay(dt); playerTick(sdt); }
+    if (!paused) { keyMove(); padGameplay(dt); vrGameplay(dt); playerTick(sdt); }
     else if (window.Pad?.active && !Pad.inMenu && Pad.down(Pad.BTN.START)) setPaused(false);
     CoopRoom?.tick?.(sdt);
     flowT -= sdt;
@@ -2770,6 +2873,10 @@ function frame(t) {
     hudTick();
     AudioSys.setIntensity(G.phase === 'boss' ? 0.95 : 0.35 + G.district * 0.1 + Math.min(0.25, G.enemies.length * 0.03));
   } else if (state === 'arena') {
+    if (window.VR?.active && AR.active && !VR.inMenu && !AR.paused && !AR.menu) {
+      if (vrPauseHeld(dt)) Arena.pause(true);
+      else { AR.Player.vrTick(VR, dt); if (vrYTap) { vrYTap = false; AR.Player.input.swap = -1; } }
+    }
     if (window.Pad?.active && AR.active && !Pad.inMenu && !AR.paused && !AR.menu) {
       if (Pad.down(Pad.BTN.START) || Pad.down(Pad.BTN.BACK)) Arena.pause(true);
       else AR.Player.padTick(Pad, dt);
@@ -2777,20 +2884,24 @@ function frame(t) {
     Arena.tick(dt);
   } else if (state === 'og') {
     World.tick(dt * 0.2, G ? G.time : 0);
-  } else if (state === 'title' && window.TitleScreen?.tick?.(dt)) {
+  } else if (state === 'title' && !window.VR?.active && window.TitleScreen?.tick?.(dt)) {
     // the title diorama renders itself through the composer (js/title.js)
   } else if (state === 'title') {
     // slow orbit over the district
     titleT += dt;
-    camera.position.set(Math.cos(titleT * 0.06) * 24, 9 + Math.sin(titleT * 0.1) * 1.5, Math.sin(titleT * 0.06) * 24);
-    camera.lookAt(0, 3.5, 0);
+    if (window.VR?.active) VR.place({ x: 0, y: 5, z: 26 });     // in a headset you stand on a rooftop over the city
+    else {
+      camera.position.set(Math.cos(titleT * 0.06) * 24, 9 + Math.sin(titleT * 0.1) * 1.5, Math.sin(titleT * 0.06) * 24);
+      camera.lookAt(0, 3.5, 0);
+    }
     World.tick(dt, titleT);
   } else if (state === 'dead' || state === 'victory') {
     World.tick(dt * 0.3, G ? G.time : 0);
   }
 
   musicDirector();
-  composer.render();
+  if (renderer.xr.isPresenting) renderer.render(scene, camera);   // one pass per eye; the bloom/PS1 composer is flat-screen only
+  else composer.render();
 }
 
 /* go */

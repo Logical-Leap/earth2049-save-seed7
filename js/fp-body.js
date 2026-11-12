@@ -50,6 +50,7 @@ const FPBody = (() => {
     // a second, never-rendered copy whose hand and forearm pieces dress the viewmodel arms
     armsAv = K().create(L);
     window.GunFeel?.setArms?.({ L: armParts('L'), R: armParts('R') });
+    window.VR?.refreshHands?.();
   }
 
   // the meshes worn on one side's hand and forearm, re-materialled unlit for the viewmodel
@@ -74,6 +75,11 @@ const FPBody = (() => {
     return { fore: cloneBone(fore, hand), hand: cloneBone(hand, null), foreLen: Math.abs(hand.position.y) || 0.245 };
   }
 
+  // a fresh copy of one glove, for VR hands (js/vr.js puts it on the controller)
+  function handFor(side) {
+    const hand = armsAv?.root.getObjectByName('hand_' + side);
+    return hand ? cloneBone(hand, null) : null;
+  }
   function attach(sc) {
     scene = sc;
     ensure().then(() => { if (body && scene && body.root.parent !== scene) scene.add(body.root); });
@@ -100,7 +106,7 @@ const FPBody = (() => {
     body.root.position.set(s.x + Math.sin(yaw) * back, s.y, s.z + Math.cos(yaw) * back);
     // glance down and you see your top and sleeves; look further down and the upper body steps aside so you see
     // your legs and shoes (it would otherwise fill the view: the eye sits right above your own chest)
-    if (spine) spine.visible = (s.pitch || 0) > -0.78;
+    if (spine) spine.visible = (s.pitch || 0) > -0.78 && !window.VR?.active;     // in VR: legs under you, hands on the controllers
     body.root.rotation.y = yaw + Math.PI;
     for (const n of _arms) { const o = body.root.getObjectByName(n); if (o) o.visible = s.arms !== false; }
     const sp = s.speed || 0;
@@ -116,7 +122,7 @@ const FPBody = (() => {
     body.update(dt);
   }
 
-  return { ensure, attach, detach, update, refresh, show, get body() { return body; }, get ready() { return !!body; } };
+  return { ensure, attach, detach, update, refresh, show, handFor, get body() { return body; }, get ready() { return !!body; } };
 })();
 
 if (typeof window !== 'undefined') window.FPBody = FPBody;

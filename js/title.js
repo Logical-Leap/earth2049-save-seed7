@@ -41,6 +41,7 @@
   const DESC = {
     btnHub: 'Drop into the Rebel Haven: gear up, get dressed, talk to the crew.',
     btnStart: 'Cast straight into the Plaza. Burn the relays. Get out alive.',
+    btnVR: 'Put the headset on. The whole game, fully immersive: your hands, your gun, your city.',
     btnHostCoop: 'Open a private uplink for up to four operatives.',
     btnJoinCoop: 'Patch into a squadmate’s room with a code.',
     btnArmory: 'Spend banked GigaTech on permanent upgrades.',
@@ -174,7 +175,7 @@
     const st = document.createElement('style'); st.id = 'titleCss'; st.textContent = CSS; document.head.appendChild(st);
     const btn = id => { const b = document.getElementById(id); return b; };
     const gt = btn('titleGT'), best = btn('titleBest');
-    const groups = [['PLAY', ['btnHub', 'btnStart']], ['SQUAD', ['btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnLook']]];
+    const groups = [['PLAY', ['btnHub', 'btnStart', 'btnVR']], ['SQUAD', ['btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnLook']]];
     const keep = {}; for (const [, ids] of groups) for (const id of ids) keep[id] = btn(id);
     root.innerHTML = '';
     root.dataset.phase = 'boot';
@@ -227,6 +228,11 @@
   }
   const visible = () => root && root.classList.contains('show');
 
+  // the next shown item (Enter VR only appears when a headset is present)
+  function step(d) {
+    for (let k = 1; k <= items.length; k++) { const i = (sel + d * k + items.length * 4) % items.length; if (items[i].offsetParent !== null) return i; }
+    return sel;
+  }
   function select(i, sound = true) {
     if (!items.length) return;
     i = (i + items.length) % items.length;
@@ -242,8 +248,8 @@
     idleT = 0;
     if (phase !== 'menu') { e.preventDefault(); e.stopPropagation(); advance(); return; }
     const k = e.code;
-    if (k === 'ArrowDown' || k === 'KeyS') { select(sel + 1); e.preventDefault(); }
-    else if (k === 'ArrowUp' || k === 'KeyW') { select(sel - 1); e.preventDefault(); }
+    if (k === 'ArrowDown' || k === 'KeyS') { select(step(1)); e.preventDefault(); }
+    else if (k === 'ArrowUp' || k === 'KeyW') { select(step(-1)); e.preventDefault(); }
     else if (k === 'Enter' || k === 'Space') { e.preventDefault(); items[sel] && items[sel].click(); }
   }
   function onAny(e) {
