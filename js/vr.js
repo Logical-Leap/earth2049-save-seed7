@@ -369,7 +369,7 @@ const VR = (() => {
   function readLayer(L) {
     const r = L.root;
     const pickText = sel => { for (const n of r.querySelectorAll(sel)) { const t = clean(n.innerText || n.textContent); if (t && n.offsetParent !== null) return t; } return ''; };
-    const title = pickText('h1, .logo2, .who, .avc-top h1, h2') || clean(r.id).toUpperCase();
+    const title = pickText('h1, .logo2, .t-logo .l2, .who, .avc-top h1, h2') || ({ ovTitle: 'EARTH 2049', ovPause: 'PAUSED' })[r.id] || clean(r.id).replace(/^ov/, '').toUpperCase();
     let body = '';
     if (L.key === 'havenDlg') body = pickText('.txt');
     else body = pickText('.tagline, .txt, .avc-info, .sub, p');

@@ -155,6 +155,7 @@ async function boot() {
   const gammaPass = new THREE.ShaderPass(THREE.GammaCorrectionShader);
   composer.addPass(gammaPass);
   window.PS1Mode?.install?.({ renderer, composer, gammaPass, bloomPass });
+  window.TitleScreen?.init?.({ renderer, composer });
 
   const loadScreen = el('loadScreen');
   if (loadScreen) loadScreen.textContent = 'LOADING SIMULATION DATA…';
@@ -1674,8 +1675,12 @@ function wireVR() {
     };
   }
   const vrLabel = t => { for (const id of ['btnVR', 'btnVRPause']) if (el(id)) el(id).innerHTML = t; };
-  VR.onStart(() => { document.exitPointerLock?.(); window.FPBody?.refresh(); VR.refreshHands(); vrLabel('&#9673; Exit VR'); });
-  VR.onEnd(() => { vrLabel('&#9673; Enter VR'); if (state === 'run' && !paused) setPaused(true); });
+  VR.onStart(() => {
+    document.exitPointerLock?.(); window.FPBody?.refresh(); VR.refreshHands(); vrLabel('Exit VR');
+    // the flat title diorama renders its own scene through the composer: in a headset you stand over the live city instead
+    if (state === 'title') { window.TitleScreen?.leave?.(); window.TitleScreen?.toMenu?.(); }
+  });
+  VR.onEnd(() => { vrLabel('Enter VR'); if (state === 'run' && !paused) setPaused(true); });
   // the wrist: health, ammo, level, the objective
   VR.hud = () => {
     if (state === 'arena' && window.AR?.Player?.P) {
@@ -2370,6 +2375,8 @@ function keyMove() {
 /* ============ menus / state ============ */
 function setState(s) {
   if (s === 'title' && Haven.active) Haven.exit(scene);
+  if (s !== 'title') window.TitleScreen?.leave?.();
+  else window.TitleScreen?.toMenu?.();
   state = s;
   window.FPBody?.show(s === 'run' || s === 'arena');
   document.body.classList.toggle('inrun', s === 'run');
@@ -2877,6 +2884,8 @@ function frame(t) {
     Arena.tick(dt);
   } else if (state === 'og') {
     World.tick(dt * 0.2, G ? G.time : 0);
+  } else if (state === 'title' && !window.VR?.active && window.TitleScreen?.tick?.(dt)) {
+    // the title diorama renders itself through the composer (js/title.js)
   } else if (state === 'title') {
     // slow orbit over the district
     titleT += dt;
