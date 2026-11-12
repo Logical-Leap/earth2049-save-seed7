@@ -584,6 +584,7 @@ AR.Mission = (() => {
     M.idleT = 0;
     const k = g?.d ? Math.min(1, (g.d.dmg * (g.d.pellets || 1)) / 140) : 0.2;           // heavier guns kick the hands harder
     window.Pad?.rumble(0.08 + k * 0.5, 0.2 + k * 0.4, 45 + k * 60);
+    if (window.VR?.active) VR.recoil(0.2 + k * 0.7);
   }
   function onDamage(e, amt, info) {
     void info;
@@ -701,6 +702,7 @@ AR.Mission = (() => {
     M.hurtTotal += amount; M.waveHurt += amount;
     WR('bump', 'hits'); WR('bump', 'dmg', amount);
     window.Pad?.rumble(Math.min(1, 0.3 + amount / 50), 0.45, 140);
+    if (window.VR?.active) VR.hurt(Math.min(0.8, 0.2 + amount / 50));
     M.styleV = Math.max(0, M.styleV - Math.min(0.9, 0.25 + amount / 40));
     rankUpdate();
     if (Math.random() < 0.3) chat(pick(AR.CHAT_USERS), pick(AR.Player.P.hp < 30 ? AR.CHAT.low : AR.CHAT.hurt));   // NOSONAR

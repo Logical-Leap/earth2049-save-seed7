@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-11-12 — Native VR (WebXR): the whole game, fully immersive
+
+- **New `js/vr.js`.** Press **Enter VR** (on the title screen or in pause) in the Meta Quest Browser or any WebXR browser.
+  - It's a real immersive session: your head is the camera, the gun is in your right hand, the HUD is on your left wrist, and menus float in front of you and are pointed at with a laser.
+  - It covers the title, the Haven (dialogue, the Fitting Room), Operation Unsubscribe, the district runs and co-op.
+- **Locomotion:**
+  - Left stick moves toward where you're looking; right stick snap-turns (smooth turning is in Options).
+  - Walking in your room walks you in the game, through the normal collision.
+  - Ducking for real crouches and slides.
+- **Combat:**
+  - You aim with your hand, and a red dot shows where the gun points.
+  - Recoil and hits buzz the controllers, and getting hurt flashes the edges of your view red.
+  - The comfort vignette while moving can be turned off in Options.
+- **Menus:** every menu is mirrored onto a panel from the gamepad's menu detection, so anything that works on a controller works in VR.
+- **Your body:** legs under you, and the gloves you picked at the Fitting Room on your controllers.
+- **Under the hood:**
+  - The game loop now runs on `renderer.setAnimationLoop`.
+  - In XR each eye renders directly; bloom and the PS1 post effects stay on flat screens only.
+- **Testing without a headset:** `?xremu=1` loads Meta's Immersive Web Emulation Runtime (MIT, `tools/iwer`) as a Quest 3.
+- See `docs/VR.md`.
+
 ## 2026-11-11 — Your own body, controller support, sprint, and level-ups
 
 - **Your Fitting Room look in first person** (`js/fp-body.js`):

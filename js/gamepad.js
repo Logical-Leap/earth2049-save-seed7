@@ -53,7 +53,9 @@ const Pad = (() => {
   const held = b => !!S.cur[b];
   const up = b => !S.cur[b] && !!S.prev[b];
   function rumble(strong = 0.4, weak = 0.4, ms = 120) {
-    if (!S.active || SAVE?.opts?.rumble === false) return;
+    if (SAVE?.opts?.rumble === false) return;
+    if (window.VR?.active) { VR.pulse('right', Math.max(strong, weak) * 0.8, ms); return; }
+    if (!S.active) return;
     const a = S.gp?.vibrationActuator;
     try { a?.playEffect?.('dual-rumble', { duration: ms, strongMagnitude: Math.min(1, strong), weakMagnitude: Math.min(1, weak) }); } catch (e) { /* no rumble */ }
   }
@@ -156,7 +158,7 @@ body.pad,body.pad *{cursor:none!important}`;
   (document.head || document.documentElement).appendChild(css);
 
   return {
-    BTN, poll, down, held, up, rumble, key, setFocus, clearFocus,
+    BTN, poll, down, held, up, rumble, key, setFocus, clearFocus, layer, items,
     get lx() { return S.lx; }, get ly() { return S.ly; }, get rx() { return S.rx; }, get ry() { return S.ry; },
     get lt() { return S.lt; }, get rt() { return S.rt; }, get active() { return S.active; }, get connected() { return S.connected; },
     get inMenu() { return S.inMenu; }, get id() { return S.id; },

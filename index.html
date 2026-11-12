@@ -153,6 +153,8 @@ body.touch #plRight{bottom:170px;}
 .ov{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;
   background:radial-gradient(ellipse at 50% 30%,rgba(30,16,60,.92),rgba(3,4,10,.97) 70%);text-align:center;padding:20px;overflow-y:auto;}
 .ov.show{display:flex;}
+.vrbtn,.vrrow{display:none!important}
+body.vr-ok .vrbtn{display:block!important}body.vr-ok .vrrow{display:flex!important}
 .logo1{font-size:clamp(11px,2.4vw,16px);letter-spacing:1.1em;color:var(--cyan);text-transform:uppercase;margin-bottom:6px;text-indent:1.1em;}
 .logo2{font-size:clamp(38px,10vw,86px);font-weight:900;letter-spacing:.18em;line-height:1;color:#fff;text-indent:.18em;
   text-shadow:0 0 18px var(--purple),0 0 70px var(--purple),0 0 120px rgba(155,89,255,.5);}
@@ -364,6 +366,7 @@ body.dev-open #devToggleBtn{opacity:.55;}
   <div class="tagline">Operation Dreamcaster &mdash; Simulation Combat Protocol</div>
   <div class="btnrow">
     <div class="btn primary" id="btnHub">Enter Rebel Haven Hub</div>
+    <div class="btn vrbtn" id="btnVR">&#9673; Enter VR</div>
     <div class="btn" id="btnStart">&#9654; Operation: Unsubscribe</div>
     <div class="btn" id="btnHostCoop">Host Co-op</div>
     <div class="btn" id="btnJoinCoop">Join Co-op</div>
@@ -467,9 +470,12 @@ body.dev-open #devToggleBtn{opacity:.55;}
   <div class="optrow">Look Sensitivity <input type="range" id="optSens" min="30" max="200" value="100"></div>
   <div class="optrow">Controller Look <input type="range" id="optPadSens" min="40" max="200" value="100"></div>
   <div class="optrow">Controller Rumble <div class="togbtn" id="optRumble">ON</div></div>
+  <div class="optrow vrrow">VR Smooth Turning <div class="togbtn" id="optVrSmooth">OFF</div></div>
+  <div class="optrow vrrow">VR Comfort Vignette <div class="togbtn" id="optVrVig">ON</div></div>
   <div class="optrow">Music <div class="togbtn" id="optMusic">ON</div> &nbsp; SFX <div class="togbtn" id="optSfx">ON</div></div>
   <div class="btnrow">
     <div class="btn primary" id="btnResume">Resume</div>
+    <div class="btn vrbtn" id="btnVRPause">&#9673; Enter VR</div>
     <div class="btn danger" id="btnAbort">Abort Run</div>
   </div>
 </div>
@@ -525,6 +531,8 @@ body.dev-open #devToggleBtn{opacity:.55;}
 <button type="button" id="devToggleBtn" title="Dev console (F1 or `)">DEV</button>
 
 <script src="lib/three.min.js?v=20260707-editor-workflow"></script>
+<script>/* dev: ?xremu=1 swaps in Meta's WebXR emulator (tools/iwer) as a Quest 3, for testing VR without a headset */
+if (/[?&]xremu=1\b/.test(location.search)) document.write('<script src="tools/iwer/iwer.min.js"><\/script><script>window.__IWER_DEV = new IWER.XRDevice(IWER.metaQuest3); __IWER_DEV.installRuntime({ forceInstall: true }); __IWER_DEV.stereoEnabled = /[?&]stereo=1/.test(location.search);<\/script>');</script>
 <script src="js/ps1-mode.js?v=20261108-ps1"></script>
 <script src="lib/CopyShader.js?v=20260707-editor-workflow"></script>
 <script src="lib/LuminosityHighPassShader.js?v=20260707-editor-workflow"></script>
@@ -547,16 +555,17 @@ body.dev-open #devToggleBtn{opacity:.55;}
 <script src="js/net/net-interpolation.js?v=20260710-coop-sync-v2"></script>
 <script src="js/net/net-client.js?v=20260713-coop-security"></script>
 <script src="js/net/net-room.js?v=20260713-coop-security"></script>
-<script src="js/gamepad.js?v=20261111-pad"></script>
+<script src="js/vr.js?v=20261112-vr"></script>
+<script src="js/gamepad.js?v=20261112-vr"></script>
 <script src="js/audio.js?v=20261111-haven"></script>
 <script src="js/music.js?v=20261111-haven"></script>
 <script src="js/variants.js?v=20261111-arena-gf"></script>
 <script src="js/gunaudio.js?v=20261111-gunplay2"></script>
-<script src="js/gunfeel.js?v=20261111-pad"></script>
+<script src="js/gunfeel.js?v=20261112-vr"></script>
 <script src="js/boom.js?v=20261111-gunplay2"></script>
 <script src="js/wardrobe.js?v=20261111-hatfit"></script>
 <script src="js/avatar.js?v=20261111-kitv"></script>
-<script src="js/fp-body.js?v=20261111-pad"></script>
+<script src="js/fp-body.js?v=20261112-vr"></script>
 <script src="js/avatar-creator.js?v=20261111-pad"></script>
 <script src="js/assets.js?v=20261111-arena-gf"></script>
 <script src="js/input-safety.js?v=20260713-camera-look-reset"></script>
@@ -565,18 +574,18 @@ body.dev-open #devToggleBtn{opacity:.55;}
 <script src="js/world.js?v=20261111-fix1"></script>
 <script src="js/haven-data.js?v=20261111-wardrobe"></script>
 <script src="js/haven.js?v=20261111-wardrobe"></script>
-<script src="js/arena/arena-core.js?v=20261111-pad"></script>
-<script src="js/arena/arena-data.js?v=20261111-pad"></script>
-<script src="js/arena/arena-sfx.js?v=20261111-pad"></script>
-<script src="js/arena/arena-fx.js?v=20261111-pad"></script>
-<script src="js/arena/arena-arsenal.js?v=20261111-pad"></script>
-<script src="js/arena/arena-player.js?v=20261111-pad"></script>
-<script src="js/arena/arena-enemies.js?v=20261111-pad"></script>
-<script src="js/arena/arena-boss.js?v=20261111-pad"></script>
-<script src="js/arena/arena-hud.js?v=20261111-pad"></script>
-<script src="js/arena/arena-mission.js?v=20261111-pad"></script>
-<script src="js/arena/arena-main.js?v=20261111-pad"></script>
+<script src="js/arena/arena-core.js?v=20261112-vr"></script>
+<script src="js/arena/arena-data.js?v=20261112-vr"></script>
+<script src="js/arena/arena-sfx.js?v=20261112-vr"></script>
+<script src="js/arena/arena-fx.js?v=20261112-vr"></script>
+<script src="js/arena/arena-arsenal.js?v=20261112-vr"></script>
+<script src="js/arena/arena-player.js?v=20261112-vr"></script>
+<script src="js/arena/arena-enemies.js?v=20261112-vr"></script>
+<script src="js/arena/arena-boss.js?v=20261112-vr"></script>
+<script src="js/arena/arena-hud.js?v=20261112-vr"></script>
+<script src="js/arena/arena-mission.js?v=20261112-vr"></script>
+<script src="js/arena/arena-main.js?v=20261112-vr"></script>
 <script src="js/devconsole.js?v=20261111-wardrobe"></script>
-<script src="js/game.js?v=20261111-pad"></script>
+<script src="js/game.js?v=20261112-vr"></script>
 </body>
 </html>

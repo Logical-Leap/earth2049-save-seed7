@@ -857,10 +857,12 @@ const GunFeel = (() => {
   }
 
   function setVisible(v) { if (armsRoot) armsRoot.visible = v && !!vm; if (!v) reticle(0); }
+  // VR: the gun lives in your real hand (js/vr.js) and your controllers wear the gloves; no floating camera arms or reticle
+  function hideArms() { if (armsRoot) armsRoot.visible = false; reticle(0); }
   const _update = update;
 
   return {
-    init, equip, setArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
+    init, equip, setArms, hideArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
     get fov() { return st.fov; }, get adsK() { return st.adsK; }, get reloading() { return !!st.reload; },
     get spreadMul() { return 1 - st.adsK * (vm && SCOPED.has(vm.sightName) ? .96 : .65); },
     get sensMul() { return 1 - st.adsK * (vm ? (1 - vm.fov / 75) * .9 : 0); },

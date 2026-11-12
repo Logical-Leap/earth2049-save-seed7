@@ -159,8 +159,13 @@ AR.Player = (() => {
 
   /* ================================================================== helpers */
   const gun = () => P.guns[P.cur];
-  function eyePos(out) { return out.set(P.body.pos.x, P.body.pos.y + P.eye, P.body.pos.z); }
+  const _vrO = V3(), _vrD = V3();
+  function eyePos(out) {
+    if (window.VR?.active && VR.aim(_vrO, _vrD)) return out.copy(_vrO);                 // shots leave the gun in your hand
+    return out.set(P.body.pos.x, P.body.pos.y + P.eye, P.body.pos.z);
+  }
   function aimDir(out) {
+    if (window.VR?.active && VR.aim(_vrO, _vrD)) return out.copy(_vrD);
     const c = gfOn() ? GunFeel.cam : null;
     const yaw = P.yaw + P.punchY + (c ? c.yaw : 0), pitch = P.pitch + P.punchP + (c ? c.pitch : 0);
     return out.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch));
@@ -297,7 +302,11 @@ AR.Player = (() => {
       }
     }
 
+    // VR: the steps you take in your room move the capsule through the same collision
+    const walk = window.VR?.active ? VR.consumeWalk() : null;
+    if (walk && dt > 0) { b.vel.x += walk.x / dt; b.vel.z += walk.z / dt; }
     const r = AR.World.moveBody(b, dt, G);
+    if (walk && dt > 0) { b.vel.x -= walk.x / dt; b.vel.z -= walk.z / dt; }
     P.groundT = b.onGround ? P.groundT + dt : 0;
     if (b.onGround) { P.airJumpsUsed = 0; P.airT = 0; } else P.airT += dt;
     if (r.landed) {
@@ -337,12 +346,14 @@ AR.Player = (() => {
   function look(rdt) {
     const sens = 0.0021 * (SAVE?.opts?.sens || 1) * (gfOn() ? GunFeel.sensMul : (1 - P.ads * (1 - (gun()?.d.ads || 0.8)) * 0.9));
     P.yaw -= I.lookX * sens; P.pitch = clamp(P.pitch - I.lookY * sens, -1.5, 1.5);
+    if (window.VR?.active) { P.yaw = VR.headYaw; P.pitch = clamp(VR.headPitch, -1.5, 1.5); }      // your head is the camera
     P.swayX = AR.damp(P.swayX, clamp(-I.lookX * 0.0009, -0.05, 0.05), 14, rdt);
     P.swayY = AR.damp(P.swayY, clamp(I.lookY * 0.0009, -0.05, 0.05), 14, rdt);
     I.lookX = 0; I.lookY = 0;
   }
   function cameraTick(dt, rdt) {
     const b = P.body;
+    if (window.VR?.active) { vrCamera(dt, rdt); return; }
     // punch recovery: critically-damped spring back to 0
     const k = 140, c = 2 * Math.sqrt(k);
     const rec = gun()?.d.recover || 8;
@@ -746,16 +757,44 @@ AR.Player = (() => {
     }
     cameraTick(dt, rdt);
     viewmodelTick(rdt);
-    if (gfOn()) {
+    if (gfOn() && !window.VR?.active) {                       // in VR, vrCamera already ran GunFeel and put the gun in your hand
       const mx = AR.clamp((keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX, -1, 1);
       GunFeel.update(rdt, { ads: I.ads && P.slideT <= 0 && P.kickT <= 0 && P.alive, move: Math.min(1, P.speed / 8), strafe: mx, onGround: P.body.onGround,
         dash: P.dashT > 0, sprint: P.sprinting, lookX: -P.swayX / 0.0009, lookY: P.swayY / 0.0009, feetY: P.body.pos.y });
     }
     // your own body under the camera: look down to see your fit (arms come from GunFeel's hands)
-    if (window.FPBody && P.alive) {
+    if (window.FPBody && P.alive && !window.VR?.active) {
       const b = P.body;
       FPBody.update(rdt, { x: b.pos.x, y: b.pos.y, z: b.pos.z, yaw: P.yaw, pitch: P.pitch, speed: P.speed, onGround: b.onGround, crouch: P.crouching, slide: P.slideT > 0, arms: false });
     }
+  }
+
+  /* ================================================================== VR (js/vr.js)
+   * Left stick move (where you look) · right stick snap turn · right trigger fire · A jump · B kick
+   * duck for real (or click the right stick) to crouch/slide · grip or X pick up / reload · Y swap (hold: pause)
+   * left trigger grenade · left stick click sprint (dash with JET DASH) */
+  function vrTick(vr, rdt) {
+    if (!P || !P.alive) { I.padX = 0; I.padZ = 0; return; }
+    const B = vr.BTN, L = vr.stick('left');
+    I.padX = L.x; I.padZ = -L.y;
+    I.fire = vr.trigger('right') > 0.4; I.ads = false;
+    if (vr.down('right', B.A)) I.jump = 0.14;
+    if (vr.down('right', B.B)) I.kick = true;
+    if (vr.down('right', B.STICK)) P.vrCrouch = !P.vrCrouch;
+    I.crouch = vr.crouched || !!P.vrCrouch || keys.ControlLeft || keys.KeyC || false;
+    if (vr.down('right', B.GRIP) || vr.down('left', B.GRIP) || vr.down('left', B.A)) { if (!AR.Drops.use()) I.reload = true; }
+    if (vr.trigger('left') > 0.6 && !P.vrLT) { P.vrLT = true; I.nade = true; } else if (vr.trigger('left') < 0.3) P.vrLT = false;
+    if (vr.down('left', B.STICK)) { if (S.dashMode) I.dash = true; else I.padSprint = !I.padSprint; }
+  }
+  function vrCamera(dt, rdt) {
+    const b = P.body;
+    P.eye = damp(P.eye, P.crouching ? CROUCH_EYE : EYE, 14, dt);
+    VR.place({ x: b.pos.x, y: b.pos.y, z: b.pos.z });
+    if (gfOn()) {
+      GunFeel.update(rdt, { ads: false, move: 0, strafe: 0, onGround: b.onGround, dash: false, sprint: false, lookX: 0, lookY: 0, feetY: b.pos.y });
+      VR.holdGun(GF.gunGroup);
+    }
+    window.FPBody?.update(rdt, { x: b.pos.x, y: b.pos.y, z: b.pos.z, yaw: P.yaw, pitch: -1.5, speed: P.speed, onGround: b.onGround, crouch: P.crouching, slide: P.slideT > 0, arms: false });
   }
 
   /* ================================================================== gamepad (js/gamepad.js polls; this maps it)
@@ -830,7 +869,7 @@ AR.Player = (() => {
   }
 
   return {
-    init, reset, tick, padTick, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, padTick, vrTick, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };

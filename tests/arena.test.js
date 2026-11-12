@@ -131,7 +131,7 @@ test('arena scripts load before the game, in dependency order; Solo and the Have
   for (const f of order) { const i = html.indexOf(`js/arena/${f}.js`); assert.ok(i > last, f); last = i; }
   assert.ok(last < html.indexOf('js/game.js'));
   assert.match(game, /el\('btnStart'\)\.onclick = \(\) => \{[^}]*startArena\(\)/);
-  assert.match(game, /state === 'arena'\) \{[\s\S]{0,400}?Arena\.tick\(dt\)/);
+  assert.match(game, /state === 'arena'\) \{[\s\S]{0,900}?Arena\.tick\(dt\)/);
 });
 
 test('arena music cues exist', () => {
