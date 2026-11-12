@@ -155,6 +155,7 @@ async function boot() {
   const gammaPass = new THREE.ShaderPass(THREE.GammaCorrectionShader);
   composer.addPass(gammaPass);
   window.PS1Mode?.install?.({ renderer, composer, gammaPass, bloomPass });
+  window.TitleScreen?.init?.({ renderer, composer });
 
   const loadScreen = el('loadScreen');
   if (loadScreen) loadScreen.textContent = 'LOADING SIMULATION DATA…';
@@ -2274,6 +2275,8 @@ function keyMove() {
 /* ============ menus / state ============ */
 function setState(s) {
   if (s === 'title' && Haven.active) Haven.exit(scene);
+  if (s !== 'title') window.TitleScreen?.leave?.();
+  else window.TitleScreen?.toMenu?.();
   state = s;
   window.FPBody?.show(s === 'run' || s === 'arena');
   document.body.classList.toggle('inrun', s === 'run');
@@ -2774,6 +2777,8 @@ function frame(t) {
     Arena.tick(dt);
   } else if (state === 'og') {
     World.tick(dt * 0.2, G ? G.time : 0);
+  } else if (state === 'title' && window.TitleScreen?.tick?.(dt)) {
+    // the title diorama renders itself through the composer (js/title.js)
   } else if (state === 'title') {
     // slow orbit over the district
     titleT += dt;

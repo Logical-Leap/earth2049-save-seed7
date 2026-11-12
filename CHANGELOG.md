@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-12 — New title screen
+
+- `js/title.js`: the title is now a live diorama. You stand on a rooftop in your Fitting Room look, with the city
+  around you to the horizon and Turing's ring and eye hanging in the sky. Rain falls, searchlights sweep, drones
+  cross, the neon pulses on the title theme's beat, and the camera cuts between three shots with a glitch.
+- A GigaCorp boot log plays once per session, then PRESS ANY BUTTON. Pressing it wakes the audio, so the theme
+  and the logo hit land together, and the menu slides in.
+- The menu is left-aligned and grouped (Play / Squad / Prepare), with a sweep highlight, a description line,
+  hover and confirm sounds, a live SEED 7 status readout and a GigaCorp LIVE propaganda ticker. Keyboard
+  (arrows / W S, Enter), mouse, touch and controller all drive the same selection. Compact layout on phones.
+- Button ids are unchanged, so game.js still owns what each one does.
+
 ## 2026-11-11 — Your own body, controller support, sprint, and level-ups
 
 - **Your Fitting Room look in first person** (`js/fp-body.js`):
