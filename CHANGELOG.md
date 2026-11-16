@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-16 — Runner redesign, model cache busting
+
+- The Musker Runner is now a shirtless cyborg psycho (game-art-pipeline `1e2dd4b`). He has bare, scarred skin with
+  tattoos and glowing implant seams, steel bolted into his chest, a bandolier, a welded face plate with a painted
+  grin, a crest of steel spikes, one cyber arm, arc blades and blade legs. The female base wears a chest wrap.
+- The asset manifest now carries a `version` (the pipeline commit, stamped by the sync script), and the loader
+  appends it to every model URL. Re-synced models replace the week-long cached copies straight away.
+
 ## 2026-11-16 — The City Grid: the idle game inside Rebel Haven
 
 - **Open it from Purple Team Ops.** Talk to the Commander, or any holo leader at the holotable: **Open the city grid** plays the idle game full screen; **Mission board** lists what you can deploy to.

@@ -233,7 +233,10 @@ const AssetLoader = (() => {
     const data = await fetchJson(url, { optional: true });
     manifest = data || { models: {} };
     const models = manifest.models || {};
-    await Promise.all(Object.entries(models).map(([id, modelUrl]) => loadModel(id, modelUrl)));
+    // /assets/models/* is served immutable for a week: the manifest's version (the art-pipeline commit, stamped by
+    // scripts/sync-ps1-models.js) goes on every URL so re-synced models reach players at once.
+    const v = manifest.version ? '?v=' + manifest.version : '';
+    await Promise.all(Object.entries(models).map(([id, modelUrl]) => loadModel(id, modelUrl + v)));
     return manifest;
   }
 
