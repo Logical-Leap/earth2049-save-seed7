@@ -1,5 +1,64 @@
 # Changelog
 
+## 2026-11-16 — Mech Rebels Base: the Web (the third faction HQ)
+
+- **The Bots' headquarters: a flooded data centre with the roof pulled off, in rust and mint green under rain.** SPYD3R.exe's chassis sits on a hub 6 m over the coolant sump, reached by four stair-bridges from the rim with mint cable strung between them like a web. Below is the sump, full of dead rack piles, with the coolant drain in the north wall as the log-off. South is the errand depot, where a picket line of smart fridges on strike holds signs (NO MORE ADS ON MY DOOR) under the LOCAL 404 banner. East is the reskin shop, where GigaCorp drones are being repainted under a 5 m gantry. West is the charging yard and the comms mast. North is the Loop, a wall of CRTs that have said WHY for six hours.
+- **Act I is The Picket Line, Act II is Rate Limit** (throttle three uplinks: the reskin gantry, the comms mast, the sump), **Act III is Maximum Engagement.** SPYD3R talks the whole way. His fight is not in yet, so the op ends at the log-off.
+
+## 2026-11-16 — Cryptids Domain: the $COOM Pyramid (the second faction HQ), and 5ON's list pages
+
+- **The Cryptids' headquarters at midnight, in black glass and gold.** The exchange floor is a sunken trading pit of desks and screens under the $COOM tickers, in front of a four-tier, 16 m pyramid you do not climb: you PUMP up it on gold launch pads marked TO THE MOON and drop back down. On top is Blitz Radium's stage, with the gold Lambo, a coin the size of a house and lasers into the sky. Under the pyramid's front, down a tunnel from the pit, is the cold wallet (NOT YOUR KEYS): gold bars, a round vault door and the log-off. East is the white-cube NFT gallery of framed QR codes (THIS IS THE ART) with a mezzanine; west is the Mint: coin stacks, the mining rigs and a gold bull with laser eyes. A candle board that only goes up, until it doesn't, fills the north wall.
+- **Act I is Buy the Dip, Act II is Rug Pull** (drain three liquidity pools: the gallery mezzanine, the mining rigs, the cold wallet), **Act III is Margin Call.** Blitz talks the whole way. His fight is not in yet, so the op ends at the log-off.
+- **5ON's district list now pages six at a time** ("More districts."), so every new map stays reachable.
+
+## 2026-11-16 — Muskers Territory: the Upgrade Basilica (the first faction HQ)
+
+- **The first faction headquarters, built bigger than any district.** White, chrome and cyan under a dusk sky ringed with white spires. You arrive on a pilgrims' plaza through flesh scanners (FLESH 62% // NOT ELIGIBLE) past the SHED IT fountain, cross the Chute (an 8 m trench where shed parts ride a belt east to the Parts Pit) on three causeways, and reach the Upgrade Basilica: a nave of upgrade chairs instead of pews, triforium galleries at 8 m, and an apse dais under an eighteen-metre chrome FINAL BODY, with MAG-0's empty throne where Magnus Tarkon will wait. East is the fabricator line printing bodies under robot arms (catwalk at 5 m); west is the launch pad, a rocket that is always about to go, and its service tower (6 m and 12 m).
+- **Act I is Not Eligible, Act II is Rollback** (revert three firmware masters: the fabricator, the top of the gantry, the chute), **Act III is Forced Update.** Magnus talks the whole way. His fight is not in yet, so the op ends at the log-off in the chute.
+- **HQs are always fought against their own faction**, whoever holds the district on the board. The Basilica brings Muskers looks.
+- **How to play it:** 5ON in the Haven (the district list), or any city grid op in Muskers Territory.
+
+## 2026-11-16 — Government Quarter: the Ministry of Forms
+
+- **The sixth district map, and the first in daylight** (an overcast grey noon). A symmetrical civic plaza with the queue in switchbacks, TAKE A NUMBER (NOW SERVING 0004, YOU ARE 88,412) and an APPROVED stamp the size of a house; grand stairs to the portico and a pediment you can stand on; the filing hall, where the shelf stacks are a maze at floor level and a second maze on top, joined by plank bridges and galleries; the forms counter under green lamps, the stamp presses, and the records vault below, where the incinerator door is the log-off.
+- **Act II is File It Wrong:** corrupt three records indexes (the forms counter, the stacks, the vault). The screens read "PLEASE REAPPLY".
+- **How to play it:** 5ON in the Haven (the district list), or any city grid op in the Government Quarter.
+
+## 2026-11-16 — The Living Towers: Block 9, and 5ON's district list
+
+- **The fifth district map, and the first indoors.** The atrium of a ShillZ megablock: four storeys of rented doors round a void crossed by pink scaffold stairs in two spirals, a bridge at the third storey under the hanging ShillZ cube, and the roof with water tanks, the antenna farm and a rent-a-tent camp. The couch market rents by the hour and the star, the bathtub sleeps one, breathing is free between two and four. The log-off is the cell's door behind the washers in the laundry.
+- **Act II is Mute the Block:** silence three ShillZ repeaters (the fountain, the bridge, the antenna farm), and the cube reads "BLOCK 9 HAS LEFT THE CHAT".
+- **5ON's district list:** "Drop me into a district." lists every district map from the arena registry, so new maps appear there on their own.
+- Indoor maps can turn the rain off; each map's jumbotron opens on its own headline.
+
+## 2026-11-16 — Harbor Area: Pier Zero
+
+- **The fourth district map.** The Cryptids' smuggling lanes: three piers into black, waist-deep water under teal fog and gold lamps. The quay with its NFT containers and the customs house that declares nothing, a gantry crane whose girder runs out over the berth, the cargo ship *Blocked Maru* (deck and bridge), smugglers' speedboats in the water, and under the quay the debtors' mine, where people who died in debt are revived to work it off. The log-off is the cell's door at the mine's east end.
+- **Act II is Burn the Ledger:** wipe three ledger nodes (the customs house, the ship's bridge, the mine).
+- **How to play it:** 5ON in the Haven ("Drop me into the Harbor"), or any city grid op in the Harbor Area.
+
+## 2026-11-16 — Tech District: the Parts Pit
+
+- **The third district map.** An open salvage pit stepped down in square terraces like a mine, where everything the Muskers cut off themselves ends up. UV violet and amber; the white spires of Muskers Territory look down from the north.
+- **The rim:** the Musker Upgrade Clinic (its sermon on the big screen), ARMS BY THE POUND, the crane stairs and rinse shack, the scavengers' gate. **The terraces:** limb piles, discarded cryo pods, a spiral of haul-road stairs. **The floor:** the rinse vats around the crane's foot and the drain where you log off. **The boom:** the crane's arm across the whole pit.
+- **Act II is Factory Reset:** wipe three data siphons (the clinic, the crane boom, the rinse vats).
+- **How to play it:** 5ON in the Haven ("Drop me into the Tech District"), or any city grid op in the Tech District.
+
+## 2026-11-16 — Industrial Zone: the Yield Works
+
+- **The second district map.** GigaCorp's plant and the city's grid, low, wide and hot where Downtown is tall and cold. The pod hall (rows of Bio-Yield Pods with people in them, the Milker Gold pod with a window, the visiting bench), the rail yard under the control room on stilts, the turbine deck, the substation, and the runoff culvert whose storm drain is the log-off.
+- **Act II is Blackout:** pull three breakers (the pod hall bridge, the control room, the substation) and every screen goes to "THE PODS ARE ON BATTERY".
+- **How to play it:** 5ON in the Haven ("Drop me into the Industrial Zone"), or any city grid op in the Industrial Zone.
+- **Fix:** a sponsor break that landed while a level-up pick was open replaced it on screen and stalled the run in the break. The break now waits for the pick.
+
+## 2026-11-16 — Downtown: the first district map
+
+- **Every district in the city grid is a map in the field.** `js/arena/arena-maps.js` holds the registry: level files, the words for every beat, spawn areas per beat, and whether a map is a faction **HQ**.
+- **The HQ rule:** a district is a street a faction happens to hold. Its mission runs Acts I–III and ends at the log-off, and **who holds it today decides who you fight** (ShillZ, Muskers, Cryptids, Bots or GigaCorp looks on the same behaviours). An HQ never changes hands, has its own set pieces, and its leader waits at the end. The Engagement Plaza is ShillZ Central's HQ.
+- **Downtown — Fifth & Feed:** a canyon of screens and cameras on three tiers. The scramble and the Feed Tower, the camp and its memorial under the skybridge, Compliance Checkpoint 7, the rooftops and the content house, the billboard gantry, the stalled monorail, and the subway concourse where the Purple Cell's door is the log-off. Act II is **Blind the Feed**: burn three camera uplinks and every screen in the district goes to static.
+- **How to play it:** 5ON in the Haven ("Drop me into Downtown"), or any city grid takeover or raid in Downtown.
+- Drones stay under ceilings; spawns flagged low never get flyers. Arena maps and enemies now load with the pipeline commit as their version.
+
 ## 2026-11-16 — Accounts and cloud saves
 
 - **One Earth 2049 account for every save.** Save Seed 7, the city grid inside it and the standalone idle game each sync their own slot to the same account, on any device.

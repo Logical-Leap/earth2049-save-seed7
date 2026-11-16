@@ -41,7 +41,17 @@ AR.Mission = (() => {
     save.runs = (save.runs || 0) + 1;
     /* a field op from the Haven mission board (js/field-ops.js): what the city grid lends this run */
     M.op = opts.op || null;
+<<<<<<< HEAD
     M.freeRerolls = M.op ? Math.max(0, Math.min(2, Math.floor(M.op.freeRerolls || 0))) : 0;
+=======
+    M.map = AR.MAP || AR.MAPS.plaza;
+    M.owner = (M.op?.owner && AR.ROSTERS[M.op.owner]) ? M.op.owner : M.map.owner;
+    M.roster = AR.ROSTERS[M.map.hq ? M.map.owner : M.owner] || {};         // a district is fought against whoever holds it today; an HQ by its own faction
+    M.noBoss = !!M.op?.noBoss || !M.map.hq || !!M.map.noLeader;           // districts end at the log-off; HQs end with their leader (once it is in the field)
+    M.L = AR.mapLines(M.map, M.owner);
+    M.chat = { ...AR.CHAT, ...(M.map.chat || {}) };
+    M.freeRerolls = M.op ? Math.max(0, Math.min(2, M.op.freeRerolls | 0)) : 0;
+>>>>>>> origin/main
     M.allyCall = M.op?.ally ? { ...M.op.ally, used: false } : null;
     M.heatMul = 1 + M.heat * 0.08;
     M.speedMul = 1 + M.heat * 0.04;
@@ -56,13 +66,14 @@ AR.Mission = (() => {
     AR.Hud.score(0, 0, M.viewers);
     AR.Hud.xp(1, 0, 0, false);
     AR.Hud.style(0, 0.3, '');
-    AR.Hud.objective('<b>CAST IN</b> // ENGAGEMENT PLAZA, SHILLZ CENTRAL');
+    AR.Hud.objective(`<b>CAST IN</b> // ${M.map.place}, ${M.map.region}`);
+    AR.Hud.chatTitle?.(M.map.chatTitle);
     // intro sequence
     AR.Hud.letterbox(true);
-    if (M.op) AR.Hud.banner('FIELD OP: ' + M.op.title, `ENGAGEMENT PLAZA${M.heat ? ' // HEAT ' + M.heat : ''}${M.op.replay ? ' // REPLAY' : ''}`, 3.6);
-    else AR.Hud.banner('OPERATION: UNSUBSCRIBE', `SHILLZ CENTRAL // ENGAGEMENT PLAZA${M.heat ? ' // HEAT ' + M.heat : ''}`, 3.6);
+    if (M.op) AR.Hud.banner('FIELD OP: ' + M.op.title, `${M.map.place}${M.heat ? ' // HEAT ' + M.heat : ''}${M.op.replay ? ' // REPLAY' : ''}`, 3.6);
+    else AR.Hud.banner(M.map.title, `${M.map.region} // ${M.map.place}${M.heat ? ' // HEAT ' + M.heat : ''}`, 3.6);
     chatBurst('start', 4);
-    queueLines(AR.LINES.intro);
+    queueLines(M.L.intro);
     setTimeout(() => { if (M && M.phase === 'intro') loadout(); }, 2600);
   }
 
@@ -71,13 +82,18 @@ AR.Mission = (() => {
     const scene = AR.scene;
     M.group = new THREE.Group(); M.group.name = 'arena-stage'; scene.add(M.group);
     // jumbotron
-    const sm = AR.World.markers('screen')[0];
-    if (sm) {
+    const screens = AR.World.markers('screen');
+    if (screens.length) {
       const c = document.createElement('canvas'); c.width = 264; c.height = 96;
       const tex = new THREE.CanvasTexture(c); tex.encoding = THREE.sRGBEncoding;
-      const mesh = new THREE.Mesh(new THREE.PlaneGeometry(sm.size[0], sm.size[1]), new THREE.MeshBasicMaterial({ map: tex, toneMapped: false }));
-      mesh.position.set(sm.pos[0], sm.pos[1], sm.pos[2] + 0.06); M.group.add(mesh);
-      M.jumbo = { c, x: c.getContext('2d'), tex, t: 0, head: 'GOING LIVE', hearts: [] };
+      const mat = new THREE.MeshBasicMaterial({ map: tex, toneMapped: false });
+      for (const sm of screens) {                                            // one feed, every screen in the district
+        const yaw = sm.yaw || 0;
+        const mesh = new THREE.Mesh(new THREE.PlaneGeometry(sm.size[0], sm.size[1]), mat);
+        mesh.position.set(sm.pos[0] + Math.sin(yaw) * 0.06, sm.pos[1], sm.pos[2] + Math.cos(yaw) * 0.06); mesh.rotation.y = yaw;
+        M.group.add(mesh);
+      }
+      M.jumbo = { c, x: c.getContext('2d'), tex, t: 0, head: M.map.jumbo.head || 'LIVE', hearts: [] };
     }
     // ring light
     const rm = AR.World.markers('ring')[0];
@@ -93,7 +109,7 @@ AR.Mission = (() => {
       M.ring = { g, ring, halo, fallen: false };
     }
     // dynamic stage lights (light the characters; the level itself is baked)
-    for (const L of (AR.World.layout.lights || []).filter(l => ['stage_key', 'stage_w', 'stage_e', 'logoff'].includes(l.name))) {
+    for (const L of (AR.World.layout.lights || []).filter(l => M.map.dyn.includes(l.name))) {
       const pl = new THREE.PointLight(new THREE.Color(...L.color), L.intensity * 1.6, L.radius * 1.6, 1.5);
       pl.position.set(...L.pos); M.group.add(pl);
       M.beatLights.push({ pl, base: L.intensity * 1.6, beat: !!L.beat, pulse: L.pulse || 0, name: L.name });
@@ -102,7 +118,7 @@ AR.Mission = (() => {
     M.bossLight = new THREE.PointLight(0xfff0e0, 0, 9, 1.4); M.group.add(M.bossLight);
     M.relayLights = [0, 1, 2].map(() => { const pl = new THREE.PointLight(0xffd400, 0, 12, 1.5); M.group.add(pl); return pl; });
     // rain
-    const N = 900, pos = new Float32Array(N * 6);
+    const N = M.map.rain ?? 900, pos = new Float32Array(N * 6);
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const rain = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x8090c0, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
     rain.frustumCulled = false; M.group.add(rain);
@@ -110,7 +126,8 @@ AR.Mission = (() => {
     // sky
     const sc = document.createElement('canvas'); sc.width = 8; sc.height = 128;
     const sx = sc.getContext('2d'); const gr = sx.createLinearGradient(0, 0, 0, 128);
-    gr.addColorStop(0, '#05030c'); gr.addColorStop(0.55, '#1a0c2a'); gr.addColorStop(0.75, '#4a1838'); gr.addColorStop(1, '#120a18');
+    const SK = M.map.sky;
+    gr.addColorStop(0, SK[0]); gr.addColorStop(0.55, SK[1]); gr.addColorStop(0.75, SK[2]); gr.addColorStop(1, SK[3]);
     sx.fillStyle = gr; sx.fillRect(0, 0, 8, 128);
     const sky = new THREE.Mesh(new THREE.SphereGeometry(220, 16, 12), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), side: THREE.BackSide, fog: false, depthWrite: false }));
     M.group.add(sky); M.sky = sky;
@@ -155,18 +172,21 @@ AR.Mission = (() => {
     const J = M.jumbo; if (!J) return;
     J.t -= dt; if (J.t > 0) return; J.t = 1 / 8;
     const x = J.x, W = 264, H = 96;
-    const dead = M.bossDown && (M.phase === 'bossdead' || M.phase === 'extract' || M.phase === 'results' && M.won);
+    const dead = M.map.jumbo.deadOn === 'relays' ? M.relaysDown >= 3
+      : M.bossDown && (M.phase === 'bossdead' || M.phase === 'extract' || M.phase === 'results' && M.won);
     x.fillStyle = dead ? '#000' : '#0b0612'; x.fillRect(0, 0, W, H);
     x.font = 'bold 10px Consolas, monospace'; x.textBaseline = 'top';
     if (dead) {
       x.fillStyle = '#ff2b4a'; x.font = 'bold 22px Consolas, monospace'; x.textAlign = 'center';
-      x.fillText('STREAM ENDED', W / 2, 26); x.font = 'bold 11px Consolas, monospace'; x.fillStyle = '#9b59ff'; x.fillText('RIYA VEX HAS BEEN DEPLATFORMED', W / 2, 56);
+      if (M.map.jumbo.deadOn === 'relays') for (let i = 0; i < 260; i++) { x.fillStyle = Math.random() < 0.5 ? '#222' : '#555'; x.fillRect(rand(0, W), rand(0, H), 3, 2); }   // NOSONAR static
+      x.fillStyle = '#ff2b4a'; x.font = 'bold 22px Consolas, monospace';
+      x.fillText(M.map.jumbo.dead[0], W / 2, 26); x.font = 'bold 11px Consolas, monospace'; x.fillStyle = '#9b59ff'; x.fillText(M.map.jumbo.dead[1], W / 2, 56);
       x.fillStyle = '#666'; x.fillText('0 WATCHING', W / 2, 72); x.textAlign = 'left';
       J.tex.needsUpdate = true; return;
     }
     // header
     x.fillStyle = '#e0003c'; x.fillRect(4, 4, 30, 12); x.fillStyle = '#fff'; x.fillText('LIVE', 8, 5);
-    x.fillStyle = '#ffd400'; x.fillText('RIYA VEX // CONTROLLED RIOT', 40, 5);
+    x.fillStyle = '#ffd400'; x.fillText(M.map.jumbo.live, 40, 5);
     x.fillStyle = '#fff'; x.textAlign = 'right'; x.fillText(fmtViewers(M.viewers) + ' WATCHING', W - 4, 5); x.textAlign = 'left';
     // eq bars from the music
     const sp = Music.spectrum();
@@ -180,7 +200,7 @@ AR.Mission = (() => {
     x.fillStyle = (b.beat % 2) ? '#ffffff' : '#ffd400';
     x.fillText(J.head, W / 2, 30);
     x.font = 'bold 10px Consolas, monospace'; x.fillStyle = '#00e5ff';
-    x.fillText(J.sub || 'LIKE // SHARE // COMPLY', W / 2, 54);
+    x.fillText(J.sub || M.map.jumbo.sub, W / 2, 54);
     x.textAlign = 'left';
     // hearts
     if (Math.random() < 0.6) J.hearts.push({ x: rand(10, W - 10), y: H, v: rand(18, 40) });           // NOSONAR
@@ -224,8 +244,8 @@ AR.Mission = (() => {
   }
   function startAct1() {
     M.phase = 'act1'; M.wave = -1; M.actT = 0;
-    AR.Hud.banner('ACT I — THE PREGAME', 'HOLD THE PLAZA');
-    headline('WE HAVE A VISITOR', 'FANS: WELCOME HIM');
+    AR.Hud.banner(...M.map.act1);
+    headline(...M.map.head.act1);
     nextWave();
   }
   function nextWave() {
@@ -235,18 +255,18 @@ AR.Mission = (() => {
     M.waveHurt = 0;
     setTimeout(() => {
       if (!M || M.phase !== 'act1') return;
-      AR.Hud.banner(w.n, w.s, 2);
+      AR.Hud.banner(w.n, M.map.waveSubs?.[M.wave] || w.s, 2);
       for (const [type, n, flag] of w.g) queue(type, Math.round(n * (1 + M.heat * 0.15)), { elite: flag === 'elite' });
       M.pending.sort(() => Math.random() - 0.5);                                                                      // NOSONAR
       M.waveLive = true;
     }, M.wave === 0 ? 400 : 2200);
-    AR.Hud.objective(`<b>ACT I</b> // HOLD THE PLAZA — WAVE ${M.wave + 1}/3`);
+    AR.Hud.objective(`<b>ACT I</b> // ${M.map.act1Obj} — WAVE ${M.wave + 1}/3`);
   }
   function startAct2() {
     M.phase = 'act2'; M.actT = 0;
-    AR.Hud.banner('ACT II — SIGNAL JAM', 'BURN HER THREE RELAYS');
-    queueLines(AR.LINES.act2);
-    headline('STREAM QUALITY: 4K', 'SPONSORED BY SIGNAL RELAYS');
+    AR.Hud.banner(...M.map.act2);
+    queueLines(M.L.act2);
+    headline(...M.map.head.act2);
     for (const m of AR.World.markers('relay')) {
       const e = AR.Enemies.spawn('relay', m.pos[0], m.pos[1], m.pos[2], { yaw: rand(0, 6.28), hpMul: 1 + M.heat * 0.15 });
       if (!e) continue;
@@ -283,7 +303,7 @@ AR.Mission = (() => {
     x.clearRect(0, 0, 96, 20);
     x.fillStyle = 'rgba(0,0,0,.75)'; x.fillRect(0, 0, 96, 20);
     x.fillStyle = f > 0.5 ? '#ffd400' : f > 0.25 ? '#ff8c00' : '#ff2b4a'; x.fillRect(2, 2, 92 * f, 9);
-    x.fillStyle = '#fff'; x.font = 'bold 8px Consolas, monospace'; x.textAlign = 'center'; x.fillText('SIGNAL RELAY ' + pct + '%', 48, 18);
+    x.fillStyle = '#fff'; x.font = 'bold 8px Consolas, monospace'; x.textAlign = 'center'; x.fillText(M.map.relayWord + ' ' + pct + '%', 48, 18);
     D.tex.needsUpdate = true;
   }
   function relayTick(dt) {
@@ -294,12 +314,12 @@ AR.Mission = (() => {
       drawRelayBar(r);
     }
   }
-  function updateRelayObjective() { AR.Hud.objective(`<b>ACT II</b> // BURN THE RELAYS — ${M.relaysDown}/3 DOWN`); }
+  function updateRelayObjective() { AR.Hud.objective(`<b>ACT II</b> // ${M.map.act2Obj} — ${M.relaysDown}/3 DOWN`); }
   function startAct3() {
     M.phase = 'act3'; M.actT = 0; M.stormT = 75; M.mods = 0; M.hyped = false;
-    AR.Hud.banner('ACT III — HYPE STORM', 'SURVIVE 75 SECONDS');
-    queueLines(AR.LINES.act3);
-    headline('HYPE STORM', 'MODERATORS DEPLOYED');
+    AR.Hud.banner(...M.map.act3);
+    queueLines(M.L.act3);
+    headline(...M.map.head.act3);
     M.cap = 20;
   }
   function startBoss() {
@@ -308,7 +328,7 @@ AR.Mission = (() => {
     AR.Hud.letterbox(true);
     AR.Hud.banner('RIYA VEX', 'THE SIGNAL WITCH — GOING LIVE', 3.2);
     chatBurst('boss', 5);
-    queueLines(AR.LINES.boss);
+    queueLines(M.L.boss);
     headline('RIYA VEX', 'MAIN EVENT');
     const bm = AR.World.markers('boss')[0];
     setTimeout(() => {
@@ -319,8 +339,8 @@ AR.Mission = (() => {
     M.cap = 14;
   }
   function bossPhase(n) {
-    if (n === 2) { queueLines(AR.LINES.boss2); headline('CONTROLLED RIOT', 'EVERYBODY HYPE'); chatBurst('bossHurt', 3); }
-    if (n === 3) { queueLines(AR.LINES.boss3); headline('LIGHTS OUT', 'DO NOT LOOK AWAY'); chatBurst('bossHurt', 4); }
+    if (n === 2) { queueLines(M.L.boss2); headline('CONTROLLED RIOT', 'EVERYBODY HYPE'); chatBurst('bossHurt', 3); }
+    if (n === 3) { queueLines(M.L.boss3); headline('LIGHTS OUT', 'DO NOT LOOK AWAY'); chatBurst('bossHurt', 4); }
   }
   function ringCrash() { if (M.ring && !M.ring.fallen) { M.ring.falling = true; M.ring.vy = 0; AR.Sfx.ui('alarm'); } }
   function bossDead() {
@@ -329,7 +349,7 @@ AR.Mission = (() => {
     AR.slowmo(1.8, 0.18);
     AR.Hud.banner('DEPLATFORMED', 'RIYA VEX // STREAM ENDED', 3.5);
     chatBurst('bossDead', 7);
-    queueLines(AR.LINES.bossDead);
+    queueLines(M.L.bossDead);
     M.viewers = 0;
     for (const e of AR.Enemies.list) if (!e.boss && !e.dying) setTimeout(() => AR.Enemies.damage(e, 99999, { src: 'explosion', dir: V3(0, 1, 0) }), rand(200, 1200));
     M.pending = [];
@@ -340,17 +360,19 @@ AR.Mission = (() => {
     M.phase = 'extract'; M.extractT = 40; M.cap = 22;
     AR.Hud.banner('LOG OFF', 'REACH THE LOG OFF POINT');
     AR.Sfx.ui('alarm');
-    queueLines(AR.LINES.extract);
-    for (let i = 0; i < 3; i++) setTimeout(() => queue('serverless', 8, { areas: ['plaza', 'fan', 'backstage'] }), i * 4000);
+    queueLines(M.L.extract);
+    for (let i = 0; i < 3; i++) setTimeout(() => { if (M) queue('serverless', 8, { areas: M.map.areas.extract }); }, i * 4000);
   }
   function perk(next) {
     M.phase = 'perk'; M.nextAct = next;
-    setTimeout(() => {
-      if (!M) return;
+    const open = () => {
+      if (!M || M.phase !== 'perk') return;
+      if (AR.menu) { setTimeout(open, 400); return; }        // a level-up pick is still open: one card overlay at a time
       AR.Enemies.clearEnemyProjs();
       AR.menu = true; AR.unlockPointer();
       offerPerks(next);
-    }, 1400);
+    };
+    setTimeout(open, 1400);
     AR.Hud.banner('SPONSOR BREAK', 'A BRAND WANTS TO WORK WITH YOU', 1.6);
     chatBurst('pick', 2);
   }
@@ -372,7 +394,7 @@ AR.Mission = (() => {
       after: () => setTimeout(() => {
         if (!M) return;
         if (next === 'act2') startAct2(); else if (next === 'act3') startAct3();
-        else if (M.op?.noBoss) { M.phase = 'bossdead'; startExtract(); }                  // district ops end at the log-off
+        else if (M.noBoss) { M.phase = 'bossdead'; startExtract(); }                       // districts and district ops end at the log-off
         else startBoss();
       }, 700) });
   }
@@ -451,6 +473,8 @@ AR.Mission = (() => {
   function pickSpawn(type, areas) {
     const P = AR.Player.P.body.pos;
     let cands = M.spawns.filter(s => (!areas || areas.includes(s.area)));
+    if (AR.ENEMIES[type]?.fly) cands = cands.filter(s => !s.low);            // no drones under a ceiling
+    if (!cands.length) cands = M.spawns.filter(s => !s.low || !AR.ENEMIES[type]?.fly);
     if (type === 'hypebeast' || type === 'moderator') cands = cands.filter(s => s.pos[1] < 1.5);
     const scored = cands.map(s => {
       const d = Math.hypot(s.pos[0] - P.x, s.pos[2] - P.z);
@@ -473,13 +497,14 @@ AR.Mission = (() => {
     const fly = AR.ENEMIES[p.type].fly;
     const x = s.pos[0] + rand(-1.2, 1.2), z = s.pos[2] + rand(-1.2, 1.2);
     const y = fly ? s.pos[1] + 5 : s.pos[1];
-    const e = AR.Enemies.spawn(p.type, x, y, z, { elite: p.elite || (Math.random() < 0.02 + M.heat * 0.02 && p.type !== 'serverless'), yaw: Math.atan2(AR.Player.P.body.pos.x - x, AR.Player.P.body.pos.z - z) });  // NOSONAR
+    const look = M.roster[p.type];
+    const e = AR.Enemies.spawn(p.type, x, y, z, { model: look ? pick(look.models) : undefined, vtype: look?.type, elite: p.elite || (Math.random() < 0.02 + M.heat * 0.02 && p.type !== 'serverless'), yaw: Math.atan2(AR.Player.P.body.pos.x - x, AR.Player.P.body.pos.z - z) });  // NOSONAR
     if (e?.elite) chat(pick(AR.CHAT_USERS), pick(AR.CHAT.elite));
     M.recent = [[x, y, z], ...(M.recent || [])].slice(0, 4);
     M.spawnT = p.type === 'serverless' ? 0.18 : 0.38;
   }
   function summonAround(pos, kinds) {
-    for (const [type, n] of kinds) queue(type, Math.round(n * (1 + M.heat * 0.15)), { areas: ['plaza', 'backstage', 'gantry', 'fan'] });
+    for (const [type, n] of kinds) queue(type, Math.round(n * (1 + M.heat * 0.15)), { areas: M.map.areas.summon });
     void pos;
   }
   /** Keep a steady population during the free-roam acts. */
@@ -508,17 +533,17 @@ AR.Mission = (() => {
     } else if (M.phase === 'act3') {
       M.stormT -= dt;
       const el = 75 - M.stormT;
-      if (M.mods === 0 && el > 4) { M.mods = 1; queue('moderator', 1, { areas: ['plaza', 'backstage'] }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'FLANK IT'); }
-      if (M.mods === 1 && el > 38) { M.mods = 2; queue('moderator', 1 + (M.heat > 2 ? 1 : 0), { areas: ['plaza', 'garage'] }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'BAN HAMMER INCOMING'); }
+      if (M.mods === 0 && el > 4) { M.mods = 1; queue('moderator', 1, { areas: M.map.areas.mod1 }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'FLANK IT'); }
+      if (M.mods === 1 && el > 38) { M.mods = 2; queue('moderator', 1 + (M.heat > 2 ? 1 : 0), { areas: M.map.areas.mod2 }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'BAN HAMMER INCOMING'); }
       if (!M.hyped && el > 24) { M.hyped = true; queue('hypebeast', 1, { elite: true }); }
       M.floodT = (M.floodT ?? 12) - dt;
-      if (M.floodT <= 0) { M.floodT = 15; queue('serverless', 8, { areas: [pick(['fan', 'backstage', 'plaza'])] }); AR.Hud.toast('SERVERLESS FLOOD', ''); }
+      if (M.floodT <= 0) { M.floodT = 15; queue('serverless', 8, { areas: [pick(M.map.areas.flood)] }); AR.Hud.toast('SERVERLESS FLOOD', ''); }
       const want = 14 + M.heat;
       if (AR.Enemies.alive() + M.pending.length < want) {
         const r = Math.random();                                                                                  // NOSONAR
         queue(r < 0.3 ? 'shill' : r < 0.55 ? 'streamer' : r < 0.75 ? 'drone' : 'serverless', r > 0.75 ? 3 : 1);
       }
-      AR.Hud.objective(`<b>ACT III</b> // HYPE STORM — SURVIVE ${Math.max(0, Math.ceil(M.stormT))}s`);
+      AR.Hud.objective(`<b>ACT III</b> // ${M.map.act3Obj} — SURVIVE ${Math.max(0, Math.ceil(M.stormT))}s`);
       if (M.stormT <= 0) {
         M.pending = [];
         AR.Hud.banner('SIGNAL LOST', 'THE STORM BREAKS');
@@ -541,7 +566,7 @@ AR.Mission = (() => {
         M.extractHold = Math.max(0, M.extractHold - dt);
         AR.Hud.objective(`<b>LOG OFF</b> // REACH THE LOG OFF POINT — ${Math.max(0, Math.ceil(M.extractT))}s`);
       }
-      if (AR.Enemies.alive() + M.pending.length < 16) queue('serverless', 4, { areas: ['fan', 'plaza'] });
+      if (AR.Enemies.alive() + M.pending.length < 16) queue('serverless', 4, { areas: M.map.areas.trickle });
       if (M.extractT <= 0 && !M.done) { AR.Hud.toast('CONNECTION UNSTABLE', 'THE SERVERLESS ARE MULTIPLYING'); M.extractT = 10; M.cap += 6; }
     }
   }
@@ -576,7 +601,7 @@ AR.Mission = (() => {
   }
   function chat(user, text) { AR.Hud.chat(user, text); M.lastChatT = M.t; }
   function chatBurst(kind, n) {
-    const lines = AR.CHAT[kind]; if (!lines) return;
+    const lines = (M?.chat || AR.CHAT)[kind]; if (!lines) return;
     for (let i = 0; i < n; i++) setTimeout(() => { if (M) chat(pick(AR.CHAT_USERS), pick(lines)); }, i * rand(120, 420));
   }
   function queueLines(lines) { for (const l of lines) M.lines.push(l); }
@@ -613,7 +638,7 @@ AR.Mission = (() => {
       AR.Enemies.explode(e.body.pos.x, e.body.pos.y + 3, e.body.pos.z, 5, 25, 'enemy', 8);
       AR.Hud.banner('RELAY DOWN', `${M.relaysDown}/3 // HER SIGNAL IS DYING`, 2);
       chatBurst('relay', 3);
-      M.lines.push(AR.LINES.relayDown[Math.min(2, M.relaysDown - 1)]);
+      M.lines.push(M.L.relayDown[Math.min(2, M.relaysDown - 1)]);
       addScore(AR.ENEMIES.relay.score * rankMult(), 'RELAY DESTROYED');
       style('relay');
       AR.Player.heal(25); P.armor = Math.min(P.maxArmor, P.armor + 25);
@@ -723,9 +748,9 @@ AR.Mission = (() => {
   function onDeath() {
     if (M.done) return;
     AR.slowmo(2.2, 0.15);
-    AR.Hud.banner('STREAM ENDED', 'FOR YOU', 3);
+    AR.Hud.banner(M.map.lostTitle, 'FOR YOU', 3);
     chatBurst('death', 6);
-    queueLines(AR.LINES.death);
+    queueLines(M.L.death);
     setTimeout(() => finish(false), 2600);
   }
   function addChips(n) { M.chips += n; addXp(n); }
@@ -745,7 +770,8 @@ AR.Mission = (() => {
     const high = nodes.filter(p => p[1] > 3.5 && Math.hypot(p[0] - st[0], p[2] - st[2]) > 30);
     if (high.length) { const p = AR.pick(high); AR.Drops.spawn('crate', p[0], p[1] + 0.4, p[2], { value: window.Wardrobe.crateValue(M.heat), still: true }); }
     // the cone: once per save, on the far gantry corner
-    if (!window.Wardrobe.save.cone) AR.Drops.spawn('cone', AR.CONE_SPOT[0], AR.CONE_SPOT[1] + 0.3, AR.CONE_SPOT[2], { still: true });
+    const cs = M.map.cone || AR.CONE_SPOT;
+    if (!window.Wardrobe.save.cone) AR.Drops.spawn('cone', cs[0], cs[1] + 0.3, cs[2], { still: true });
   }
   function use() { AR.Drops.use(); }
   function noteUnlock(name) { if (M) M.unlocks.push(name); }
@@ -834,7 +860,7 @@ AR.Mission = (() => {
     try { persist(); } catch (err) { console.warn('[E2049] arena save failed', err); }
     const mmss = `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
     const rows = [
-      ['RESULT', won ? (M.op?.noBoss ? 'EXTRACTED' : 'RIYA DEPLATFORMED // EXTRACTED') : 'TERMINATED ON STREAM'],
+      ['RESULT', won ? (M.noBoss ? 'EXTRACTED' : M.map.winResult) : 'TERMINATED ON STREAM'],
       ['TIME', mmss], ['KILLS', M.kills], ['HEADSHOTS', `${M.heads} (${M.kills ? Math.round(M.heads / M.kills * 100) : 0}%)`],
       ['BEST STREAK', M.bestMulti >= 2 ? `${M.maxStreakName} (x${M.bestMulti})` : '—'], ['PEAK STYLE', `${AR.RANKS[M.maxRank].k} // ${AR.RANKS[M.maxRank].n}`],
       ['AIR KILLS', M.airKills], ['LONGEST KILL', Math.round(M.longest) + ' M'], ['DAMAGE TAKEN', Math.round(M.hurtTotal)],
@@ -851,7 +877,7 @@ AR.Mission = (() => {
     setTimeout(() => {
       AR.menu = true; AR.unlockPointer();
       const nextHeat = won ? Math.min(10, M.heat + 1) : M.heat;
-      AR.Hud.results({ title: won ? 'EXTRACTED' : 'STREAM ENDED', sub: won ? (M.op ? 'FIELD OP COMPLETE // ' + M.op.title : 'OPERATION: UNSUBSCRIBE COMPLETE') : 'RIYA THANKS YOU FOR WATCHING', grade, rows, score, gt, best,
+      AR.Hud.results({ title: won ? 'EXTRACTED' : M.map.lostTitle, sub: won ? (M.op ? 'FIELD OP COMPLETE // ' + M.op.title : M.map.title + ' COMPLETE') : M.map.lostSub, grade, rows, score, gt, best,
         retryLabel: won ? `RUN IT BACK // HEAT ${nextHeat}` : 'RUN IT BACK' },
       () => { SAVE.arena.heat = nextHeat; AR.restart(nextHeat); },
       () => AR.exit());
@@ -878,7 +904,7 @@ AR.Mission = (() => {
     AR.Hud.score(M.score, M.chips, M.phase === 'bossdead' || M.phase === 'extract' ? 0 : M.viewers);
     // idle chat
     M.idleT += dt;
-    if (M.t - (M.lastChatT || 0) > rand(3, 6)) chat(pick(AR.CHAT_USERS), pick(M.idleT > 12 ? AR.CHAT.idle : AR.CHAT.kill.concat(AR.CHAT.start)));
+    if (M.t - (M.lastChatT || 0) > rand(3, 6)) chat(pick(AR.CHAT_USERS), pick(M.idleT > 12 ? M.chat.idle : M.chat.kill.concat(M.chat.start)));
     if (['act1', 'act2', 'act3', 'boss', 'extract'].includes(M.phase)) { spawnTick(dt); directorTick(dt); }
     if (M.phase === 'act1' && M.waveLive) checkWave();
     // relays: pulse, beams, health bars

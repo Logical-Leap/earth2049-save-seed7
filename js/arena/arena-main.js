@@ -49,15 +49,16 @@ const Arena = (() => {
     AR.scene = opts.scene; AR.camera = opts.camera; AR.renderer = opts.renderer; AR.composer = opts.composer;
     AR.Hud.build(); AR.Hud.show(false);
     const ls = AR.el('loadScreen');
-    if (ls) { ls.style.display = 'flex'; ls.textContent = 'CASTING INTO SHILLZ CENTRAL…'; }
+    const map = AR.MAP = AR.pickMap(opts.op, opts.map);                 // every district is a map (js/arena/arena-maps.js)
+    if (ls) { ls.style.display = 'flex'; ls.textContent = map.load; }
     AudioSys.init(); AudioSys.resume(); AR.Sfx.init();
-    const layout = await AR.World.load(opts.scene, 'assets/maps/plaza/', 'plaza');
+    const layout = await AR.World.load(opts.scene, map.dir, map.file);
     await AR.Enemies.preload();
     await AR.Arsenal.preload();
     await loadProps(layout);
     const fog = layout.meta?.fog || [0.07, 0.05, 0.12];
     ctx.prevFog = opts.scene.fog; ctx.prevBg = opts.scene.background;
-    opts.scene.fog = new THREE.FogExp2(new THREE.Color(...fog), 0.016);
+    opts.scene.fog = new THREE.FogExp2(new THREE.Color(...fog), map.fogDensity || 0.016);
     opts.scene.background = new THREE.Color(...fog);
     AR.Fx.init(opts.scene); AR.Enemies.init(opts.scene); AR.Drops.init(opts.scene);
     if (!AR.Player.ready) { AR.Player.init(opts.camera, opts.composer); AR.Player.ready = true; } else AR.Player.attachPass(opts.composer);
@@ -156,7 +157,7 @@ const Arena = (() => {
   function snapshot() {
     const P = AR.Player.P, M = AR.Mission.M;
     return {
-      active: AR.active, phase: M?.phase, wave: M?.wave, score: M?.score, rank: M?.rank, kills: M?.kills, relaysDown: M?.relaysDown, heat: M?.heat,
+      active: AR.active, map: AR.MAP?.id, phase: M?.phase, wave: M?.wave, score: M?.score, rank: M?.rank, kills: M?.kills, relaysDown: M?.relaysDown, heat: M?.heat,
       enemies: AR.Enemies.alive(), pending: M?.pending.length, hp: P?.hp, gun: AR.Player.gun?.id,
       player: P && { x: +P.body.pos.x.toFixed(2), y: +P.body.pos.y.toFixed(2), z: +P.body.pos.z.toFixed(2), onGround: P.body.onGround },
       boss: AR.Boss.boss && { hp: Math.round(AR.Boss.boss.hp), phase: AR.Boss.phase },

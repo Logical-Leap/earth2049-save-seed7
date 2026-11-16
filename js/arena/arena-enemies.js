@@ -22,6 +22,9 @@ AR.Enemies = (() => {
     serverless_m: A + 'serverless_m.glb', serverless_f: A + 'serverless_f.glb', shill_m: E + 'shill_m.glb', shill_f: E + 'shill_f.glb',
     streamer_m: E + 'streamer_m.glb', streamer_f: E + 'streamer_f.glb',
     hypebeast_m: E + 'hypebeast_m.glb', cdrone_x: E + 'cdrone_x.glb', enforcer_x: E + 'enforcer_x.glb',
+    // the other factions' looks, for districts they hold (AR.ROSTERS in arena-maps.js)
+    runner_m: E + 'runner_m.glb', runner_f: E + 'runner_f.glb', lancer_m: E + 'lancer_m.glb', lancer_f: E + 'lancer_f.glb',
+    broker_m: E + 'broker_m.glb', broker_f: E + 'broker_f.glb', node_x: E + 'node_x.glb', sentinel_x: E + 'sentinel_x.glb', trooper_x: E + 'trooper_x.glb',
     riya: 'assets/models/ps1/characters/riya.glb', relay: 'assets/models/haven/props/shillz_speaker_tower.glb',
   };
   const gltfs = {};
@@ -71,7 +74,7 @@ AR.Enemies = (() => {
     const root = THREE.SkeletonUtils.clone(gltf.scene);
     const mats = litMaterials(root);
     const seed = opts.seed ?? Math.floor(Math.random() * 1e9);                         // NOSONAR
-    Variants.roll(gltf, root, seed, d.type || null);
+    Variants.roll(gltf, root, seed, opts.vtype || d.type || null);
     root.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(root);
     const hgt = Math.max(0.1, box.max.y - box.min.y);
@@ -558,7 +561,8 @@ AR.Enemies = (() => {
       const R = 9 + (e.id % 4);
       const tx = pp.x + Math.cos(e.orbit) * R, tz = pp.z + Math.sin(e.orbit) * R;
       const floor = AR.World.floorAt(b.pos.x, b.pos.z, 0.3, b.pos.y + 1);
-      const ty = Math.max(floor, pp.y) + e.alt;
+      const ceil = AR.World.ceilAt(b.pos.x, b.pos.z, 0.3, b.pos.y + 0.3);       // stay under a ceiling (the subway)
+      const ty = Math.min(Math.max(floor, pp.y) + e.alt, ceil - 0.9);
       let vx = tx - b.pos.x, vy = ty - b.pos.y, vz = tz - b.pos.z;
       const l = Math.hypot(vx, vy, vz) || 1;
       const spd = Math.min(e.d.run, l * 2);

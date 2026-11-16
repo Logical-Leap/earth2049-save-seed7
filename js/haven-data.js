@@ -52,6 +52,7 @@ const HAVEN_NPCS = {
     greet: "Rig's warm. The OG Device is humming like it owes somebody money. You going in, or are you sightseeing?",
     options: [
       { t: 'Deploy me.', action: 'deploy', reply: 'Cast initiated. Try to come back with all your fingers this time.' },
+      { t: 'Drop me into a district.', reply: 'Pick a block. Every one of them is somebody\'s, until it isn\'t.', menu: () => havenDistrictOptions() },
       { t: "What's the Dreamcaster?", reply: "Operation Dreamcaster. The OG Device cuts a hole in Turing's timeline and drops you into a simulation of a district. Die in there, you wake up here with a headache and less dignity. Win, and we keep whatever you dragged back." },
       { t: 'You flew in the Collapse War?', reply: 'Gunship. Forty-one sorties. Now I fly a folding chair next to a portal. Progress, baby.' },
       { t: 'Later.' },
@@ -203,3 +204,15 @@ const HAVEN_ZONES = [
   { name: 'PURPLE TEAM OPS', sub: 'AUTHORIZED REBELS ONLY', x0: 6.5, x1: 36, z0: -30, z1: -14.5 },
   { name: 'THE RANGE', sub: 'LIVE FIRE DISABLED. SHOUT PEW PEW.', x0: 10.5, x1: 34, z0: 14.5, z1: 28 },
 ];
+
+/* 5ON's district list: one line per district map in the arena registry (js/arena/arena-maps.js), HQs marked. */
+/** 5ON's district list, six to a page; "More districts." pages on, wrapping back to the first page. */
+function havenDistrictOptions(page = 0) {
+  const PER = 6;
+  const maps = Object.values(window.AR?.MAPS || {}).filter(m => m.id !== 'plaza');
+  const pages = Math.max(1, Math.ceil(maps.length / PER));
+  const p = ((page % pages) + pages) % pages;
+  const out = maps.slice(p * PER, p * PER + PER).map(m => ({ t: `${m.region} — ${m.place}${m.hq ? ' (HQ)' : ''}`, action: 'deploy_' + m.id }));
+  if (pages > 1) out.push({ t: p === pages - 1 ? 'Back to the first page.' : 'More districts.', reply: p === pages - 1 ? 'From the top.' : 'Further out. Same rules.', menu: () => havenDistrictOptions(p + 1) });
+  return out;
+}

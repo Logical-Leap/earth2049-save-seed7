@@ -197,7 +197,7 @@ AR.Hud = (() => {
       <div class="tl"><div class="score">0</div><div class="sub"><span class="chips">0</span> GIGATECH // <span class="viewers">VIEWERS 48.2K</span></div>
         <div class="obj"></div></div>
       <div class="style"><div class="rank">D</div><div class="rankn">LURKER</div><div class="meter"><i></i></div><div class="mult">x1.0 CLOUT</div><div class="streak"></div></div>
-      <div class="chat"><div class="hd"><b>LIVE</b>RIYA VEX // CONTROLLED RIOT</div><div class="msgs"></div></div>
+      <div class="chat"><div class="hd"><b>LIVE</b><span class="ct">RIYA VEX // CONTROLLED RIOT</span></div><div class="msgs"></div></div>
       <div class="bossbar"><div class="bn"></div><div class="bs"></div><div class="bar"><i></i></div></div>
       <div class="banner"><div class="bm"></div><div class="bsu"></div></div>
       <div class="toast"></div><div class="subs"></div><div class="prompt"></div><div class="lvup"></div>
@@ -464,5 +464,7 @@ AR.Hud = (() => {
     ov.classList.add('on');
   }
 
-  return { build, show, update, hitmark, hurt, flash, weapon, toast, banner, prompt, say, chat, score, objective, style, boss, warn, letterbox, cards, results, pause, xp, levelUp };
+  /** The stream the chat belongs to (Riya's riot in the plaza, the civic camera feed downtown). */
+  function chatTitle(t) { const e = root?.querySelector('.chat .ct'); if (e && t) e.textContent = t; }
+  return { build, show, update, hitmark, hurt, flash, weapon, toast, banner, prompt, say, chat, chatTitle, score, objective, style, boss, warn, letterbox, cards, results, pause, xp, levelUp };
 })();
