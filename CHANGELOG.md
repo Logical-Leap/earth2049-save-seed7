@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16 — Muskers Territory: the Upgrade Basilica (the first faction HQ)
+
+- **The first faction headquarters, built bigger than any district.** White, chrome and cyan under a dusk sky ringed with white spires. You arrive on a pilgrims' plaza through flesh scanners (FLESH 62% // NOT ELIGIBLE) past the SHED IT fountain, cross the Chute (an 8 m trench where shed parts ride a belt east to the Parts Pit) on three causeways, and reach the Upgrade Basilica: a nave of upgrade chairs instead of pews, triforium galleries at 8 m, and an apse dais under an eighteen-metre chrome FINAL BODY, with MAG-0's empty throne where Magnus Tarkon will wait. East is the fabricator line printing bodies under robot arms (catwalk at 5 m); west is the launch pad, a rocket that is always about to go, and its service tower (6 m and 12 m).
+- **Act I is Not Eligible, Act II is Rollback** (revert three firmware masters: the fabricator, the top of the gantry, the chute), **Act III is Forced Update.** Magnus talks the whole way. His fight is not in yet, so the op ends at the log-off in the chute.
+- **HQs are always fought against their own faction**, whoever holds the district on the board. The Basilica brings Muskers looks.
+- **How to play it:** 5ON in the Haven (the district list), or any city grid op in Muskers Territory.
+
 ## 2026-11-16 — Government Quarter: the Ministry of Forms
 
 - **The sixth district map, and the first in daylight** (an overcast grey noon). A symmetrical civic plaza with the queue in switchbacks, TAKE A NUMBER (NOW SERVING 0004, YOU ARE 88,412) and an APPROVED stamp the size of a house; grand stairs to the portico and a pediment you can stand on; the filing hall, where the shelf stacks are a maze at floor level and a second maze on top, joined by plank bridges and galleries; the forms counter under green lamps, the stamp presses, and the records vault below, where the incinerator door is the log-off.

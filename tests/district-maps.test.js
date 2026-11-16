@@ -135,3 +135,13 @@ test('wiring: arena-maps loads between the data and the mission; 5ON lists every
 test('a sponsor break waits for an open level-up pick (one card overlay at a time, or the run stalls)', () => {
   assert.match(read('js/arena/arena-mission.js'), /if \(AR\.menu\) \{ setTimeout\(open, 400\); return; \}/);
 });
+
+test('Muskers Territory is the first faction HQ after the plaza: an HQ, owned by the Muskers, no leader fight yet', () => {
+  const m = AR.MAPS.muskerT;
+  assert.ok(m.hq && m.noLeader && m.owner === 'muskers' && m.dist === 'muskerT');
+});
+
+test('an HQ is always fought against its own faction, whoever the op says holds it', () => {
+  const src = read('js/arena/arena-mission.js');
+  assert.match(src, /M\.roster = AR\.ROSTERS\[M\.map\.hq \? M\.map\.owner : M\.owner\]/);
+});

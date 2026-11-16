@@ -300,6 +300,46 @@ AR.MAPS = {
     sky: ['#5a6066', '#767c82', '#90969a', '#50565c'], rain: 400, fogDensity: 0.008,
     dyn: ['presses', 'vault', 'logoff'],
   },
+  muskerT: {
+    id: 'muskerT', dist: 'muskerT', hq: true, noLeader: true, owner: 'muskers', dir: 'assets/maps/muskerT/', file: 'muskerT',
+    load: 'CASTING INTO MUSKERS TERRITORY…', place: 'THE UPGRADE BASILICA', region: 'MUSKERS TERRITORY', title: 'HQ OP: MUSKERS TERRITORY',
+    act1: ['ACT I — NOT ELIGIBLE', 'CROSS THE CHUTE'], act1Obj: 'CROSS THE CHUTE',
+    act2: ['ACT II — ROLLBACK', 'REVERT THREE FIRMWARE MASTERS'], act2Obj: 'ROLLBACK', relayWord: 'FIRMWARE MASTER',
+    act3: ['ACT III — FORCED UPDATE', 'SURVIVE 75 SECONDS'], act3Obj: 'FORCED UPDATE',
+    waveSubs: ['THE FAITHFUL ARE UPGRADING', 'BODIES OFF THE LINE', 'A NEW MODEL SHIPS EARLY'],
+    head: { act1: ['FLESH DETECTED', 'NOT ELIGIBLE'], act2: ['FIRMWARE: CURRENT', 'ROLLBACK DISABLED'], act3: ['FORCED UPDATE', 'DO NOT POWER OFF'] },
+    jumbo: { head: 'MAG-0 KEYNOTE', live: 'UPGRADE BASILICA // KEYNOTE', sub: 'UPGRADE OR DIE', dead: ['FIRMWARE REVERTED', 'v1.0 // MEAT'], deadOn: 'relays' },
+    chatTitle: 'UPGRADE BASILICA // KEYNOTE',
+    areas: {
+      summon: ['campus', 'nave', 'fab', 'plaza'], mod1: ['campus', 'plaza'], mod2: ['nave', 'campus'],
+      flood: ['chute', 'plaza', 'fab', 'campus', 'gallery'], extract: ['chute', 'campus', 'plaza'], trickle: ['chute', 'plaza'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Muskers Territory. Their headquarters, and their church. Everything in the Parts Pit was shed here first.'],
+        ['COMMANDER', 'The scanners will call you meat. Get over the chute and into the campus. Tarkon is in the basilica, but we are not here for him today.'],
+        ['MAGNUS', 'A VISITOR. SIXTY-TWO PERCENT FLESH. I CAN FIX THAT. I CAN FIX ALL OF IT. UPGRADE OR DIE.'],
+      ],
+      act2: [['COMMANDER', 'Three firmware masters push every update in the city. The fabricator line, the top of the launch gantry, and the chute. Roll them back.'],
+        ['MAGNUS', 'ROLLBACK IS NOT A FEATURE. THERE IS NO PREVIOUS VERSION. THERE IS ONLY NEXT.']],
+      relayDown: [['COMMANDER', 'Master reverted. Somewhere a knee just went back to being a knee.'], ['MAGNUS', 'WHO DOWNGRADED THE FABRICATOR. THOSE BODIES WERE PREORDERED.'],
+        ['COMMANDER', 'That\'s all three. Every implant in the city is on version one. He\'s forcing an update.']],
+      act3: [['MAGNUS', 'FORCED UPDATE. DO NOT POWER OFF. DO NOT RESIST. RESISTANCE VOIDS THE WARRANTY.'],
+        ['COMMANDER', 'They\'re coming off the line. Take the gallery or the gantry and shoot down.']],
+      extract: [['COMMANDER', 'Down into the chute. The log-off is at the east end, where the parts go to the Pit.']],
+      win: [['COMMANDER', 'You\'re out. You rode the discard belt like a spare leg. Tarkon will want a word. Not today.']],
+      death: [['MAGNUS', 'DEPRECATED. YOUR PARTS WILL BE RECYCLED. SOME OF THEM.']],
+    },
+    chat: {
+      start: ['keynote live', 'is that a FULL MEAT guy', 'flesh 62% lmao', 'preordered my new spine', 'MAG-0 MAG-0 MAG-0', 'first'],
+      relay: ['my arm just rebooted', 'v1.0?? i paid for v12', 'subscription expired on my knees', 'ROLLBACK', 'refund my legs'],
+      idle: ['he is on the gallery', 'check the gantry', 'boring', 'shed it bro', 'upgrade or die'],
+    },
+    lostTitle: 'DEPRECATED', lostSub: 'YOUR PARTS WILL BE RECYCLED', winResult: 'FIRMWARE REVERTED // EXTRACTED',
+    cone: [-22, 12, -30],
+    sky: ['#16242e', '#2a4252', '#4c6c7e', '#0e1a22'], rain: 0, fogDensity: 0.009,
+    dyn: ['altar', 'fabricator', 'gantry', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.
