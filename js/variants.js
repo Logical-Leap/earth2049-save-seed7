@@ -81,8 +81,14 @@ const Variants = (() => {
     const forced = (d.types && type && d.types[type]?.force) || [];
     const shown = new Set(split([...on, ...forced])), nodes = new Set(split([...hairs, ...Object.values(acc).flat(), ...forced]));
     for (const n of nodes) { const o = root.getObjectByName(n); if (o) o.scale.setScalar(shown.has(n) ? 1 : 0); }
-    const map = tinted(rec.mapData, rec.mask, tint);
-    const em = rec.emData ? tinted(rec.emData, rec.mask, tint) : null;
+    // the same seed always makes the same textures: share them (enemies reuse a small pool of seeds)
+    rec.cache = rec.cache || new Map();
+    let tex = rec.cache.get(seed);
+    if (!tex) {
+      tex = { map: tinted(rec.mapData, rec.mask, tint), em: rec.emData ? tinted(rec.emData, rec.mask, tint) : null };
+      if (rec.cache.size < 64) { rec.cache.set(seed, tex); tex.map.__keep = true; if (tex.em) tex.em.__keep = true; }
+    }
+    const map = tex.map, em = tex.em;
     root.traverse(o => {
       if (!o.isMesh || !o.material) return;
       const ms = Array.isArray(o.material) ? o.material : [o.material];

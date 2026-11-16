@@ -94,12 +94,13 @@ test('arena content tables are complete', () => {
   const ids = new Set();
   for (const p of AR.PERKS) { assert.equal(typeof p.fx, 'function', p.id); assert.ok(!ids.has(p.id), 'unique ' + p.id); ids.add(p.id); assert.ok([0, 1, 2].includes(p.r)); }
   assert.ok(AR.PERKS.length >= 20);
-  const files = { serverless_m: 'arena', serverless_f: 'arena', shill_m: 'arena', shill_f: 'arena', hypebeast_m: 'arena', cdrone_x: 'arena', enforcer_x: 'arena' };
+  const files = { serverless_m: 'arena', serverless_f: 'arena', shill_m: 'ps1/enemies', shill_f: 'ps1/enemies', streamer_m: 'ps1/enemies',
+    streamer_f: 'ps1/enemies', hypebeast_m: 'ps1/enemies', cdrone_x: 'ps1/enemies', enforcer_x: 'ps1/enemies' };
   for (const [id, e] of Object.entries(AR.ENEMIES)) {
     for (const m of e.models) {
       if (m === 'riya') assert.ok(exists('assets/models/ps1/characters/riya.glb'));
       else if (m === 'relay') assert.ok(exists('assets/models/haven/props/shillz_speaker_tower.glb'));
-      else { assert.ok(files[m], 'known model ' + m); assert.ok(exists(`assets/models/arena/${m}.glb`), m); }
+      else { assert.ok(files[m], 'known model ' + m); assert.ok(exists(`assets/models/${files[m]}/${m}.glb`), m); }
     }
     assert.ok(e.hp > 0, id);
   }
