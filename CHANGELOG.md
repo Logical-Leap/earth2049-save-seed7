@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-16 — Harbor Area: Pier Zero
+
+- **The fourth district map.** The Cryptids' smuggling lanes: three piers into black, waist-deep water under teal fog and gold lamps. The quay with its NFT containers and the customs house that declares nothing, a gantry crane whose girder runs out over the berth, the cargo ship *Blocked Maru* (deck and bridge), smugglers' speedboats in the water, and under the quay the debtors' mine, where people who died in debt are revived to work it off. The log-off is the cell's door at the mine's east end.
+- **Act II is Burn the Ledger:** wipe three ledger nodes (the customs house, the ship's bridge, the mine).
+- **How to play it:** 5ON in the Haven ("Drop me into the Harbor"), or any city grid op in the Harbor Area.
+
 ## 2026-11-16 — Tech District: the Parts Pit
 
 - **The third district map.** An open salvage pit stepped down in square terraces like a mine, where everything the Muskers cut off themselves ends up. UV violet and amber; the white spires of Muskers Territory look down from the north.

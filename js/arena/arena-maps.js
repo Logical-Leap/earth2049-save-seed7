@@ -174,6 +174,48 @@ AR.MAPS = {
     sky: ['#06040e', '#140c2a', '#2c1a40', '#0c0814'], rain: 300, fogDensity: 0.012,
     dyn: ['crane', 'clinic', 'logoff'],
   },
+  /* Harbor Area: Pier Zero. The Cryptids' smuggling lanes: piers into black water under teal fog and gold lamps, an
+   * NFT container yard, a cargo ship nobody unloads, and the debtors' mine under the quay. */
+  harbor: {
+    id: 'harbor', dist: 'harbor', hq: false, owner: 'cryptids', dir: 'assets/maps/harbor/', file: 'harbor',
+    load: 'CASTING INTO THE HARBOR…', place: 'PIER ZERO', region: 'HARBOR AREA', title: 'DISTRICT OP: HARBOR AREA',
+    act1: ['ACT I — LOW TIDE', 'CLEAR THE PIERS'], act1Obj: 'CLEAR THE PIERS',
+    act2: ['ACT II — BURN THE LEDGER', 'WIPE THREE LEDGER NODES'], act2Obj: 'BURN THE LEDGER', relayWord: 'LEDGER NODE',
+    act3: ['ACT III — MARGIN CALL', 'SURVIVE 75 SECONDS'], act3Obj: 'MARGIN CALL',
+    waveSubs: ['SMUGGLERS OFF THE BOATS', 'SHOOTERS ON THE SHIP', 'SOMETHING HEAVY ON THE QUAY'],
+    head: { act1: ['$COOM +412%', 'NOTHING DECLARED'], act2: ['LEDGER: IMMUTABLE', 'PROBABLY'], act3: ['MARGIN CALL', 'ALL POSITIONS LIQUIDATED'] },
+    jumbo: { live: 'BLOCKEDCHAIN MARKET // PIER ZERO', sub: 'VALUE IS BELIEF', dead: ['LEDGER NOT FOUND', 'ALL DEBTS: UNKNOWN'], deadOn: 'relays' },
+    chatTitle: 'BLOCKEDCHAIN MARKET // PIER CAM',
+    areas: {
+      summon: ['quay', 'pier_m', 'pier_w', 'pier_e', 'water'], mod1: ['quay', 'pier_m'], mod2: ['quay', 'pier_e'],
+      flood: ['water', 'pier_w', 'pier_e', 'quay'], extract: ['mine', 'quay'], trickle: ['mine', 'quay'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Harbor Area. Pier Zero. Nothing that comes through here gets declared, including the people.'],
+        ['COMMANDER', '{OWNER} run the docks. Clear the piers, then burn their ledger. Every debt in the district is written in it.'],
+        ['THE MARKET', 'WELCOME, TRADER. YOUR WALLET IS EMPTY. YOUR FUTURE EARNINGS ARE NOT. SHALL WE BEGIN?'],
+      ],
+      act2: [['COMMANDER', 'Three ledger nodes. The customs house on the quay, the bridge of that ship, and down in the debtors\' mine. Burn them.'],
+        ['THE MARKET', 'THE LEDGER IS IMMUTABLE. PLEASE STOP SHOOTING THE IMMUTABLE LEDGER.']],
+      relayDown: [['COMMANDER', 'Node down. Somebody down there just stopped owing.'], ['THE MARKET', 'MINOR DESYNC. NO DEBT HAS BEEN LOST. DEBT CANNOT BE LOST.'],
+        ['COMMANDER', 'That\'s the ledger. Nobody here owes anything to anyone. They\'ll come for that.']],
+      act3: [['THE MARKET', 'MARGIN CALL. ALL COLLATERAL TO THE QUAY. THAT INCLUDES YOU.'],
+        ['COMMANDER', 'Heavies on the quay. Use the containers, or take the water and come up behind them.']],
+      extract: [['COMMANDER', 'Get down the shaft. The debtors\' mine runs east to the cell. Bring whoever wants to come.']],
+      win: [['COMMANDER', 'You\'re out. The mine\'s debt boards are blank. Some of them walked out behind you.']],
+      death: [['THE MARKET', 'POSITION LIQUIDATED. YOUR ACCOUNT WILL RESUME. TIME SPENT REVIVED IS BILLED.']],
+    },
+    chat: {
+      start: ['pier cam live', 'who is that on the pier', 'is he declared?', 'buying $COOM', 'he looks like a rug pull', 'first'],
+      relay: ['LEDGER DESYNC', 'my wallet says zero??', 'is my debt gone', 'who burned the ledger', 'buy the dip', 'SELL SELL SELL'],
+      idle: ['he is hiding in the water', 'boring', 'check the mine', 'hello???', 'the ship is right there'],
+    },
+    lostTitle: 'POSITION LIQUIDATED', lostSub: 'YOUR ACCOUNT WILL RESUME', winResult: 'LEDGER BURNED // EXTRACTED',
+    cone: [42, 0, -40],
+    sky: ['#020608', '#06161a', '#0c2a2c', '#030a0c'], rain: 700, fogDensity: 0.021,
+    dyn: ['bridge', 'customs', 'mine', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.

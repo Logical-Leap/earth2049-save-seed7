@@ -33,7 +33,7 @@ test('pickMap: an explicit map, else the op district, else the plaza; leader fig
   assert.equal(AR.pickMap(null, 'downtown').id, 'downtown');
   assert.equal(AR.pickMap({ kind: 'takeover', dist: 'downtown' }).id, 'downtown');
   assert.equal(AR.pickMap({ kind: 'raid', dist: 'downtown' }).id, 'downtown');
-  assert.equal(AR.pickMap({ kind: 'takeover', dist: 'harbor' }).id, 'plaza', 'districts without a map still play the plaza');
+  assert.equal(AR.pickMap({ kind: 'takeover', dist: 'abandoned' }).id, 'plaza', 'districts without a map still play the plaza');
   assert.equal(AR.pickMap({ kind: 'leader', fac: 'shillz', dist: 'downtown' }).id, 'plaza');
   assert.equal(AR.pickMap(null).id, 'plaza');
 });

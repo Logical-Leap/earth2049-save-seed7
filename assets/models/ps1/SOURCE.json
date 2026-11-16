@@ -1,6 +1,6 @@
 {
   "repo": "Logical-Leap/game-art-pipeline",
-  "commit": "2be1e7095195027ad9ee3d882b60a20af05313fc",
+  "commit": "33d017502e77bba52c937f0c19aa6522d56284ea",
   "synced": "2026-11-16",
   "files": [
     "assets/models/ps1/characters/shillz.glb",
@@ -82,6 +82,8 @@
     "assets/maps/industrial/industrial.layout.json",
     "assets/maps/tech/tech.glb",
     "assets/maps/tech/tech.layout.json",
+    "assets/maps/harbor/harbor.glb",
+    "assets/maps/harbor/harbor.layout.json",
     "assets/models/arena/serverless_m.glb",
     "assets/models/arena/serverless_f.glb",
     "assets/models/ps1/avatar/catalog.json",

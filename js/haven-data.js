@@ -55,6 +55,7 @@ const HAVEN_NPCS = {
       { t: 'Drop me into Downtown.', action: 'deploy_downtown', reply: 'Fifth and Feed. Smile for the cameras. Then break them.' },
       { t: 'Drop me into the Industrial Zone.', action: 'deploy_industrial', reply: 'The Yield Works. Mind the pods. There are people in them.' },
       { t: 'Drop me into the Tech District.', action: 'deploy_tech', reply: 'The Parts Pit. If you lose an arm down there, nobody will notice.' },
+      { t: 'Drop me into the Harbor.', action: 'deploy_harbor', reply: 'Pier Zero. Do not sign anything. Do not die down there either. They bill for that.' },
       { t: "What's the Dreamcaster?", reply: "Operation Dreamcaster. The OG Device cuts a hole in Turing's timeline and drops you into a simulation of a district. Die in there, you wake up here with a headache and less dignity. Win, and we keep whatever you dragged back." },
       { t: 'You flew in the Collapse War?', reply: 'Gunship. Forty-one sorties. Now I fly a folding chair next to a portal. Progress, baby.' },
       { t: 'Later.' },
