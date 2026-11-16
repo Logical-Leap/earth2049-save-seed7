@@ -11,7 +11,7 @@ AR.VERSION = '4cc60ce';
 AR.GUNS = {
   pistol: {
     name: 'VOLT-9', cls: 'pistol', sfx: 'pistol', tag: 'SIDEARM // INFINITE RESERVE',
-    dmg: 30, pellets: 1, rpm: 400, mag: 12, reserve: Infinity, reload: 0.95,
+    dmg: 34, pellets: 1, rpm: 270, semi: true, mag: 12, reserve: Infinity, reload: 0.95,     // semi: one shot per trigger pull
     spread: 0.45, adsSpread: 0.05, bloom: 0.55, bloomMax: 2.4, bloomRecover: 7,
     kick: 1.7, kickYaw: 0.45, recover: 9, shake: 0.07, fovKick: 1.2, vmKick: 0.09, vmRot: 0.22,
     knock: 3, head: 2.2, falloff: [35, 70, 0.6], tracer: 0xfff2a0, ads: 0.82, adsTime: 0.12,

@@ -312,7 +312,7 @@ AR.Mission = (() => {
   }
   function updateRelayObjective() { AR.Hud.objective(`<b>ACT II</b> // ${M.map.act2Obj} — ${M.relaysDown}/3 DOWN`); }
   function startAct3() {
-    M.phase = 'act3'; M.actT = 0; M.stormT = 75; M.mods = 0; M.hyped = false;
+    M.phase = 'act3'; M.actT = 0; M.stormT = 75; M.mods = 0; M.hyped = false; M.calm = false; M.warn10 = false; M.stormDone = false; M.floodT = 12;
     AR.Hud.banner(...M.map.act3);
     queueLines(M.L.act3);
     headline(...M.map.head.act3);
@@ -526,29 +526,49 @@ AR.Mission = (() => {
           AR.Sfx.ui('alarm');
         }
       }
+    } else if (M.phase === 'act3' && M.stormDone) {
+      // the storm has passed: no more reinforcements, the player finishes whoever is left (all marked)
+      const left = AR.Enemies.list.filter(e => !e.dying && !e.boss && !e.relay);
+      AR.Hud.objective(`<b>ACT III</b> // STORM PASSED — TAKE OUT THE LAST ${left.length}`);
+      // a bot stuck somewhere it can't be reached must never hold the act hostage
+      if (left.length && left.length <= 2 && M.t - Math.max(M.lastKillT || 0, M.stormDoneT) > 25) {
+        for (const e of left) AR.Enemies.logOff(e);
+        AR.Hud.toast('SIGNAL LOST', 'THE LAST OF THEM LOGGED OFF');
+      }
+      if (!left.length && !M.pending.length) {
+        M.stormDone = false; M.phase = 'act3done';
+        AR.Enemies.clearEnemyProjs();
+        addScore(1500 * (1 + M.heat * 0.25), 'ROOM CLEARED');
+        perk('boss');
+      }
     } else if (M.phase === 'act3') {
       M.stormT -= dt;
-      const el = 75 - M.stormT;
+      const el = 75 - M.stormT, calm = M.stormT <= 15;                // the last 15 s: no new reinforcements, the crowd thins out
+      if (calm && !M.calm) { M.calm = true; AR.Hud.toast('STORM PEAKING', 'NO MORE REINFORCEMENTS'); }
       if (M.mods === 0 && el > 4) { M.mods = 1; queue('moderator', 1, { areas: M.map.areas.mod1 }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'FLANK IT'); }
       if (M.mods === 1 && el > 38) { M.mods = 2; queue('moderator', 1 + (M.heat > 2 ? 1 : 0), { areas: M.map.areas.mod2 }); M.pending.unshift(M.pending.pop()); AR.Hud.toast('MODERATOR', 'BAN HAMMER INCOMING'); }
       if (!M.hyped && el > 24) { M.hyped = true; queue('hypebeast', 1, { elite: true }); }
-      M.floodT = (M.floodT ?? 12) - dt;
-      if (M.floodT <= 0) { M.floodT = 15; queue('serverless', 8, { areas: [pick(M.map.areas.flood)] }); AR.Hud.toast('SERVERLESS FLOOD', ''); }
-      const want = 14 + M.heat;
-      if (AR.Enemies.alive() + M.pending.length < want) {
-        const r = Math.random();                                                                                  // NOSONAR
-        queue(r < 0.3 ? 'shill' : r < 0.55 ? 'streamer' : r < 0.75 ? 'drone' : 'serverless', r > 0.75 ? 3 : 1);
+      if (!calm) {
+        M.floodT = (M.floodT ?? 12) - dt;
+        if (M.floodT <= 0) { M.floodT = 15; queue('serverless', 8, { areas: [pick(M.map.areas.flood)] }); AR.Hud.toast('SERVERLESS FLOOD', ''); }
+        const want = 14 + M.heat;
+        if (AR.Enemies.alive() + M.pending.length < want) {
+          const r = Math.random();                                                                                  // NOSONAR
+          queue(r < 0.3 ? 'shill' : r < 0.55 ? 'streamer' : r < 0.75 ? 'drone' : 'serverless', r > 0.75 ? 3 : 1);
+        }
       }
+      if (M.stormT <= 10 && !M.warn10) { M.warn10 = true; AR.Sfx.ui('alarm'); AR.Hud.toast('10 SECONDS', 'HOLD ON'); }
       AR.Hud.objective(`<b>ACT III</b> // ${M.map.act3Obj} — SURVIVE ${Math.max(0, Math.ceil(M.stormT))}s`);
       if (M.stormT <= 0) {
-        M.pending = [];
-        AR.Hud.banner('SIGNAL LOST', 'THE STORM BREAKS');
-        let k = 0;
-        for (const e of AR.Enemies.list) if (!e.dying && !e.boss) { setTimeout(() => AR.Enemies.damage(e, 99999, { src: 'explosion', dir: V3(0, 1, 0) }), 120 * k++); }
-        AR.Enemies.clearEnemyProjs();
+        M.stormDone = true; M.stormDoneT = M.t; M.pending = [];
+        // the crowd scatters: everyone but the nearest few logs off quietly, the player finishes the rest
+        const P = AR.Player.P.body.pos, keep = 5 + Math.min(3, M.heat);
+        const up = AR.Enemies.list.filter(e => !e.dying && !e.boss && !e.relay)
+          .sort((a, b) => Math.hypot(a.body.pos.x - P.x, a.body.pos.z - P.z) - Math.hypot(b.body.pos.x - P.x, b.body.pos.z - P.z));
+        for (const e of up.slice(keep)) AR.Enemies.logOff(e);
+        AR.Hud.banner('STORM PASSED', 'THE CROWD SCATTERS // FINISH THE LAST ' + Math.min(keep, up.length), 2.4);
         addScore(5000 * (1 + M.heat * 0.25), 'STORM SURVIVED');
         WR('bump', 'storms');
-        perk('boss');
       }
     } else if (M.phase === 'extract') {
       M.extractT -= dt;
@@ -914,9 +934,9 @@ AR.Mission = (() => {
     if (!M) return [];
     const out = [];
     // stragglers: when a wave is down to its last few and nobody has died for a while, mark them
-    if ((M.phase === 'act1' || M.phase === 'act3') && !M.pending.length && M.t - (M.lastKillT || 0) > 8) {
+    if ((M.phase === 'act1' || M.phase === 'act3') && !M.pending.length && (M.stormDone || M.t - (M.lastKillT || 0) > 8)) {
       const left = AR.Enemies.list.filter(e => !e.dying && !e.relay && !e.boss);
-      if (left.length && left.length <= 4) for (const e of left) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'STRAGGLER', cls: 'warn' });
+      if (left.length && (M.stormDone || left.length <= 4)) for (const e of left) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'STRAGGLER', cls: 'warn' });
     }
     if (M.phase === 'act2') for (const r of M.relays) if (!r.dying) out.push({ x: r.body.pos.x, y: r.body.pos.y + 5.6, z: r.body.pos.z, label: `RELAY ${Math.ceil(Math.max(0, r.hp / r.maxHp) * 100)}%`, cls: 'warn' });
     if (M.phase === 'extract') out.push({ x: M.extraction.pos[0], y: M.extraction.pos[1] + 2, z: M.extraction.pos[2], label: 'LOG OFF', cls: 'ex' });

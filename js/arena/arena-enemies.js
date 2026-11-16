@@ -829,6 +829,12 @@ AR.Enemies = (() => {
     if (e.check) e.check.material.dispose();
     list.splice(i, 1);
   }
+  /** take a bot out of the fight with no kill, no gibs and no score (the crowd scattering when the storm passes) */
+  function logOff(e) {
+    const i = list.indexOf(e); if (i < 0 || e.boss) return;
+    if (e.telegraph) { e.telegraph.life = 0.01; e.telegraph = null; }
+    remove(i);
+  }
   function clear() {
     for (let i = list.length - 1; i >= 0; i--) remove(i);
     for (let i = projs.length - 1; i >= 0; i--) { if (projs[i].tele) projs[i].tele.life = 0.01; removeProj(i); }
@@ -837,7 +843,7 @@ AR.Enemies = (() => {
   function dispose() { clear(); if (group) scene.remove(group); group = null; }
 
   return {
-    preload, init, dispose, tick, spawn, clear, rayHit, inCone, nearest, hitByBullet, damage, kicked, explode, spawnProj, clearEnemyProjs, kill,
+    preload, init, dispose, tick, spawn, clear, rayHit, inCone, nearest, hitByBullet, damage, kicked, explode, spawnProj, clearEnemyProjs, kill, logOff,
     enemyFire, lob, steer, faceTo, pathTarget, animate, canSee, get list() { return list; }, get projs() { return projs; }, get group() { return group; },
     alive: () => list.reduce((n, e) => n + (e.dying || e.boss ? 0 : 1), 0),
   };

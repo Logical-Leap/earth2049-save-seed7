@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-16 — Gun feel fixes from playtest
+
+- **Controller aim assist toned way down.** It no longer turns the camera for you. A small slow-down over a target (at most 25%, was 55%), a narrower target cone, and only a light pull, only while you are already steering toward the target with the right stick (about a quarter of the old strength). Moving without touching the right stick gets no help. Phones get a little more help than a controller, still about a third less than before.
+- **No more mass explosion at the end of Act III.** When the storm timer runs out, the crowd scatters: everyone except the nearest 5–8 logs off quietly, and you finish the rest. They are all marked, and the objective counts them down. Reinforcements stop for the last 15 seconds of the storm, with a warning at 10 seconds. If a bot gets stuck somewhere unreachable, it logs off after 25 seconds so the act can't stall.
+- **The VOLT-9 sidearm fires once per trigger pull.** Holding fire no longer keeps shooting, and fast clicking is capped at 270 rounds a minute (was 400 full-auto). Damage per shot goes from 30 to 34 so it stays useful. The same applies to the sidearm outside missions (250 rpm, 21 damage). AUTO fire on phones still works with it.
+
 ## 2026-11-16 — Play on a phone
 
 - **Touch controls in missions.** Operation: Unsubscribe, every mission-board fight and the district maps now play on a phone:

@@ -167,10 +167,13 @@ AR.Touch = (() => {
     const t = AR.Player.assistTarget?.();
     const aiming = T.look !== null || T.fire !== null || i.fire;
     if (t && aiming) {
-      const pull = (P.ads > 0.4 ? 0.9 : 0.45) * rdt;
+      const pull = (P.ads > 0.4 ? 0.6 : 0.3) * rdt;          // phones keep a little more help than a pad: thumbs on glass are coarse
       P.yaw += AR.clamp(t.dYaw, -pull, pull); P.pitch = AR.clamp(P.pitch + AR.clamp(t.dPitch, -pull, pull), -1.5, 1.5);
     }
-    if (autoFire && T.fire === null) i.fire = !!(t && t.ang < 0.05);
+    if (autoFire && T.fire === null) {
+      const want = !!(t && t.ang < 0.05), semi = P.guns?.[P.cur]?.d?.semi;
+      i.fire = want && !(semi && i.fire);                    // a semi-auto gun gets a fresh pull each shot, still capped by its fire rate
+    }
   }
 
   /* a touch anywhere while a mission runs wakes the controls; a key, a real mouse move or a pad puts them away */

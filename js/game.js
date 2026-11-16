@@ -1861,7 +1861,10 @@ function playerTick(dt) {
   // fire
   let firing = Input.fire;
   if (!firing && isTouch && G.autoFire) firing = autoAimCheck();
-  if (firing) fireWeapon(dt);
+  // semi-auto guns (the sidearm) fire once per trigger pull: hold the button and nothing more comes out
+  const semi = WEAPONS[curWeapon()?.id]?.semi && !(isTouch && G.autoFire && !Input.fire);
+  if (!Input.fire) p.trigHeld = false;
+  if (firing && !(semi && p.trigHeld)) { const t0 = p.fireT; fireWeapon(dt); if (semi && Input.fire && p.fireT > t0) p.trigHeld = true; }
 
   // camera (in VR the headset owns it: slide the rig so your head is over the player)
   if (window.VR?.active) {
