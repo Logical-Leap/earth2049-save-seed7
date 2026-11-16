@@ -20,7 +20,7 @@ AR.Player = (() => {
 
   const keys = {};
   const I = { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0,
-    padX: 0, padZ: 0, padSprint: false };
+    padX: 0, padZ: 0, padSprint: false, touchX: 0, touchZ: 0, touchSprint: false };   // touch* = phone controls (arena-touch.js)
   let camera = null, vmScene = null, vmCam = null, vmPass = null, vmRoot = null, vmLight = null, vmAmb = null, boot = null;
   let P = null, S = null;
   const guns = {};          // 'id:tier' -> first-person model from AR.Arsenal
@@ -111,7 +111,7 @@ AR.Player = (() => {
     });
     addEventListener('wheel', e => { if (on()) I.swap = -1; }, { passive: true });
   }
-  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0, padX: 0, padZ: 0, padSprint: false }); }
+  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0, padX: 0, padZ: 0, padSprint: false, touchX: 0, touchZ: 0, touchSprint: false }); }
 
   /* ================================================================== run state */
   function newStats() {
@@ -226,14 +226,14 @@ AR.Player = (() => {
   }
   function move(dt) {
     const b = P.body, v = b.vel;
-    let mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX, mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0) + I.padZ;
+    let mx = (keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX + I.touchX, mz = (keys.KeyW ? 1 : 0) - (keys.KeyS ? 1 : 0) + I.padZ + I.touchZ;
     const ml = Math.hypot(mx, mz); if (ml > 1) { mx /= ml; mz /= ml; }
     const sy = Math.sin(P.yaw), cy = Math.cos(P.yaw);
     let wx = mx * cy - mz * sy, wz = -mx * sy - mz * cy;
     const wl = Math.hypot(wx, wz); if (wl > 0) { wx /= wl; wz /= wl; }
     const analog = Math.min(1, wl);                                     // a half-pushed stick walks
     // sprint: hold SHIFT (or click the left stick) while moving forward; firing, aiming, crouching or reloading breaks it
-    const wantSprint = !S.dashMode && (keys.ShiftLeft || keys.ShiftRight || I.padSprint) && mz > 0.35 && !I.ads && !I.fire && !P.crouching && !gun()?.reloading;
+    const wantSprint = !S.dashMode && (keys.ShiftLeft || keys.ShiftRight || I.padSprint || I.touchSprint) && mz > 0.35 && !I.ads && !I.fire && !P.crouching && !gun()?.reloading;
     P.sprinting = wantSprint && (b.onGround || P.sprinting);
     if (!wantSprint) I.padSprint = I.padSprint && mz > 0.35 && !I.fire;
     P.sprintK = damp(P.sprintK || 0, P.sprinting ? 1 : 0, 8, dt);
@@ -869,7 +869,7 @@ AR.Player = (() => {
   }
 
   return {
-    init, reset, tick, padTick, vrTick, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, padTick, vrTick, assistTarget, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };

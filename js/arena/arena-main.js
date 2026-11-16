@@ -13,7 +13,7 @@ const Arena = (() => {
   AR.slowmo = (t, k) => { slowT = t; slowK = k; };
   AR.pointerLocked = () => document.pointerLockElement === AR.el('c');
   AR.lockPointer = () => {
-    if (AR.freeLook || window.acceptanceInputEnabled || window.Pad?.active || window.VR?.active) return;      // a controller needs no pointer lock
+    if (AR.freeLook || window.acceptanceInputEnabled || window.Pad?.active || window.VR?.active || AR.Touch?.on) return;      // a controller or a touch screen needs no pointer lock
     try {
       const r = AR.el('c').requestPointerLock();
       if (r && typeof r.catch === 'function') r.catch(() => { AR.freeLook = true; });
@@ -35,6 +35,7 @@ const Arena = (() => {
     if (e.code === 'Escape' || e.code === 'KeyP') { if (AR.paused) pause(false); else if (!AR.menu) pause(true); }
   });
 
+  AR.pause = on => pause(on);                    // the touch controls' pause button
   function pause(on) {
     AR.paused = on; AR.pausedByLock = false;
     AR.Player.clearInput();
@@ -108,7 +109,7 @@ const Arena = (() => {
     begin(heat);
   }
   function exit() {
-    AR.active = false; AR.paused = false; AR.menu = false;
+    AR.active = false; AR.paused = false; AR.menu = false; AR.Touch?.sleep();
     AR.Hud.show(false); AR.Hud.letterbox(false); AR.Hud.pause(false);
     AR.Mission.dispose(); AR.Boss.dispose(); AR.Enemies.dispose(); AR.Drops.dispose(); AR.Fx.dispose();
     AR.Player.dispose(ctx.composer);
@@ -122,6 +123,7 @@ const Arena = (() => {
   }
 
   function tick(rdt) {
+    AR.Touch?.tick(rdt);
     if (!AR.active) return;
     if (AR.paused || AR.menu) { AR.Fx.tick(0, AR.camera); AR.Hud.update(0); if (AR.menu) AR.Player.tick(0, rdt); return; }
     let k = 1;

@@ -187,7 +187,7 @@
       <div class="tfx t-dim"></div>
       <div class="t-boot"></div>
       <div class="t-logo"><div class="l1">GigaCorp presents a Turing simulation</div><div class="l2" data-t="EARTH 2049">EARTH 2049</div><div class="l3">Save Seed 7</div></div>
-      <div class="t-press">PRESS ANY BUTTON</div>
+      <div class="t-press">${(matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches) ? 'TAP TO START' : 'PRESS ANY BUTTON'}</div>
       <div class="t-menu"></div>
       <div class="t-stats"></div>
       <div class="t-status">SEED 7 // <b>STABLE</b><br>SIGNAL<span class="bars"><i></i><i></i><i></i><i></i><i></i></span><br><span class="clk"></span></div>

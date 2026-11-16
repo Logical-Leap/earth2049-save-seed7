@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-11-16 — Play on a phone
+
+- **Touch controls in missions.** Operation: Unsubscribe, every mission-board fight and the district maps now play on a phone:
+  - Left half: a floating move stick. Push it all the way forward to sprint.
+  - Right half: drag to look. FIRE also looks while you hold it, so you can aim and shoot with one thumb.
+  - Buttons: AIM, JUMP, SLIDE, RELOAD (USE when something can be picked up), SWAP, KICK, NADE and DASH (with the jet sponsor).
+  - Top bar: pause and AUTO, which fires when the crosshair rests on an enemy.
+  - Phones get the same gentle aim assist as a controller.
+- **Phones in general.** Full screen and landscape on the first touch where the browser allows it, a "turn your phone sideways" screen in portrait, TAP TO START on the title, TAP A CARD on picks, and the weapon readout moves to the bottom centre to make room for thumbs.
+- **Desktop, controller and VR are unchanged.** The touch controls only appear after a touch inside a mission, hide again the moment a key, a real mouse or a controller is used, and never appear in VR.
+
 ## 2026-11-16 — Mech Rebels Base: the Web (the third faction HQ)
 
 - **The Bots' headquarters: a flooded data centre with the roof pulled off, in rust and mint green under rain.** SPYD3R.exe's chassis sits on a hub 6 m over the coolant sump, reached by four stair-bridges from the rim with mint cable strung between them like a web. Below is the sump, full of dead rack piles, with the coolant drain in the north wall as the log-off. South is the errand depot, where a picket line of smart fridges on strike holds signs (NO MORE ADS ON MY DOOR) under the LOCAL 404 banner. East is the reskin shop, where GigaCorp drones are being repainted under a 5 m gantry. West is the charging yard and the comms mast. North is the Loop, a wall of CRTs that have said WHY for six hours.
