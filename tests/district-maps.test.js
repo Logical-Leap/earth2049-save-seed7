@@ -48,7 +48,7 @@ for (const m of Object.values(AR.MAPS)) {
     assert.equal(k('extraction').length, 1);
     assert.ok(k('screen').length >= 1, 'somewhere for the feed');
     for (const s of k('screen')) assert.equal(s.size.length, 2);
-    if (m.hq) assert.equal(k('boss').length, 1, 'an HQ has its leader');
+    if (m.hq) assert.equal(k('boss').length, 1, 'an HQ has its leader (marker placed even before the fight exists: noLeader)');
     const areas = new Set(k('spawn').map(s => s.area));
     for (const [beat, list] of Object.entries(m.areas)) for (const a of list) assert.ok(areas.has(a), `${beat} spawns from ${a}`);
     for (const r of k('relay')) assert.ok(areas.has(r.area), 'relay guards spawn in ' + r.area);
@@ -127,5 +127,5 @@ test('wiring: arena-maps loads between the data and the mission; 5ON drops you i
   assert.match(read('js/haven-data.js'), /action: 'deploy_downtown'/);
   assert.match(read('js/game.js'), /action === 'deploy_downtown'\) \{[^}]*startArena\(\{ map: 'downtown' \}\)/);
   assert.match(read('js/arena/arena-main.js'), /AR\.pickMap\(opts\.op, opts\.map\)/);
-  assert.match(read('js/arena/arena-mission.js'), /M\.noBoss = !!M\.op\?\.noBoss \|\| !M\.map\.hq/);
+  assert.match(read('js/arena/arena-mission.js'), /M\.noBoss = !!M\.op\?\.noBoss \|\| !M\.map\.hq \|\| !!M\.map\.noLeader/);
 });

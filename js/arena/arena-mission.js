@@ -44,7 +44,7 @@ AR.Mission = (() => {
     M.map = AR.MAP || AR.MAPS.plaza;
     M.owner = (M.op?.owner && AR.ROSTERS[M.op.owner]) ? M.op.owner : M.map.owner;
     M.roster = M.map.hq ? {} : (AR.ROSTERS[M.owner] || {});                // a district is fought against whoever holds it today
-    M.noBoss = !!M.op?.noBoss || !M.map.hq;                                // districts end at the log-off; HQs end with their leader
+    M.noBoss = !!M.op?.noBoss || !M.map.hq || !!M.map.noLeader;           // districts end at the log-off; HQs end with their leader (once it is in the field)
     M.L = AR.mapLines(M.map, M.owner);
     M.chat = { ...AR.CHAT, ...(M.map.chat || {}) };
     M.freeRerolls = M.op ? Math.max(0, Math.min(2, M.op.freeRerolls | 0)) : 0;

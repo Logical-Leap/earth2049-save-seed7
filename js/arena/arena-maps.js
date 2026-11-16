@@ -7,6 +7,7 @@
  *   DISTRICT   a street that a faction happens to hold. The mission runs Act I to Act III and ends at the log-off.
  *              Who holds it today decides who you fight (AR.ROSTERS): the city grid reshuffles owners every loop.
  *   HQ         a faction's seat. Never changes hands, has its own set pieces, and its leader waits at the end.
+ *              An HQ whose leader has no fight yet sets noLeader: true and ends at the log-off until it does.
  *
  * AR.pickMap(op, id) chooses the map for a run: an explicit id, else the field op's district, else the plaza.
  */
