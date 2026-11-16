@@ -933,6 +933,8 @@ const Haven = (() => {
     const n = S.dialog?.npc; if (!n) return;
     AudioSys.sfx?.('ui');
     if (o.action === 'train') { const tips = n.def.tips || []; say(pick(tips), n.def.options); return; }
+    if (o.menu) { say(o.reply || S.fullText, [...o.menu(), { t: 'Back.', back: true }]); return; }          // a sub-list (5ON's districts)
+    if (o.back) { say(n.def.greet, n.def.options); return; }
     if (o.reply && !o.action) { say(o.reply, n.def.options.filter(x => x !== o)); return; }
     const act = S.dialog.onAction;
     if (o.reply && o.action) {                         // say the line, then do the thing

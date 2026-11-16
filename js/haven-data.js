@@ -52,10 +52,7 @@ const HAVEN_NPCS = {
     greet: "Rig's warm. The OG Device is humming like it owes somebody money. You going in, or are you sightseeing?",
     options: [
       { t: 'Deploy me.', action: 'deploy', reply: 'Cast initiated. Try to come back with all your fingers this time.' },
-      { t: 'Drop me into Downtown.', action: 'deploy_downtown', reply: 'Fifth and Feed. Smile for the cameras. Then break them.' },
-      { t: 'Drop me into the Industrial Zone.', action: 'deploy_industrial', reply: 'The Yield Works. Mind the pods. There are people in them.' },
-      { t: 'Drop me into the Tech District.', action: 'deploy_tech', reply: 'The Parts Pit. If you lose an arm down there, nobody will notice.' },
-      { t: 'Drop me into the Harbor.', action: 'deploy_harbor', reply: 'Pier Zero. Do not sign anything. Do not die down there either. They bill for that.' },
+      { t: 'Drop me into a district.', reply: 'Pick a block. Every one of them is somebody\'s, until it isn\'t.', menu: () => havenDistrictOptions() },
       { t: "What's the Dreamcaster?", reply: "Operation Dreamcaster. The OG Device cuts a hole in Turing's timeline and drops you into a simulation of a district. Die in there, you wake up here with a headache and less dignity. Win, and we keep whatever you dragged back." },
       { t: 'You flew in the Collapse War?', reply: 'Gunship. Forty-one sorties. Now I fly a folding chair next to a portal. Progress, baby.' },
       { t: 'Later.' },
@@ -207,3 +204,9 @@ const HAVEN_ZONES = [
   { name: 'PURPLE TEAM OPS', sub: 'AUTHORIZED REBELS ONLY', x0: 6.5, x1: 36, z0: -30, z1: -14.5 },
   { name: 'THE RANGE', sub: 'LIVE FIRE DISABLED. SHOUT PEW PEW.', x0: 10.5, x1: 34, z0: 14.5, z1: 28 },
 ];
+
+/* 5ON's district list: one line per district map in the arena registry (js/arena/arena-maps.js), HQs marked. */
+function havenDistrictOptions() {
+  const maps = Object.values(window.AR?.MAPS || {}).filter(m => m.id !== 'plaza');
+  return maps.slice(0, 8).map(m => ({ t: `${m.region} — ${m.place}${m.hq ? ' (HQ)' : ''}`, action: 'deploy_' + m.id }));
+}

@@ -1499,10 +1499,7 @@ function openMissionBoard() { if (!ensureFieldOps()) return; hubPause(); FieldOp
 function havenAction(action, npc) {
   if (!G?.hub) return;
   if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
-  if (action === 'deploy_downtown') { Music.stinger('deploy'); startArena({ map: 'downtown' }); return; }
-  if (action === 'deploy_industrial') { Music.stinger('deploy'); startArena({ map: 'industrial' }); return; }
-  if (action === 'deploy_tech') { Music.stinger('deploy'); startArena({ map: 'tech' }); return; }
-  if (action === 'deploy_harbor') { Music.stinger('deploy'); startArena({ map: 'harbor' }); return; }
+  if (action.startsWith('deploy_') && window.AR?.MAPS?.[action.slice(7)]) { Music.stinger('deploy'); startArena({ map: action.slice(7) }); return; }
   if (action === 'grid') { openCityGrid(); return; }
   if (action === 'board') { openMissionBoard(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }

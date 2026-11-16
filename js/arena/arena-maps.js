@@ -36,7 +36,7 @@ AR.MAPS = {
     act3: ['ACT III — HYPE STORM', 'SURVIVE 75 SECONDS'], act3Obj: 'HYPE STORM',
     waveSubs: null,
     head: { act1: ['WE HAVE A VISITOR', 'FANS: WELCOME HIM'], act2: ['STREAM QUALITY: 4K', 'SPONSORED BY SIGNAL RELAYS'], act3: ['HYPE STORM', 'MODERATORS DEPLOYED'] },
-    jumbo: { live: 'RIYA VEX // CONTROLLED RIOT', sub: 'LIKE // SHARE // COMPLY', dead: ['STREAM ENDED', 'RIYA VEX HAS BEEN DEPLATFORMED'], deadOn: 'boss' },
+    jumbo: { head: 'GOING LIVE', live: 'RIYA VEX // CONTROLLED RIOT', sub: 'LIKE // SHARE // COMPLY', dead: ['STREAM ENDED', 'RIYA VEX HAS BEEN DEPLATFORMED'], deadOn: 'boss' },
     chatTitle: 'RIYA VEX // CONTROLLED RIOT',
     areas: {
       summon: ['plaza', 'backstage', 'gantry', 'fan'], mod1: ['plaza', 'backstage'], mod2: ['plaza', 'garage'],
@@ -58,7 +58,7 @@ AR.MAPS = {
     act3: ['ACT III — LOCKDOWN', 'SURVIVE 75 SECONDS'], act3Obj: 'LOCKDOWN',
     waveSubs: ['THE SERVERLESS ARE ONLINE', 'SHOOTERS ON THE ROOFS', 'THE BIG ONE IS ON FIFTH'],
     head: { act1: ['CITIZEN NOT SMILING', 'PLEASE SMILE FOR CAM 04'], act2: ['COVERAGE: 100%', 'EVERY BILLBOARD HAS A CAMERA'], act3: ['LOCKDOWN', 'COMPLIANCE DISPATCHED'] },
-    jumbo: { live: 'DOWNTOWN CIVIC FEED // CAM 04', sub: 'SMILE // YOU ARE ON FEED', dead: ['NO SIGNAL', 'DOWNTOWN IS OFF THE GRID'], deadOn: 'relays' },
+    jumbo: { head: 'CAM 04 LIVE', live: 'DOWNTOWN CIVIC FEED // CAM 04', sub: 'SMILE // YOU ARE ON FEED', dead: ['NO SIGNAL', 'DOWNTOWN IS OFF THE GRID'], deadOn: 'relays' },
     chatTitle: 'DOWNTOWN CIVIC FEED // CAM 04',
     areas: {
       summon: ['scramble', 'avenue_n', 'avenue_s', 'camp', 'checkpoint'], mod1: ['avenue_n', 'checkpoint'], mod2: ['avenue_s', 'scramble'],
@@ -100,7 +100,7 @@ AR.MAPS = {
     act3: ['ACT III — BACKUP POWER', 'SURVIVE 75 SECONDS'], act3Obj: 'BACKUP POWER',
     waveSubs: ['THE NIGHT SHIFT CLOCKS IN', 'SHOOTERS ON THE TRAIN', 'SOMETHING BIG IN THE POD HALL'],
     head: { act1: ['YIELD: 104%', 'SHIFT 3 // 0 INJURIES'], act2: ['GRID LOAD: NOMINAL', 'DO NOT TOUCH THE BREAKERS'], act3: ['BACKUP POWER', 'CONTAINMENT DISPATCHED'] },
-    jumbo: { live: 'GIGACORP YIELD WORKS // SHIFT 3', sub: 'LIE STILL // GET PAID', dead: ['BLACKOUT', 'THE PODS ARE ON BATTERY'], deadOn: 'relays' },
+    jumbo: { head: 'SHIFT 3', live: 'GIGACORP YIELD WORKS // SHIFT 3', sub: 'LIE STILL // GET PAID', dead: ['BLACKOUT', 'THE PODS ARE ON BATTERY'], deadOn: 'relays' },
     chatTitle: 'GIGACORP YIELD WORKS // FLOOR CAM',
     areas: {
       summon: ['yard', 'hall', 'turbines', 'lot'], mod1: ['yard', 'substation'], mod2: ['hall', 'yard'],
@@ -142,7 +142,7 @@ AR.MAPS = {
     act3: ['ACT III — RECALL NOTICE', 'SURVIVE 75 SECONDS'], act3Obj: 'RECALL NOTICE',
     waveSubs: ['SCAVENGERS ON THE TERRACES', 'SHOOTERS ON THE RIM', 'SOMETHING HEAVY ON THE HAUL ROAD'],
     head: { act1: ['UPGRADE OR DIE', 'TODAY ONLY: NEW KNEES'], act2: ['DATA PRIVACY: OFF', 'YOUR DATA IS AN UPGRADE'], act3: ['RECALL NOTICE', 'ALL UNITS RETURN TO SENDER'] },
-    jumbo: { live: 'MUSKER SERMON // LIVE FROM THE CLINIC', sub: 'THE FLESH IS THE FINAL BUG', dead: ['FACTORY RESET', 'PLEASE REINSTALL YOUR BODY'], deadOn: 'relays' },
+    jumbo: { head: 'SERMON LIVE', live: 'MUSKER SERMON // LIVE FROM THE CLINIC', sub: 'THE FLESH IS THE FINAL BUG', dead: ['FACTORY RESET', 'PLEASE REINSTALL YOUR BODY'], deadOn: 'relays' },
     chatTitle: 'MUSKER SERMON // CLINIC CAM',
     areas: {
       summon: ['t1', 't2', 'rim_e', 'rim_w'], mod1: ['rim_s', 't1'], mod2: ['t2', 'rim_n'],
@@ -184,7 +184,7 @@ AR.MAPS = {
     act3: ['ACT III — MARGIN CALL', 'SURVIVE 75 SECONDS'], act3Obj: 'MARGIN CALL',
     waveSubs: ['SMUGGLERS OFF THE BOATS', 'SHOOTERS ON THE SHIP', 'SOMETHING HEAVY ON THE QUAY'],
     head: { act1: ['$COOM +412%', 'NOTHING DECLARED'], act2: ['LEDGER: IMMUTABLE', 'PROBABLY'], act3: ['MARGIN CALL', 'ALL POSITIONS LIQUIDATED'] },
-    jumbo: { live: 'BLOCKEDCHAIN MARKET // PIER ZERO', sub: 'VALUE IS BELIEF', dead: ['LEDGER NOT FOUND', 'ALL DEBTS: UNKNOWN'], deadOn: 'relays' },
+    jumbo: { head: '$COOM +412%', live: 'BLOCKEDCHAIN MARKET // PIER ZERO', sub: 'VALUE IS BELIEF', dead: ['LEDGER NOT FOUND', 'ALL DEBTS: UNKNOWN'], deadOn: 'relays' },
     chatTitle: 'BLOCKEDCHAIN MARKET // PIER CAM',
     areas: {
       summon: ['quay', 'pier_m', 'pier_w', 'pier_e', 'water'], mod1: ['quay', 'pier_m'], mod2: ['quay', 'pier_e'],
@@ -215,6 +215,48 @@ AR.MAPS = {
     cone: [42, 0, -40],
     sky: ['#020608', '#06161a', '#0c2a2c', '#030a0c'], rain: 700, fogDensity: 0.021,
     dyn: ['bridge', 'customs', 'mine', 'logoff'],
+  },
+  /* The Living Towers: Block 9. The first map indoors: the atrium of a ShillZ megablock, four storeys of rented doors
+   * round a void crossed by scaffold stairs, the ShillZ cube hanging in the middle broadcasting to all of them. */
+  towers: {
+    id: 'towers', dist: 'towers', hq: false, owner: 'shillz', dir: 'assets/maps/towers/', file: 'towers',
+    load: 'CASTING INTO THE LIVING TOWERS…', place: 'BLOCK 9', region: 'THE LIVING TOWERS', title: 'DISTRICT OP: THE LIVING TOWERS',
+    act1: ['ACT I — CHECK-IN', 'CLEAR THE COURTYARD'], act1Obj: 'CLEAR THE BLOCK',
+    act2: ['ACT II — MUTE THE BLOCK', 'SILENCE THREE REPEATERS'], act2Obj: 'MUTE THE BLOCK', relayWord: 'REPEATER',
+    act3: ['ACT III — EVICTION NOTICE', 'SURVIVE 75 SECONDS'], act3Obj: 'EVICTION NOTICE',
+    waveSubs: ['NEIGHBOURS FROM EVERY FLOOR', 'SHOOTERS ON THE GALLERIES', 'SOMEONE BIG IN THE COURTYARD'],
+    head: { act1: ['GOOD MORNING BLOCK 9', 'RATE YOUR HOST'], act2: ['200,000 VIEWERS', 'ALL OF YOU ARE REACHABLE'], act3: ['EVICTION NOTICE', 'ENGAGEMENT BELOW LIMIT'] },
+    jumbo: { head: 'GOOD MORNING', live: 'RIYA VEX // MORNING CHECK-IN', sub: 'STAY HOME // STAY LIVE', dead: ['MUTED', 'BLOCK 9 HAS LEFT THE CHAT'], deadOn: 'relays' },
+    chatTitle: 'RIYA VEX // BLOCK 9 MORNING CHECK-IN',
+    areas: {
+      summon: ['courtyard', 'l1', 'l2', 'arcade'], mod1: ['courtyard', 'arcade'], mod2: ['courtyard', 'arcade'],
+      flood: ['arcade', 'l1', 'l2', 'l3'], extract: ['courtyard', 'arcade', 'l1'], trickle: ['arcade', 'courtyard'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'The Living Towers, Block 9. Two hundred thousand people in a box, and Riya talks to every one of them every morning.'],
+        ['COMMANDER', '{OWNER} hold the block. Clear the courtyard, then mute her repeaters. A block that can\'t hear her is a block that can hear us.'],
+        ['RIYA', 'Good MORNING Block 9! Rate your host, hydrate, and remember: if you can hear me, I can hear you.'],
+      ],
+      act2: [['COMMANDER', 'Three repeaters. The fountain in the courtyard, the bridge under her cube, the antenna farm on the roof. Mute them.'],
+        ['RIYA', 'Besties, there is a person in the building who does NOT want you to hear me. Isn\'t that SO weird?']],
+      relayDown: [['COMMANDER', 'One floor just went quiet. Listen to it.'], ['RIYA', 'Chat, if your stream dropped, that is a YOU problem. Refresh!'],
+        ['COMMANDER', 'Block 9 is muted. For the first time in years they can hear each other. Here she comes.']],
+      act3: [['RIYA', 'Eviction notice for everyone who stopped listening. Moderators, help them pack.'],
+        ['COMMANDER', 'Moderators in the courtyard. Get above them. The galleries are yours.']],
+      extract: [['COMMANDER', 'The laundry in the south-west corner. The cell\'s door is behind the washers. Go.']],
+      win: [['COMMANDER', 'You\'re out. Somebody on the third floor just knocked on their neighbour\'s door. That\'s how it starts.']],
+      death: [['RIYA', 'Aaand they\'ve been evicted! One star. Would not host again.']],
+    },
+    chat: {
+      start: ['block 9 checking in', 'who is that on the stairs', 'is he renting?', 'my couch is 4.2 stars', 'riya hi riya', 'first'],
+      relay: ['i cant hear riya', 'the cube went quiet', 'my neighbour just said hi??', 'stream dropped on floor 3', 'who muted the block'],
+      idle: ['he is hiding in the laundry', 'boring', 'check the roof', 'hello???', 'rent a couch already'],
+    },
+    lostTitle: 'EVICTED', lostSub: 'ONE STAR // WOULD NOT HOST AGAIN', winResult: 'BLOCK MUTED // EXTRACTED',
+    cone: [-22, 18, 22],
+    sky: ['#1a0c18', '#4a1c3a', '#a04870', '#2a1020'], rain: 0, fogDensity: 0.012,
+    dyn: ['cube', 'logoff'],
   },
 };
 

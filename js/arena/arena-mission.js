@@ -89,7 +89,7 @@ AR.Mission = (() => {
         mesh.position.set(sm.pos[0] + Math.sin(yaw) * 0.06, sm.pos[1], sm.pos[2] + Math.cos(yaw) * 0.06); mesh.rotation.y = yaw;
         M.group.add(mesh);
       }
-      M.jumbo = { c, x: c.getContext('2d'), tex, t: 0, head: M.map.id === 'plaza' ? 'GOING LIVE' : 'CAM 04 LIVE', hearts: [] };
+      M.jumbo = { c, x: c.getContext('2d'), tex, t: 0, head: M.map.jumbo.head || 'LIVE', hearts: [] };
     }
     // ring light
     const rm = AR.World.markers('ring')[0];
@@ -114,7 +114,7 @@ AR.Mission = (() => {
     M.bossLight = new THREE.PointLight(0xfff0e0, 0, 9, 1.4); M.group.add(M.bossLight);
     M.relayLights = [0, 1, 2].map(() => { const pl = new THREE.PointLight(0xffd400, 0, 12, 1.5); M.group.add(pl); return pl; });
     // rain
-    const N = M.map.rain || 900, pos = new Float32Array(N * 6);
+    const N = M.map.rain ?? 900, pos = new Float32Array(N * 6);
     const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
     const rain = new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x8090c0, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false }));
     rain.frustumCulled = false; M.group.add(rain);

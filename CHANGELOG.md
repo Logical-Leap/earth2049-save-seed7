@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16 — The Living Towers: Block 9, and 5ON's district list
+
+- **The fifth district map, and the first indoors.** The atrium of a ShillZ megablock: four storeys of rented doors round a void crossed by pink scaffold stairs in two spirals, a bridge at the third storey under the hanging ShillZ cube, and the roof with water tanks, the antenna farm and a rent-a-tent camp. The couch market rents by the hour and the star, the bathtub sleeps one, breathing is free between two and four. The log-off is the cell's door behind the washers in the laundry.
+- **Act II is Mute the Block:** silence three ShillZ repeaters (the fountain, the bridge, the antenna farm), and the cube reads "BLOCK 9 HAS LEFT THE CHAT".
+- **5ON's district list:** "Drop me into a district." lists every district map from the arena registry, so new maps appear there on their own.
+- Indoor maps can turn the rain off; each map's jumbotron opens on its own headline.
+
 ## 2026-11-16 — Harbor Area: Pier Zero
 
 - **The fourth district map.** The Cryptids' smuggling lanes: three piers into black, waist-deep water under teal fog and gold lamps. The quay with its NFT containers and the customs house that declares nothing, a gantry crane whose girder runs out over the berth, the cargo ship *Blocked Maru* (deck and bridge), smugglers' speedboats in the water, and under the quay the debtors' mine, where people who died in debt are revived to work it off. The log-off is the cell's door at the mine's east end.

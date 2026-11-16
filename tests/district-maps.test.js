@@ -120,12 +120,14 @@ test('district rosters: every faction look has a model the arena loads', () => {
   for (const f of ['shillz', 'muskers', 'cryptids', 'bots', 'gigacorp']) assert.ok(AR.ROSTERS[f] && AR.FAC_NAMES[f], f);
 });
 
-test('wiring: arena-maps loads between the data and the mission; 5ON drops you into Downtown', () => {
+test('wiring: arena-maps loads between the data and the mission; 5ON lists every district map', () => {
   const html = read('index.html');
   const i = n => html.indexOf(`js/arena/${n}.js`);
   assert.ok(i('arena-data') < i('arena-maps') && i('arena-maps') < i('arena-mission') && i('arena-maps') > 0);
-  assert.match(read('js/haven-data.js'), /action: 'deploy_downtown'/);
-  assert.match(read('js/game.js'), /action === 'deploy_downtown'\) \{[^}]*startArena\(\{ map: 'downtown' \}\)/);
+  assert.match(read('js/haven-data.js'), /menu: \(\) => havenDistrictOptions\(\)/);
+  assert.match(read('js/haven-data.js'), /action: 'deploy_' \+ m\.id/);
+  assert.match(read('js/game.js'), /action\.startsWith\('deploy_'\) && window\.AR\?\.MAPS\?\.\[action\.slice\(7\)\]\) \{[^}]*startArena\(\{ map: action\.slice\(7\) \}\)/);
+  assert.match(read('js/haven.js'), /if \(o\.menu\) \{/);
   assert.match(read('js/arena/arena-main.js'), /AR\.pickMap\(opts\.op, opts\.map\)/);
   assert.match(read('js/arena/arena-mission.js'), /M\.noBoss = !!M\.op\?\.noBoss \|\| !M\.map\.hq \|\| !!M\.map\.noLeader/);
 });
