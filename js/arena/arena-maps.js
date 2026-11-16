@@ -340,6 +340,46 @@ AR.MAPS = {
     sky: ['#16242e', '#2a4252', '#4c6c7e', '#0e1a22'], rain: 0, fogDensity: 0.009,
     dyn: ['altar', 'fabricator', 'gantry', 'logoff'],
   },
+  cryptidD: {
+    id: 'cryptidD', dist: 'cryptidD', hq: true, noLeader: true, owner: 'cryptids', dir: 'assets/maps/cryptidD/', file: 'cryptidD',
+    load: 'CASTING INTO THE CRYPTIDS DOMAIN…', place: 'THE $COOM PYRAMID', region: 'CRYPTIDS DOMAIN', title: 'HQ OP: CRYPTIDS DOMAIN',
+    act1: ['ACT I — BUY THE DIP', 'TAKE THE EXCHANGE FLOOR'], act1Obj: 'BUY THE DIP',
+    act2: ['ACT II — RUG PULL', 'DRAIN THREE LIQUIDITY POOLS'], act2Obj: 'RUG PULL', relayWord: 'LIQUIDITY POOL',
+    act3: ['ACT III — MARGIN CALL', 'SURVIVE 75 SECONDS'], act3Obj: 'MARGIN CALL',
+    waveSubs: ['THE TRADERS WANT THEIR MONEY', 'WHALES OFF THE PYRAMID', 'SOMETHING BIG IS PUMPING'],
+    head: { act1: ['$COOM +412%', 'NUMBER GO UP'], act2: ['LIQUIDITY: DEEP', 'TRUST THE CODE'], act3: ['MARGIN CALL', 'ALL POSITIONS LIQUIDATED'] },
+    jumbo: { head: '$COOM +412%', live: 'THE EXCHANGE FLOOR // BLITZ TV', sub: 'NOT FINANCIAL ADVICE', dead: ['$COOM -99%', 'IT WAS NEVER MONEY'], deadOn: 'relays' },
+    chatTitle: 'BLITZ TV // THE EXCHANGE FLOOR',
+    areas: {
+      summon: ['floor', 'plaza', 'mint', 'pyramid'], mod1: ['plaza', 'floor'], mod2: ['plaza', 'mint'],
+      flood: ['floor', 'plaza', 'pyramid', 'gallery', 'mint'], extract: ['vault', 'floor', 'plaza'], trickle: ['vault', 'floor'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Cryptids Domain. Blitz Radium\'s house: the exchange floor, the galleries, and the pyramid. Every price in the city is set in that pit.'],
+        ['COMMANDER', 'Take the floor. The pads say TO THE MOON; they go up the pyramid. Blitz is on the top, but he is not the job today.'],
+        ['BLITZ', 'whoa, no VR shades? you are either poor or a cop. either way, welcome to the domain. everything here is for sale, including you.'],
+      ],
+      act2: [['COMMANDER', 'Three liquidity pools hold up every token he has. The NFT gallery mezzanine, the mining rigs at the Mint, and the cold wallet under the pyramid. Drain them.'],
+        ['BLITZ', 'you cannot rug a rug, man. it is rugs all the way down. that is the innovation.']],
+      relayDown: [['COMMANDER', 'Pool drained. Somewhere a JPEG just became a JPEG again.'], ['BLITZ', 'that was a TEMPORARY dip. buy it. somebody buy it. why is nobody buying it.'],
+        ['COMMANDER', 'That\'s all three. $COOM is at zero and every trader on the floor just noticed.']],
+      act3: [['BLITZ', 'MARGIN CALL. everyone is getting liquidated. starting with the guy who did this.'],
+        ['COMMANDER', 'They\'re coming for their money and you are the only thing left to sell. Use the pads, take the high tiers.']],
+      extract: [['COMMANDER', 'Down to the cold wallet. The tunnel from the pit. The log-off is behind the gold.']],
+      win: [['COMMANDER', 'You\'re out. Blitz is announcing the crash as a token. It will be worth more than the old one by lunch. Typical.']],
+      death: [['BLITZ', 'rekt. no refunds. not financial advice.']],
+    },
+    chat: {
+      start: ['blitz tv live', 'is he a cop', 'no shades lol', 'buy the dip', 'WAGMI', 'first'],
+      relay: ['wait my wallet says 0', 'rug pull??', 'it was never money', 'SELL SELL SELL', 'my jpeg is just a jpeg'],
+      idle: ['he is on the pyramid', 'check the vault', 'boring', 'diamond hands', 'to the moon'],
+    },
+    lostTitle: 'REKT', lostSub: 'NOT FINANCIAL ADVICE', winResult: 'POOLS DRAINED // EXTRACTED',
+    cone: [44, 5, 8],
+    sky: ['#0c0a06', '#1e160a', '#3a2a10', '#060402'], rain: 0, fogDensity: 0.012,
+    dyn: ['board', 'stage', 'vault', 'rigs', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.

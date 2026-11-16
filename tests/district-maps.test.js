@@ -145,3 +145,18 @@ test('an HQ is always fought against its own faction, whoever the op says holds 
   const src = read('js/arena/arena-mission.js');
   assert.match(src, /M\.roster = AR\.ROSTERS\[M\.map\.hq \? M\.map\.owner : M\.owner\]/);
 });
+
+test("5ON's district list pages six at a time and every map is reachable", () => {
+  const ctx = { window: { AR } };
+  vm.createContext(ctx);
+  vm.runInContext(read('js/haven-data.js') + '\nwindow.f = havenDistrictOptions;', ctx);
+  const seen = new Set(); let page = 0; let opts = ctx.window.f(0);
+  for (let i = 0; i < 10; i++) {
+    for (const o of opts) if (o.action) seen.add(o.action);
+    assert.ok(opts.filter(o => o.action).length <= 6);
+    const more = opts.find(o => o.menu);
+    if (!more) break;
+    opts = more.menu(); page++;
+  }
+  for (const m of Object.values(AR.MAPS)) if (m.id !== 'plaza') assert.ok(seen.has('deploy_' + m.id), m.id + ' is on a page');
+});

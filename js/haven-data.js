@@ -206,7 +206,13 @@ const HAVEN_ZONES = [
 ];
 
 /* 5ON's district list: one line per district map in the arena registry (js/arena/arena-maps.js), HQs marked. */
-function havenDistrictOptions() {
+/** 5ON's district list, six to a page; "More districts." pages on, wrapping back to the first page. */
+function havenDistrictOptions(page = 0) {
+  const PER = 6;
   const maps = Object.values(window.AR?.MAPS || {}).filter(m => m.id !== 'plaza');
-  return maps.slice(0, 8).map(m => ({ t: `${m.region} — ${m.place}${m.hq ? ' (HQ)' : ''}`, action: 'deploy_' + m.id }));
+  const pages = Math.max(1, Math.ceil(maps.length / PER));
+  const p = ((page % pages) + pages) % pages;
+  const out = maps.slice(p * PER, p * PER + PER).map(m => ({ t: `${m.region} — ${m.place}${m.hq ? ' (HQ)' : ''}`, action: 'deploy_' + m.id }));
+  if (pages > 1) out.push({ t: p === pages - 1 ? 'Back to the first page.' : 'More districts.', reply: p === pages - 1 ? 'From the top.' : 'Further out. Same rules.', menu: () => havenDistrictOptions(p + 1) });
+  return out;
 }

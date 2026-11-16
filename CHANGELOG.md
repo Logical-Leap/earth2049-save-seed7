@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-16 — Cryptids Domain: the $COOM Pyramid (the second faction HQ), and 5ON's list pages
+
+- **The Cryptids' headquarters at midnight, in black glass and gold.** The exchange floor is a sunken trading pit of desks and screens under the $COOM tickers, in front of a four-tier, 16 m pyramid you do not climb: you PUMP up it on gold launch pads marked TO THE MOON and drop back down. On top is Blitz Radium's stage, with the gold Lambo, a coin the size of a house and lasers into the sky. Under the pyramid's front, down a tunnel from the pit, is the cold wallet (NOT YOUR KEYS): gold bars, a round vault door and the log-off. East is the white-cube NFT gallery of framed QR codes (THIS IS THE ART) with a mezzanine; west is the Mint: coin stacks, the mining rigs and a gold bull with laser eyes. A candle board that only goes up, until it doesn't, fills the north wall.
+- **Act I is Buy the Dip, Act II is Rug Pull** (drain three liquidity pools: the gallery mezzanine, the mining rigs, the cold wallet), **Act III is Margin Call.** Blitz talks the whole way. His fight is not in yet, so the op ends at the log-off.
+- **5ON's district list now pages six at a time** ("More districts."), so every new map stays reachable.
+
 ## 2026-11-16 — Muskers Territory: the Upgrade Basilica (the first faction HQ)
 
 - **The first faction headquarters, built bigger than any district.** White, chrome and cyan under a dusk sky ringed with white spires. You arrive on a pilgrims' plaza through flesh scanners (FLESH 62% // NOT ELIGIBLE) past the SHED IT fountain, cross the Chute (an 8 m trench where shed parts ride a belt east to the Parts Pit) on three causeways, and reach the Upgrade Basilica: a nave of upgrade chairs instead of pews, triforium galleries at 8 m, and an apse dais under an eighteen-metre chrome FINAL BODY, with MAG-0's empty throne where Magnus Tarkon will wait. East is the fabricator line printing bodies under robot arms (catwalk at 5 m); west is the launch pad, a rocket that is always about to go, and its service tower (6 m and 12 m).
