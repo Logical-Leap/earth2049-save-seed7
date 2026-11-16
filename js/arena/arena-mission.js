@@ -39,6 +39,10 @@ AR.Mission = (() => {
       xp: 0, level: 1, xpNeed: xpNeed(1), levelQueue: 0, leveling: false, shownLevel: 1,
     };
     save.runs = (save.runs || 0) + 1;
+    /* a field op from the Haven mission board (js/field-ops.js): what the city grid lends this run */
+    M.op = opts.op || null;
+    M.freeRerolls = M.op ? Math.max(0, Math.min(2, M.op.freeRerolls | 0)) : 0;
+    M.allyCall = M.op?.ally ? { ...M.op.ally, used: false } : null;
     M.heatMul = 1 + M.heat * 0.08;
     M.speedMul = 1 + M.heat * 0.04;
     M.fireMul = 1 / (1 + M.heat * 0.08);
@@ -55,7 +59,8 @@ AR.Mission = (() => {
     AR.Hud.objective('<b>CAST IN</b> // ENGAGEMENT PLAZA, SHILLZ CENTRAL');
     // intro sequence
     AR.Hud.letterbox(true);
-    AR.Hud.banner('OPERATION: UNSUBSCRIBE', `SHILLZ CENTRAL // ENGAGEMENT PLAZA${M.heat ? ' // HEAT ' + M.heat : ''}`, 3.6);
+    if (M.op) AR.Hud.banner('FIELD OP: ' + M.op.title, `ENGAGEMENT PLAZA${M.heat ? ' // HEAT ' + M.heat : ''}${M.op.replay ? ' // REPLAY' : ''}`, 3.6);
+    else AR.Hud.banner('OPERATION: UNSUBSCRIBE', `SHILLZ CENTRAL // ENGAGEMENT PLAZA${M.heat ? ' // HEAT ' + M.heat : ''}`, 3.6);
     chatBurst('start', 4);
     queueLines(AR.LINES.intro);
     setTimeout(() => { if (M && M.phase === 'intro') loadout(); }, 2600);
@@ -150,7 +155,7 @@ AR.Mission = (() => {
     const J = M.jumbo; if (!J) return;
     J.t -= dt; if (J.t > 0) return; J.t = 1 / 8;
     const x = J.x, W = 264, H = 96;
-    const dead = M.phase === 'bossdead' || M.phase === 'extract' || M.phase === 'results' && M.won;
+    const dead = M.bossDown && (M.phase === 'bossdead' || M.phase === 'extract' || M.phase === 'results' && M.won);
     x.fillStyle = dead ? '#000' : '#0b0612'; x.fillRect(0, 0, W, H);
     x.font = 'bold 10px Consolas, monospace'; x.textBaseline = 'top';
     if (dead) {
@@ -198,7 +203,8 @@ AR.Mission = (() => {
     M.phase = 'loadout';
     AR.Hud.letterbox(false);
     const opts = [...AR.PRIMARIES].sort(() => Math.random() - 0.5).slice(0, 3);                                       // NOSONAR
-    const tiers = opts.map(() => Math.min(6, (Math.random() < 0.35 ? 1 : 0) + Math.floor(M.heat / 2)));               // NOSONAR
+    const floor = Math.min(2, M.op?.tierFloor | 0);                                                                  // grid requisition: up to RARE
+    const tiers = opts.map(() => Math.max(floor, Math.min(6, (Math.random() < 0.35 ? 1 : 0) + Math.floor(M.heat / 2))));  // NOSONAR
     const bar = (v, max) => `<i style="width:${Math.round(clamp(v / max, 0.05, 1) * 110)}px"></i>`;
     AR.menu = true; AR.unlockPointer();
     AR.Hud.cards('DREAMCASTER LOADOUT', 'PICK YOUR PRIMARY // VOLT-9 SIDEARM INCLUDED', opts.map(id => {
@@ -318,7 +324,7 @@ AR.Mission = (() => {
   }
   function ringCrash() { if (M.ring && !M.ring.fallen) { M.ring.falling = true; M.ring.vy = 0; AR.Sfx.ui('alarm'); } }
   function bossDead() {
-    M.phase = 'bossdead';
+    M.phase = 'bossdead'; M.bossDown = true;
     if (M.bossLight) M.bossLight.intensity = 0;
     AR.slowmo(1.8, 0.18);
     AR.Hud.banner('DEPLATFORMED', 'RIYA VEX // STREAM ENDED', 3.5);
@@ -363,7 +369,12 @@ AR.Mission = (() => {
   }
   function offerPerks(next) {
     showOffer({ title: 'SPONSOR OFFERS', sub: 'A BRAND WANTS TO WORK WITH YOU // PICK ONE', kind: 'sponsor', heal: 25, refill: true,
-      after: () => setTimeout(() => { if (!M) return; if (next === 'act2') startAct2(); else if (next === 'act3') startAct3(); else startBoss(); }, 700) });
+      after: () => setTimeout(() => {
+        if (!M) return;
+        if (next === 'act2') startAct2(); else if (next === 'act3') startAct3();
+        else if (M.op?.noBoss) { M.phase = 'bossdead'; startExtract(); }                  // district ops end at the log-off
+        else startBoss();
+      }, 700) });
   }
   // the three-card pick, for sponsor breaks and level-ups alike
   function showOffer(o) {
@@ -385,7 +396,8 @@ AR.Mission = (() => {
       const P = AR.Player.P;
       AR.Fx.emit(AR.Fx.glow, P.body.pos.x, P.body.pos.y + 1, P.body.pos.z, [0x39ff8a, 0x4da6ff, 0xff2bd6][p.r], 40 + p.r * 30, 5, 0.7, { up: 3 });
       o.after?.(p);
-    }, [{ t: `REROLL (${M.reroll} GIGATECH)`, fn: () => {
+    }, [{ t: M.freeRerolls > 0 ? `REROLL (FREE // ${M.freeRerolls} LEFT)` : `REROLL (${M.reroll} GIGATECH)`, fn: () => {
+      if (M.freeRerolls > 0) { M.freeRerolls--; h.close(); AR.Sfx.ui('card'); showOffer(o); return; }   // the city grid's sponsors
       if (M.chips < M.reroll) { AR.Sfx.dry(); return; }
       M.chips -= M.reroll; M.reroll += 10; h.close(); AR.Sfx.ui('card'); showOffer(o);
     } }], { kind: o.kind, level: o.level });
@@ -761,6 +773,42 @@ AR.Mission = (() => {
     }
   }
 
+  /* ================================================================== ally call-in (the city grid: a sovereign ally that holds or borders the target)
+   * One per mission. It answers on its own the first time HP drops under 40% or when the hype storm starts. */
+  function allyTick(dt) {
+    const C = M.allyCall; if (!C) return;
+    const P = AR.Player.P;
+    if (!C.used) {
+      const live = ['act1', 'act2', 'act3', 'boss'].includes(M.phase);
+      if (live && (M.phase === 'act3' || P.hp < P.maxHp * 0.4)) {
+        C.used = true; C.left = C.secs || 45; C.fireT = 0; C.t = 0;
+        const col = new THREE.Color(C.color || '#39ff8a').getHex();
+        const m = new THREE.Mesh(new THREE.OctahedronGeometry(0.3, 0), new THREE.MeshBasicMaterial({ color: col }));
+        const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: Assets.starTex(), color: col, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false }));
+        s.scale.setScalar(1.2); m.add(s); M.group.add(m);
+        m.position.set(P.body.pos.x, P.body.pos.y + 6, P.body.pos.z);
+        C.m = m; C.col = col;
+        AR.Hud.toast('ALLY CALL-IN', `${C.name} SENT A GUNSHIP DRONE // ${Math.round(C.left)} S`);
+        AR.Sfx.ui('alarm');
+      }
+      return;
+    }
+    if (!C.m) return;
+    C.left -= dt; C.t += dt; C.fireT -= dt;
+    if (C.left <= 0 || M.phase === 'results') { M.group.remove(C.m); C.m = null; AR.Hud.toast('ALLY CALL-IN', 'THE DRONE PEELS OFF'); return; }
+    const tx = P.body.pos.x + Math.cos(C.t * 1.2) * 2.2, tz = P.body.pos.z + Math.sin(C.t * 1.2) * 2.2, ty = P.body.pos.y + 3.2;
+    C.m.position.lerp(V3(tx, ty, tz), Math.min(1, dt * 4)); C.m.rotation.y += dt * 3;
+    if (C.fireT <= 0) {
+      const e = AR.Enemies.nearest(C.m.position.x, C.m.position.y, C.m.position.z, 30);
+      if (e && !e.relay) {
+        C.fireT = 0.3;
+        AR.Fx.trace(C.m.position.x, C.m.position.y, C.m.position.z, e.headPos.x, e.headPos.y - 0.3, e.headPos.z, C.col, 0.08);
+        AR.Enemies.damage(e, 16 * (1 + M.heat * 0.15), { src: 'buddy', dir: V3(0, 0, 0), knock: 0.4 });
+        AR.Sfx.gun('smg', { gain: 0.3, pitch: 1.3 });
+      } else C.fireT = 0.25;
+    }
+  }
+
   /* ================================================================== results */
   function finish(won) {
     if (M.done) return;
@@ -771,7 +819,9 @@ AR.Mission = (() => {
     if (won) addScore(Math.max(0, 900 - secs) * 40 * (1 + M.heat * 0.25), '');
     const score = M.score;
     const grade = [...AR.RESULT_GRADES].reverse().find(([s]) => score >= s * (1 + M.heat * 0.3))?.[1] || 'LURKER';
-    const gt = Math.round((M.chips + score / 2000) * (won ? 1 : 0.5));
+    const gi0 = AR.RESULT_GRADES.findIndex(g => g[1] === grade);
+    const fo = M.op && window.FieldOps ? window.FieldOps.complete(SAVE, M.op, { won, style: window.FieldOps.styleOf(M.maxRank, AR.RANKS.length, Math.max(0, gi0), AR.RESULT_GRADES.length) }) : null;
+    const gt = Math.round((M.chips + score / 2000) * (won ? 1 : 0.5) * (fo ? fo.gtMul : 1));
     const best = score > (save.best || 0);
     save.best = Math.max(save.best || 0, score);
     if (won) { save.wins = (save.wins || 0) + 1; save.maxHeat = Math.max(save.maxHeat || 0, M.heat + 1); }
@@ -784,7 +834,7 @@ AR.Mission = (() => {
     try { persist(); } catch (err) { console.warn('[E2049] arena save failed', err); }
     const mmss = `${Math.floor(secs / 60)}:${String(Math.floor(secs % 60)).padStart(2, '0')}`;
     const rows = [
-      ['RESULT', won ? 'RIYA DEPLATFORMED // EXTRACTED' : 'TERMINATED ON STREAM'],
+      ['RESULT', won ? (M.op?.noBoss ? 'EXTRACTED' : 'RIYA DEPLATFORMED // EXTRACTED') : 'TERMINATED ON STREAM'],
       ['TIME', mmss], ['KILLS', M.kills], ['HEADSHOTS', `${M.heads} (${M.kills ? Math.round(M.heads / M.kills * 100) : 0}%)`],
       ['BEST STREAK', M.bestMulti >= 2 ? `${M.maxStreakName} (x${M.bestMulti})` : '—'], ['PEAK STYLE', `${AR.RANKS[M.maxRank].k} // ${AR.RANKS[M.maxRank].n}`],
       ['AIR KILLS', M.airKills], ['LONGEST KILL', Math.round(M.longest) + ' M'], ['DAMAGE TAKEN', Math.round(M.hurtTotal)],
@@ -797,10 +847,11 @@ AR.Mission = (() => {
       rows.push(['WALLET', `◆ ${drip.wallet.toLocaleString('en-US')} // SEAM IS AT THE FITTING ROOM`]);
     }
     if (M.unlocks.length) rows.push(['UNLOCKED', M.unlocks.join(', ')]);
+    if (fo?.label) rows.unshift(['FIELD OP', fo.label]);
     setTimeout(() => {
       AR.menu = true; AR.unlockPointer();
       const nextHeat = won ? Math.min(10, M.heat + 1) : M.heat;
-      AR.Hud.results({ title: won ? 'EXTRACTED' : 'STREAM ENDED', sub: won ? 'OPERATION: UNSUBSCRIBE COMPLETE' : 'RIYA THANKS YOU FOR WATCHING', grade, rows, score, gt, best,
+      AR.Hud.results({ title: won ? 'EXTRACTED' : 'STREAM ENDED', sub: won ? (M.op ? 'FIELD OP COMPLETE // ' + M.op.title : 'OPERATION: UNSUBSCRIBE COMPLETE') : 'RIYA THANKS YOU FOR WATCHING', grade, rows, score, gt, best,
         retryLabel: won ? `RUN IT BACK // HEAT ${nextHeat}` : 'RUN IT BACK' },
       () => { SAVE.arena.heat = nextHeat; AR.restart(nextHeat); },
       () => AR.exit());
@@ -834,6 +885,7 @@ AR.Mission = (() => {
     for (const r of M.relays) if (r.light && !r.dying) r.light.intensity = 2 + Math.sin(M.t * 6 + r.id) * 1.2;
     relayTick(dt);
     buddyTick(dt);
+    allyTick(dt);
   }
 
   function waypoints() {
@@ -846,6 +898,15 @@ AR.Mission = (() => {
     }
     if (M.phase === 'act2') for (const r of M.relays) if (!r.dying) out.push({ x: r.body.pos.x, y: r.body.pos.y + 5.6, z: r.body.pos.z, label: `RELAY ${Math.ceil(Math.max(0, r.hp / r.maxHp) * 100)}%`, cls: 'warn' });
     if (M.phase === 'extract') out.push({ x: M.extraction.pos[0], y: M.extraction.pos[1] + 2, z: M.extraction.pos[2], label: 'LOG OFF', cls: 'ex' });
+    // city grid intel: Truth 25 marks elites, Truth 60 also marks the relay sites before they go up
+    const intel = M.op?.intel | 0;
+    if (intel >= 1 && ['act1', 'act2', 'act3', 'boss'].includes(M.phase)) {
+      let n = 0;
+      for (const e of AR.Enemies.list) if (e.elite && !e.dying && n++ < 4) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'ELITE', cls: 'warn' });
+    }
+    if (intel >= 2 && (M.phase === 'act1' || M.phase === 'perk' && M.nextAct === 'act2')) {
+      for (const m of AR.World.markers('relay')) out.push({ x: m.pos[0], y: m.pos[1] + 5.6, z: m.pos[2], label: 'RELAY SITE', cls: 'warn' });
+    }
     return out;
   }
   function padAt(x, y, z) {

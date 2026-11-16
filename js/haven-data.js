@@ -84,6 +84,8 @@ const HAVEN_NPCS = {
     model: 'rebel', name: 'THE COMMANDER', title: 'ORBITAL RELAY // ENCRYPTED', hologram: '#9b59ff',
     greet: "Signal's thin, so listen fast. GigaCorp thinks I'm running their orbital ad relay. I am. I'm also running you.",
     options: [
+      { t: 'Open the city grid.', action: 'grid' },
+      { t: 'Show me the mission board.', action: 'board' },
       { t: 'Brief me.', action: 'briefing' },
       { t: 'Whose side are you on?', reply: "Yours, as of this transmission. Ask again tomorrow. Same answer, new encryption." },
       { t: 'What does Turing want?', reply: "Certainty. A world where nothing surprises it. So surprise it. Every run you take that it didn't predict is a crack in the model." },

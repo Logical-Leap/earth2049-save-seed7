@@ -62,16 +62,16 @@ const Arena = (() => {
     AR.Fx.init(opts.scene); AR.Enemies.init(opts.scene); AR.Drops.init(opts.scene);
     if (!AR.Player.ready) { AR.Player.init(opts.camera, opts.composer); AR.Player.ready = true; } else AR.Player.attachPass(opts.composer);
     AR.Player.useGunFeel(opts.gunGroup);                  // the art department's first-person rig, if it is loaded
-    begin(opts.heat);
+    begin(opts.heat, opts.op);
     if (ls) ls.style.display = 'none';
     loading = false;
   }
-  function begin(heat) {
+  function begin(heat, op) {
     const ps = AR.World.markers('playerStart')[0];
     AR.Player.reset({ x: ps.pos[0], y: ps.pos[1], z: ps.pos[2], yaw: ps.yaw }, null);
     AR.active = true; AR.paused = false; AR.menu = false; hitstopT = 0; slowT = 0; flowT = 0; lastNode = -1;
     AR.Hud.show(true);
-    AR.Mission.start({ heat });
+    AR.Mission.start({ heat, op: op || null });
     AR.lockPointer();
   }
   const propCache = {};

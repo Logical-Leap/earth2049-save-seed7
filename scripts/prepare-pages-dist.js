@@ -14,6 +14,7 @@ const out = path.join(root, 'dist-pages');
 const entries = [
   'index.html',
   '_headers',
+  'idle',
   'js',
   'lib',
   'assets/data',
