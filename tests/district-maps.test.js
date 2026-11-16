@@ -129,3 +129,7 @@ test('wiring: arena-maps loads between the data and the mission; 5ON drops you i
   assert.match(read('js/arena/arena-main.js'), /AR\.pickMap\(opts\.op, opts\.map\)/);
   assert.match(read('js/arena/arena-mission.js'), /M\.noBoss = !!M\.op\?\.noBoss \|\| !M\.map\.hq \|\| !!M\.map\.noLeader/);
 });
+
+test('a sponsor break waits for an open level-up pick (one card overlay at a time, or the run stalls)', () => {
+  assert.match(read('js/arena/arena-mission.js'), /if \(AR\.menu\) \{ setTimeout\(open, 400\); return; \}/);
+});

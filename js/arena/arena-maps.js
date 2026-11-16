@@ -90,6 +90,48 @@ AR.MAPS = {
     sky: ['#03050c', '#0c1424', '#20304a', '#0a0e18'], rain: 1300, fogDensity: 0.0145,
     dyn: ['tower_key', 'camp_fire', 'checkpoint', 'lobby', 'tube', 'logoff'],
   },
+  /* Industrial Zone: the Yield Works. GigaCorp's plant and the city's grid. Low, wide and hot where Downtown is tall
+   * and cold: the pod hall, the rail yard under the control room, the turbine deck, the runoff culvert. */
+  industrial: {
+    id: 'industrial', dist: 'industrial', hq: false, owner: 'gigacorp', dir: 'assets/maps/industrial/', file: 'industrial',
+    load: 'CASTING INTO THE INDUSTRIAL ZONE…', place: 'THE YIELD WORKS', region: 'INDUSTRIAL ZONE', title: 'DISTRICT OP: INDUSTRIAL ZONE',
+    act1: ['ACT I — SHIFT CHANGE', 'CLEAR THE YARD'], act1Obj: 'CLEAR THE YARD',
+    act2: ['ACT II — BLACKOUT', 'PULL THREE BREAKERS'], act2Obj: 'PULL THE BREAKERS', relayWord: 'BREAKER',
+    act3: ['ACT III — BACKUP POWER', 'SURVIVE 75 SECONDS'], act3Obj: 'BACKUP POWER',
+    waveSubs: ['THE NIGHT SHIFT CLOCKS IN', 'SHOOTERS ON THE TRAIN', 'SOMETHING BIG IN THE POD HALL'],
+    head: { act1: ['YIELD: 104%', 'SHIFT 3 // 0 INJURIES'], act2: ['GRID LOAD: NOMINAL', 'DO NOT TOUCH THE BREAKERS'], act3: ['BACKUP POWER', 'CONTAINMENT DISPATCHED'] },
+    jumbo: { live: 'GIGACORP YIELD WORKS // SHIFT 3', sub: 'LIE STILL // GET PAID', dead: ['BLACKOUT', 'THE PODS ARE ON BATTERY'], deadOn: 'relays' },
+    chatTitle: 'GIGACORP YIELD WORKS // FLOOR CAM',
+    areas: {
+      summon: ['yard', 'hall', 'turbines', 'lot'], mod1: ['yard', 'substation'], mod2: ['hall', 'yard'],
+      flood: ['culvert', 'lot', 'south', 'hall'], extract: ['culvert', 'lot', 'south', 'yard'], trickle: ['culvert', 'south'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Industrial Zone. GigaCorp\'s plant, the city\'s grid. That hum is the Bio-Yield Pods.'],
+        ['COMMANDER', '{OWNER} run the floor tonight. Clear the yard, then pull their breakers. Take the power, take the district.'],
+        ['PLANT PA', 'ATTENTION SHIFT 3. AN UNSCHEDULED VISITOR IS ON THE FLOOR. PLEASE DO NOT LET IT AFFECT YOUR YIELD.'],
+      ],
+      act2: [['COMMANDER', 'Three breakers feed the plant. The bridge in the pod hall, the control room over the yard, the substation. Pull them.'],
+        ['PLANT PA', 'REMINDER: THE PODS HAVE BACKUP BATTERIES. PROBABLY.']],
+      relayDown: [['COMMANDER', 'Breaker out. Half the yard just went dark.'], ['PLANT PA', 'GRID LOAD IRREGULAR. CONTRACTORS, PLEASE CONTINUE LYING STILL.'],
+        ['COMMANDER', 'That\'s the last one. The turbines are spinning for nobody. Here they come.']],
+      act3: [['PLANT PA', 'BACKUP POWER ENGAGED. CONTAINMENT TO THE YARD. ALL OF IT.'],
+        ['COMMANDER', 'Moderators through the yard. Use the train cars and flank the shields.']],
+      extract: [['COMMANDER', 'The power\'s ours. The storm drain at the west end of the culvert runs to the cell. Get down there.']],
+      win: [['COMMANDER', 'You\'re out. The plant ran on batteries for ten minutes and nobody in the pods woke up. Next time we bring them with us.']],
+      death: [['PLANT PA', 'WORKPLACE INCIDENT LOGGED. INJURY COUNTER RESET. THANK YOU FOR YOUR YIELD.']],
+    },
+    chat: {
+      start: ['shift 3 cam is live', 'who let him on the floor', 'is that a contractor?', 'my aunt is in pod 212', 'yield going down??', 'first'],
+      relay: ['lights flickering on cam 2', 'the pods are beeping', 'BLACKOUT', 'who pulled the breaker', 'is my aunt ok', 'the turbines stopped??'],
+      idle: ['is he hiding in the pods', 'boring', 'check the culvert', 'hello???', 'shift 3 is so slow'],
+    },
+    lostTitle: 'WORKPLACE INCIDENT', lostSub: 'THANK YOU FOR YOUR YIELD', winResult: 'BLACKOUT // EXTRACTED',
+    cone: [44, 2.2, -40],
+    sky: ['#0a0604', '#1e120a', '#4a2a14', '#120a06'], rain: 500, fogDensity: 0.0135,
+    dyn: ['hall_key', 'control', 'turbines', 'arc', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.

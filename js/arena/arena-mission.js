@@ -361,12 +361,14 @@ AR.Mission = (() => {
   }
   function perk(next) {
     M.phase = 'perk'; M.nextAct = next;
-    setTimeout(() => {
-      if (!M) return;
+    const open = () => {
+      if (!M || M.phase !== 'perk') return;
+      if (AR.menu) { setTimeout(open, 400); return; }        // a level-up pick is still open: one card overlay at a time
       AR.Enemies.clearEnemyProjs();
       AR.menu = true; AR.unlockPointer();
       offerPerks(next);
-    }, 1400);
+    };
+    setTimeout(open, 1400);
     AR.Hud.banner('SPONSOR BREAK', 'A BRAND WANTS TO WORK WITH YOU', 1.6);
     chatBurst('pick', 2);
   }

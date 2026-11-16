@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16 — Industrial Zone: the Yield Works
+
+- **The second district map.** GigaCorp's plant and the city's grid, low, wide and hot where Downtown is tall and cold. The pod hall (rows of Bio-Yield Pods with people in them, the Milker Gold pod with a window, the visiting bench), the rail yard under the control room on stilts, the turbine deck, the substation, and the runoff culvert whose storm drain is the log-off.
+- **Act II is Blackout:** pull three breakers (the pod hall bridge, the control room, the substation) and every screen goes to "THE PODS ARE ON BATTERY".
+- **How to play it:** 5ON in the Haven ("Drop me into the Industrial Zone"), or any city grid op in the Industrial Zone.
+- **Fix:** a sponsor break that landed while a level-up pick was open replaced it on screen and stalled the run in the break. The break now waits for the pick.
+
 ## 2026-11-16 — Downtown: the first district map
 
 - **Every district in the city grid is a map in the field.** `js/arena/arena-maps.js` holds the registry: level files, the words for every beat, spawn areas per beat, and whether a map is a faction **HQ**.
