@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "playwright-core": "^1.61.1",
-    "serve": "^14.2.4",
-    "wrangler": "4.110.0"
+    "serve": "^14.2.8",
+    "wrangler": "4.163.0"
   }
 }
