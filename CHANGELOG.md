@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-11-16 — Tech District: the Parts Pit
+
+- **The third district map.** An open salvage pit stepped down in square terraces like a mine, where everything the Muskers cut off themselves ends up. UV violet and amber; the white spires of Muskers Territory look down from the north.
+- **The rim:** the Musker Upgrade Clinic (its sermon on the big screen), ARMS BY THE POUND, the crane stairs and rinse shack, the scavengers' gate. **The terraces:** limb piles, discarded cryo pods, a spiral of haul-road stairs. **The floor:** the rinse vats around the crane's foot and the drain where you log off. **The boom:** the crane's arm across the whole pit.
+- **Act II is Factory Reset:** wipe three data siphons (the clinic, the crane boom, the rinse vats).
+- **How to play it:** 5ON in the Haven ("Drop me into the Tech District"), or any city grid op in the Tech District.
+
 ## 2026-11-16 — Industrial Zone: the Yield Works
 
 - **The second district map.** GigaCorp's plant and the city's grid, low, wide and hot where Downtown is tall and cold. The pod hall (rows of Bio-Yield Pods with people in them, the Milker Gold pod with a window, the visiting bench), the rail yard under the control room on stilts, the turbine deck, the substation, and the runoff culvert whose storm drain is the log-off.

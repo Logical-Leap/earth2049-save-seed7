@@ -132,6 +132,48 @@ AR.MAPS = {
     sky: ['#0a0604', '#1e120a', '#4a2a14', '#120a06'], rain: 500, fogDensity: 0.0135,
     dyn: ['hall_key', 'control', 'turbines', 'arc', 'logoff'],
   },
+  /* Tech District: the Parts Pit. An open salvage pit stepped down like a mine, where the Muskers' discards end up.
+   * UV violet and amber; the way down is a spiral; the white spires of Muskers Territory look on from the north. */
+  tech: {
+    id: 'tech', dist: 'tech', hq: false, owner: 'muskers', dir: 'assets/maps/tech/', file: 'tech',
+    load: 'CASTING INTO THE TECH DISTRICT…', place: 'THE PARTS PIT', region: 'TECH DISTRICT', title: 'DISTRICT OP: TECH DISTRICT',
+    act1: ['ACT I — SCRAP RUN', 'CLEAR THE PIT'], act1Obj: 'CLEAR THE PIT',
+    act2: ['ACT II — FACTORY RESET', 'WIPE THREE DATA SIPHONS'], act2Obj: 'FACTORY RESET', relayWord: 'SIPHON',
+    act3: ['ACT III — RECALL NOTICE', 'SURVIVE 75 SECONDS'], act3Obj: 'RECALL NOTICE',
+    waveSubs: ['SCAVENGERS ON THE TERRACES', 'SHOOTERS ON THE RIM', 'SOMETHING HEAVY ON THE HAUL ROAD'],
+    head: { act1: ['UPGRADE OR DIE', 'TODAY ONLY: NEW KNEES'], act2: ['DATA PRIVACY: OFF', 'YOUR DATA IS AN UPGRADE'], act3: ['RECALL NOTICE', 'ALL UNITS RETURN TO SENDER'] },
+    jumbo: { live: 'MUSKER SERMON // LIVE FROM THE CLINIC', sub: 'THE FLESH IS THE FINAL BUG', dead: ['FACTORY RESET', 'PLEASE REINSTALL YOUR BODY'], deadOn: 'relays' },
+    chatTitle: 'MUSKER SERMON // CLINIC CAM',
+    areas: {
+      summon: ['t1', 't2', 'rim_e', 'rim_w'], mod1: ['rim_s', 't1'], mod2: ['t2', 'rim_n'],
+      flood: ['rim_n', 'rim_e', 'rim_w', 't1'], extract: ['floor', 't2', 't1'], trickle: ['t2', 't1'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Tech District. The Parts Pit. Everything the Muskers cut off themselves ends up down there.'],
+        ['COMMANDER', '{OWNER} hold the pit tonight. Clear it, then wipe their data siphons. The district\'s research runs through them.'],
+        ['THE SERMON', 'BROTHER. SISTER. YOU ARE STILL MOSTLY MEAT. THE CLINIC IS OPEN. THE FIRST ARM IS FREE.'],
+      ],
+      act2: [['COMMANDER', 'Three siphons. The upgrade clinic on the north rim, the crane boom over the pit, the rinse vats on the floor. Wipe them.'],
+        ['THE SERMON', 'DATA IS NOT STOLEN. DATA IS ASCENDED.']],
+      relayDown: [['COMMANDER', 'Siphon wiped. Their research just lost a week.'], ['THE SERMON', 'A SMALL REGRESSION. WE DO NOT FEAR REGRESSION. WE PATCH IT.'],
+        ['COMMANDER', 'That\'s all three. The pit\'s blind. They\'re recalling everything they\'ve got.']],
+      act3: [['THE SERMON', 'RECALL NOTICE. ALL UNITS RETURN TO THE PIT. BRING THE MEAT.'],
+        ['COMMANDER', 'Heavies on the haul road. Use the terraces, make them climb to you.']],
+      extract: [['COMMANDER', 'Recall\'s broken. The drain by the rinse vats on the floor runs to the cell. Go down.']],
+      win: [['COMMANDER', 'You\'re out. The pit\'s quiet and the sermon\'s stuck on a loading bar. Take what you can carry next time.']],
+      death: [['THE SERMON', 'ANOTHER BODY RETURNED FOR PARTS. YOUR WARRANTY IS VOID.']],
+    },
+    chat: {
+      start: ['sermon is live', 'who is that in the pit', 'is he even upgraded', 'buying left hands', 'magnus would never', 'first'],
+      relay: ['the sermon is lagging', 'research DOWN', 'my upgrade download stopped??', 'factory reset lol', 'who touched the siphon'],
+      idle: ['he is hiding in the limbs', 'boring', 'check the vats', 'hello???', 'the crane is right there'],
+    },
+    lostTitle: 'RETURNED FOR PARTS', lostSub: 'YOUR WARRANTY IS VOID', winResult: 'FACTORY RESET // EXTRACTED',
+    cone: [38, 0, 38],
+    sky: ['#06040e', '#140c2a', '#2c1a40', '#0c0814'], rain: 300, fogDensity: 0.012,
+    dyn: ['crane', 'clinic', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.
