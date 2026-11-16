@@ -175,11 +175,10 @@
   function post(m) {
     if (!frame?.contentWindow) return;
     m.src = ME;
-    const o = location.origin && location.origin !== 'null' ? location.origin : '*';
-    try { frame.contentWindow.postMessage(m, o); } catch (e) { /* frame is gone */ }
+    try { frame.contentWindow.postMessage(m, location.origin); } catch (e) { /* frame is gone */ }   // same origin only, never '*'
   }
   function onMsg(e) {
-    if (!frame || e.source !== frame.contentWindow) return;
+    if (!frame || e.source !== frame.contentWindow || e.origin !== location.origin) return;
     const m = e.data; if (!m || typeof m !== 'object' || m.src !== PEER) return;
     const save = hooks.save(); if (!save) return;
     const I = idle(save);

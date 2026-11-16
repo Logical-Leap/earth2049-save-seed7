@@ -9378,7 +9378,7 @@ const LINK=(function(){
   function post(m){
     if(!on)return;
     m.src=SRC;
-    try{window.parent.postMessage(m,ORIGIN&&ORIGIN!=='null'?ORIGIN:'*')}catch(e){}
+    try{window.parent.postMessage(m,ORIGIN)}catch(e){}            /* same origin only, never '*' */
   }
   function summary(){
     const c=contestedDist();
@@ -9511,7 +9511,7 @@ const LINK=(function(){
   }
 
   function onMsg(e){
-    if(!on||e.source!==window.parent)return;
+    if(!on||e.source!==window.parent||e.origin!==ORIGIN)return;
     const m=e.data;if(!m||typeof m!=='object'||m.src!==PEER)return;
     if(m.type==='hello'){
       hello=true;if(typeof m.gt==='number')gt=m.gt;

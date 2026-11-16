@@ -47,7 +47,7 @@ AR.Mission = (() => {
     M.noBoss = !!M.op?.noBoss || !M.map.hq || !!M.map.noLeader;           // districts end at the log-off; HQs end with their leader (once it is in the field)
     M.L = AR.mapLines(M.map, M.owner);
     M.chat = { ...AR.CHAT, ...(M.map.chat || {}) };
-    M.freeRerolls = M.op ? Math.max(0, Math.min(2, M.op.freeRerolls | 0)) : 0;
+    M.freeRerolls = M.op ? Math.max(0, Math.min(2, Math.floor(M.op.freeRerolls || 0))) : 0;
     M.allyCall = M.op?.ally ? { ...M.op.ally, used: false } : null;
     M.heatMul = 1 + M.heat * 0.08;
     M.speedMul = 1 + M.heat * 0.04;
@@ -219,7 +219,7 @@ AR.Mission = (() => {
     M.phase = 'loadout';
     AR.Hud.letterbox(false);
     const opts = [...AR.PRIMARIES].sort(() => Math.random() - 0.5).slice(0, 3);                                       // NOSONAR
-    const floor = Math.min(2, M.op?.tierFloor | 0);                                                                  // grid requisition: up to RARE
+    const floor = Math.min(2, M.op?.tierFloor || 0);                                                                  // grid requisition: up to RARE
     const tiers = opts.map(() => Math.max(floor, Math.min(6, (Math.random() < 0.35 ? 1 : 0) + Math.floor(M.heat / 2))));  // NOSONAR
     const bar = (v, max) => `<i style="width:${Math.round(clamp(v / max, 0.05, 1) * 110)}px"></i>`;
     AR.menu = true; AR.unlockPointer();
@@ -921,10 +921,10 @@ AR.Mission = (() => {
     if (M.phase === 'act2') for (const r of M.relays) if (!r.dying) out.push({ x: r.body.pos.x, y: r.body.pos.y + 5.6, z: r.body.pos.z, label: `RELAY ${Math.ceil(Math.max(0, r.hp / r.maxHp) * 100)}%`, cls: 'warn' });
     if (M.phase === 'extract') out.push({ x: M.extraction.pos[0], y: M.extraction.pos[1] + 2, z: M.extraction.pos[2], label: 'LOG OFF', cls: 'ex' });
     // city grid intel: Truth 25 marks elites, Truth 60 also marks the relay sites before they go up
-    const intel = M.op?.intel | 0;
+    const intel = M.op?.intel || 0;
     if (intel >= 1 && ['act1', 'act2', 'act3', 'boss'].includes(M.phase)) {
-      let n = 0;
-      for (const e of AR.Enemies.list) if (e.elite && !e.dying && n++ < 4) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'ELITE', cls: 'warn' });
+      const elites = AR.Enemies.list.filter(e => e.elite && !e.dying).slice(0, 4);
+      for (const e of elites) out.push({ x: e.body.pos.x, y: e.body.pos.y + e.body.h + 0.4, z: e.body.pos.z, label: 'ELITE', cls: 'warn' });
     }
     if (intel >= 2 && (M.phase === 'act1' || M.phase === 'perk' && M.nextAct === 'act2')) {
       for (const m of AR.World.markers('relay')) out.push({ x: m.pos[0], y: m.pos[1] + 5.6, z: m.pos[2], label: 'RELAY SITE', cls: 'warn' });
