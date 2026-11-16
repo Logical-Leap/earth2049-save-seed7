@@ -1,4 +1,5 @@
 import { RoomDurableObject } from './room-durable-object.js';
+import { handleApi } from './account-api.js';
 export { RoomDurableObject };
 function cors(res) { const h = new Headers(res.headers); h.set('access-control-allow-origin','*'); h.set('access-control-allow-methods','GET,POST,OPTIONS'); h.set('access-control-allow-headers','content-type'); return new Response(res.body, { status:res.status, statusText:res.statusText, headers:h }); }
 function json(data, status = 200) { return cors(new Response(JSON.stringify(data), { status, headers:{ 'content-type':'application/json' } })); }
@@ -6,6 +7,7 @@ function roomCode() { const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let o
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === '/api' || url.pathname.startsWith('/api/')) return handleApi(request, env);   // accounts and cloud saves
     if (request.method === 'OPTIONS') return cors(new Response(null));
     if (url.pathname === '/health') return json({ ok:true, service:'earth2049-coop', durableObjects:true });
     if (url.pathname === '/rooms' && request.method === 'POST') {
