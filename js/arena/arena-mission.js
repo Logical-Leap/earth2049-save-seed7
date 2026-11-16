@@ -41,17 +41,13 @@ AR.Mission = (() => {
     save.runs = (save.runs || 0) + 1;
     /* a field op from the Haven mission board (js/field-ops.js): what the city grid lends this run */
     M.op = opts.op || null;
-<<<<<<< HEAD
-    M.freeRerolls = M.op ? Math.max(0, Math.min(2, Math.floor(M.op.freeRerolls || 0))) : 0;
-=======
     M.map = AR.MAP || AR.MAPS.plaza;
     M.owner = (M.op?.owner && AR.ROSTERS[M.op.owner]) ? M.op.owner : M.map.owner;
     M.roster = AR.ROSTERS[M.map.hq ? M.map.owner : M.owner] || {};         // a district is fought against whoever holds it today; an HQ by its own faction
     M.noBoss = !!M.op?.noBoss || !M.map.hq || !!M.map.noLeader;           // districts end at the log-off; HQs end with their leader (once it is in the field)
     M.L = AR.mapLines(M.map, M.owner);
     M.chat = { ...AR.CHAT, ...(M.map.chat || {}) };
-    M.freeRerolls = M.op ? Math.max(0, Math.min(2, M.op.freeRerolls | 0)) : 0;
->>>>>>> origin/main
+    M.freeRerolls = M.op ? Math.max(0, Math.min(2, Math.floor(M.op.freeRerolls || 0))) : 0;
     M.allyCall = M.op?.ally ? { ...M.op.ally, used: false } : null;
     M.heatMul = 1 + M.heat * 0.08;
     M.speedMul = 1 + M.heat * 0.04;
