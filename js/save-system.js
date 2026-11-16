@@ -64,6 +64,7 @@
       equippedAbilities: abilities.empGrenade?.unlocked ? ['empGrenade'] : [],
       mastery, relics: {}, simTier: 1, modifiersSeen: {}, codex: {}, corruptionUp: {},
       profile: { id: 'op-' + String(randomId()).slice(0, 77), name: 'Purple Operative', color: '#9b59ff' },
+      idle: { sum: null, at: 0, outbox: [], seq: 0 },
     };
   }
 
@@ -99,6 +100,16 @@
     const result = {};
     for (const id of knownIds) if (source[id]) result[id] = true;
     return result;
+  }
+
+  /* the city grid link (js/field-ops.js): the idle game's last summary and the field reports waiting for it */
+  const IDLE_KINDS = ['takeover', 'raid', 'leader'];
+  function normalizeIdle(raw) {
+    const source = safeObject(raw);
+    const sum = source.sum && typeof source.sum === 'object' && !Array.isArray(source.sum) && Number.isFinite(Number(source.sum.loop)) && Array.isArray(source.sum.dists) ? source.sum : null;
+    const outbox = (Array.isArray(source.outbox) ? source.outbox : [])
+      .filter(e => e && typeof e === 'object' && typeof e.id === 'string' && IDLE_KINDS.includes(e.kind)).slice(-40);
+    return { sum, at: clampNumber(source.at), outbox, seq: clampNumber(source.seq) };
   }
 
   function normalize(raw, catalogs = {}, randomId = defaultRandomId) {
@@ -139,6 +150,7 @@
     save.mastery = {};
     for (const id of data.weaponIds) save.mastery[id] = masteryRecord(sourceMastery[id]);
     save.profile = normalizeProfile(source.profile, defaults.profile);
+    save.idle = normalizeIdle(source.idle);
     return save;
   }
 

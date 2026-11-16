@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-11-16 — The City Grid: the idle game inside Rebel Haven
+
+- **Open it from Purple Team Ops.** Talk to the Commander, or any holo leader at the holotable: **Open the city grid** plays the idle game full screen; **Mission board** lists what you can deploy to.
+  - The idle game is synced from its own repo into `idle/` (`node scripts/sync-idle.js ../earth2049-idle-real`) and keeps its own save slot.
+  - BACK TO HAVEN (or the controller's View button) closes it. In VR it shows a note to lift the headset.
+- **The grid helps the field** (options, never raw power):
+  - Starting gun at least Uncommon from 10 Memory Shards, Rare from 60. Rare is the cap.
+  - Free sponsor rerolls equal to loops completed, at most 2.
+  - One ally call-in drone per mission from a sovereign ally that holds or borders the target.
+  - Truth 25 marks elites; Truth 60 also marks relay sites. Suspicion 40/75 adds +1/+2 heat.
+- **The field helps the grid** (milestones, applied when the grid next opens):
+  - A won takeover captures the district at 25% off, once per district per loop. Auto-resolve rolls 85% for 20% off.
+  - A defended raid keeps the district with no bill and no Morale loss.
+  - A leader fight makes that faction hostile, win or lose. A first win opens its FIELD tech node and Codex report forever.
+  - Style on this loop's ops is a new overthrow input, worth at most 0.06.
+- **District ops** run Operation: Unsubscribe through Act III and end at the log-off; leader fights run the full mission. Only Riya is in the field so far.
+- **GigaTech** is one currency. The grid can spend it on jamming a raid or scrubbing records; it never becomes shards or production.
+- **Balance:** measured with the idle play bot, full field play makes loops 14–19% faster (cap 25%). The most support the grid can lend is worth less than one heat level. Numbers in `docs/IDLE-LINK.md`.
+
 ## 2026-11-16 — Every enemy type has its own model
 
 - New enemy models from game-art-pipeline `3ea944f`. The three types that used to borrow another unit's body now

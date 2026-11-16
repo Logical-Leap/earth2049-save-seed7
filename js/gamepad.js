@@ -113,6 +113,8 @@ const Pad = (() => {
     menuLock = Math.max(0, menuLock - dt);
     if (!L) { if (layerKey) { clearFocus(); layerKey = ''; } return false; }
     if (!S.active) return true;
+    /* the city grid is its own game with its own gamepad support: only BACK (View) leaves it */
+    if (L.key === 'ovGrid') { if (down(BTN.BACK)) L.root.querySelector('#gridClose')?.click(); return true; }
     const list = items(L);
     if (L.key !== layerKey || (focus && !list.includes(focus))) {
       layerKey = L.key; clearFocus();

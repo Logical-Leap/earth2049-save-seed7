@@ -905,7 +905,7 @@ const Haven = (() => {
     box.querySelector('.who').style.color = def.hologram || '#ffe600';
     box.querySelector('.role').textContent = def.title || '';
     const opts = def.intel
-      ? [{ t: 'Open the full briefing.', action: 'briefing' }, { t: 'Close.' }]
+      ? [{ t: 'Open the city grid.', action: 'grid' }, { t: 'Mission board.', action: 'board' }, { t: 'Open the full briefing.', action: 'briefing' }, { t: 'Close.' }]
       : (def.options || [{ t: 'Bye.' }]);
     say(def.intel || def.greet, opts);
     box.classList.add('show');

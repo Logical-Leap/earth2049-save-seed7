@@ -1442,16 +1442,42 @@ async function startArena(opts = {}) {
   setState('arena');
   paused = false;
   G = null;
-  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, onExit: () => {
+  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, op: opts.op || null, onExit: () => {
     if (World.group) World.group.visible = true;
     setState('loading');
     newRun({ hub:true });
   } });
 }
 
+/* THE CITY GRID — the idle game, opened from Purple Team Ops (the Commander, or a holo leader at the holotable).
+ * js/field-ops.js owns the link; this just pauses the hub around it and turns a board pick into an arena run. */
+const IDLE_SRC = 'idle/index.html?host=ss7&v=20261116-field';
+let fieldOpsReady = false;
+function ensureFieldOps() {
+  if (fieldOpsReady || !window.FieldOps) return !!window.FieldOps;
+  fieldOpsReady = true;
+  FieldOps.init({
+    save: () => SAVE, persist, sfx: () => AudioSys.sfx('ui'), banner,
+    openGrid: () => openCityGrid(),
+    onClose: () => { hubOverlayOpen = false; paused = false; hideOverlays(); banner('PURPLE TEAM OPS', 'BACK IN REBEL HAVEN'); },
+    onDeploy: op => {
+      hubOverlayOpen = false; paused = false; hideOverlays();
+      const heat = Math.max(0, Math.min(10, (SAVE.arena?.heat ?? 0) + (op.heatAdd | 0)));
+      Music.stinger('deploy');
+      startArena({ heat, op });
+    },
+  });
+  return true;
+}
+function hubPause() { hubOverlayOpen = true; paused = true; document.exitPointerLock?.(); hideOverlays(); }
+function openCityGrid() { if (!ensureFieldOps()) return; hubPause(); FieldOps.openGrid(IDLE_SRC); }
+function openMissionBoard() { if (!ensureFieldOps()) return; hubPause(); FieldOps.openBoard(); }
+
 function havenAction(action, npc) {
   if (!G?.hub) return;
   if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
+  if (action === 'grid') { openCityGrid(); return; }
+  if (action === 'board') { openMissionBoard(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }
   if (action === 'wardrobe') { openWardrobe(); return; }
   if (action === 'snack') { G.p.hp = Math.min(G.p.maxHp, G.p.hp + 15); AudioSys.sfx('pickup'); banner('BUG NOODLES', 'NOURISHED? CLOSE ENOUGH. +15 HP'); return; }
