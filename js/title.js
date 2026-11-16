@@ -46,6 +46,7 @@
     btnJoinCoop: 'Patch into a squadmate’s room with a code.',
     btnArmory: 'Spend banked GigaTech on permanent upgrades.',
     btnHelp: 'Controls, the situation, and what we know about the factions.',
+    btnCloud: 'Sign in to keep your saves safe and play on any device.',
     btnLook: 'Switch the picture: PS1 crunch or modern.',
   };
 
@@ -175,7 +176,7 @@
     const st = document.createElement('style'); st.id = 'titleCss'; st.textContent = CSS; document.head.appendChild(st);
     const btn = id => { const b = document.getElementById(id); return b; };
     const gt = btn('titleGT'), best = btn('titleBest');
-    const groups = [['PLAY', ['btnHub', 'btnStart', 'btnVR']], ['SQUAD', ['btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnLook']]];
+    const groups = [['PLAY', ['btnHub', 'btnStart', 'btnVR']], ['SQUAD', ['btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnCloud', 'btnLook']]];
     const keep = {}; for (const [, ids] of groups) for (const id of ids) keep[id] = btn(id);
     root.innerHTML = '';
     root.dataset.phase = 'boot';

@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-16 — Accounts and cloud saves
+
+- **One Earth 2049 account for every save.** Save Seed 7, the city grid inside it and the standalone idle game each sync their own slot to the same account, on any device.
+- **Where:** the title menu's **Cloud Save**, the Armory's Save tab, and the idle game's Save tab.
+- **How it syncs:** the game still saves on the device first. Signed in, it uploads changes every 3 minutes and when the page is hidden, takes a newer cloud save at a menu, and asks which save to keep when two devices both moved on. The last 10 versions are kept.
+- **Your data:** download everything, sign out, or delete the account and every cloud save from the same screen.
+- **Server:** `/api` on the co-op Worker with a new D1 database, `earth2049-accounts`. Details in `docs/ACCOUNTS.md`.
+- **Not on yet:** email sign-in waits for a game domain to send codes from; until then the screen says cloud saves are coming soon. Steam sign-in waits for the Steamworks key.
+
 ## 2026-11-16 — Runner redesign, model cache busting
 
 - The Musker Runner is now a shirtless cyborg psycho (game-art-pipeline `1e2dd4b`). He has bare, scarred skin with

@@ -6,3 +6,4 @@ dist-pages/
 *.7z
 *.rar
 artifacts/
+.wrangler/

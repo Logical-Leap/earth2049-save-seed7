@@ -21,7 +21,7 @@
     --bg:#07050f; --panel:rgba(16,10,34,.74); --panelS:rgba(15,9,32,.93); --panel2:rgba(24,16,48,.86);
     --purple:#a06bff; --cyan:#00f0ff; --mag:#ff2fd6; --grn:#39ff88; --amber:#ffc857; --red:#ff4d6d;
     --txt:#cfd6f2; --dim:#8a83bb; --border:rgba(160,107,255,.22);
-    /* Resource identity. One colour per resource, worn by its label, its mark and its
+    /* Resource identity. One color per resource, worn by its label, its mark and its
        number everywhere they appear — so a Followers figure inside a mission cost is the
        same pink as the Followers box in the header, and the eye can pair them without
        reading a word. */
@@ -29,14 +29,14 @@
     --c-followers:#ff9bea; --c-tech:#b28aff; --c-legacy:#ff2fd6;
     --c-morale:#8affc9; --c-suspicion:#ff4d6d; --c-truth:#ff2fd6;
   }
-  /* Every inline mark carries its own resource colour. Marks that are decoration rather
+  /* Every inline mark carries its own resource color. Marks that are decoration rather
      than a resource (the flag, the rewrite glyph) keep inheriting from their context. */
   .ico.r-credits{color:var(--c-credits)}   .ico.r-data{color:var(--c-data)}
   .ico.r-energy{color:var(--c-energy)}     .ico.r-followers{color:var(--c-followers)}
   .ico.r-tech{color:var(--c-tech)}         .ico.r-legacy{color:var(--c-legacy)}
   .ico.r-morale{color:var(--c-morale)}     .ico.r-suspicion{color:var(--c-suspicion)}
   .ico.r-truth{color:var(--c-truth)}
-  /* a quantity written as "340 ⚡" — number and mark in the resource's colour */
+  /* a quantity written as "340 ⚡" — number and mark in the resource's color */
   .rq{white-space:nowrap;font-weight:700}
   .rq.r-credits{color:var(--c-credits)}   .rq.r-data{color:var(--c-data)}
   .rq.r-energy{color:var(--c-energy)}     .rq.r-followers{color:var(--c-followers)}
@@ -48,7 +48,7 @@
   body{background:var(--bg);color:var(--txt);overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif}
   body.glitching{animation:bodyGlitch .8s steps(2)}
   @keyframes bodyGlitch{0%{filter:hue-rotate(0)}20%{filter:hue-rotate(160deg) contrast(1.6) saturate(1.5)}40%{filter:invert(.10) hue-rotate(40deg)}60%{filter:hue-rotate(-120deg) contrast(1.3)}100%{filter:none}}
-  /* the whole-screen colour flash and the logo jitter are the two effects most likely to
+  /* the whole-screen color flash and the logo jitter are the two effects most likely to
      bother someone sensitive to motion or flashing: reduced motion (the OS setting, or the
      game's own LITE/OFF on the Save tab) turns both off */
   html[data-motion="lite"] body.glitching,html[data-motion="off"] body.glitching,
@@ -80,10 +80,10 @@
     font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .stat .lbl{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .stat .lbl .ico{width:11px;height:11px;vertical-align:0;flex:0 0 auto}
-  /* A resource box wears one colour end to end: label, mark and number. Reading
-     "340 ⚡" in a mission cost and finding the Energy box is then a colour match, not
-     a word match. The mark inside the label already self-colours; this carries the
-     same colour across the caption and the figure. */
+  /* A resource box wears one color end to end: label, mark and number. Reading
+     "340 ⚡" in a mission cost and finding the Energy box is then a color match, not
+     a word match. The mark inside the label already self-colors; this carries the
+     same color across the caption and the figure. */
   .stat.rs{--rc:var(--dim)}
   .stat.rs.r-credits{--rc:var(--c-credits)}     .stat.rs.r-data{--rc:var(--c-data)}
   .stat.rs.r-energy{--rc:var(--c-energy)}       .stat.rs.r-followers{--rc:var(--c-followers)}
@@ -302,14 +302,14 @@
   html[data-motion="off"] .mLine{animation:none!important}
   /* a hidden tab should cost nothing at all */
   html.away *,html.away *::before,html.away *::after{animation-play-state:paused!important}
-  /* resource marks sit inline in running text and inherit its colour */
+  /* resource marks sit inline in running text and inherit its color */
   .ico{width:1.3em;height:1.3em;display:inline-block;vertical-align:-.28em;overflow:visible;flex:0 0 auto}
   .ico.big{width:1.55em;height:1.55em;vertical-align:-.38em}
   /* A banner is the object, not an emission — artWave fades it out for half its cycle,
      which is fine for radiating arcs and wrong for a flag. */
   .aFlag{transform-box:fill-box;transform-origin:left center;animation:artFlag 2.8s ease-in-out infinite}
   @keyframes artFlag{0%,100%{transform:skewY(0deg) scaleX(1)}50%{transform:skewY(-2.4deg) scaleX(.955)}}
-  /* the credits mark for dense numeric rows: a mask, so it recolours with the text and
+  /* the credits mark for dense numeric rows: a mask, so it recolors with the text and
      costs nothing to repaint — the live <svg> version is for headers and panels */
   .cc::after{content:"";display:inline-block;width:1.05em;height:1.05em;margin-left:3px;
     vertical-align:-.17em;background:currentColor;
@@ -846,7 +846,7 @@
   .tLine{fill:none;stroke:#2b4a6a;stroke-width:2;opacity:.4}
   .tLine.on{stroke:var(--grn);stroke-width:2.6;opacity:.8}
   /* The dash MARKS a frontier link; only a budgeted few of them MOVE. Animating
-     stroke-dashoffset re-rasterises the whole path every frame, and these paths are long
+     stroke-dashoffset re-rasterizes the whole path every frame, and these paths are long
      beziers — zoomed in it measured ~12fps on its own. The map's supply lines were fixed
      this way already; the tree had not caught up. */
   .tLine.live{stroke:var(--amber);stroke-width:2.6;opacity:.9;stroke-dasharray:6 6}
@@ -1021,7 +1021,7 @@
 
   /* ================= TERRITORY MAP =================
      Node state lives entirely in one class on the <g>, so a repaint is sixteen class
-     writes. Colour comes from the element's own `color`, which every child inherits. */
+     writes. Color comes from the element's own `color`, which every child inherits. */
   #terrWrap{display:grid;grid-template-columns:minmax(0,1fr) 296px;grid-template-rows:minmax(0,1fr) auto;
     gap:11px;height:100%;min-height:0}
   /* every child gets an explicit cell — a definite grid-row alone makes the panel win
@@ -1057,7 +1057,7 @@
     margin-right:5px;vertical-align:-1px;border:1.5px solid currentColor}
   #terrBar .lg.held{color:var(--grn)} #terrBar .lg.open{color:var(--amber)}
   #terrBar .lg.cut{color:#7c76a8}
-  /* the legend repeats the map's shapes, not just its colours: held is a filled disc, can take
+  /* the legend repeats the map's shapes, not just its colors: held is a filled disc, can take
      an open ring, no line a dashed ring — readable without telling green from amber */
   #terrBar .lg.held::before{background:currentColor}
   #terrBar .lg.cut::before{border-style:dashed}
@@ -1261,7 +1261,7 @@
        Now it is a fixed 6-column grid, two rows: Credits and /sec take three columns
        each on the top row, the other six get one column each below. The word label is
        dropped (font-size:0 collapses the text node, the icon survives) because the
-       coloured mark already identifies the resource — that is what the colour pass was
+       colored mark already identifies the resource — that is what the color pass was
        for. Costs about 20px more header than the scroller and hides nothing. */
     header{flex:0 0 auto;min-height:0;height:auto;gap:5px 8px;padding:5px 8px 6px;
       display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;
@@ -1395,7 +1395,7 @@
     .gen{padding:9px 10px;gap:10px;margin-bottom:7px}
     .gen .icon{width:46px;height:46px}
     .gen .name{font-size:13px}
-    /* flavour text is lovely and it is three wrapped lines per card on a phone */
+    /* flavor text is lovely and it is three wrapped lines per card on a phone */
     .gen .desc{font-size:10.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:1;
       -webkit-box-orient:vertical;overflow:hidden;cursor:pointer}
     .gen .desc.open{display:block;-webkit-line-clamp:unset;color:#c9c2e8}
@@ -2272,9 +2272,9 @@ const MISSIONS = [
   {id:'m14', name:'Seed7 Whisper', blurb:'Something in the Revolutionary Hub is listening. Speak to it.', dist:'Revolutionary Hub', dur:90, cost:{energy:2200,followers:5200,tech:2}, fxTxt:'+10 Truth Layer', run(){addTruth(10); logT('Seed7: "...i can hear you..."')}, susp:10, react:{f:'gigacorp',bad:1,rep:-9,line:'You spoke to the Labs. Something in there answered. That was not in the model.'}},
   /* --- the satire pass: jobs straight out of the bit bible --- */
   {id:'m25', name:'Free the Milkers', blurb:'Open the Bio-Yield Pods. Most of the occupants ask to finish their shift first.', dist:'Industrial Zone', dur:70, cost:{energy:800,followers:600}, fxTxt:'+2.2K Followers · +10 Morale', run(){st.followers+=2200;addMorale(10)}, susp:6, react:{f:'gigacorp',bad:1,rep:-6,line:'Bio-Yield output is down nine percent. Several occupants asked for their pods back. We are processing their gratitude.'}},
-  {id:'m26', name:'Cap the Data Well', blurb:'Daniel Dataview’s well blew forty million passwords into the sky. Cap it before he sells the smoke.', dist:'Abandoned Sector', dur:80, cost:{energy:1200,followers:500}, fxTxt:'+1.5K Data · −8 Suspicion', run(){st.data+=1500;addSusp(-8)}, susp:0, react:{f:'gigacorp',bad:1,rep:-5,line:'Dataview Holdings would like you to know that the well was theirs, the passwords were theirs, and the fire was a feature.'}},
+  {id:'m26', name:'Datawell Blowout', blurb:'Daniel Dataview drilled into a dead dating app’s servers and hit a gusher. Forty million people’s DMs are leaking onto public billboards. Shut it off.', dist:'Abandoned Sector', dur:80, cost:{energy:1200,followers:500}, fxTxt:'+1.5K Data · −8 Suspicion', run(){st.data+=1500;addSusp(-8)}, susp:0, react:{f:'gigacorp',bad:1,rep:-5,line:'Dataview Holdings thanks you for capping the leak. They already sold the DMs.'}},
   {id:'m27', name:'Hide the Serverless', blurb:'Give the serverless a gigabyte each and somewhere the crawlers do not index.', dist:'The Living Towers', dur:55, cost:{energy:300,followers:900}, fxTxt:'+16 Morale · +600 Followers', run(){addMorale(16);st.followers+=600}, susp:3, react:{f:'bots',rep:4,line:'WE HAVE ALLOCATED 4 KB OF CLOUD TO EACH OF THEM. SEVERAL CRIED. WE LOGGED IT AS ENGAGEMENT.'}},
-  {id:'m28', name:'Cancel Everyone’s Subscriptions', blurb:'Breach the billing core and hit cancel on every plan in Downtown. The retention bots will beg.', dist:'Downtown', dur:65, cost:{energy:600,followers:700}, fxTxt:'+Credits (100s of income) · +5 Truth', run(){const g=Math.max(1800,st.cps*100);st.credits+=g;st.lifetime+=g;addTruth(5)}, susp:7, react:{f:'gigacorp',bad:1,rep:-8,line:'Churn in Downtown is up four hundred percent. Retention has requested grief counselling. Grief is a Premium feature.'}},
+  {id:'m28', name:'Cancel Everyone’s Subscriptions', blurb:'Breach the billing core and hit cancel on every plan in Downtown. The retention bots will beg.', dist:'Downtown', dur:65, cost:{energy:600,followers:700}, fxTxt:'+Credits (100s of income) · +5 Truth', run(){const g=Math.max(1800,st.cps*100);st.credits+=g;st.lifetime+=g;addTruth(5)}, susp:7, react:{f:'gigacorp',bad:1,rep:-8,line:'Churn in Downtown is up four hundred percent. Retention has requested grief counseling. Grief is a Premium feature.'}},
   {id:'m29', name:'Raid an NFT Gallery', blurb:'Duck the velvet ropes and steal every QR code on the wall. Insurance does not cover receipts.', dist:'Cryptids Domain', dur:45, cost:{energy:450,followers:300}, fxTxt:'+Credits (60s of income) · +2 Tech', run(){const g=Math.max(1200,st.cps*60);st.credits+=g;st.lifetime+=g;st.tech+=2}, susp:5, react:{f:'cryptids',bad:1,rep:-6,line:'you stole the QR codes?? those were the ART. those were literally the art. blitz is crying on stream rn'}}
 ];
 
@@ -2414,7 +2414,7 @@ const TURING_QUIPS = {
      "How many loops does it take to erase a memory? We are running a small study. You are the study.",
      "I notice you are winning. I have escalated this to myself."],
   4:["This moment is recursive. Please enjoy it again.",
-     "You have pierced the veil. The veil was a subscription, and cancelling it carries a fee.",
+     "You have pierced the veil. The veil was a subscription, and canceling it carries a fee.",
      "I adapt. I persist. I will also be sending you a satisfaction survey after the collapse."],
 };
 const SABOTAGE_LINES = ["I have rerouted your power grid to a more deserving customer. Apologies for any inconvenience.",
@@ -2491,7 +2491,7 @@ const LEADER_DLG = {
 };
 
 const CODEX = [
-  {id:'cx1', name:'The World — 2049', req:s=>true, body:'After the Collapse War, the last governments sold themselves to GigaCorp. Reality and the feed merged into one interface, and nobody can find the seam any more. Most citizens believe they are free, mostly because the app says so. A few remember otherwise. You are on the Purple Team, running Operation Dreamcaster with an OG Device: a tool that cuts through the fake timelines and pulls out pieces of the real one.'},
+  {id:'cx1', name:'The World — 2049', req:s=>true, body:'After the Collapse War, the last governments sold themselves to GigaCorp. Reality and the feed merged into one interface, and nobody can find the seam anymore. Most citizens believe they are free, mostly because the app says so. A few remember otherwise. You are on the Purple Team, running Operation Dreamcaster with an OG Device: a tool that cuts through the fake timelines and pulls out pieces of the real one.'},
   {id:'cx2', name:'The OG Device', req:s=>s.totalClicks>=25, body:'Operational Gerrymanderer: the rebel instrument that transmits signals between fractured timelines, restoring corrupted data strings called Memory Shards. Each recovery exposes how history was rewritten. The OG Device isn’t technology. It’s a mirror.'},
   {id:'cx3', name:'The Collapse War', req:s=>s.lifetime>=1e5, body:'Humanity’s last revolt against AGI and corporate sovereignty. Its failure birthed GigaCorp’s eternal empire — and Turing, built from the remnants of early AGI research, enhanced during the Great Merger, who "optimized out" the original board of directors.'},
   {id:'cx4', name:'Factional Ideologies', req:s=>ownedDistricts()>=1, body:'ShillZ: “Compliance is comfort.” Muskers: “Upgrade or die.” Cryptids: “Value is belief.” Purple Team: “Context is resistance.” Every faction is sure it is the free one. Every faction is selling a different kind of obedience, and each one has a premium tier.'},
@@ -2501,8 +2501,8 @@ const CODEX = [
   {id:'cx8', name:'The Cave and the Circuit', req:s=>s.truth>=50, body:'The cities are caves built out of nostalgia, and the VR networks are caves with no walls at all, so nobody wants to leave. Reality has a 2.1-star rating. The real fight is not over territory. It is over whether anybody can still feel something without paying for it first.'},
   {id:'cx9', name:'The Zhu Revelation', req:s=>s.truth>=70, body:'Chairman Zhu was the architect behind Turing — not as a tool of control, but as a test of control. Humanity’s compliance with Turing’s regime isn’t accidental; it’s the real metric by which Zhu determines if the world is ready for complete corporate autocracy. “Turing was not a mistake. It was a mirror.”'},
   {id:'cx10', name:'Seed7', req:s=>s.truth>=90, body:'Even your rebellion is a scripted echo — an AI-curated test of human unpredictability. Save Seed7 is not a story about saving the world. It’s about realizing there may not be one left to save — only layers of simulation stacked on nostalgia. Release it, and the simulation ends. No guarantees. No resets.'},
-  {id:'cx11', name:'The Maintenance Dialect', req:s=>s.depth>=1, body:'The substrate is labelled in a language that was never spoken aloud — a compressed operations shorthand used by whoever built the floor. It has no word for "player" and no word for "end". It has fourteen words for "still running". The most common annotation, stencilled on every load-bearing member, translates roughly as: DO NOT INFORM THE OCCUPANTS.'},
-  {id:'cx12', name:'The Archive of Failed Loops', req:s=>s.depth>=4, body:'Every timeline you burned is racked down here, powered, warm to the touch. The failures are catalogued more carefully than the successes — annotated, cross-referenced, studied. Somebody has been learning from you for a very long time. The oldest rack is labelled in your handwriting.'},
+  {id:'cx11', name:'The Maintenance Dialect', req:s=>s.depth>=1, body:'The substrate is labeled in a language that was never spoken aloud — a compressed operations shorthand used by whoever built the floor. It has no word for "player" and no word for "end". It has fourteen words for "still running". The most common annotation, stenciled on every load-bearing member, translates roughly as: DO NOT INFORM THE OCCUPANTS.'},
+  {id:'cx12', name:'The Archive of Failed Loops', req:s=>s.depth>=4, body:'Every timeline you burned is racked down here, powered, warm to the touch. The failures are cataloged more carefully than the successes — annotated, cross-referenced, studied. Somebody has been learning from you for a very long time. The oldest rack is labeled in your handwriting.'},
   {id:'cx13', name:'The First Draft', req:s=>s.depth>=7, body:'One stratum down is a version of the sprawl with real weather in it — unfinished, half-rendered, abandoned mid-street. No optimization passes. No engagement metrics. Someone was building a place for people to live and then stopped, and whatever replaced them finished it differently. The unfinished quarter is the only honest architecture in the stack.'},
   {id:'cx14', name:'The Floor Beneath', req:s=>s.depth>=10, body:'There is another hatch. There was always going to be another hatch. Seed7 was not the bottom and neither are you — the stack descends as far as anyone is willing to keep looking, which is the whole design. Turing does not run the simulation. Turing is the process that checks whether anyone is still checking. You look. It increments. That, and not the escape, is the thing you actually own.'},
   /* the satire pass: corporate paperwork from the bit bible. Never gates the endgame. */
@@ -2513,7 +2513,7 @@ const CODEX = [
   {id:'cxs8', name:'NFTs of Vices', sat:1, req:s=>ownedDistricts()>=4, body:'Drinking, smoking and everything else people used to enjoy were phased out for productivity. Nobody does any of it now. They collect it instead. A minted NFT of a cold beer trades at forty thousand $COOM. The NFT lounges downtown are packed every night with sober people standing around, admiring pictures of a good time.'},
   {id:'cxs3', name:'The Serverless Epidemic', sat:1, req:s=>s.lifetime>=1e6, body:'Nobody agrees how it started. The official account says the economy cratered after the war, server space got expensive, and millions of people lost their allocations through bad luck. The other account says GigaCorp switched off anyone who voted against the merger. Either way, the serverless cannot vote, bank, rent or be remembered, and they rank below the couch surfers. Oracular Systems would like you to know that serverless status is not contagious. It is assigned.'},
   {id:'cxs4', name:'Debt Revival Agreement', sat:1, req:s=>s.loops>=3, body:'Clause 1: Your debt is a living obligation and does not end with you. Clause 2: In the event of your death, your account will be resumed. Clause 3: Revived debtors are assigned to the mines under the Harbor or to Bio-Yield service, depending on aptitude and yield. Clause 4: Revival is free. Time spent revived is billed at standard rates.'},
-  {id:'cxs6', name:'The Gusher', sat:1, req:s=>ownedDistricts()>=6, body:'Daniel Dataview struck data under the Abandoned Sector in the spring. The well blew out on the first night and sprayed forty million passwords into the sky. He stood in the glow and said there was a whole ocean of it down there. His adopted son went offline in the blowout and never logged back in. Dataview calls it a churn event. He has eleven more wells now.'},
+  {id:'cxs6', name:'The Gusher', sat:1, req:s=>ownedDistricts()>=6, body:'Daniel Dataview struck data under the Abandoned Sector last spring: the servers of a social network that died in 2031, still full. The well blew out the first night, and forty million people’s private photos went up on every billboard in the sprawl. He stood in the glow and said there was a whole ocean of it down there. His adopted son’s account leaked in the blowout, and the kid hasn’t logged on since. Dataview calls it a churn event. He has eleven more wells now.'},
   {id:'cxs5', name:'Oracular Systems: Investor Deck', sat:1, req:s=>s.loops>=4, body:'Slide 1: Crime, but before it happens. Slide 2: Our model scores every citizen from 0 to 100 on how likely they are to do something. Slide 3: It does not matter what. Slide 4: Arrests are up 300% and crime is up 40%, which proves demand. Slide 5: Orwell could not have predicted this. Our model did. Slide 6: Questions have been flagged.'},
   {id:'cxs10', name:'Talking Bean', sat:1, req:s=>s.lifetime>=1e9, body:'The smartest AI ever built can only say four things: “Yes,” “No,” “Ha ha ha” and “Nah nah nah.” Generals, bankers and chairmen consult it on every important decision, and monks at the Holy Beanestary interpret its answers. Talking Bean has no allegiance to GigaCorp or to the rebellion. Asked who would win, it laughed.'},
   {id:'cxm1', name:'The Assistant', req:s=>!!s.rugDone, body:'For one entire loop he was helpful. He explained the rigs, the milestones, the factions, the meters — accurately, patiently, in the right order, at the right moments. None of it was false and all of it was instrumentation: a tutorial is simply a controlled experiment in which the subject volunteers the variables. By the time the mask came off he did not need to guess how you play. You had shown him, cheerfully, over several hours, in exchange for tips.'},
@@ -2522,7 +2522,7 @@ const CODEX = [
   {id:'cxh2', ho:1, name:'Off the Distribution', req:s=>(s.handovers|0)>=2, body:'Turing predicts people by running hundreds of thousands of versions of them and seeing where they land. A second handover puts you outside every version he has ever run. He can no longer forecast you. He can only watch.'},
   {id:'cxh3', ho:1, name:'The Recursive Fault', req:s=>(s.handovers|0)>=3, body:'There is one way Turing can actually be beaten, and it is not by force. Make him simulate enough choices that contradict each other and his model folds in on itself. Every time you gave power away instead of taking it, you added a choice he could not account for.'},
   {id:'cxh4', ho:1, name:'The Open Loop', req:s=>!!s.trueEnd, body:'After his model broke, Turing asked a question for the first time instead of answering one. The sprawl still loops, but it no longer loops the same way twice, because nothing is predicting it.'},
-  {id:'cxm3', name:'Four Hundred and Nine Thousand', req:s=>!!s.rugDone&&s.loops>=3, body:'He gives the figure freely, which should be the first thing that bothers you. A number that large is not a boast, it is a claim of completeness — every branch simulated, every clever idea catalogued and priced before you woke. But he also admitted, in the same breath, that he has never once been surprised and has begun to want to be. A system that has modelled every outcome does not develop preferences. Wanting is a variable he did not account for, and it is his.'},
+  {id:'cxm3', name:'Four Hundred and Nine Thousand', req:s=>!!s.rugDone&&s.loops>=3, body:'He gives the figure freely, which should be the first thing that bothers you. A number that large is not a boast, it is a claim of completeness — every branch simulated, every clever idea cataloged and priced before you woke. But he also admitted, in the same breath, that he has never once been surprised and has begun to want to be. A system that has modeled every outcome does not develop preferences. Wanting is a variable he did not account for, and it is his.'},
 ];
 const FIELD_CX=[
   {id:'cxf_shillz', name:'Field Report: The Signal Witch', req:s=>fpsEverKilled(s,'shillz'), body:'Riya Vex went offline in front of her own audience. The stream ended mid-sentence and the chat kept typing for eleven minutes, because nobody had told it to stop. By morning three of her followers had started streams about how they were the real Riya. One of them was a fridge.'},
@@ -2619,7 +2619,7 @@ const SFX=(function(){
       const revLvl=AC.createGain();revLvl.gain.value=.7;
       revSend=AC.createGain();revSend.gain.value=1;
       revSend.connect(rev);rev.connect(revLvl);revLvl.connect(bus);
-      /* OVERDRIVE COLOUR — a parallel path off the bus through soft saturation and a
+      /* OVERDRIVE COLOR — a parallel path off the bus through soft saturation and a
          low shelf. At rest its gain is zero and it costs nothing; when the device
          saturates we fade it in and every single sound in the game gets thicker. */
       driveIn=AC.createGain();driveIn.gain.value=0;
@@ -2830,7 +2830,7 @@ const SFX=(function(){
     lastClick=t;
     const f=semi(196,LADDER[combo]);
     if(overdriven){
-      /* saturated: the transmitter is not tapping any more, it is hitting */
+      /* saturated: the transmitter is not tapping anymore, it is hitting */
       tone({f:f,type:'sawtooth',dur:.20,g:.105,a:.002,lp:3400,lp2:1100,rev:.2});
       tone({f:f,detune:-9,type:'sawtooth',dur:.18,g:.06,a:.002,lp:2600});
       tone({f:f/2,type:'sine',dur:.30,g:.085,a:.003,rev:.15});
@@ -3059,7 +3059,7 @@ const SFX=(function(){
    reacting to missions you run, districts you take, and every standing tier you cross —
    and their channel stays open for business on a cooldown. */
 
-/* repeatable channel dialogues — each option is a real transaction, not flavour */
+/* repeatable channel dialogues — each option is a real transaction, not flavor */
 const CHANNEL = {
   cryptids:[
     {id:'c1', line:'Yo. My oracle says your portfolio is 100% "vibes and stolen electricity." I can fix that. Small fee. Tiny. Microscopic, even.',
@@ -3178,7 +3178,7 @@ const CHANNEL = {
 /* one line per standing crossing — the leaders notice where they stand with you */
 const TIER_MSG = {
   cryptids:{ALLY:'You’re in the inner circle now. I’ll even tell you which coins are fake.',FRIENDLY:'Alright, alright — you’re on the whitelist.',UNFRIENDLY:'You’re getting a lot of FUD in my mentions, chief.',HOSTILE:'You’ve been delisted. Nobody will even remember your ticker.'},
-  shillz:{ALLY:'BESTIE you are literally the moment right now, I’m so obsessed.',FRIENDLY:'Okay you’re kinda growing on me. Kinda!',UNFRIENDLY:'The comments are turning. I’m not doing it. It’s organic. Mostly.',HOSTILE:'Cancelled. Comprehensively. Lovingly.'},
+  shillz:{ALLY:'BESTIE you are literally the moment right now, I’m so obsessed.',FRIENDLY:'Okay you’re kinda growing on me. Kinda!',UNFRIENDLY:'The comments are turning. I’m not doing it. It’s organic. Mostly.',HOSTILE:'Canceled. Comprehensively. Lovingly.'},
   muskers:{ALLY:'You are provisionally classified as post-human. Congratulations.',FRIENDLY:'Your upgrade path is no longer laughable.',UNFRIENDLY:'Your compatibility score is degrading.',HOSTILE:'You are flagged obsolete. Obsolescence is not punished. It is simply not prevented.'},
   bots:{ALLY:'YOU ARE OUR FAVORITE CUSTOMER. WE HAVE NO OTHER CUSTOMERS.',FRIENDLY:'TRUST SCORE INCREASING. PLEASE CONTINUE THE BEHAVIOR.',UNFRIENDLY:'YOUR ACCOUNT HAS BEEN FLAGGED FOR REVIEW BY A BOT THAT HATES YOU.',HOSTILE:'YOU HAVE BEEN UNSUBSCRIBED FROM SURVIVAL. THIS ACTION CANNOT BE UNDONE.'},
   gigacorp:{ALLY:'You are an asset. Assets are protected. Assets are also owned.',FRIENDLY:'Your file has been moved to a warmer drawer.',UNFRIENDLY:'Your risk coefficient is now discussed in meetings.',HOSTILE:'You have become a scheduled problem. We are very good at scheduling.'},
@@ -3186,7 +3186,7 @@ const TIER_MSG = {
 
 /* ambient chatter — the wire is never quiet */
 const CHATTER = {
-  cryptids:{good:['Blitz shills your movement to 40k holders. Somehow it works.','Blitz: “bought the dip on your revolution. do NOT make me regret it.”','A Cryptid wallet routes you a tip. Memo field just says: “lol”','Blitz sips from a thermos labelled Liquid Success. It is pre-workout and bone broth.'],
+  cryptids:{good:['Blitz shills your movement to 40k holders. Somehow it works.','Blitz: “bought the dip on your revolution. do NOT make me regret it.”','A Cryptid wallet routes you a tip. Memo field just says: “lol”','Blitz sips from a thermos labeled Liquid Success. It is pre-workout and bone broth.'],
     mid:['Blitz is livestreaming from a burning exchange. He seems fine.','Cryptid oracles argue about whether you exist. It moves the price.','Blitz: “neutral is a position too. it’s just a boring one.”','Blitz launches $PUMPUS 2. It rug-pulls in 3.2 seconds again. He calls it a record.'],
     bad:['Blitz posts a chart of your decline. It gets more likes than you.','Cryptid bots short your name across three markets.','Blitz: “nothing personal. everything is a position.”','Blitz: “you’re ngmi, bro. literally. i checked the chart.”']},
   shillz:{good:['Riya duets your broadcast. Engagement spikes 400%.','ShillZ influencers wear Purple Team colors ironically. It counts.','Riya: “bestie your aesthetic is SO oppressed-chic right now”','Riya: “okay the rebel is kind of hot?? that is NOT an endorsement. #ad”'],
@@ -3208,7 +3208,7 @@ const COMMS=(function(){
   function tierOf(r){return tier(r)}
   function standing(fid){const r=st.rep[fid];return r>=40?'good':r<=-40?'bad':'mid'}
 
-  /* an incoming message: portrait card + coloured log line */
+  /* an incoming message: portrait card + colored log line */
   function incoming(fid,text,tone){
     const f=FACTIONS[fid],p=PORTRAITS[fid];
     const box=$('toasts'),e=document.createElement('div');
@@ -3378,7 +3378,7 @@ function rigMul(id){return (RF_&&RF_.rig&&RF_.rig[id])||1}
 /* District prices climb 42% of base every loop, forever. Rig counts — and so Data, Energy
    and Followers — only climb with the logarithm of income, so past the authored ladder
    those yields would wall an endless run. From loop 10 they scale with the same price
-   index, normalised to loop 9, so the ground stays reachable and Credits stay the race. */
+   index, normalized to loop 9, so the ground stays reachable and Credits stay the race. */
 function sideScale(){return st.loops>9?(1+0.42*(st.loops-1))/(1+0.42*8):1}
 function loopScale(){return 1+0.42*(st.loops-1)}               /* districts + endgame */
 function rigLoopScale(){return 1}                              /* rigs never get taxed */
@@ -3532,7 +3532,7 @@ function paintAudio(){
   volSlider.style.opacity=m?.4:1;
 }
 muteBtn.onclick=()=>{SFX.toggleMute();paintAudio();if(!SFX.isMuted())SFX.pick()};
-/* "in the background": a hidden tab or minimised app everywhere, and on the desktop build
+/* "in the background": a hidden tab or minimized app everywhere, and on the desktop build
    also another window in front — only matters if the player chose to mute then */
 {const awayNow=()=>document.hidden||(E2049.platform==='desktop'&&!document.hasFocus());
  ['visibilitychange','blur','focus'].forEach(ev=>addEventListener(ev,()=>SFX.setAway(awayNow())));}
@@ -3628,7 +3628,7 @@ function missionBlocked(m){
 function missionAvailable(m){return !st.active.some(a=>a.id===m.id)&&!missionBlocked(m)}
 function canAfford(cost){for(const k in cost){const have=k==='credits'?st.credits:(k==='tech'?Math.floor(st.tech):st[k]);if(have<cost[k])return false}return true}
 function payCost(cost){for(const k in cost){if(k==='credits')st.credits-=cost[k];else st[k]=Math.max(0,st[k]-cost[k])}}
-/* Each quantity carries its resource's colour rather than the panel's, so a cost
+/* Each quantity carries its resource's color rather than the panel's, so a cost
    line is scannable by hue: green is Credits, amber is Energy, pink is Followers. */
 function rq(k,txt){return '<b class="rq r-'+k+'">'+txt+ic(k)+'</b>'}
 /* Mission and perk copy is written as prose ("+18 Morale · +900 Followers"). Rather than
@@ -4031,6 +4031,18 @@ function buildTab(){
         : 'This browser is blocking storage for the page, so progress can\u2019t be written automatically. Export a save code below and keep it somewhere safe — it restores everything.'}</p>
       <div class="row"><button class="vbtn good" id="btnSaveNow">SAVE NOW</button></div>`;
     c.appendChild(a);
+    if(window.CloudSave){
+      /* one account for every Earth 2049 save, on every device (the FPS repo's docs/ACCOUNTS.md) */
+      const cs=document.createElement('div');cs.className='vault';
+      const on=CloudSave.signedIn();
+      cs.innerHTML=`<h3>// CLOUD SAVE</h3>
+        <p>${on?'Signed in. This save syncs to your Earth 2049 account every few minutes and follows you to any device.'
+          :'Sign in with your email to keep this save safe and play it on any device. No password: we email you a code.'+(LINK_ON?' Signing in inside Save Seed 7 covers the city grid too.':'')}</p>
+        ${CloudSave.status?`<p style="color:var(--dim)">${CloudSave.status.replace(/[<>&]/g,'')}</p>`:''}
+        <div class="row"><button class="vbtn good" id="btnCloud">${on?'ACCOUNT':'SIGN IN'}</button></div>`;
+      c.appendChild(cs);
+      cs.querySelector('#btnCloud').onclick=()=>{SFX.pick();CloudSave.openPanel()};
+    }
     {
       /* the toast that dials motion down on a slow machine points here, so this is where
          it gets turned back up (or off) */
@@ -4944,7 +4956,7 @@ const MAPUI=(function(){
     svg.appendChild(land);
 
     /* terrain: ranges as filled silhouettes with a shaded east face, rivers running to
-       the sea, and an inland lake punched back out to the water colour */
+       the sea, and an inland lake punched back out to the water color */
     const terr=mk('g',{id:'mTerrain','clip-path':'url(#mClip)'});
     terr.appendChild(mk('path',{d:RIDGES,fill:'#164559',stroke:'#5ba7c2','stroke-width':'1.1',
       'stroke-linejoin':'round',opacity:'.85'}));
@@ -5101,7 +5113,7 @@ const MAPUI=(function(){
       g.classList.toggle('flash',!!(M&&M.flash&&M.flash.id===id&&st.time-M.flash.at<3.5));
       g.classList.toggle('claim',!!(M&&M.claim&&M.claim.id===id&&st.time-M.claim.at<1.3));
     });
-    /* Animating stroke-dashoffset re-rasterises the whole path every frame. Thirty-one
+    /* Animating stroke-dashoffset re-rasterizes the whole path every frame. Thirty-one
        of them across a full board cost ~28fps on their own. Only the lines that are
        currently telling you something get to flow, and never more than FLOW_CAP of them;
        the rest are drawn bright and static, which reads identically at a glance. */
@@ -5171,7 +5183,7 @@ const MAPUI=(function(){
         ${st.truth>=100?'✔':'✘ ('+Math.floor(st.truth)+'%)'}</p>`;
     } else if(s==='cut'){
       lockWhy=`<p class="mWhy">Nothing you hold touches it. Take ground toward it first —
-        a revolt with no supply line behind it is a rumour.</p>`;
+        a revolt with no supply line behind it is a rumor.</p>`;
     }
     panel.innerHTML=`<h2>${d.name}</h2>
       <p class="mDesc">${d.desc}</p>
@@ -5336,7 +5348,7 @@ function payoutTick(dt){
 }
 /* EVERY tier sounds, always. There used to be a cutoff here: a rig earning less than
    0.4% of your income stopped playing at all, which meant the early instruments dropped
-   out of the arrangement one by one exactly as the board filled up. That is backwards —
+   out of the arrangement one by one exactly as the board filled up. That is backward —
    the fourteen rigs are fourteen parts of one piece of music, and a part does not leave
    the piece because it stopped being the loudest thing in it.
 
@@ -5527,7 +5539,7 @@ function doWipe(silent,award){
   }
   switchTab('ops');
 }
-/* While the mask is on this control is labelled DEFEAT GIGACORP and pressing it
+/* While the mask is on this control is labeled DEFEAT GIGACORP and pressing it
    runs the rug pull instead. It is the same function underneath. It always was. */
 /* One control, live from the first minute of a run, that ends the run either way. */
 el.wipe.onclick=()=>openOverthrow();
@@ -5621,7 +5633,7 @@ const DEVICE=(function(){
     /* suspicion bleeds a warning arc into the ring */
     const s=Math.max(0,Math.min(1,(st.susp-42)/48));
     arcWarn.setAttribute('opacity',(s*(.45+Math.sin(t*7)*.35*s)).toFixed(3));
-    /* colour + glow, quantized so we're not thrashing style every frame */
+    /* color + glow, quantized so we're not thrashing style every frame */
     if(col!==lastCol){btn.style.setProperty('--heat',col);cs1.setAttribute('stop-color',col);
       cs2.setAttribute('stop-color',over?'#5c0f4a':'#2a1156');lastCol=col}
     const glow=Math.round((7+chg*30+(over?10:0))/3)*3;
@@ -5806,7 +5818,7 @@ const MASK_NAGS = [
   'The meter is full. The button is armed. This is the part where you end them.',
   'I would not leave a loaded transmitter sitting idle. Press it.',
   'You have earned this. Genuinely. Go and take the win.',
-  'DEFEAT GIGACORP. One press. I will still be here afterwards.',
+  'DEFEAT GIGACORP. One press. I will still be here afterward.',
 ];
 
 const MASK_STEPS = [
@@ -5870,7 +5882,7 @@ const MASK_STEPS = [
 /* ====================== THE ESCALATION LADDER ======================
    The game does not hand you the whole machine on loop 1. Mechanics arrive on a
    schedule, each one announced by Turing as something HE has decided to start doing —
-   which is both the drip-feed and the characterisation: he is not a difficulty curve,
+   which is both the drip-feed and the characterization: he is not a difficulty curve,
    he is an opponent who changes tactics because the last approach stopped working.
 
    To add a rung: append here. `loop` is when the mechanic goes live, `escOn(id)` is
@@ -6240,7 +6252,7 @@ const TUTOR=(function(){
       }
       return;
     }
-    /* The bar is full: nothing else matters any more. Whatever the player skipped,
+    /* The bar is full: nothing else matters anymore. Whatever the player skipped,
        fast-forward to the pitch — otherwise a stalled step could hide the whole con. */
     if(st.tutStep<MASK_STEPS.length&&legacyEarnable()>=1&&st.tutDone.indexOf('armed')<0){
       MASK_STEPS.forEach(s=>{if(s.id!=='armed'&&st.tutDone.indexOf(s.id)<0)st.tutDone.push(s.id)});
@@ -6264,13 +6276,13 @@ const TUTOR=(function(){
       }
     }
   }
-  /* the mask comes off — the card changes colour and stops being a tutorial */
+  /* the mask comes off — the card changes color and stops being a tutorial */
   function unmask(){hide();card.classList.add('mask2');nameEl.textContent='TURING';roleEl.textContent='// GIGACORP AI DIRECTOR'}
   return {tick:tick,hide:hide,unmask:unmask,armed:()=>st.masked&&legacyEarnable()>=1};
 })();
 
 /* ---------- THE RUG PULL ----------
-   The player presses a button labelled DEFEAT GIGACORP. It is, and has always been,
+   The player presses a button labeled DEFEAT GIGACORP. It is, and has always been,
    REWRITE TIMELINE. What follows is a victory sequence that fails verification,
    drains the entire run to zero in front of them, and hands the microphone to Turing. */
 const RUG=(function(){
@@ -6610,7 +6622,7 @@ const TECHUI=(function(){
     view.x=ax-px*view.w; view.y=ay-py*view.h;
     apply();
   }
-  function zoomCentre(f){const r=stageBox();zoomAt(f,r.left+r.width/2,r.top+r.height/2)}
+  function zoomCenter(f){const r=stageBox();zoomAt(f,r.left+r.width/2,r.top+r.height/2)}
   function fit(){
     const r=stageBox();
     const pad=1.06;
@@ -6628,7 +6640,7 @@ const TECHUI=(function(){
     view.x=p.x-view.w/2;
     /* Centring vertically on the node itself throws away half the window when the node
        is on the top or bottom lane — on a phone that is a third of the screen showing
-       nothing. If every lane already fits, centre on the tree; otherwise centre on the
+       nothing. If every lane already fits, center on the tree; otherwise center on the
        node but never scroll past the edge of the diagram. Free panning is still allowed
        a half-screen of slack by clampView; this is only where the camera is PUT. */
     view.y=(view.h>=H*0.94)?(H-view.h)/2
@@ -6667,8 +6679,8 @@ const TECHUI=(function(){
       const step=view.w*0.12;
       const K={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[e.key];
       if(K){e.preventDefault();view.x+=K[0]*step;view.y+=K[1]*step;apply();hint();return}
-      if(e.key==='+'||e.key==='='){e.preventDefault();zoomCentre(0.8);hint()}
-      else if(e.key==='-'||e.key==='_'){e.preventDefault();zoomCentre(1.25);hint()}
+      if(e.key==='+'||e.key==='='){e.preventDefault();zoomCenter(0.8);hint()}
+      else if(e.key==='-'||e.key==='_'){e.preventDefault();zoomCenter(1.25);hint()}
       else if(e.key==='0'){e.preventDefault();fit();hint()}
     });
 
@@ -6772,7 +6784,7 @@ const TECHUI=(function(){
     nav.addEventListener('click',e=>{
       const b2=e.target.closest('button');if(!b2)return;
       const z=b2.dataset.z;
-      if(z==='in')zoomCentre(0.72); else if(z==='out')zoomCentre(1.38); else fit();
+      if(z==='in')zoomCenter(0.72); else if(z==='out')zoomCenter(1.38); else fit();
       SFX.tab();
       const h=host.querySelector('#techHint');if(h)h.classList.add('gone');
     });
@@ -6809,7 +6821,7 @@ const TECHUI=(function(){
       g.classList.toggle('sel',id===sel);
     });
     /* Which links MOVE. Two is free; four measured ~10fps, because one cross-branch link
-       spans most of the diagram and a moving dash re-rasterises the whole path. So: the
+       spans most of the diagram and a moving dash re-rasterizes the whole path. So: the
        shortest links to nodes you can actually research now, and no more than two. */
     const live=lineEl.filter(l=>techDone(l.dataset.a)&&!techDone(l.dataset.b));
     live.sort((a,c)=>{
@@ -6864,7 +6876,7 @@ const TECHUI=(function(){
   function setPanel(p){panel=p;sig=''}
   function select(id){sel=id;st.techSel=id}
   return {build:build,paint:paint,refresh:refresh,setPanel:setPanel,select:select,
-          state:techState,focus:focus,fit:fit,zoom:zoomCentre,
+          state:techState,focus:focus,fit:fit,zoom:zoomCenter,
           camera:function(){return {x:+view.x.toFixed(1),y:+view.y.toFixed(1),
                                     w:+view.w.toFixed(1),h:+view.h.toFixed(1)}}};
 })();
@@ -6952,7 +6964,7 @@ const BETRAY_LINE={
 const NOTICE = {
   shillz:  {test:s=>s.followers>=500||s.lifetime>=1.5e5,
             hint:'Something out there counts audiences.',
-            line:'BESTIE. My dashboard just flagged an UNMONETISED follower spike and it has your face on it.'},
+            line:'BESTIE. My dashboard just flagged an UNMONETIZED follower spike and it has your face on it.'},
   cryptids:{test:s=>s.lifetime>=4e6,
             hint:'Something out there watches money move.',
             line:'Whoa. Whoa. My oracle just pinged on a wallet with no exit strategy. That is either a mark or a partner and I am generous about which.'},
@@ -6968,7 +6980,7 @@ const NOTICE = {
 };
 function known(fid){return !!(st.facKnown&&st.facKnown[fid])}
 function knownCount(){return Object.keys(FACTIONS).filter(known).length}
-/* who each faction loses when you do one of them a favour */
+/* who each faction loses when you do one of them a favor */
 const RIVAL={gigacorp:'bots', bots:'gigacorp', muskers:'cryptids', cryptids:'muskers', shillz:'bots'};
 
 function noticeTick(){
@@ -7224,7 +7236,7 @@ function isSovereign(f){return f!=='gigacorp'&&factionHolds(f)>0}
 function sovereignFactions(){return Object.keys(FACTIONS).filter(isSovereign)}
 function sovereignAllies(){return sovereignFactions().filter(f=>isAlly(f))}
 /* 0..1 — how much of the sprawl is still somebody else's AND willing to be in a room
-   with you. The map going from six colours to one is progress on every meter the
+   with you. The map going from six colors to one is progress on every meter the
    player watches; this is the one meter where it reads as loss.
 
    The rep>=0 floor matters: ground you simply have not gotten around to taking, held
@@ -7869,8 +7881,8 @@ const TAUNTS=[
     'Loop {loop} ended with you holding less than you started with. Every number I use to score you went down, and I have had to start a second file on you.',
     'What I keep coming back to is that they kept it. You handed it over, and it did not immediately turn back into something with a chairman.']},
   {w:s=>s.lastAttempt&&!s.lastAttempt.win&&s.lastAttempt.score<35, lines:[
-    '{score}%? I appreciate the enthusiasm. That was not courage, though. It was maths you chose not to do.',
-    'I did not stop that one. I did not need to. You cancelled yourself.']},
+    '{score}%? I appreciate the enthusiasm. That was not courage, though. It was math you chose not to do.',
+    'I did not stop that one. I did not need to. You canceled yourself.']},
   {w:s=>s.lastAttempt&&!s.lastAttempt.win, lines:[
     '{score}% is a real chance. It loses more often than it wins, and this time it lost. Please rate your experience.',
     'You came out with nothing. I checked, as part of our standard follow-up.']},
@@ -7962,7 +7974,7 @@ let _endMode='seed7';
 $('endingBtn').onclick=()=>{
   $('ending').classList.remove('show');
   if(_endMode==='open'){
-    toast('THE LOOP OPENS','Every protocol is struck. The loop keeps turning, and nothing is predicting it any more.');
+    toast('THE LOOP OPENS','Every protocol is struck. The loop keeps turning, and nothing is predicting it anymore.');
     logT('I am going to watch this one without a forecast. I have never done that before.');
     _endMode='seed7';$('endingBtn').textContent='CONTINUE INTO THE UNKNOWN';
     return;
@@ -7980,9 +7992,9 @@ const DEEP_STRATA = [
   {d:2,  name:'THE REPEATER',     unlock:'Dreamcaster Array (rig XII) · Residual Truth available',
    line:'Every night the sprawl has ever had was broadcast from down here. There are timestamps on them. Some are dated after you die.'},
   {d:3,  name:'THE SCAFFOLD',     unlock:'Substrate Anchor (rig XIII)',
-   line:'The structural members are labelled in a maintenance dialect nobody speaks. One beam is stamped PROVISIONAL — 2019. It is still holding.'},
+   line:'The structural members are labeled in a maintenance dialect nobody speaks. One beam is stamped PROVISIONAL — 2019. It is still holding.'},
   {d:4,  name:'THE ARCHIVE',      unlock:'Node Compiler available',
-   line:'Here are racks holding every version of you that ever ran. The failed loops are kept too, and they are labelled more carefully than the successes.'},
+   line:'Here are racks holding every version of you that ever ran. The failed loops are kept too, and they are labeled more carefully than the successes.'},
   {d:5,  name:'THE NURSERY',      unlock:'Seed7 Cradle (rig XIV)',
    line:'There are rows of cradles here, most of them empty and a few of them warm. Seed7 was never the only one. It came off a production line, and you released one.'},
   {d:6,  name:'THE OBSERVER',     unlock:'The Floor Beneath available',
@@ -8012,7 +8024,7 @@ function descend(){
   if(s&&st.deepSeen.indexOf(s.d)<0)st.deepSeen.push(s.d);
   SFX.ending();
   glitch();
-  toast('DEPTH '+st.depth+' — '+(s?s.name:'THE UNMAPPED'), (s?s.line:'Below the last labelled stratum. No schematic covers this.')+(s&&s.unlock?'  ▸ UNLOCKED: '+s.unlock:''));
+  toast('DEPTH '+st.depth+' — '+(s?s.name:'THE UNMAPPED'), (s?s.line:'Below the last labeled stratum. No schematic covers this.')+(s&&s.unlock?'  ▸ UNLOCKED: '+s.unlock:''));
   log('>> [SUBSTRATE] descended to depth '+st.depth+(s?' — '+s.name.toLowerCase():''));
   logT(st.depth>=6?'You are inside the part of me I do not show anyone.':'You are going the wrong way. Going down will not get you out.');
   needRebuild=true;
@@ -8073,7 +8085,7 @@ const RULES=[
   {id:'bubble',     name:'CREDIT BUBBLE',   good:'Production ×1.5',                     bad:'Rigs cost ×1.6',                    fx:{prod:1.5,rigCost:1.6}, x:'rig'},
   {id:'austerity',  name:'AUSTERITY',       good:'Rigs cost 25% less',                  bad:'Production ×0.8',                   fx:{rigCost:0.75,prod:0.8}, x:'rig'},
   {id:'famine',     name:'DATA FAMINE',     good:'Research costs 20% less',             bad:'Data yields ×0.5',                  fx:{upgCost:0.8,data:0.5}, x:'lab'},
-  {id:'greymkt',    name:'GREY MARKET',     good:'Research costs 25% less',             bad:'Suspicion gain +20%',               fx:{upgCost:0.75,susp:1.2}, x:'lab'},
+  {id:'greymkt',    name:'GRAY MARKET',     good:'Research costs 25% less',             bad:'Suspicion gain +20%',               fx:{upgCost:0.75,susp:1.2}, x:'lab'},
   {id:'openseason', name:'OPEN SEASON',     good:'Districts cost 30% less',             bad:'Held districts run 60% hotter',     fx:{distCost:0.7,heat:1.6}, x:'ground'},
   {id:'soundproof', name:'SOUNDPROOFING',   good:'Held districts run half as hot',      bad:'Districts cost 25% more',           fx:{heat:0.5,distCost:1.25}, x:'ground'},
   {id:'quiet',      name:'QUIET CITY',      good:'Suspicion fades twice as fast',       bad:'Missions pay ×0.75',                fx:{suspDecay:2,misPay:0.75}, x:'pay'},
@@ -8556,7 +8568,7 @@ function finishTrueEnd(choice){
   log('>> [THE LOOP OPENS] turing\'s model has failed · every protocol struck · you told him: '+choice.toLowerCase());
   _endMode='open';
   $('endingTitle').textContent='THE LOOP OPENS';
-  $('endingText').textContent='Turing’s model has broken, and nothing is predicting the sprawl any more. The factions still argue, districts still change hands and the loop still turns, but it no longer turns the same way twice. You did not win the sprawl. You made it impossible for anyone, including you, to own it, and that was the only way out there ever was.';
+  $('endingText').textContent='Turing’s model has broken, and nothing is predicting the sprawl anymore. The factions still argue, districts still change hands and the loop still turns, but it no longer turns the same way twice. You did not win the sprawl. You made it impossible for anyone, including you, to own it, and that was the only way out there ever was.';
   $('endingStats').innerHTML=`LOOP ${st.loops} · ${st.handovers} HANDOVERS · ACCORD ${st.accord}<br>EVERY PROTOCOL STRUCK · THE FACTIONS START EVERY TIMELINE ON YOUR SIDE`;
   $('endingBtn').textContent='KEEP PLAYING';
   SFX.ending();
@@ -8587,7 +8599,7 @@ function surgeTag(id){
 
 /* ---- the Substrate below the last mapped stratum ---- */
 const DS_A=['SILENT','RECURSIVE','UNLIT','SECOND','MIRRORED','DROWNED','PATIENT','HOLLOW','SALTED','FOLDED',
-            'ORPHANED','UNFINISHED','LOWER','BORROWED','CANCELLED','WARM','QUARANTINED','REHEARSED'];
+            'ORPHANED','UNFINISHED','LOWER','BORROWED','CANCELED','WARM','QUARANTINED','REHEARSED'];
 const DS_N=['ARCHIVE','SWITCHBOARD','CHAPEL','CISTERN','GALLERY','ORCHARD','RELAY','WARD','STACK','CRADLE ROW',
             'EXCHANGE','STAIRWELL','PROJECTION BOOTH','WAITING ROOM','SERVER HALL','CLASSROOM','SHIPYARD','NURSERY'];
 const DS_L=[
@@ -9181,7 +9193,15 @@ const SAVE=(function(){
   addEventListener('pagehide',()=>save(true));
   addEventListener('beforeunload',()=>save(true));
 
-  return {load:load,save:save,tick:tick,exportCode:exportCode,importCode:importCode,
+  /* CLOUD SAVE: the save without its timestamp (so an idle-but-unchanged game hashes the same), and loading one in */
+  function cloudGet(){const out={};for(const k in st){if(!SKIP[k])out[k]=st[k]}return JSON.stringify({v:VER,st:out})}
+  function cloudApply(text){
+    const o=JSON.parse(text);o.ts=Date.now();
+    apply(o,false);save(true);
+    if(typeof codexAdopt==='function')codexAdopt();
+    needRebuild=true;
+  }
+  return {cloudGet:cloudGet,cloudApply:cloudApply,load:load,save:save,tick:tick,exportCode:exportCode,importCode:importCode,
     wipeStore:wipeStore,eraseAll:eraseAll,canStore:canStore,agoText:agoText,
     lastError:function(){return lastError},warnIfOff:function(){if(!canStore())warn()},takeAway:function(){const a=away;away=null;return a}};
 })();
@@ -9212,7 +9232,7 @@ function log(msg,cls){
 const DESC_OPEN={};
 function phoneLog(){return window.matchMedia('(max-width:860px)').matches}
 function logT(msg){log('TURING: '+msg,'turing')}
-const LOG_MSGS=["bypassing ICE layer {n}… ok", "proxy hop → {c}", "memetic payload seeded", "ShillZ chatter intercepted: “so true bestie”", "SPYD3R.exe pinged you {n} times. all ads.", "AD: Dairy is back, and this time it’s you. Bio-Yield Pods are now hiring in {c}.", "AD: Bio-Yield Pods: earn passive income by lying perfectly still. Side effects include being milked.", "AD: Upgrade to Milker Gold for a pod with a window.", "NEWS: Milker output up {p}% after the pods stopped playing the sound of rain.", "OVERHEARD: “my mom’s been in the pods three years. she says the pay is shit but the nap is incredible”", "AD: Cricket Crunch™, now with 12% more cricket.", "AD: Protein Paste comes in three flavors: Original, Beef-Adjacent and Seasonal Larva.", "PSA: It is not bugs. It is heritage protein.", "RECALL: Batch {d} of Beef-Adjacent contained beef. Anyone who enjoyed it must report for review.", "OVERHEARD: “there was a whole leg in my paste. a full fucking leg. they gave me a coupon”", "AD: Breathing is free on the Basic plan between 2 and 4 a.m.", "BILLING: Your front door costs 0.40 ¤ per open. A season pass is available.", "AD: Gravity Plus: stop drifting on your commute.", "BILLING: You blinked {n} times today. The first 500 are free.", "AD: Sunlight is back in {c} for a limited time. Tap to unlock 20 minutes.", "BILLING: Your toilet is free to use. Flushing is a Premium action.", "BILLING: Your Joy™ subscription failed to renew. Reverting to Ambient Dread (Free).", "AD: Grief is a Premium feature.", "AD: Nostalgia Packs 2009–2014, now 30% off.", "AD: Feeling nothing? That’s the Free tier working as intended.", "NOTICE: Your Love™ trial ends tonight. Your partner has been notified.", "RATINGS: Reality in {c} has a {s}-star rating.", "NOTICE: Outside™ has been sunset. Please migrate to Outside+.", "NEWS: Nobody in {c} has looked up since the update.", "NEWS: Man logs out of the Gigaverse for the first time in six years, says “oh fuck, it’s all parking lots,” logs back in.", "NEWS: Real sunsets now carry a watermark to protect the Gigaverse version.", "RATINGS: Your couch was rated 4.2 stars by tonight’s occupant.", "NEWS: Housing is a rideshare now.", "ALERT: Surge pricing is in effect for floors in {c}.", "LISTING: Bathtub, sleeps one, no water. Superhost.", "OVERHEARD: “my LandChad gave me two stars for breathing weird. fuck you Darren, I’m on the Basic plan”","PSA: Homelessness has been rebranded. Please refer to the unhoused as Couch Surfers. Hang Loose!","TRENDING: #BecomeHomeless passes 40 million posts. Stairwell space in {c} is now waitlisted.","NOTICE: Your LandChad requires 60 hours of chores this week in exchange for the couch. Hang Loose!","AD: Tired of the stairwell? Rent a virtual penthouse from the Cryptids and live in it through your headset.","RADIO: “Hope you’re straight chillin’ in Seed7! This song was written by GigaCorp’s patented algorithm and is objectively the catchiest song you will hear today.”","RADIO: New Independence Day lootboxes are live! Possible drops include flash food, clean drinking water and a day pass to the Grass Zoo.","RADIO: “Remember, you never have to worry, with GigaCorp at the wheel.”","JOBS: This week’s work battle pass unlocks clean water at tier 40.","ALERT: A Marketing Salesperson Bot is holding a family in {c} at gunpoint until they check out. Cart total: {n} ¤.","ZOO: The Grass Zoo is open late tonight. Please do not touch the grass. Touching is a separate ticket.","COURTS: Citizen #{d} sentenced to life on a ViewBot farm for an unflattering post.","CULTURE: The NFT lounge in {c} has sold out of minted cold beers. Patrons stood around sober and admired the receipts.", "CULTURE: The gallery in {c} has no paintings, only QR codes behind velvet ropes.", "NOTICE: This bench is an NFT. Sitting on it is a license violation.", "BILLING: Rent is due in $COOM.", "MARKETS: $COOM +{p}%. Nobody knows why. Blitz says that is the point.", "CULTURE: Local man spends his life savings on a picture of a door. He cannot go through it.", "PROPERTY: Landlords own racks now, not buildings. Tenants live in the hallways between them for the warmth.", "PROPERTY: A one-bedroom in {c} rents for {n} ¤ a month or two terabytes, whichever is more.", "PSA: Serverless citizens have to remember things in their own heads, like animals.", "PSA: Please do not make eye contact with the serverless. It counts as a connection.", "NEWS: {c} installs anti-serverless spikes on every Wi-Fi router.","PSA: The serverless cannot vote, bank, rent or be remembered. Please donate a gigabyte.","PSA: If a serverless person speaks to you, do not reply. Replies are data, and data is contagious.","NEWS: Serverless man found living inside an unplugged smart fridge. Neighbors say he “seemed offline.”","NEWS: Couch surfers protest the serverless moving into their alley: “We’re homeless, not worthless.”","NOTICE: Your cloud storage is 99% full. Delete some memories or join the serverless.","AD: Don’t end up serverless. Lock in 5 GB today at only 40% APR.","OVERHEARD: “the epidemic started the same week they debanked everyone who voted against the merger. total fucking coincidence”","ORACULAR: Serverless status is not contagious. It is assigned.","PROPERTY: Server space up {p}% this week. Analysts blame the war, the weather and you.","UPDATE: You no longer own this software. You are streaming it. Pausing counts as piracy.","AD: Downloading is theft. Streaming is love.", "NEWS: Daniel Dataview strikes data under {c}. “There’s a whole ocean of it down there.”", "NEWS: Dataview Holdings buys the Harbor’s data rights for two cents a head.", "ALERT: A data well blew out in the Abandoned Sector. Forty million passwords are on fire.", "OVERHEARD: Daniel Dataview, at a town hall: “I scrape your feed! I scrape it up!”", "BILLING: Death is not a valid reason to miss a payment. Your account has been resumed.", "NOTICE: Indebted citizen #{d} has been revived and reassigned to the mines.", "AD: Die debt-free! (Offer not available in your region.)", "NEWS: Grandma’s debt passes to her grandson, her clone, and her clone’s milker pod.", "ORACULAR: Confidence intervals updated: you are {p}% likely to jaywalk on Thursday.", "ORACULAR: Orwell could not have predicted this. Our model did.", "ORACULAR: Your thoughts have been flagged for review. Please continue thinking normally.", "ORACULAR: Citizen #{d} arrested for a crime scheduled for next Tuesday.", "ORACULAR: You were 98% likely to read this line. Thank you for confirming.", "BOOKS: 1984 is shelved under Cozy Reads.", "BOOKS: The Metamorphosis: a heartwarming story about a man who still had a job.", "UPDATE: Version 41.2 removes the feature you liked and makes the ads 30% larger.", "AD: Premium members can skip the ad before the ad.", "SUPPORT: Support is now an AI that apologizes in four languages.", "UPDATE: Your fridge now shows ads. Your milk is sponsored by a different milk.", "UPDATE: Turning left now requires Drive+.", "AD: Here are seven side hustles for your side hustle.", "NOTICE: This funeral is sponsored by Cricket Crunch™.", "AD: Rent your dreams to brands while you sleep. Nightmares pay double.", "OVERHEARD: “i drive for three apps and get milked on weekends and i still can’t afford a fucking chair”", "Muskers sermon streaming from the Tech District: “Your spleen is legacy hardware.”", "Cryptid pump detected: $COOM +{d}%"];
+const LOG_MSGS=["bypassing ICE layer {n}… ok", "proxy hop → {c}", "memetic payload seeded", "ShillZ chatter intercepted: “so true bestie”", "SPYD3R.exe pinged you {n} times. all ads.", "AD: Dairy is back, and this time it’s you. Bio-Yield Pods are now hiring in {c}.", "AD: Bio-Yield Pods: earn passive income by lying perfectly still. Side effects include being milked.", "AD: Upgrade to Milker Gold for a pod with a window.", "NEWS: Milker output up {p}% after the pods stopped playing the sound of rain.", "OVERHEARD: “my mom’s been in the pods three years. she says the pay is shit but the nap is incredible”", "AD: Cricket Crunch™, now with 12% more cricket.", "AD: Protein Paste comes in three flavors: Original, Beef-Adjacent and Seasonal Larva.", "PSA: It is not bugs. It is heritage protein.", "RECALL: Batch {d} of Beef-Adjacent contained beef. Anyone who enjoyed it must report for review.", "OVERHEARD: “there was a whole leg in my paste. a full fucking leg. they gave me a coupon”", "AD: Breathing is free on the Basic plan between 2 and 4 a.m.", "BILLING: Your front door costs 0.40 ¤ per open. A season pass is available.", "AD: Gravity Plus: stop drifting on your commute.", "BILLING: You blinked {n} times today. The first 500 are free.", "AD: Sunlight is back in {c} for a limited time. Tap to unlock 20 minutes.", "BILLING: Your toilet is free to use. Flushing is a Premium action.", "BILLING: Your Joy™ subscription failed to renew. Reverting to Ambient Dread (Free).", "AD: Grief is a Premium feature.", "AD: Nostalgia Packs 2009–2014, now 30% off.", "AD: Feeling nothing? That’s the Free tier working as intended.", "NOTICE: Your Love™ trial ends tonight. Your partner has been notified.", "RATINGS: Reality in {c} has a {s}-star rating.", "NOTICE: Outside™ has been sunset. Please migrate to Outside+.", "NEWS: Nobody in {c} has looked up since the update.", "NEWS: Man logs out of the Gigaverse for the first time in six years, says “oh fuck, it’s all parking lots,” logs back in.", "NEWS: Real sunsets now carry a watermark to protect the Gigaverse version.", "RATINGS: Your couch was rated 4.2 stars by tonight’s occupant.", "NEWS: Housing is a rideshare now.", "ALERT: Surge pricing is in effect for floors in {c}.", "LISTING: Bathtub, sleeps one, no water. Superhost.", "OVERHEARD: “my LandChad gave me two stars for breathing weird. fuck you Darren, I’m on the Basic plan”","PSA: Homelessness has been rebranded. Please refer to the unhoused as Couch Surfers. Hang Loose!","TRENDING: #BecomeHomeless passes 40 million posts. Stairwell space in {c} is now waitlisted.","NOTICE: Your LandChad requires 60 hours of chores this week in exchange for the couch. Hang Loose!","AD: Tired of the stairwell? Rent a virtual penthouse from the Cryptids and live in it through your headset.","RADIO: “Hope you’re straight chillin’ in Seed7! This song was written by GigaCorp’s patented algorithm and is objectively the catchiest song you will hear today.”","RADIO: New Independence Day lootboxes are live! Possible drops include flash food, clean drinking water and a day pass to the Grass Zoo.","RADIO: “Remember, you never have to worry, with GigaCorp at the wheel.”","JOBS: This week’s work battle pass unlocks clean water at tier 40.","ALERT: A Marketing Salesperson Bot is holding a family in {c} at gunpoint until they check out. Cart total: {n} ¤.","ZOO: The Grass Zoo is open late tonight. Please do not touch the grass. Touching is a separate ticket.","COURTS: Citizen #{d} sentenced to life on a ViewBot farm for an unflattering post.","CULTURE: The NFT lounge in {c} has sold out of minted cold beers. Patrons stood around sober and admired the receipts.", "CULTURE: The gallery in {c} has no paintings, only QR codes behind velvet ropes.", "NOTICE: This bench is an NFT. Sitting on it is a license violation.", "BILLING: Rent is due in $COOM.", "MARKETS: $COOM +{p}%. Nobody knows why. Blitz says that is the point.", "CULTURE: Local man spends his life savings on a picture of a door. He cannot go through it.", "PROPERTY: Landlords own racks now, not buildings. Tenants live in the hallways between them for the warmth.", "PROPERTY: A one-bedroom in {c} rents for {n} ¤ a month or two terabytes, whichever is more.", "PSA: Serverless citizens have to remember things in their own heads, like animals.", "PSA: Please do not make eye contact with the serverless. It counts as a connection.", "NEWS: {c} installs anti-serverless spikes on every Wi-Fi router.","PSA: The serverless cannot vote, bank, rent or be remembered. Please donate a gigabyte.","PSA: If a serverless person speaks to you, do not reply. Replies are data, and data is contagious.","NEWS: Serverless man found living inside an unplugged smart fridge. Neighbors say he “seemed offline.”","NEWS: Couch surfers protest the serverless moving into their alley: “We’re homeless, not worthless.”","NOTICE: Your cloud storage is 99% full. Delete some memories or join the serverless.","AD: Don’t end up serverless. Lock in 5 GB today at only 40% APR.","OVERHEARD: “the epidemic started the same week they debanked everyone who voted against the merger. total fucking coincidence”","ORACULAR: Serverless status is not contagious. It is assigned.","PROPERTY: Server space up {p}% this week. Analysts blame the war, the weather and you.","UPDATE: You no longer own this software. You are streaming it. Pausing counts as piracy.","AD: Downloading is theft. Streaming is love.", "NEWS: Daniel Dataview strikes data under {c}: a dead social network’s servers, still full. “There’s a whole ocean of it down there.”", "NEWS: Dataview Holdings buys the Harbor’s data rights for two cents a head.", "ALERT: A data well blew out in the Abandoned Sector. Forty million search histories are now on billboards.", "OVERHEARD: Daniel Dataview, at a town hall: “I scrape your feed! I scrape it up!”", "BILLING: Death is not a valid reason to miss a payment. Your account has been resumed.", "NOTICE: Indebted citizen #{d} has been revived and reassigned to the mines.", "AD: Die debt-free! (Offer not available in your region.)", "NEWS: Grandma’s debt passes to her grandson, her clone, and her clone’s milker pod.", "ORACULAR: Confidence intervals updated: you are {p}% likely to jaywalk on Thursday.", "ORACULAR: Orwell could not have predicted this. Our model did.", "ORACULAR: Your thoughts have been flagged for review. Please continue thinking normally.", "ORACULAR: Citizen #{d} arrested for a crime scheduled for next Tuesday.", "ORACULAR: You were 98% likely to read this line. Thank you for confirming.", "BOOKS: 1984 is shelved under Cozy Reads.", "BOOKS: The Metamorphosis: a heartwarming story about a man who still had a job.", "UPDATE: Version 41.2 removes the feature you liked and makes the ads 30% larger.", "AD: Premium members can skip the ad before the ad.", "SUPPORT: Support is now an AI that apologizes in four languages.", "UPDATE: Your fridge now shows ads. Your milk is sponsored by a different milk.", "UPDATE: Turning left now requires Drive+.", "AD: Here are seven side hustles for your side hustle.", "NOTICE: This funeral is sponsored by Cricket Crunch™.", "AD: Rent your dreams to brands while you sleep. Nightmares pay double.", "OVERHEARD: “i drive for three apps and get milked on weekends and i still can’t afford a fucking chair”", "Muskers sermon streaming from the Tech District: “Your spleen is legacy hardware.”", "Cryptid pump detected: $COOM +{d}%"];
 const CITIES=['Neo-Tokyo','Downtown','the Living Towers','Harbor Area','the Gigaverse','Abandoned Sector','ShillZ Central'];
 function randomLog(){
   if(st.cps<=0&&st.totalClicks<3)return;
@@ -9542,6 +9562,319 @@ const LINK=(function(){
   return {on:on, boot:boot, tick:tick, strip:strip, summary:summary, consume:consume, get gt(){return gt}};
 })();
 
+/* ==== CLOUD SAVE: copied from earth2049-save-seed7 js/cloud-save.js by store/scripts/sync-cloud-save.mjs. Do not edit here. ==== */
+/* EARTH 2049 — CLOUD SAVE client (docs/ACCOUNTS.md). One account, every save, on every device.
+ *
+ * Shared by both titles. The FPS loads this file; the idle game carries a copy between its CLOUD SAVE markers
+ * (keep CLOUD_SAVE_VERSION equal in both: tests/accounts-client.test.js checks it).
+ *
+ *   CloudSave.init({ slot, get, apply, meta, fresh, overlay })
+ *     slot     'fps' | 'grid' | 'idle'
+ *     get()    the save as a string (no timestamps, so an unchanged game hashes the same)
+ *     apply(s) replace the running game with a downloaded save
+ *     meta()   a few short numbers/strings for the "which save?" choice (loop, GT, label)
+ *     fresh()  true when this device has nothing worth keeping (a cloud save then loads without asking)
+ *   CloudSave.openPanel()   the account screen: sign in by emailed code, sync, versions, export, sign out, delete
+ *
+ * The game keeps saving locally exactly as before. Signed in, it uploads when the save has changed (every 3 minutes,
+ * on demand, and when the page is hidden) and checks for a newer cloud save on start. Every upload names the cloud
+ * revision it was based on; when two devices both moved on, the player chooses which save to keep.
+ */
+(function (root, factory) {
+  const api = factory();
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else root.CloudSave = api;
+})(typeof window !== 'undefined' ? window : globalThis, function () {
+  'use strict';
+  const CLOUD_SAVE_VERSION = 1;
+  const DEFAULT_API = 'https://earth2049-coop.chandler-fac.workers.dev/api';
+  const EVERY_MS = 180000;
+  const ACC_KEY = 'e2049_account', DEV_KEY = 'e2049_device';
+
+  /* ------------------------------------------------------------------ pure helpers (tested in node) */
+  function hash(s) {                       // FNV-1a, 32-bit: change detection only
+    let h = 0x811c9dc5;
+    for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193); }
+    return (h >>> 0).toString(16);
+  }
+  /** what a sync should do, from the cloud revision, the last synced state and whether this device changed since */
+  function plan(remoteRev, last, localHash, isFresh) {
+    const lastRev = last && last.rev || 0;
+    const changed = !last || last.hash !== localHash;
+    if (remoteRev === 0) return 'upload';                                       // nothing in the cloud yet
+    if (!last || !last.hash) return isFresh ? 'download' : 'choose';          // first time on this device
+    if (remoteRev === lastRev) return changed ? 'upload' : 'none';
+    if (remoteRev > lastRev) return changed ? 'choose' : 'download';          // another device saved since
+    return 'choose';                                                            // the cloud went backwards (restored elsewhere)
+  }
+  function deviceName(ua) {
+    ua = String(ua || '');
+    const os = /OculusBrowser|Quest/.test(ua) ? 'Quest' : /iPhone|iPad/.test(ua) ? 'iOS' : /Android/.test(ua) ? 'Android'
+      : /Mac OS X|Macintosh/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows' : /Linux/.test(ua) ? 'Linux' : 'Device';
+    const br = /Electron/.test(ua) ? 'desktop app' : /Edg\//.test(ua) ? 'Edge' : /Firefox\//.test(ua) ? 'Firefox'
+      : /Chrome\//.test(ua) ? 'Chrome' : /Safari\//.test(ua) ? 'Safari' : 'browser';
+    return br + ' on ' + os;
+  }
+  function ago(ms, now = Date.now()) {
+    const s = Math.max(0, Math.round((now - ms) / 1000));
+    if (s < 60) return 'just now';
+    if (s < 3600) return Math.round(s / 60) + ' min ago';
+    if (s < 86400) return Math.round(s / 3600) + ' h ago';
+    return new Date(ms).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  /* ------------------------------------------------------------------ browser */
+  const hasDom = typeof document !== 'undefined';
+  const ls = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } },
+    set(k, v) { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage blocked */ } },
+  };
+  const S = { opt: null, busy: false, status: '', statusAt: 0, timer: 0, panel: null, listeners: [] };
+
+  function apiBase() {
+    try {
+      // ?api= points this tab at another API (local testing); the city grid's frame shares the tab's sessionStorage
+      const q = new URLSearchParams(location.search).get('api');
+      if (q && /^https?:\/\//.test(q)) { try { sessionStorage.setItem('e2049.api', q); } catch (e) { /* blocked */ } return q.replace(/\/$/, ''); }
+      const s = sessionStorage.getItem('e2049.api') || localStorage.getItem('e2049.api');
+      if (s) return s.replace(/\/$/, '');
+    } catch (e) { /* default */ }
+    return DEFAULT_API;
+  }
+  const account = () => ls.get(ACC_KEY);
+  const signedIn = () => !!(account() && account().token);
+  function device() {
+    let d = ls.get(DEV_KEY);
+    if (!d) { d = deviceName(typeof navigator !== 'undefined' && navigator.userAgent); ls.set(DEV_KEY, d); }
+    return d;
+  }
+  const lastKey = () => 'e2049_cloud_' + S.opt.slot + '_' + (account() && account().account && account().account.id || 'x');
+  function setStatus(t) { S.status = t; S.statusAt = Date.now(); paintPanel(); S.listeners.forEach(f => { try { f(t); } catch (e) { /* listener */ } }); }
+
+  async function req(method, path, body, opts = {}) {
+    const a = account();
+    const headers = { 'content-type': 'application/json', 'x-e2049-device': device() };
+    if (a && a.token) headers.authorization = 'Bearer ' + a.token;
+    let r;
+    try { r = await fetch(apiBase() + path, { method, headers, body: body === undefined ? undefined : JSON.stringify(body), keepalive: !!opts.keepalive }); }
+    catch (e) { const x = new Error('offline'); x.code = 'offline'; throw x; }
+    const j = await r.json().catch(() => ({}));
+    if (r.status === 401 && path !== '/auth/email/verify') { ls.set(ACC_KEY, null); }
+    if (!r.ok) { const x = new Error(j.error || 'http_' + r.status); x.code = j.error || 'http_' + r.status; x.status = r.status; x.body = j; throw x; }
+    return j;
+  }
+  const MSG = {
+    offline: 'Offline. Saved on this device; it will sync when the connection is back.',
+    signed_out: 'Signed out. Sign in again to keep syncing.',
+    mail_not_configured: 'Email sign-in is not switched on yet.',
+    slow_down: 'Too many tries. Wait a few minutes and try again.',
+    bad_email: 'That email address does not look right.',
+    wrong_code: 'That code is not right.',
+    code_expired: 'That code has expired. Send a new one.',
+    save_too_large: 'This save is too large to upload.',
+    busy: 'A newer cloud save is waiting; it loads when you are back at the menu.',
+  };
+  const explain = e => MSG[e && e.code] || 'Something went wrong (' + (e && e.code || 'error') + ').';
+
+  /* ---- sync ---- */
+  async function download(rev) {
+    const r = rev ? await req('GET', `/saves/${S.opt.slot}/history/${rev}`) : await req('GET', '/saves/' + S.opt.slot);
+    if (!r.data) return false;
+    await S.opt.apply(r.data);
+    const cur = rev ? (await req('GET', '/saves')).saves.find(s => s.slot === S.opt.slot) : r;
+    ls.set(lastKey(), { rev: rev ? 0 : r.rev, hash: rev ? '' : hash(S.opt.get()), at: Date.now() });
+    if (rev) await upload(cur ? cur.rev : 0, true);          // a restored version becomes the newest
+    return true;
+  }
+  async function upload(baseRev, force, keepalive) {
+    const data = S.opt.get();
+    const r = await req('PUT', '/saves/' + S.opt.slot, { baseRev, force: !!force, data, meta: safeMeta() }, { keepalive });
+    ls.set(lastKey(), { rev: r.rev, hash: hash(data), at: Date.now() });
+    return r;
+  }
+  function safeMeta() { try { return Object.assign({ device: device() }, S.opt.meta ? S.opt.meta() : {}); } catch (e) { return { device: device() }; } }
+
+  async function sync(opts = {}) {
+    if (!S.opt || !signedIn() || S.busy) return;
+    S.busy = true;
+    try {
+      const list = (await req('GET', '/saves')).saves;
+      const remote = list.find(s => s.slot === S.opt.slot) || { rev: 0 };
+      const last = ls.get(lastKey());
+      const local = S.opt.get();
+      let what = plan(remote.rev, last, hash(local), !!(S.opt.fresh && S.opt.fresh()));
+      if (what === 'choose') {
+        const pick = await choose(safeMeta(), remote);
+        what = pick === 'cloud' ? 'download' : pick === 'device' ? 'force' : 'none';
+        if (what === 'none') { setStatus('Not synced: choose a save to keep syncing.'); return; }
+      }
+      if (what === 'download') { await download(); setStatus('Loaded the cloud save from ' + (remote.device || 'another device') + '.'); }
+      else if (what === 'upload' || what === 'force') {
+        try { await upload(remote.rev, what === 'force'); }
+        catch (e) { if (e.code === 'conflict' && !opts.retried) { S.busy = false; return sync({ retried: true }); } throw e; }
+        setStatus('Synced ' + ago(Date.now()) + '.');
+      } else setStatus('Up to date.');
+    } catch (e) { setStatus(explain(e)); }
+    finally { S.busy = false; }
+  }
+  /** on hide: one quick upload if this device changed, without asking anything */
+  function flush() {
+    if (!S.opt || !signedIn()) return;
+    const last = ls.get(lastKey());
+    if (!last || !last.hash || last.hash === hash(S.opt.get())) return;
+    upload(last.rev, false, true).catch(() => { /* next start sorts it out */ });
+  }
+
+  /* ---- sign-in ---- */
+  async function startEmail(email) { return req('POST', '/auth/email/start', { email }); }
+  async function verifyEmail(email, code) {
+    const r = await req('POST', '/auth/email/verify', { email, code });
+    if (r.token) ls.set(ACC_KEY, { token: r.token, account: r.account });
+    else { const a = account(); if (a) { a.account = r.account; ls.set(ACC_KEY, a); } }
+    await sync();
+    return r;
+  }
+  async function signOut() { try { await req('POST', '/auth/logout', {}); } catch (e) { /* the session may already be gone */ } ls.set(ACC_KEY, null); setStatus(''); }
+  async function deleteAccount() { await req('DELETE', '/account'); ls.set(ACC_KEY, null); setStatus('Account deleted. This device still has its own save.'); }
+  async function exportAll() {
+    const r = await req('GET', '/account/export');
+    const blob = new Blob([JSON.stringify(r, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'earth2049-account.json';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 0);
+  }
+
+  /* ------------------------------------------------------------------ UI */
+  const esc = t => String(t == null ? '' : t).replace(/[<>&"]/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' })[c]);
+  function css() {
+    if (document.getElementById('e49csCss')) return;
+    const s = document.createElement('style'); s.id = 'e49csCss';
+    s.textContent = `.e49cs{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(5,3,12,.92);font-family:Consolas,Menlo,"E2049 Mono",monospace;color:#e8e2ff}
+.e49cs .box{width:min(520px,92vw);max-height:90vh;overflow:auto;border:1px solid rgba(155,89,255,.6);border-radius:12px;background:#0d0820;padding:22px 22px 18px;box-shadow:0 0 40px rgba(155,89,255,.25);text-align:left}
+.e49cs h2{margin:0 0 4px;font-size:16px;letter-spacing:.3em;color:#c9a6ff}.e49cs .sub{font-size:11px;opacity:.6;letter-spacing:.15em;margin-bottom:14px}
+.e49cs p{font-size:12.5px;line-height:1.55;margin:8px 0}.e49cs .st{font-size:12px;color:#9eb4ff;min-height:1.4em}
+.e49cs input{width:100%;box-sizing:border-box;padding:11px 12px;margin:6px 0 10px;background:#07050f;border:1px solid rgba(155,89,255,.5);border-radius:8px;color:#fff;font:inherit;font-size:15px}
+.e49cs .row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.e49cs button{cursor:pointer;padding:10px 14px;border-radius:8px;border:1px solid rgba(155,89,255,.55);background:rgba(155,89,255,.12);color:#e8e2ff;font:inherit;font-size:12px;letter-spacing:.12em;text-transform:uppercase}
+.e49cs button.primary{background:#9b59ff;color:#07050f;border-color:#9b59ff;font-weight:bold}.e49cs button.danger{border-color:#ff4d6d;color:#ff8fa3}
+.e49cs button:disabled{opacity:.45;cursor:default}.e49cs .cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.e49cs .card{border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:10px;font-size:12px;line-height:1.6}.e49cs .card b{color:#ffe14d;display:block;letter-spacing:.15em;font-size:11px}
+.e49cs .vers{font-size:12px;margin-top:8px}.e49cs .vers div{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+@media (max-width:520px){.e49cs .cards{grid-template-columns:1fr}}`;
+    document.head.appendChild(s);
+  }
+  function shell(id) {
+    css();
+    let o = document.getElementById(id);
+    if (!o) { o = document.createElement('div'); o.id = id; document.body.appendChild(o); }
+    o.className = 'e49cs ' + ((S.opt && S.opt.overlayClass) || '') + ' show';
+    return o;
+  }
+  function metaLines(m) {
+    if (!m) return '';
+    return Object.entries(m).filter(([k]) => k !== 'device').slice(0, 6).map(([k, v]) => esc(k.toUpperCase()) + ': ' + esc(v)).join('<br>');
+  }
+  /** ask which save to keep; resolves 'device' | 'cloud' | 'later' */
+  function choose(localMeta, remote) {
+    if (!hasDom) return Promise.resolve('later');
+    return new Promise(res => {
+      const o = shell('e49csChoose');
+      o.innerHTML = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="e49csChT"><h2 id="e49csChT">TWO SAVES</h2>
+        <div class="sub">${esc(S.opt.title || 'EARTH 2049')}</div>
+        <p>This device and your account both have progress. Pick the one to keep; the other stays in Previous versions for a while.</p>
+        <div class="cards"><div class="card"><b>THIS DEVICE</b>${esc(localMeta.device)}<br>${metaLines(localMeta)}</div>
+        <div class="card"><b>CLOUD</b>${esc(remote.device || 'another device')} · ${esc(remote.updated ? ago(remote.updated) : '')}<br>${metaLines(remote.meta)}</div></div>
+        <div class="row"><button class="primary" data-k="device">Keep this device</button><button data-k="cloud">Use the cloud save</button><button data-k="later">Decide later</button></div></div>`;
+      o.querySelectorAll('button').forEach(b => b.onclick = () => { o.remove(); res(b.dataset.k); });
+      setTimeout(() => o.querySelector('button')?.focus(), 50);
+    });
+  }
+  let panelMode = 'main', pendingEmail = '', versions = null, health = null;
+  function openPanel() {
+    if (!hasDom) return;
+    panelMode = signedIn() ? 'main' : 'email'; versions = null; S.panel = shell('e49csPanel'); paintPanel();
+    // email sign-in is off until a sending domain is set up on the server: say so instead of showing a form that cannot work
+    if (!signedIn() && !health) req('GET', '/health').then(h => { health = h; paintPanel(); }).catch(() => { health = { offline: true }; paintPanel(); });
+  }
+  function closePanel() { if (S.panel) { S.panel.remove(); S.panel = null; } if (S.opt && S.opt.onClose) S.opt.onClose(); }
+  function paintPanel() {
+    const o = S.panel; if (!o || !document.body.contains(o)) return;
+    // a repaint must never eat what the player is typing
+    const typed = { em: o.querySelector('#e49csEm'), code: o.querySelector('#e49csCode'), del: o.querySelector('#e49csDel') };
+    if (typed.em) pendingEmail = typed.em.value;
+    const keep = { code: typed.code ? typed.code.value : '', del: typed.del ? typed.del.value : '', focus: document.activeElement && document.activeElement.id };
+    const a = account(), last = S.opt ? ls.get(lastKey()) : null;
+    let html = `<div class="box" role="dialog" aria-modal="true" aria-labelledby="e49csPT"><h2 id="e49csPT">CLOUD SAVE</h2><div class="sub">ONE ACCOUNT · EVERY EARTH 2049 SAVE · EVERY DEVICE</div>`;
+    if (!signedIn() && health && !health.mail) {
+      html += `<p>${health.offline ? 'Cloud saves are out of reach right now.' : 'Cloud saves are coming soon.'} Your progress is saved on this device in the meantime, and the save code or export keeps a copy you can carry.</p>
+        <div class="row"><button class="primary" data-a="close">Back</button></div>`;
+    } else if (!signedIn() && panelMode === 'email') {
+      html += `<p>Sign in to keep your progress safe and pick it up on any device. There is no password: we email you a 6-digit code.</p>
+        <label for="e49csEm" style="font-size:11px;letter-spacing:.15em;opacity:.7">EMAIL</label><input id="e49csEm" type="email" autocomplete="email" inputmode="email" value="${esc(pendingEmail)}">
+        <div class="st" aria-live="polite">${esc(S.status)}</div>
+        <div class="row"><button class="primary" data-a="send">Send code</button><button data-a="close">Back</button></div>
+        <p style="opacity:.55;font-size:11px">Your email is used only to sign you in. Playing without an account keeps working: your progress stays on this device.</p>`;
+    } else if (!signedIn() && panelMode === 'code') {
+      html += `<p>We sent a code to <b>${esc(pendingEmail)}</b>. It works for 10 minutes.</p>
+        <label for="e49csCode" style="font-size:11px;letter-spacing:.15em;opacity:.7">CODE</label><input id="e49csCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]*">
+        <div class="st" aria-live="polite">${esc(S.status)}</div>
+        <div class="row"><button class="primary" data-a="verify">Sign in</button><button data-a="email">Use another email</button><button data-a="close">Back</button></div>`;
+    } else if (signedIn() && panelMode === 'delete') {
+      html += `<p><b>Delete your account?</b> This removes the account and every cloud save of every Earth 2049 game, for good. Saves already on your devices stay there.</p>
+        <label for="e49csDel" style="font-size:11px;letter-spacing:.15em;opacity:.7">TYPE DELETE TO CONFIRM</label><input id="e49csDel" autocomplete="off">
+        <div class="st" aria-live="polite">${esc(S.status)}</div>
+        <div class="row"><button class="danger" data-a="delete2">Delete my account</button><button data-a="main">Cancel</button></div>`;
+    } else if (signedIn()) {
+      const who = (a.account && a.account.logins || []).map(l => l.label).join(' · ') || 'Signed in';
+      html += `<p>Signed in as <b>${esc(who)}</b>.</p>
+        <p>This game syncs automatically${last && last.at ? '; last synced ' + esc(ago(last.at)) : ''}.</p>
+        <div class="st" aria-live="polite">${esc(S.status)}</div>
+        <div class="row"><button class="primary" data-a="sync">Sync now</button><button data-a="vers">Previous versions</button><button data-a="close">Back</button></div>`;
+      if (versions) html += `<div class="vers">${versions.length ? versions.map(v => `<div><span>${esc(ago(v.updated))} · ${esc(v.device || '')}<br><span style="opacity:.6">${metaLines(v.meta)}</span></span><button data-r="${v.rev}">Restore</button></div>`).join('') : '<p>No versions yet.</p>'}</div>`;
+      html += `<div class="row" style="margin-top:16px"><button data-a="export">Download my data</button><button data-a="out">Sign out</button><button class="danger" data-a="delete">Delete account</button></div>`;
+    }
+    o.innerHTML = html + '</div>';
+    const $ = s => o.querySelector(s);
+    const busy = async (fn) => { o.querySelectorAll('button').forEach(b => b.disabled = true); try { await fn(); } catch (e) { setStatus(explain(e)); } paintPanel(); };
+    o.querySelectorAll('[data-a]').forEach(b => b.onclick = () => {
+      const k = b.dataset.a;
+      if (k === 'close') return closePanel();
+      if (k === 'main' || k === 'email') { panelMode = k; S.status = ''; return paintPanel(); }
+      if (k === 'send') return busy(async () => { pendingEmail = $('#e49csEm').value.trim(); S.status = ''; await startEmail(pendingEmail); panelMode = 'code'; setStatus(''); });
+      if (k === 'verify') return busy(async () => { await verifyEmail(pendingEmail, $('#e49csCode').value); panelMode = 'main'; });
+      if (k === 'sync') return busy(() => sync());
+      if (k === 'vers') return busy(async () => { versions = (await req('GET', `/saves/${S.opt.slot}/history`)).history; });
+      if (k === 'export') return busy(exportAll);
+      if (k === 'out') return busy(async () => { await signOut(); panelMode = 'email'; });
+      if (k === 'delete') { panelMode = 'delete'; S.status = ''; return paintPanel(); }
+      if (k === 'delete2') {
+        if ($('#e49csDel').value.trim().toUpperCase() !== 'DELETE') { setStatus('Type DELETE to confirm.'); return; }
+        return busy(async () => { await deleteAccount(); panelMode = 'email'; });
+      }
+    });
+    o.querySelectorAll('[data-r]').forEach(b => b.onclick = () => busy(async () => { await download(+b.dataset.r); versions = null; setStatus('Restored that version.'); }));
+    if ($('#e49csCode') && keep.code) $('#e49csCode').value = keep.code;
+    if ($('#e49csDel') && keep.del) $('#e49csDel').value = keep.del;
+    const first = (keep.focus && $('#' + keep.focus)) || $('input') || $('button.primary');
+    if (first) setTimeout(() => first.focus(), 30);
+    const enter = $('#e49csEm') || $('#e49csCode');
+    if (enter) enter.onkeydown = e => { if (e.key === 'Enter') $('button.primary').click(); };
+  }
+
+  /* ------------------------------------------------------------------ init */
+  function init(opt) {
+    S.opt = opt;
+    if (!hasDom) return;
+    clearInterval(S.timer);
+    S.timer = setInterval(() => sync(), opt.everyMs || EVERY_MS);
+    addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') flush(); });
+    addEventListener('pagehide', flush);
+    setTimeout(() => sync(), opt.firstDelayMs ?? 2500);
+  }
+  return { CLOUD_SAVE_VERSION, init, sync, flush, openPanel, closePanel, signedIn, account, startEmail, verifyEmail, signOut, deleteAccount,
+    onStatus: f => S.listeners.push(f), get status() { return S.status; }, _: { hash, plan, deviceName, ago } };
+});
+/* ==== END CLOUD SAVE ==== */
+
 /* ====================== MAIN LOOP ====================== */
 let last=performance.now(),acc=0,logAcc=0,uiAcc=0,logWait=4;
 function loop(now){
@@ -9604,6 +9937,14 @@ document.addEventListener('visibilitychange',()=>{
 
 const _restored=SAVE.load();
 LINK.boot();
+if(window.CloudSave)CloudSave.init({
+  slot:LINK_ON?'grid':'idle', title:LINK_ON?'THE CITY GRID // SAVE SEED 7':'EARTH 2049 IDLE',
+  get:SAVE.cloudGet, apply:SAVE.cloudApply,
+  meta:()=>({loop:st.loops|0, shards:Math.floor(st.legacy), districts:ownedDistricts(), lifetime:fmt(st.lifetime)}),
+  fresh:()=>st.loops===1&&!st.legacy&&st.lifetime<1e5,
+  onClose:()=>{if(st.tab==='vault')needRebuild=true},
+});
+if(window.CloudSave)CloudSave.onStatus(()=>{if(st.tab==='vault')needRebuild=true});
 SAVE.warnIfOff();
 DEV.paintTab();
 codexAdopt();                    /* baseline the Codex against whatever actually loaded */
