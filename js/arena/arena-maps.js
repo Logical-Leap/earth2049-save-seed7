@@ -258,6 +258,48 @@ AR.MAPS = {
     sky: ['#1a0c18', '#4a1c3a', '#a04870', '#2a1020'], rain: 0, fogDensity: 0.012,
     dyn: ['cube', 'logoff'],
   },
+  /* Government Quarter: the Ministry of Forms. The first map in daylight (overcast): a symmetrical civic plaza with
+   * its queue and the APPROVED stamp, the portico, a filing hall whose stacks are a maze at two heights, the vault. */
+  gov: {
+    id: 'gov', dist: 'gov', hq: false, owner: 'gigacorp', dir: 'assets/maps/gov/', file: 'gov',
+    load: 'CASTING INTO THE GOVERNMENT QUARTER…', place: 'THE MINISTRY OF FORMS', region: 'GOVERNMENT QUARTER', title: 'DISTRICT OP: GOVERNMENT QUARTER',
+    act1: ['ACT I — TAKE A NUMBER', 'CLEAR THE PLAZA'], act1Obj: 'CLEAR THE QUEUE',
+    act2: ['ACT II — FILE IT WRONG', 'CORRUPT THREE RECORDS INDEXES'], act2Obj: 'FILE IT WRONG', relayWord: 'INDEX',
+    act3: ['ACT III — AUDIT', 'SURVIVE 75 SECONDS'], act3Obj: 'AUDIT',
+    waveSubs: ['THE QUEUE TURNS ON YOU', 'CLERKS ON THE STACKS', 'SOMETHING BIG IS APPROVED'],
+    head: { act1: ['NOW SERVING 0004', 'YOU ARE 88,412'], act2: ['RECORDS: COMPLETE', 'NOBODY HAS READ THEM'], act3: ['AUDIT', 'ALL CITIZENS UNDER REVIEW'] },
+    jumbo: { head: 'NOW SERVING 0004', live: 'MINISTRY OF FORMS // QUEUE CAM', sub: 'PLEASE TAKE A NUMBER', dead: ['RECORDS CORRUPTED', 'PLEASE REAPPLY'], deadOn: 'relays' },
+    chatTitle: 'MINISTRY OF FORMS // QUEUE CAM',
+    areas: {
+      summon: ['plaza', 'hall', 'wings', 'portico'], mod1: ['plaza', 'hall'], mod2: ['plaza', 'wings'],
+      flood: ['plaza', 'hall', 'wings', 'upper'], extract: ['vault', 'wings', 'hall'], trickle: ['vault', 'wings'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Government Quarter. The Ministry of Forms. Nobody reads anything in there, which makes it the best place in the city to hide.'],
+        ['COMMANDER', '{OWNER} run the ministry. Clear the queue, then corrupt their records indexes. If they can\'t find the forms, they can\'t find us.'],
+        ['THE CLERK', 'NUMBER 0004. NUMBER 0004 TO WINDOW ONE. YOU ARE NOT NUMBER 0004. PLEASE RETURN TO THE QUEUE.'],
+      ],
+      act2: [['COMMANDER', 'Three indexes. The forms counter in the west wing, the top of the stacks, and the vault under the hall. File them wrong.'],
+        ['THE CLERK', 'TAMPERING WITH A RECORD IS A FORM 27-B OFFENCE. FORM 27-B IS ALSO MISSING.']],
+      relayDown: [['COMMANDER', 'Index scrambled. Half the city just became nobody in particular.'], ['THE CLERK', 'A FILING IRREGULARITY HAS BEEN NOTED. IT WILL BE READ IN ELEVEN YEARS.'],
+        ['COMMANDER', 'That\'s all three. The state can\'t find anyone. It\'s sending auditors.']],
+      act3: [['THE CLERK', 'AUDIT IN PROGRESS. ALL CITIZENS ARE UNDER REVIEW. ESPECIALLY YOU.'],
+        ['COMMANDER', 'Auditors on the plaza. Use the queue ropes and the stamp, or take the stacks and shoot down.']],
+      extract: [['COMMANDER', 'Down to the vault. The incinerator door at the east end goes to the cell.']],
+      win: [['COMMANDER', 'You\'re out. Somewhere in that building there\'s a form with your face on it, filed under Weather. Good.']],
+      death: [['THE CLERK', 'YOUR CASE HAS BEEN CLOSED. PLEASE REAPPLY.']],
+    },
+    chat: {
+      start: ['queue cam live', 'is he number 0004?', 'who let him skip the line', 'ive been here since 2046', 'form 27-b anyone', 'first'],
+      relay: ['the screens say REAPPLY', 'my record is gone??', 'i dont exist anymore lol', 'someone misfiled the clerk', 'FREE'],
+      idle: ['he is hiding in the stacks', 'boring', 'check the vault', 'hello???', 'take a number bro'],
+    },
+    lostTitle: 'CASE CLOSED', lostSub: 'PLEASE REAPPLY', winResult: 'RECORDS CORRUPTED // EXTRACTED',
+    cone: [-38, 0, 40],
+    sky: ['#5a6066', '#767c82', '#90969a', '#50565c'], rain: 400, fogDensity: 0.008,
+    dyn: ['presses', 'vault', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.

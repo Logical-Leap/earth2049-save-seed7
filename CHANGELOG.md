@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-11-16 — Government Quarter: the Ministry of Forms
+
+- **The sixth district map, and the first in daylight** (an overcast grey noon). A symmetrical civic plaza with the queue in switchbacks, TAKE A NUMBER (NOW SERVING 0004, YOU ARE 88,412) and an APPROVED stamp the size of a house; grand stairs to the portico and a pediment you can stand on; the filing hall, where the shelf stacks are a maze at floor level and a second maze on top, joined by plank bridges and galleries; the forms counter under green lamps, the stamp presses, and the records vault below, where the incinerator door is the log-off.
+- **Act II is File It Wrong:** corrupt three records indexes (the forms counter, the stacks, the vault). The screens read "PLEASE REAPPLY".
+- **How to play it:** 5ON in the Haven (the district list), or any city grid op in the Government Quarter.
+
 ## 2026-11-16 — The Living Towers: Block 9, and 5ON's district list
 
 - **The fifth district map, and the first indoors.** The atrium of a ShillZ megablock: four storeys of rented doors round a void crossed by pink scaffold stairs in two spirals, a bridge at the third storey under the hanging ShillZ cube, and the roof with water tanks, the antenna farm and a rent-a-tent camp. The couch market rents by the hour and the star, the bathtub sleeps one, breathing is free between two and four. The log-off is the cell's door behind the washers in the laundry.

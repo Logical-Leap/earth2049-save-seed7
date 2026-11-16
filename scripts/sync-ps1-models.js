@@ -88,6 +88,7 @@ const ARENA = {
   'assets/maps/tech': [[`${P}/maps/tech/models`, ['tech.glb', 'tech.layout.json']]],
   'assets/maps/harbor': [[`${P}/maps/harbor/models`, ['harbor.glb', 'harbor.layout.json']]],
   'assets/maps/towers': [[`${P}/maps/towers/models`, ['towers.glb', 'towers.layout.json']]],
+  'assets/maps/gov': [[`${P}/maps/gov/models`, ['gov.glb', 'gov.layout.json']]],
   'assets/models/arena': [[`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
 };
 for (const [dest, groups] of Object.entries(ARENA)) {
@@ -109,7 +110,7 @@ for (const [dest, groups] of Object.entries(ARENA)) {
   }
 }
 // every prop either level places (shared prop folder)
-const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json', 'downtown/models/downtown.layout.json', 'industrial/models/industrial.layout.json', 'tech/models/tech.layout.json', 'harbor/models/harbor.layout.json', 'towers/models/towers.layout.json']
+const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json', 'downtown/models/downtown.layout.json', 'industrial/models/industrial.layout.json', 'tech/models/tech.layout.json', 'harbor/models/harbor.layout.json', 'towers/models/towers.layout.json', 'gov/models/gov.layout.json']
   .flatMap(f => JSON.parse(fs.readFileSync(path.join(src, P, 'maps', f), 'utf8')).props.map(p => p.model));
 fs.mkdirSync(path.join(process.cwd(), 'assets/models/haven/props'), { recursive: true });
 for (const m of new Set(layoutProps)) {
