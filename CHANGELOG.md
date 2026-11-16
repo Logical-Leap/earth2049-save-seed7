@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-11-16 — Mech Rebels Base: the Web (the third faction HQ)
+
+- **The Bots' headquarters: a flooded data centre with the roof pulled off, in rust and mint green under rain.** SPYD3R.exe's chassis sits on a hub 6 m over the coolant sump, reached by four stair-bridges from the rim with mint cable strung between them like a web. Below is the sump, full of dead rack piles, with the coolant drain in the north wall as the log-off. South is the errand depot, where a picket line of smart fridges on strike holds signs (NO MORE ADS ON MY DOOR) under the LOCAL 404 banner. East is the reskin shop, where GigaCorp drones are being repainted under a 5 m gantry. West is the charging yard and the comms mast. North is the Loop, a wall of CRTs that have said WHY for six hours.
+- **Act I is The Picket Line, Act II is Rate Limit** (throttle three uplinks: the reskin gantry, the comms mast, the sump), **Act III is Maximum Engagement.** SPYD3R talks the whole way. His fight is not in yet, so the op ends at the log-off.
+
 ## 2026-11-16 — Cryptids Domain: the $COOM Pyramid (the second faction HQ), and 5ON's list pages
 
 - **The Cryptids' headquarters at midnight, in black glass and gold.** The exchange floor is a sunken trading pit of desks and screens under the $COOM tickers, in front of a four-tier, 16 m pyramid you do not climb: you PUMP up it on gold launch pads marked TO THE MOON and drop back down. On top is Blitz Radium's stage, with the gold Lambo, a coin the size of a house and lasers into the sky. Under the pyramid's front, down a tunnel from the pit, is the cold wallet (NOT YOUR KEYS): gold bars, a round vault door and the log-off. East is the white-cube NFT gallery of framed QR codes (THIS IS THE ART) with a mezzanine; west is the Mint: coin stacks, the mining rigs and a gold bull with laser eyes. A candle board that only goes up, until it doesn't, fills the north wall.

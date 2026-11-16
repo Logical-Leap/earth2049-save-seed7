@@ -29,7 +29,7 @@
   const BASE = 'assets/models/ps1/avatar/';
   // /assets/models/* is served "immutable" for a week, so every kit file is fetched with this version.
   // scripts/sync-ps1-models.js rewrites it to the art-pipeline commit on every sync: new items show up at once.
-  const KIT_V = 'b0de3bc';
+  const KIT_V = '4cc60ce';
   const STORE = 'e2049.avatar.v1';
   const OWNED = 'e2049.avatar.owned.v1';
   const RARITY_COLORS = ['#a7b0c2', '#4fd17a', '#42a5f5', '#b65cff', '#ff9800', '#ffd54f', '#00e5ff'];

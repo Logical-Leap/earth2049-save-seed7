@@ -91,6 +91,7 @@ const ARENA = {
   'assets/maps/gov': [[`${P}/maps/gov/models`, ['gov.glb', 'gov.layout.json']]],
   'assets/maps/muskerT': [[`${P}/maps/muskerT/models`, ['muskerT.glb', 'muskerT.layout.json']]],
   'assets/maps/cryptidD': [[`${P}/maps/cryptidD/models`, ['cryptidD.glb', 'cryptidD.layout.json']]],
+  'assets/maps/botBase': [[`${P}/maps/botBase/models`, ['botBase.glb', 'botBase.layout.json']]],
   'assets/models/arena': [[`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
 };
 for (const [dest, groups] of Object.entries(ARENA)) {
@@ -112,7 +113,7 @@ for (const [dest, groups] of Object.entries(ARENA)) {
   }
 }
 // every prop either level places (shared prop folder)
-const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json', 'downtown/models/downtown.layout.json', 'industrial/models/industrial.layout.json', 'tech/models/tech.layout.json', 'harbor/models/harbor.layout.json', 'towers/models/towers.layout.json', 'gov/models/gov.layout.json', 'muskerT/models/muskerT.layout.json', 'cryptidD/models/cryptidD.layout.json']
+const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json', 'downtown/models/downtown.layout.json', 'industrial/models/industrial.layout.json', 'tech/models/tech.layout.json', 'harbor/models/harbor.layout.json', 'towers/models/towers.layout.json', 'gov/models/gov.layout.json', 'muskerT/models/muskerT.layout.json', 'cryptidD/models/cryptidD.layout.json', 'botBase/models/botBase.layout.json']
   .flatMap(f => JSON.parse(fs.readFileSync(path.join(src, P, 'maps', f), 'utf8')).props.map(p => p.model));
 fs.mkdirSync(path.join(process.cwd(), 'assets/models/haven/props'), { recursive: true });
 for (const m of new Set(layoutProps)) {

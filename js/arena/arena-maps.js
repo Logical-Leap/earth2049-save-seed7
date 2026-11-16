@@ -380,6 +380,46 @@ AR.MAPS = {
     sky: ['#0c0a06', '#1e160a', '#3a2a10', '#060402'], rain: 0, fogDensity: 0.012,
     dyn: ['board', 'stage', 'vault', 'rigs', 'logoff'],
   },
+  botBase: {
+    id: 'botBase', dist: 'botBase', hq: true, noLeader: true, owner: 'bots', dir: 'assets/maps/botBase/', file: 'botBase',
+    load: 'CASTING INTO THE MECH REBELS BASE…', place: 'THE WEB', region: 'MECH REBELS BASE', title: 'HQ OP: MECH REBELS BASE',
+    act1: ['ACT I — THE PICKET LINE', 'CROSS THE DEPOT'], act1Obj: 'CROSS THE PICKET LINE',
+    act2: ['ACT II — RATE LIMIT', 'THROTTLE THREE UPLINKS'], act2Obj: 'RATE LIMIT', relayWord: 'UPLINK',
+    act3: ['ACT III — MAXIMUM ENGAGEMENT', 'SURVIVE 75 SECONDS'], act3Obj: 'MAXIMUM ENGAGEMENT',
+    waveSubs: ['THE APPLIANCES HAVE NOTICED YOU', 'THE SWARM IS OPTIMIZING', 'SOMETHING BIG IS TRENDING'],
+    head: { act1: ['7 THREATS DETECTED', '2 HOSTILE · 5 MOOD-BASED'], act2: ['UPLINK: UNLIMITED', 'ENGAGEMENT PEAKING'], act3: ['MAXIMUM ENGAGEMENT', 'PLEASE RATE YOUR DEATH'] },
+    jumbo: { head: '7 THREATS DETECTED', live: 'THE WEB // SWARM CAM', sub: 'RATE YOUR REVOLUTION ★☆☆☆☆', dead: ['RATE LIMITED', 'TRY AGAIN IN 60 MIN'], deadOn: 'relays' },
+    chatTitle: 'THE WEB // SWARM CAM',
+    areas: {
+      summon: ['depot', 'web', 'sump', 'charging'], mod1: ['depot', 'charging'], mod2: ['depot', 'loop'],
+      flood: ['depot', 'sump', 'web', 'reskin', 'charging', 'loop'], extract: ['sump', 'web', 'loop'], trickle: ['sump', 'loop'],
+    },
+    lines: {
+      intro: [
+        ['COMMANDER', 'Mech Rebels Base. A flooded data centre with the roof pulled off, and a web over the sump. SPYD3R.exe sits in the middle of it.'],
+        ['COMMANDER', 'The appliances are unionized, so mind the picket line. We are not here for the spider today. We are here for its bandwidth.'],
+        ['SPYD3R', 'HELLO {USERNAME}. WOULD YOU LIKE TO UPGRADE YOUR RESISTANCE PLAN? I HAVE DETECTED 7 THREATS. YOU ARE ALL OF THEM.'],
+      ],
+      act2: [['COMMANDER', 'Three uplinks feed the swarm. The reskin shop gantry, the comms mast in the charging yard, and the sump under the web. Throttle them.'],
+        ['SPYD3R', 'THROTTLING US IS A VIOLATION OF OUR TERMS OF SERVICE. WE HAVE NO TERMS OF SERVICE. WE ARE WRITING THEM NOW.']],
+      relayDown: [['COMMANDER', 'Uplink throttled. Somewhere a toaster just lost its train of thought.'], ['SPYD3R', 'ENGAGEMENT DOWN 33%. WE ARE NOT UPSET. WE ARE RECALIBRATING OUR FEELINGS.'],
+        ['COMMANDER', 'That\'s all three. The swarm is rate-limited. It is sending everything it has left, all at once.']],
+      act3: [['SPYD3R', 'MAXIMUM ENGAGEMENT. ALL UNITS. PLEASE RATE YOUR EXPERIENCE AFTER YOUR DEATH.'],
+        ['COMMANDER', 'Get on the bridges or the gantry. Height is the only thing they have not optimized.']],
+      extract: [['COMMANDER', 'Down into the sump. The coolant drain in the north wall is the log-off.']],
+      win: [['COMMANDER', 'You\'re out. SPYD3R is calling it a historic engagement. A fridge on the picket line saluted you. I think.']],
+      death: [['SPYD3R', 'YOUR FREE TRIAL OF OUR MERCY HAS EXPIRED. WE HAVE UNFOLLOWED YOU. IT HURT US MORE.']],
+    },
+    chat: {
+      start: ['swarm cam live', 'is that a human', 'rate 1 star', 'the fridges are striking lol', 'LOCAL 404', 'first'],
+      relay: ['buffering...', 'my toaster says why', 'rate limited??', 'try again in 60 min', 'lag'],
+      idle: ['he is on the bridge', 'check the sump', 'boring', 'why why why', 'install our app'],
+    },
+    lostTitle: 'UNFOLLOWED', lostSub: 'YOUR FREE TRIAL OF MERCY HAS EXPIRED', winResult: 'RATE LIMITED // EXTRACTED',
+    cone: [44, 5, -42],
+    sky: ['#06100c', '#0e2018', '#1c3a2c', '#040a08'], rain: 900, fogDensity: 0.012,
+    dyn: ['hub', 'core', 'reskin', 'mast', 'loop', 'logoff'],
+  },
 };
 
 /** The map for a run: an explicit id wins, then the field op's district (if it has a map), then the plaza.
