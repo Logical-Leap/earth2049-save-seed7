@@ -1465,7 +1465,7 @@ async function startArena(opts = {}) {
   setState('arena');
   paused = false;
   G = null;
-  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, op: opts.op || null, onExit: () => {
+  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, op: opts.op || null, map: opts.map || null, onExit: () => {
     if (World.group) World.group.visible = true;
     setState('loading');
     newRun({ hub:true });
@@ -1499,6 +1499,7 @@ function openMissionBoard() { if (!ensureFieldOps()) return; hubPause(); FieldOp
 function havenAction(action, npc) {
   if (!G?.hub) return;
   if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
+  if (action === 'deploy_downtown') { Music.stinger('deploy'); startArena({ map: 'downtown' }); return; }
   if (action === 'grid') { openCityGrid(); return; }
   if (action === 'board') { openMissionBoard(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }

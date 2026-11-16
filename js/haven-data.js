@@ -52,6 +52,7 @@ const HAVEN_NPCS = {
     greet: "Rig's warm. The OG Device is humming like it owes somebody money. You going in, or are you sightseeing?",
     options: [
       { t: 'Deploy me.', action: 'deploy', reply: 'Cast initiated. Try to come back with all your fingers this time.' },
+      { t: 'Drop me into Downtown.', action: 'deploy_downtown', reply: 'Fifth and Feed. Smile for the cameras. Then break them.' },
       { t: "What's the Dreamcaster?", reply: "Operation Dreamcaster. The OG Device cuts a hole in Turing's timeline and drops you into a simulation of a district. Die in there, you wake up here with a headache and less dignity. Win, and we keep whatever you dragged back." },
       { t: 'You flew in the Collapse War?', reply: 'Gunship. Forty-one sorties. Now I fly a folding chair next to a portal. Progress, baby.' },
       { t: 'Later.' },

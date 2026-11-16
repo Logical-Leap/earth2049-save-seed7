@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-11-16 — Downtown: the first district map
+
+- **Every district in the city grid is a map in the field.** `js/arena/arena-maps.js` holds the registry: level files, the words for every beat, spawn areas per beat, and whether a map is a faction **HQ**.
+- **The HQ rule:** a district is a street a faction happens to hold. Its mission runs Acts I–III and ends at the log-off, and **who holds it today decides who you fight** (ShillZ, Muskers, Cryptids, Bots or GigaCorp looks on the same behaviours). An HQ never changes hands, has its own set pieces, and its leader waits at the end. The Engagement Plaza is ShillZ Central's HQ.
+- **Downtown — Fifth & Feed:** a canyon of screens and cameras on three tiers. The scramble and the Feed Tower, the camp and its memorial under the skybridge, Compliance Checkpoint 7, the rooftops and the content house, the billboard gantry, the stalled monorail, and the subway concourse where the Purple Cell's door is the log-off. Act II is **Blind the Feed**: burn three camera uplinks and every screen in the district goes to static.
+- **How to play it:** 5ON in the Haven ("Drop me into Downtown"), or any city grid takeover or raid in Downtown.
+- Drones stay under ceilings; spawns flagged low never get flyers. Arena maps and enemies now load with the pipeline commit as their version.
+
 ## 2026-11-16 — Accounts and cloud saves
 
 - **One Earth 2049 account for every save.** Save Seed 7, the city grid inside it and the standalone idle game each sync their own slot to the same account, on any device.

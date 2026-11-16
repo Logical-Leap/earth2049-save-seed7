@@ -80,9 +80,10 @@ const ENEMY_BASES = ['shill_m', 'shill_f', 'hypebeast_m', 'streamer_m', 'streame
     files.push(`${dest}/${n}.glb`);
   }
 }
-// ---- Operation: Unsubscribe — the Engagement Plaza arena (its enemies come from assets/models/ps1/enemies)
+// ---- the arena maps: the Engagement Plaza (ShillZ Central HQ) and the districts (enemies come from assets/models/ps1/enemies)
 const ARENA = {
   'assets/maps/plaza': [[`${P}/maps/plaza/models`, ['plaza.glb', 'plaza.layout.json']]],
+  'assets/maps/downtown': [[`${P}/maps/downtown/models`, ['downtown.glb', 'downtown.layout.json']]],
   'assets/models/arena': [[`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
 };
 for (const [dest, groups] of Object.entries(ARENA)) {
@@ -104,7 +105,7 @@ for (const [dest, groups] of Object.entries(ARENA)) {
   }
 }
 // every prop either level places (shared prop folder)
-const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json']
+const layoutProps = ['haven/models/haven.layout.json', 'plaza/models/plaza.layout.json', 'downtown/models/downtown.layout.json']
   .flatMap(f => JSON.parse(fs.readFileSync(path.join(src, P, 'maps', f), 'utf8')).props.map(p => p.model));
 fs.mkdirSync(path.join(process.cwd(), 'assets/models/haven/props'), { recursive: true });
 for (const m of new Set(layoutProps)) {
@@ -125,6 +126,13 @@ try {
     const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
     m.version = commit.slice(0, 7);
     fs.writeFileSync(mf, JSON.stringify({ version: m.version, ...m }, null, 2) + '\n');
+  }
+}
+// the arena loads its maps and enemies with ?v=AR.VERSION: stamp the commit there too
+{
+  const js = path.join(process.cwd(), 'js/arena/arena-data.js');
+  if (fs.existsSync(js) && commit !== 'unknown') {
+    fs.writeFileSync(js, fs.readFileSync(js, 'utf8').replace(/AR\.VERSION = '[^']*';/, `AR.VERSION = '${commit.slice(0, 7)}';`));
   }
 }
 // the avatar kit is cached as immutable: stamp the commit into js/avatar.js so players fetch the new files
