@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-11-16 — Every enemy type has its own model
+
+- New enemy models from game-art-pipeline `3ea944f`. The three types that used to borrow another unit's body now
+  have their own:
+  - **ShillZ Streamer:** a quilted yellow puffer, a headset and LIVE shades, a battery pack with a ring light
+    haloing the head, and a chest-mounted phone.
+  - **Musker Runner:** a sealed helmet with a visor slit and crest fin, arc blades past both fists, jump-jet
+    ports and running-blade feet.
+  - **Musker Lancer:** a crown of implant rods, a respirator and monocle, a long duster, and a plasma lance
+    in place of the right forearm.
+- Enemies in districts now spawn from the variant bases (`assets/models/ps1/enemies/`): male or female body
+  where the unit is a person, plus a seeded look (faction tints, accessories). There are 12 looks per body, and
+  their textures are shared. The Engagement Plaza uses the same folder, and its Streamer is the new model.
+- `Variants.roll` caches tinted textures per seed.
+
 ## 2026-11-12 — Native VR (WebXR): the whole game, fully immersive
 
 - **New `js/vr.js`.** Press **Enter VR** (on the title screen or in pause) in the Meta Quest Browser or any WebXR browser.

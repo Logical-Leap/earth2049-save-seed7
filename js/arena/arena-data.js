@@ -83,7 +83,7 @@ AR.ENEMIES = {
     blurb: 'Fake rebels. Real fists.',
   },
   streamer: {
-    name: 'STREAMER', models: ['shill_m', 'shill_f'], type: 'streamer', hp: 62, walk: 3.4, run: 4.6, r: 0.38, h: 1.76,
+    name: 'STREAMER', models: ['streamer_m', 'streamer_f'], type: 'streamer', hp: 62, walk: 3.4, run: 4.6, r: 0.38, h: 1.76,
     dmg: 9, ai: 'ranged', range: [9, 22], burst: 3, burstGap: 0.16, fireCd: [2.0, 3.0], tele: 0.6, boltSpeed: 24,
     score: 150, chips: [1, 3], knock: 1.2, flinch: 0.8, gib: [0xffd400, 0xff60d0, 0x2a2416], blurb: 'Ring light on. Aim off. Usually.',
   },

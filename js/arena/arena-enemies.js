@@ -17,10 +17,11 @@ AR.Enemies = (() => {
   const { V3, clamp, rand, pick } = AR;
   const list = [];
   let scene = null, group = null, uid = 1;
-  const A = 'assets/models/arena/';
+  const A = 'assets/models/arena/', E = 'assets/models/ps1/enemies/';
   const MODELS = {
-    serverless_m: A + 'serverless_m.glb', serverless_f: A + 'serverless_f.glb', shill_m: A + 'shill_m.glb', shill_f: A + 'shill_f.glb',
-    hypebeast_m: A + 'hypebeast_m.glb', cdrone_x: A + 'cdrone_x.glb', enforcer_x: A + 'enforcer_x.glb',
+    serverless_m: A + 'serverless_m.glb', serverless_f: A + 'serverless_f.glb', shill_m: E + 'shill_m.glb', shill_f: E + 'shill_f.glb',
+    streamer_m: E + 'streamer_m.glb', streamer_f: E + 'streamer_f.glb',
+    hypebeast_m: E + 'hypebeast_m.glb', cdrone_x: E + 'cdrone_x.glb', enforcer_x: E + 'enforcer_x.glb',
     riya: 'assets/models/ps1/characters/riya.glb', relay: 'assets/models/haven/props/shillz_speaker_tower.glb',
   };
   const gltfs = {};
@@ -71,7 +72,6 @@ AR.Enemies = (() => {
     const mats = litMaterials(root);
     const seed = opts.seed ?? Math.floor(Math.random() * 1e9);                         // NOSONAR
     Variants.roll(gltf, root, seed, d.type || null);
-    if (d.type === 'shill') { const rl = root.getObjectByName('acc_ringlight'); if (rl) rl.scale.setScalar(0); }
     root.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(root);
     const hgt = Math.max(0.1, box.max.y - box.min.y);

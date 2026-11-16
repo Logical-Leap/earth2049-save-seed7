@@ -20,6 +20,7 @@ const P = 'projects/earth2049';
 const CHARACTERS = {
   shillz: 'shillz', shillz_big: 'shillz_big', musker: 'musker', cryptid: 'cryptid',
   mech: 'mech', mech_enforcer: 'mech_enforcer', bot_node: 'bot_node',
+  streamer: 'streamer', runner: 'runner', lancer: 'lancer',
   riya: 'riya', magnus: 'magnus', spyd3r: 'spyd3r', blitz: 'blitz', turing: 'turing',
 };
 // Non-humanoid units built with the props kit (named leg_/spin_ nodes, no clips).
@@ -68,11 +69,21 @@ for (const [dest, groups] of Object.entries(HAVEN)) {
     files.push(`${dest}/${to}`);
   }
 }
-// ---- Operation: Unsubscribe — the Engagement Plaza arena and its enemy variant bases
+// ---- Every enemy type's variant bases (male / female, or _x for machines): seeded looks in districts and the arena
+const ENEMY_BASES = ['shill_m', 'shill_f', 'hypebeast_m', 'streamer_m', 'streamer_f', 'runner_m', 'runner_f', 'lancer_m', 'lancer_f',
+  'node_x', 'sentinel_x', 'cdrone_x', 'broker_m', 'broker_f', 'trooper_x', 'enforcer_x'];
+{
+  const dest = 'assets/models/ps1/enemies';
+  fs.mkdirSync(path.join(process.cwd(), dest), { recursive: true });
+  for (const n of ENEMY_BASES) {
+    fs.copyFileSync(path.join(src, P, 'characters/enemies/models', n + '.glb'), path.join(process.cwd(), dest, n + '.glb'));
+    files.push(`${dest}/${n}.glb`);
+  }
+}
+// ---- Operation: Unsubscribe — the Engagement Plaza arena (its enemies come from assets/models/ps1/enemies)
 const ARENA = {
   'assets/maps/plaza': [[`${P}/maps/plaza/models`, ['plaza.glb', 'plaza.layout.json']]],
-  'assets/models/arena': [[`${P}/characters/enemies/models`, ['shill_m.glb', 'shill_f.glb', 'hypebeast_m.glb', 'cdrone_x.glb', 'enforcer_x.glb']],
-    [`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
+  'assets/models/arena': [[`${P}/characters/crowd/models`, ['serverless_m.glb', 'serverless_f.glb']]],
 };
 for (const [dest, groups] of Object.entries(ARENA)) {
   fs.mkdirSync(path.join(process.cwd(), dest), { recursive: true });

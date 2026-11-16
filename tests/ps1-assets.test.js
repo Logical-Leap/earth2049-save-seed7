@@ -54,3 +54,19 @@ test('props-kit units expose the nodes the game animates', () => {
   assert.equal(nodes(manifest['enemy.sentinel']).filter(n => /^leg_\d$/.test(n)).length, 4);
   assert.ok(nodes(manifest['enemy.cdrone']).some(n => n.startsWith('spin_')));
 });
+
+test('every enemy type has its own model, with a female body where it is a person', () => {
+  const types = ['shill', 'streamer', 'hypebeast', 'runner', 'lancer', 'node', 'sentinel', 'cdrone', 'broker', 'trooper', 'enforcer'];
+  const urls = types.map(t => manifest['enemy.' + t]);
+  assert.equal(new Set(urls).size, types.length, 'two enemy types share a model');
+  for (const t of ['shill', 'streamer', 'runner', 'lancer', 'broker']) assert.ok(manifest['enemy.' + t + '.f'], t + ' has no female body');
+  for (const url of urls) {
+    const b = fs.readFileSync(path.join(root, url));
+    const json = JSON.parse(b.subarray(20, 20 + b.readUInt32LE(12)).toString());
+    assert.ok(json.scenes[0].extras?.crowd, url + ' is not a variant base');
+    assert.ok((json.images || []).length >= 3, url + ' has no slot mask');
+  }
+  // the arena flashes the streamer's ring light before a burst
+  const sb = fs.readFileSync(path.join(root, manifest['enemy.streamer']));
+  assert.ok(JSON.parse(sb.subarray(20, 20 + sb.readUInt32LE(12)).toString()).nodes.some(n => n.name === 'acc_ringlight'));
+});

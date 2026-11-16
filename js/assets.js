@@ -17,9 +17,10 @@ const Assets = (() => {
   const EXTERNAL_MODELS = {
     shill:     { height: 1.8, anim: PS1_CLIPS.melee },
     hypebeast: { height: 1.8, anim: PS1_CLIPS.melee },
-    streamer:  { height: 1.8, anim: PS1_CLIPS.ranged },
-    runner:    { height: 1.8, anim: PS1_CLIPS.melee },
-    lancer:    { height: 1.8, anim: PS1_CLIPS.ranged },
+    // the bounding box includes the streamer's ring light, the runner's crest fin and the lancer's implant rods
+    streamer:  { height: 2.16, anim: PS1_CLIPS.ranged },
+    runner:    { height: 1.87, anim: PS1_CLIPS.melee },
+    lancer:    { height: 1.87, anim: PS1_CLIPS.ranged },
     node:      { height: 1.8, anim: PS1_CLIPS.ranged },
     // Units built with the props kit: no clips; the game animates their
     // leg_* nodes (gait) and spin_* nodes (rotors/halos) procedurally.
@@ -358,7 +359,24 @@ const Assets = (() => {
 
   async function preloadExternalModels() {
     // All GLBs are listed in the asset manifest and loaded (once) by AssetLoader.
-    await AssetLoader?.preloadManifest?.();
+    const manifest = await AssetLoader?.preloadManifest?.();
+    // Enemy GLBs are variant bases (male / female, tint slots, accessory nodes): decode their slot masks now so every
+    // spawn can roll a look synchronously.
+    if (window.Variants && manifest?.models) {
+      await Promise.all(Object.keys(manifest.models).filter(k => k.startsWith('enemy.'))
+        .map(k => Variants.prepare(AssetLoader.getModel(k)).catch(() => null)));
+    }
+  }
+  // Each enemy type rolls one of a dozen seeded looks per body, so the tinted textures are shared and bounded.
+  const LOOKS_PER_BODY = 12;
+  function enemyModel(typeId) {
+    const opts = ['enemy.' + typeId, 'enemy.' + typeId + '.f'].map(k => AssetLoader?.getModel?.(k)).filter(Boolean);
+    return opts.length ? opts[Math.floor(Math.random() * opts.length)] : null;
+  }
+  function rollLook(gltf, model, typeId) {
+    if (!window.Variants || !gltf.scene.userData?.crowd) return;
+    let h = 0; for (const ch of typeId) h = (h * 31 + ch.charCodeAt(0)) | 0;
+    Variants.roll(gltf, model, (h & 0xffff) * 977 + Math.floor(Math.random() * LOOKS_PER_BODY), typeId);
   }
 
   // PS1 look: swap the GLB's PBR materials for per-vertex (Gouraud) Lambert
@@ -411,7 +429,7 @@ const Assets = (() => {
 
   function makeExternalRig(typeId, kind = 'enemy') {
     const def = kind === 'boss' ? EXTERNAL_BOSSES[typeId] : EXTERNAL_MODELS[typeId];
-    const gltf = def && AssetLoader?.getModel?.(kind + '.' + typeId);
+    const gltf = def && (kind === 'enemy' ? enemyModel(typeId) : AssetLoader?.getModel?.(kind + '.' + typeId));
     if (!gltf) return null;
     const rig = newRig();
     rig.external = true;
@@ -419,6 +437,7 @@ const Assets = (() => {
     const model = cloneExternalScene(gltf.scene);
     model.name = 'GLB_' + typeId;
     ps1Materials(model, rig.flash);
+    if (kind === 'enemy') rollLook(gltf, model, typeId);      // per-spawn look: body, tints, accessories
     rig.root.add(model);
     model.updateMatrixWorld(true);
     const box = new THREE.Box3().setFromObject(model);
