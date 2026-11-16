@@ -327,6 +327,7 @@ AR.Hud = (() => {
   function prompt(t) {
     if (!N.prompt) return;
     if (t && window.Pad?.active) t = t.replace('[E]', '[X]');
+    else if (t && AR.Touch?.on) t = t.replace('[E] ', 'TAP USE: ');
     if (t) { if (N.prompt.textContent !== t) N.prompt.textContent = t; N.prompt.style.display = 'block'; } else N.prompt.style.display = 'none';
   }
   let subT = null;
@@ -373,7 +374,7 @@ AR.Hud = (() => {
     const ov = el('arCards');
     const fx = o.kind === 'level' || o.kind === 'sponsor';
     ov.className = 'arov' + (fx ? ' fx ' + o.kind : '');
-    const hint = window.Pad?.active ? 'D-PAD TO CHOOSE // A TO SIGN' : 'CLICK A CARD OR PRESS 1 / 2 / 3';
+    const hint = window.Pad?.active ? 'D-PAD TO CHOOSE // A TO SIGN' : (AR.Touch?.on || matchMedia('(pointer: coarse)').matches) ? 'TAP A CARD' : 'CLICK A CARD OR PRESS 1 / 2 / 3';
     ov.innerHTML = `${fx ? '<div class="rays"></div>' : ''}<h1>${title}</h1><h2>${sub}</h2><div class="arcards"></div><div class="arbtns"></div><div style="margin-top:14px;font-size:11px;opacity:.6">${hint}</div>`;
     if (o.kind === 'level') for (let i = 0; i < 26; i++) {
       const p = document.createElement('i'); p.className = 'sp';

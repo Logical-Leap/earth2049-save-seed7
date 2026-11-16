@@ -2357,6 +2357,7 @@ function initInput() {
     for (const t of e.changedTouches) {
       if (t.target.classList && t.target.classList.contains('tbtn')) continue;
       if (state !== 'run' || paused) continue;
+      window.AR?.Touch?.fullscreen();                 // phones: full screen and landscape on the first touch in play
       if (t.clientX < innerWidth * 0.42 && moveId === null) {
         moveId = t.identifier; anchor = { x: t.clientX, y: t.clientY };
         base.style.display = 'block'; knob.style.display = 'block';
