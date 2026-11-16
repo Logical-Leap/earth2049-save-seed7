@@ -63,6 +63,29 @@ function setProfileName(name) {
 
 /* ------------------------------------------------------------ wardrobe (js/wardrobe.js): DRIP, feats, avatar unlocks */
 let wardrobeCatalog = null;
+/* CLOUD SAVE (js/cloud-save.js, docs/ACCOUNTS.md): the local save stays the source of play; signed in, it also syncs
+ * to the player's Earth 2049 account. A newer cloud save only replaces the running game at a menu, never mid-run. */
+function applyCloudSave(text) {
+  if (state === 'run' || state === 'arena') throw Object.assign(new Error('busy'), { code: 'busy' });
+  const result = SaveSystem.importSave(text, localStorage, saveCatalogs(), randomId);
+  if (!result.ok) throw Object.assign(new Error(result.error), { code: result.error });
+  SAVE = result.save; saveWriteBlocked = false; saveLoadStatus = 'cloud'; futureSaveRaw = null; attachWardrobe();
+  ensureAbilityUnlocks(); updateTitle();
+  if (el('ovArmory')?.classList.contains('show')) renderArmory();
+}
+function initCloudSave() {
+  if (!window.CloudSave) return;
+  CloudSave.init({
+    slot: 'fps', title: 'EARTH 2049: SAVE SEED 7', overlayClass: 'ov',
+    get: () => JSON.stringify(SAVE),
+    apply: applyCloudSave,
+    meta: () => ({ gigatech: SAVE.gt | 0, runs: SAVE.runs | 0, 'arena wins': SAVE.arena?.wins | 0, 'best heat': SAVE.arena?.maxHeat | 0 }),
+    fresh: () => !(SAVE.runs || SAVE.gt || SAVE.arena?.runs || SAVE.kills),
+    onClose: () => { if (el('ovArmory')?.classList.contains('show')) renderArmory(); },
+  });
+  CloudSave.onStatus(() => { if (state === 'title') updateTitle(); });
+}
+function openCloudSave() { if (window.CloudSave) CloudSave.openPanel(); }
 function attachWardrobe() { if (wardrobeCatalog && window.Wardrobe) Wardrobe.attach(SAVE, wardrobeCatalog); }
 function loadWardrobe() {
   if (!window.Wardrobe) return;
@@ -2546,6 +2569,9 @@ function renderArmory() { // NOSONAR - static tab renderer avoids framework/bund
     }
   } else if (activeArmoryTab === 'save') {
     add(cardHtml('Save Status', saveStatusCopy()));
+    add(cardHtml('Cloud Save', window.CloudSave?.signedIn() ? 'Signed in: this save syncs to your Earth 2049 account and follows you to any device. ' + (CloudSave.status || '') : 'Sign in with your email to keep this save safe and play it on any device. No password.', '<div class="buybtn" data-cloud>' + (window.CloudSave?.signedIn() ? 'ACCOUNT' : 'SIGN IN') + '</div>'), card => {
+      card.querySelector('[data-cloud]').onclick = () => { AudioSys.sfx('ui'); openCloudSave(); };
+    });
     add(cardHtml('Export Progress', 'Download a portable JSON copy before moving devices or testing an Early Access update.', '<div class="buybtn" data-save-export>EXPORT SAVE</div>'), card => {
       card.querySelector('[data-save-export]').onclick = downloadSaveFile;
     });
@@ -2622,6 +2648,8 @@ function wireMenus() {
     btnLook.onclick = () => { AudioSys.sfx?.('ui'); window.PS1Mode?.cycle?.(); };
   }
   el('btnHelp').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderBriefing(); show('ovHelp'); };
+  if (el('btnCloud')) el('btnCloud').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); openCloudSave(); };
+  initCloudSave();
   el('btnHelpBack').onclick = () => {
     AudioSys.sfx('ui');
     if (hubOverlayOpen && G?.hub) { hubOverlayOpen = false; paused = false; show(null); banner('REBEL HAVEN', 'INTEL TERMINAL CLOSED'); }

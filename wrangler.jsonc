@@ -10,5 +10,12 @@
   },
   "migrations": [
     { "tag": "v1", "new_sqlite_classes": ["RoomDurableObject"] }
+  ],
+  // accounts and cloud saves (workers/account-api.js, docs/ACCOUNTS.md)
+  "d1_databases": [
+    { "binding": "DB", "database_name": "earth2049-accounts", "database_id": "06b5b9b3-2ea1-489a-b007-b593cad5351f", "migrations_dir": "migrations" }
   ]
+  // Email sign-in switches on with a game domain: add  "send_email": [{ "name": "EMAIL" }]  and
+  // "vars": { "MAIL_FROM": "signin@<domain>" }  once that domain is onboarded to Cloudflare Email Sending.
+  // Steam sign-in: wrangler secret put STEAM_WEB_API_KEY and STEAM_APP_ID.
 }

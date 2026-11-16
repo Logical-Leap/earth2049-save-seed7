@@ -118,6 +118,15 @@ try {
 } catch (err) {
   console.warn('could not read the pipeline commit:', err.message);
 }
+// models are cached as immutable: stamp the commit into the asset manifest so the loader fetches the new files
+{
+  const mf = path.join(process.cwd(), 'assets/data/asset-manifest.json');
+  if (fs.existsSync(mf) && commit !== 'unknown') {
+    const m = JSON.parse(fs.readFileSync(mf, 'utf8'));
+    m.version = commit.slice(0, 7);
+    fs.writeFileSync(mf, JSON.stringify({ version: m.version, ...m }, null, 2) + '\n');
+  }
+}
 // the avatar kit is cached as immutable: stamp the commit into js/avatar.js so players fetch the new files
 {
   const js = path.join(process.cwd(), 'js/avatar.js');

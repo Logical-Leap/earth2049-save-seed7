@@ -1,0 +1,10 @@
+// Local-only config for tests/accounts-api.test.js: the same Worker against a local D1 and no real mail.
+{
+  "name": "earth2049-coop-test",
+  "main": "workers/coop-worker.js",
+  "compatibility_date": "2026-07-08",
+  "durable_objects": { "bindings": [ { "name": "ROOMS", "class_name": "RoomDurableObject" } ] },
+  "migrations": [ { "tag": "v1", "new_sqlite_classes": ["RoomDurableObject"] } ],
+  "d1_databases": [ { "binding": "DB", "database_name": "earth2049-accounts-test", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" } ],
+  "vars": { "DEV_ECHO_CODES": "1" }
+}
