@@ -74,3 +74,17 @@ test('the first-person body wears the saved look and dresses GunFeel hands from 
   assert.match(read('js/arena/arena-player.js'), /FPBody\.update\(rdt, \{[^}]*arms: false/);
   assert.match(read('js/game.js'), /window\.FPBody\?\.refresh\(\)/, 'the Fitting Room re-dresses the body');
 });
+
+test('sidearm is semi-auto and the storm ending never blows up the crowd', () => {
+  const fs = require('node:fs');
+  const data = fs.readFileSync(require('node:path').join(__dirname, '../js/arena/arena-data.js'), 'utf8');
+  const cfg = fs.readFileSync(require('node:path').join(__dirname, '../js/config.js'), 'utf8');
+  const mission = fs.readFileSync(require('node:path').join(__dirname, '../js/arena/arena-mission.js'), 'utf8');
+  const player = fs.readFileSync(require('node:path').join(__dirname, '../js/arena/arena-player.js'), 'utf8');
+  assert.match(data, /pistol: \{[\s\S]*?rpm: 270, semi: true/, 'arena sidearm: one shot per pull, 270 rpm cap');
+  assert.match(cfg, /pistol : \{[^}]*semi:true/, 'run-mode sidearm is semi-auto too');
+  assert.match(player, /d\.semi && g\.held/, 'fire waits for the trigger to come back up');
+  const storm = mission.slice(mission.indexOf("M.phase === 'act3' && M.stormDone"), mission.indexOf("} else if (M.phase === 'extract')"));
+  assert.doesNotMatch(storm, /damage\(e, 99999/, 'no mass explosion when the storm ends');
+  assert.match(storm, /AR\.Enemies\.logOff/, 'far bots log off quietly instead');
+});

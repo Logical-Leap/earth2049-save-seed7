@@ -507,6 +507,7 @@ AR.Player = (() => {
     g.fireT -= dt;
     g.bloom = Math.max(0, g.bloom - d.bloomRecover * dt * (g.fireT < -0.1 ? 1.5 : 1));
     if (performance.now() - g.lastShot > 320) g.shot = 0;
+    if (!I.fire) g.held = false;                                // semi-auto guns wait for the trigger to come back up
     if (gfOn()) { gfFireTick(g, d, dt); return; }
     // reload
     if (I.reload) { I.reload = false; startReload(g); }
@@ -531,7 +532,7 @@ AR.Player = (() => {
       if (g.reloading) return;
     }
     if (!I.fire || P.swapT > 0 || P.kickT > 0.1) return;
-    if (g.fireT > 0) return;
+    if (g.fireT > 0 || (d.semi && g.held)) return;
     if (g.ammo <= 0) {
       if (!g.dryT || performance.now() - g.dryT > 300) { AR.Sfx.dry(); g.dryT = performance.now(); }
       if (g.reserve <= 0 && P.cur === 1) { swapTo(0); AR.Hud.toast('PRIMARY DRY', 'SIDEARM OUT // FIND AMMO'); return; }
@@ -539,7 +540,7 @@ AR.Player = (() => {
     }
     const interval = 60 / (d.rpm * (1 + S.rate) * (AR.Mission?.adrenal() || 1));
     g.fireT += interval; if (g.fireT < -interval) g.fireT = 0;
-    g.ammo--; g.lastShot = performance.now();
+    g.ammo--; g.lastShot = performance.now(); g.held = !!d.semi;
     shoot(g);
     if (g.ammo === 0 && g.reserve > 0) setTimeout(() => { if (P && gun() === g && g.ammo === 0) startReload(g); }, 160);
   }
@@ -547,7 +548,7 @@ AR.Player = (() => {
     const w = gfWeapon(g);
     g.reloading = GunFeel.reloading;
     if (I.reload) { I.reload = false; GunFeel.reload(w); }
-    if (!I.fire || P.swapT > 0 || P.kickT > 0.1 || g.fireT > 0) return;
+    if (!I.fire || P.swapT > 0 || P.kickT > 0.1 || g.fireT > 0 || (d.semi && g.held)) return;
     if (!GunFeel.canFire(w)) return;
     if (g.ammo <= 0) {
       if (!GunFeel.reload(w)) {
@@ -558,7 +559,7 @@ AR.Player = (() => {
     }
     const interval = 60 / (d.rpm * (1 + S.rate) * (AR.Mission?.adrenal() || 1));
     g.fireT += interval; if (g.fireT < -interval) g.fireT = 0;
-    g.ammo--; g.lastShot = performance.now();
+    g.ammo--; g.lastShot = performance.now(); g.held = !!d.semi;
     shoot(g);
     const k = GunFeel.fire(w);                                 // hands, flash, casings, rarity audio; returns the climb
     P.pitch = clamp(P.pitch + k.pitch, -1.5, 1.5); P.yaw += k.yaw;
@@ -805,16 +806,21 @@ AR.Player = (() => {
     if (!P || !P.alive) { I.padX = 0; I.padZ = 0; return; }
     const B = Pad.BTN;
     I.padX = pad.lx; I.padZ = -pad.ly;
-    // look: response curve, then aim assist (slow down over a target, a gentle pull toward its head)
+    // look: response curve, then aim assist. Kept light: a little slow-down over a target, and a small pull only
+    // while the player is already steering toward it with the right stick. It helps; it never aims for you.
     const curve = v => Math.sign(v) * Math.pow(Math.abs(v), 1.8);
     let lx = curve(pad.rx) * 3.4, ly = curve(pad.ry) * 2.3;                   // rad/s at full tilt
     const sens = SAVE?.opts?.padSens || 1;
-    const t = assistTarget();
-    if (t && (Math.abs(pad.rx) > 0.05 || Math.abs(pad.ry) > 0.05 || P.speed > 1)) {
-      const k = 0.45 + 0.55 * Math.min(1, t.ang / 0.07);                      // friction: up to 55% slower on target
+    const stick = Math.hypot(pad.rx, pad.ry);
+    const t = stick > 0.12 ? assistTarget() : null;
+    if (t) {
+      const k = 0.75 + 0.25 * Math.min(1, t.ang / 0.04);                      // friction: at most 25% slower right on target
       lx *= k; ly *= k;
-      const pull = (P.ads > 0.4 ? 0.9 : 0.45) * rdt;                           // magnetism, stronger while aiming
-      P.yaw += AR.clamp(t.dYaw, -pull, pull); P.pitch = AR.clamp(P.pitch + AR.clamp(t.dPitch, -pull, pull), -1.5, 1.5);
+      const toward = Math.sign(t.dYaw) === -Math.sign(pad.rx) || Math.abs(t.dYaw) < 0.01;   // stick right turns yaw down
+      if (toward) {                                                           // magnetism: only toward where the stick already points
+        const pull = (P.ads > 0.4 ? 0.22 : 0.1) * Math.min(1, stick) * rdt;
+        P.yaw += AR.clamp(t.dYaw, -pull, pull); P.pitch = AR.clamp(P.pitch + AR.clamp(t.dPitch, -pull * 0.6, pull * 0.6), -1.5, 1.5);
+      }
     }
     I.lookX += lx * sens * rdt / 0.0021 / (SAVE?.opts?.sens || 1);
     I.lookY += ly * sens * rdt / 0.0021 / (SAVE?.opts?.sens || 1);
@@ -839,7 +845,7 @@ AR.Player = (() => {
       const d = _to.length(); if (d > 45 || d < 1) continue;
       _to.divideScalar(d);
       const ang = Math.acos(Math.min(1, _to.dot(_aim)));
-      const cone = 0.09 + 0.6 / d;                                            // wider up close
+      const cone = 0.05 + 0.25 / d;                                           // a little wider up close
       if (ang > cone || (best && ang >= best.ang)) continue;
       if (AR.World.los && !AR.World.los(_eye.x, _eye.y, _eye.z, h.x, h.y - 0.25, h.z)) continue;
       const wantYaw = Math.atan2(-_to.x, -_to.z), wantPitch = Math.asin(_to.y);

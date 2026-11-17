@@ -50,7 +50,7 @@ const RARITIES = [
 ];
 
 const WEAPONS = {
-  pistol : { name:'Volt-9',          cls:'Pistol',          dmg:18,  rpm:310, spread:1.0,  ammo:Infinity, pellets:1, type:'hit' },
+  pistol : { name:'Volt-9',          cls:'Pistol',          dmg:21,  rpm:250, semi:true, spread:1.0,  ammo:Infinity, pellets:1, type:'hit' },
   smg    : { name:'VX-2 Ripper',     cls:'SMG',             dmg:11,  rpm:800, spread:3.4,  ammo:280, pellets:1, type:'hit' },
   shotgun: { name:'Riptide-12',      cls:'Shotgun',         dmg:9,   rpm:85,  spread:6.5,  ammo:52,  pellets:9, type:'hit' },
   ar     : { name:'M-52 Revenant',   cls:'Assault Rifle',   dmg:22,  rpm:540, spread:1.8,  ammo:220, pellets:1, type:'hit' },
