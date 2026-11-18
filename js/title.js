@@ -41,7 +41,7 @@
   const DESC = {
     btnHub: 'Drop into the Rebel Haven: gear up, get dressed, talk to the crew.',
     btnStart: 'Cast straight into the Plaza. Burn the relays. Get out alive.',
-    btnVR: 'Put the headset on. The whole game, fully immersive: your hands, your gun, your city.',
+    btnVR: 'Play the whole game in a headset. VR options and how to get in.',
     btnPvp: 'The GigaLeague: competitive PvP. Quickplay, private rooms, or offline against bots. Create-a-class, scorestreaks, 12 modes.',
     btnHostCoop: 'Open a game for up to four operatives. Anyone can find it, or share the code.',
     btnJoinCoop: 'Quick match, browse open games, or join a friend by code.',

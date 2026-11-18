@@ -5,8 +5,10 @@
  *   FPBody.detach()             take it out of the scene
  *   FPBody.refresh()            re-dress after the look changed (the Fitting Room calls this)
  *
- * The head and everything on it is hidden, so looking down shows your top, legs and shoes. The body stands a
- * little behind the camera so the lens never sits inside the chest. In combat (arms: false) the body's arms are
+ * The head and everything on it is hidden. The body stands a little behind the camera and steps further back as
+ * you look down, so you see the front of your chest, legs and shoes (never down into the top of the model).
+ * Any worn piece that comes within a hand's width of the lens (a back item swinging up in a jump, a chain in a
+ * slide) is hidden for that frame: nothing ever clips through the camera, in flat play or VR. In combat (arms: false) the body's arms are
  * hidden and GunFeel's viewmodel hands wear your equipped gloves and sleeves instead: FPBody builds those pieces
  * from the same look (hand + forearm of each side) and hands them to GunFeel.setArms().
  */
@@ -14,6 +16,12 @@
 
 const FPBody = (() => {
   const BACK = 0.12;                      // metres behind the camera
+  const BACK_DOWN = 0.3;                  // extra step back when looking straight down
+  const BACK_VR = 0.26;                   // in VR you look down with your own head: legs just in front of you
+  const NEAR = 0.16;                      // metres: worn pieces closer than this to the lens are hidden
+  let cam = null;
+  const _eye = new THREE.Vector3(), _loc = new THREE.Vector3(), _inv = new THREE.Matrix4();
+  let meshes = [], hidden = new Set();
   let spine = null;
   let body = null, armsAv = null, scene = null, code = null, building = null, poseT = 0, clip = '';
   const basicCache = new Map();
@@ -42,7 +50,9 @@ const FPBody = (() => {
     body = K().create(L);
     body.root.name = 'fp-body';
     body.setFirstPerson(true);
-    body.root.traverse(o => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = false; } });
+    meshes = []; hidden = new Set();
+    body.root.traverse(o => { if (o.isMesh) { o.castShadow = false; o.frustumCulled = false;
+      if (!o.geometry.boundingBox) o.geometry.computeBoundingBox(); meshes.push(o); } });
     if (parent) parent.add(body.root);
     body.root.visible = shown;
     body.play('Idle Combat', 0); clip = 'Idle Combat';
@@ -99,14 +109,13 @@ const FPBody = (() => {
   const _arms = ['upperarm_L', 'upperarm_R'];
   function update(dt, s) {
     if (!body || !scene || !body.root.parent || !shown) return;
-    const yaw = s.yaw;
-    // stand behind the camera, facing where it faces (the kit faces +Z; the camera looks down -Z)
-    const k = Math.max(0, Math.min(1, (-(s.pitch || 0) - 0.7) / 0.35));
-    const back = BACK + 0.2 * k;              // further back as you look down: you see the fronts of your legs and shoes
+    const yaw = s.yaw, vr = !!window.VR?.active;
+    // stand behind the camera, facing where it faces (the kit faces +Z; the camera looks down -Z); step back as you
+    // look down so the lens is in front of your chest, not above your waist
+    const k = Math.max(0, Math.min(1, (-(s.pitch || 0) - 0.45) / 0.85));
+    const back = vr ? BACK_VR : BACK + BACK_DOWN * k * k * (3 - 2 * k);
     body.root.position.set(s.x + Math.sin(yaw) * back, s.y, s.z + Math.cos(yaw) * back);
-    // glance down and you see your top and sleeves; look further down and the upper body steps aside so you see
-    // your legs and shoes (it would otherwise fill the view: the eye sits right above your own chest)
-    if (spine) spine.visible = (s.pitch || 0) > -0.78 && !window.VR?.active;     // in VR: legs under you, hands on the controllers
+    if (spine) spine.visible = true;
     body.root.rotation.y = yaw + Math.PI;
     for (const n of _arms) { const o = body.root.getObjectByName(n); if (o) o.visible = s.arms !== false; }
     const sp = s.speed || 0;
@@ -120,9 +129,24 @@ const FPBody = (() => {
       if (poseT <= 0 || (clip !== 'Idle Combat' && clip !== 'Idle')) { poseT = 6; play(s.arms === false ? 'Idle Combat' : 'Idle'); }
     }
     body.update(dt);
+    clearLens(s);
   }
+  // hide whatever worn piece is about to poke through the lens this frame
+  function clearLens(s) {
+    for (const o of hidden) o.visible = true;
+    hidden.clear();
+    if (cam) cam.getWorldPosition(_eye); else _eye.set(s.x, s.y + 1.62, s.z);
+    body.root.updateMatrixWorld(true);
+    for (const o of meshes) {
+      if (!o.visible) continue;
+      _loc.copy(_eye).applyMatrix4(_inv.copy(o.matrixWorld).invert());
+      const sc = o.matrixWorld.getMaxScaleOnAxis() || 1;
+      if (o.geometry.boundingBox.distanceToPoint(_loc) * sc < NEAR) { o.visible = false; hidden.add(o); }
+    }
+  }
+  function setCamera(c) { cam = c || null; }
 
-  return { ensure, attach, detach, update, refresh, show, handFor, get body() { return body; }, get ready() { return !!body; } };
+  return { ensure, attach, detach, update, refresh, show, handFor, setCamera, get hiddenNow() { return [...hidden].map(o => o.name); }, get body() { return body; }, get ready() { return !!body; } };
 })();
 
 if (typeof window !== 'undefined') window.FPBody = FPBody;

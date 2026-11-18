@@ -724,7 +724,7 @@ AR.Mission = (() => {
     AR.hitstop(e.d.hp > 300 || e.elite ? 0.09 : head ? 0.05 : 0.035);
     AR.Player.addTrauma(e.d.hp > 300 ? 0.3 : 0.08);
     AR.Hud.style(M.rank, M.styleV - M.rank, (M.multi >= 2 ? STREAK[Math.min(STREAK.length - 1, M.multi)] + ' ' : '') + tags.join(' // '));
-    clearTimeout(M.streakClear); M.streakClear = setTimeout(() => AR.Hud.style(M.rank, M.styleV - M.rank, ''), 1800);
+    clearTimeout(M.streakClear); M.streakClear = setTimeout(() => { if (M) AR.Hud.style(M.rank, M.styleV - M.rank, ''); }, 1800);   // the mission may be over by then
     // heals
     const copium = S.copium && P.hp < P.maxHp * 0.35;
     if (S.leech) AR.Player.heal(S.leech * (copium ? 2 : 1));

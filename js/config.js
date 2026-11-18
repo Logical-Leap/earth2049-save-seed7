@@ -124,7 +124,7 @@ const AUGMENTS = [
   { id:'trigger',   n:'Trigger Hack',      t:'Offense',  d:'+20% fire rate.',                        ap:p=>{p.mods.rate+=0.20;} },
   { id:'deadeye',   n:'Dead Eye Firmware', t:'Offense',  d:'+12% critical chance.',                  ap:p=>{p.mods.crit+=0.12;} },
   { id:'executioner',n:'Executioner Code', t:'Offense',  d:'+75% critical damage.',                  ap:p=>{p.mods.critDmg+=0.75;} },
-  { id:'volatile',  n:'Volatile Rounds',   t:'Offense',  d:'Kills detonate: AoE damage around the corpse.', ap:p=>{p.mods.volatile=true;} },
+  { id:'volatile',  n:'Volatile Rounds',   t:'Offense',  d:'Kills detonate: a small blast around the corpse. A kill from the blast bursts once more, weaker.', ap:p=>{p.mods.volatile=true;} },
   { id:'ricochet',  n:'Ricochet Logic',    t:'Offense',  d:'Hits arc to a nearby enemy for 60% damage.',    ap:p=>{p.mods.ricochet+=1;} },
   { id:'nanoleech', n:'Nanoleech Swarm',   t:'Survival', d:'Heal 3 HP per kill.',                    ap:p=>{p.mods.leech+=3;} },
   { id:'vital',     n:'Vital Boost',       t:'Survival', d:'+40 Max HP. Heal 40.',                   ap:p=>{p.maxHp+=40;p.hp=Math.min(p.maxHp,p.hp+40);} },

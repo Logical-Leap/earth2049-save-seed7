@@ -5,10 +5,13 @@ The whole game runs natively in a VR headset as a fully immersive WebXR session,
 ## Playing on a Meta Quest 3 / 3S
 1. Put the headset on and open the **Meta Quest Browser**.
 2. Go to https://logical-leap.github.io/earth2049-save-seed7/ (HTTPS is required, and GitHub Pages provides it).
-3. Press **Enter VR**. It's on the title screen and in the pause menu, and it only appears when the browser reports a headset.
+3. Press **Play in VR** on the title screen, then **Enter VR**. The VR panel is always there: it shows whether a headset is connected, the comfort options (smooth turning, comfort vignette) and how to get in on a Quest or on PC VR. Mid-run, Enter VR is in the pause menu once a headset is connected; the VR options are in the pause menu too.
 4. Stand or sit; the floor height comes from your Guardian.
 
 Nothing needs installing on a computer: WebXR runs in the headset's own browser. To watch logs while you play, use the Meta Quest Developer Hub or `chrome://inspect` with the headset plugged in over USB and developer mode on. That's optional.
+
+## Your body in VR
+Looking down shows your chest, legs and shoes in front of you. Anything you wear that comes within a hand's width of your eyes (a hat brim, a cape, wings) is hidden for that moment, so nothing ever fills your view.
 
 ## Controls
 | Where | Control | Action |

@@ -50,8 +50,9 @@ export default {
       if (url.pathname === '/pvp/rooms' && request.method === 'GET') { const d = pdir(); if (!d) return json({ rooms:[] }); return json(await (await d.fetch('https://directory/list?protocol=101')).json()); }
       if (url.pathname === '/pvp/rooms' && request.method === 'POST') { const body = await request.json().catch(()=>({})); return json({ roomCode: await pvpCreate(body, { listed: body.public === true, quick:false }) }); }
       if (url.pathname === '/pvp/matchmake' && request.method === 'POST') {
-        const body = await request.json().catch(()=>({})), playlist = ['core','classic','party'].includes(body.playlist) ? body.playlist : 'core';
-        const d = pdir(), found = d ? (await (await d.fetch('https://directory/match?protocol=101&playlist=' + playlist)).json()).room : null;
+        // 'any' (the big QUICK MATCH button): the best open match in any playlist, else a new CORE one
+        const body = await request.json().catch(()=>({})), any = !['core','classic','party'].includes(body.playlist), playlist = any ? 'core' : body.playlist;
+        const d = pdir(), found = d ? (await (await d.fetch('https://directory/match?protocol=101&playlist=' + (any ? '' : playlist))).json()).room : null;
         if (found) return json({ roomCode: found.code, created:false });
         return json({ roomCode: await pvpCreate(Object.assign({}, body, { playlist, name: 'QUICKPLAY // ' + playlist.toUpperCase() }), { listed:true, quick:true }), created:true });
       }

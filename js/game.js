@@ -122,7 +122,7 @@ function openWardrobe() {
       persist();
       Haven.refreshWardrobe?.();
       window.FPBody?.refresh();
-      banner('THE FITTING ROOM', L ? 'LOOKING GOOD. SEAM APPROVES.' : 'COME BACK WHEN YOU HAVE MORE DRIP.');
+      banner('THE FITTING ROOM', L ? 'FIT SAVED. SEAM APPROVES.' : 'COME BACK WHEN YOU HAVE MORE DRIP.');
     },
   });
 }
@@ -197,6 +197,7 @@ async function boot() {
   // first-person gunplay (js/gunfeel.js): arsenal viewmodels, hands, recoil, ADS, reloads, flashes, casings
   if (window.GunFeel) { GunFeel.init({ camera, scene, gunGroup }); GunFeel.preloadMasks(); }
   window.FPBody?.attach(scene);                       // your own body under the camera (js/fp-body.js)
+  window.FPBody?.setCamera?.(camera);                 // so nothing worn ever pokes through the lens
   window.VR?.init({ renderer, scene, camera });      // native WebXR (js/vr.js)
   if (window.VR) wireVR();
   window.Boom?.init?.({ scene, camera });          // grenade and plasma explosions (js/boom.js)
@@ -1269,6 +1270,7 @@ function damageEnemy(e, dmg, crit, at, netConfirmed) {
   if (e.hp <= 0) killEnemy(e);
 }
 
+let volatileDepth = 0;
 function killEnemy(e) {
   const p = G.p;
   e.state = 'dying'; e.dieT = 0;
@@ -1293,14 +1295,18 @@ function killEnemy(e) {
   const ml = weaponMasteryLevel(curWeapon().id);
   if (curWeapon().id === 'smg' && ml >= 3 && curWeapon().ammo !== Infinity) curWeapon().ammo = Math.min(curWeapon().ammoMax, curWeapon().ammo + 6);
   if (curWeapon().id === 'lmg' && ml >= 3) p.armor = Math.min(p.maxArmor, p.armor + 3);
-  if (p.mods.volatile) {
-    const vd = 30 + G.district * 12;
-    spawnShock(e.pos.x, 1, e.pos.z, 0xff9040, 3.4);
-    for (const e2 of G.enemies) {
-      if (e2 === e || e2.state === 'dying') continue;
-      const d = Math.hypot(e2.pos.x - e.pos.x, e2.pos.z - e.pos.z);
-      if (d < 2.6) damageEnemy(e2, vd, false, e2.pos);
-    }
+  // Volatile Rounds: a kill bursts; a kill from that burst bursts once more at half strength, then the chain stops
+  if (p.mods.volatile && volatileDepth <= 1) {
+    const vd = (20 + G.district * 8) * (volatileDepth ? 0.5 : 1);
+    spawnShock(e.pos.x, 1, e.pos.z, 0xff9040, volatileDepth ? 2.6 : 3.4);
+    volatileDepth++;
+    try {
+      for (const e2 of G.enemies) {
+        if (e2 === e || e2.state === 'dying') continue;
+        const d = Math.hypot(e2.pos.x - e.pos.x, e2.pos.z - e.pos.z);
+        if (d < 2.4) damageEnemy(e2, vd, false, e2.pos);
+      }
+    } finally { volatileDepth--; }
   }
   // drops
   const gtv = Math.round(rewardPolicy.shardGT * (1 + G.district * 0.15) * G.tierData.reward);
@@ -1733,8 +1739,23 @@ function vrGameplay(dt) {
   if (vrPauseHeld(dt)) setPaused(true);
   if (vrYTap) { vrYTap = false; tap('KeyQ'); }
 }
+// the title's Play in VR opens this panel: headset status, Enter VR, comfort options and how to get in
+function openVRPanel() {
+  AudioSys.init(); AudioSys.sfx('ui');
+  const st = el('vrStatus');
+  const paint = () => {
+    const ok = !!VR.supported;
+    st.textContent = ok ? 'Headset ready' : 'No headset on this device. See how to play below.';
+    st.className = ok ? 'ok' : 'no';
+    el('btnVREnter').classList.toggle('cant', !ok);
+  };
+  paint(); setTimeout(paint, 600);
+  hideOverlays(); el('ovVR').classList.add('show');
+}
 function wireVR() {
-  for (const id of ['btnVR', 'btnVRPause']) {
+  el('btnVR').onclick = openVRPanel;
+  el('btnVRBack').onclick = () => { AudioSys.sfx('ui'); hideOverlays(); updateTitle?.(); el('ovTitle').classList.add('show'); };
+  for (const id of ['btnVREnter', 'btnVRPause']) {
     const b = el(id); if (!b) continue;
     b.onclick = async () => {
       AudioSys.init(); AudioSys.sfx('ui');
@@ -1744,7 +1765,7 @@ function wireVR() {
       else banner('VR', 'NO HEADSET FOUND. OPEN THE GAME IN YOUR QUEST BROWSER.');
     };
   }
-  const vrLabel = t => { for (const id of ['btnVR', 'btnVRPause']) if (el(id)) el(id).innerHTML = t; };
+  const vrLabel = t => { for (const id of ['btnVREnter', 'btnVRPause']) if (el(id)) el(id).innerHTML = t; };
   VR.onStart(() => {
     document.exitPointerLock?.(); window.FPBody?.refresh(); VR.refreshHands(); vrLabel('Exit VR');
     // the flat title diorama renders its own scene through the composer: in a headset you stand over the live city instead
@@ -2394,6 +2415,11 @@ function initInput() {
     console.info('[E2049] Pointer lock unavailable; using free-cursor aiming.');
   };
   document.addEventListener('pointerlockerror', enableFreeLook);
+  // after a dialogue or menu closes, take the mouse back so the player can keep looking around (no extra click)
+  window.relockMouse = () => {
+    if (state !== 'run' || paused || isTouch || freeLook || window.VR?.active || uiHoldsMouse() || document.pointerLockElement === cv) return;
+    try { const req = cv.requestPointerLock(); if (req && typeof req.catch === 'function') req.catch(() => {}); } catch (err) { /* the next click locks it */ }
+  };
   cv.addEventListener('mousedown', e => {
     if (state !== 'run' || paused) return;
     if (!isTouch && !freeLook && document.pointerLockElement !== cv && !acceptanceInputEnabled) {
@@ -2415,7 +2441,8 @@ function initInput() {
   });
   document.addEventListener('pointerlockchange', () => {
     Input.lookDX = 0; Input.lookDY = 0;
-    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused && !window.Pad?.active && !window.VR?.active) setPaused(true);
+    // losing the mouse means "tabbed away" and pauses, unless the game let go of it on purpose (a dialogue, a menu)
+    if (document.pointerLockElement !== cv && state === 'run' && !isTouch && !paused && !window.Pad?.active && !window.VR?.active && !uiHoldsMouse()) setPaused(true);
   });
 
   // touch
@@ -2734,11 +2761,12 @@ function wireMenus() {
   el('optSens').oninput = e => { SAVE.opts.sens = e.target.value / 100; persist(); };
   if (el('optPadSens')) { el('optPadSens').value = (SAVE.opts.padSens || 1) * 100; el('optPadSens').oninput = e => { SAVE.opts.padSens = e.target.value / 100; persist(); }; }
   if (SAVE.opts.rumble === undefined) SAVE.opts.rumble = true;
+  const togs = [];
   const tog = (id, key, fn) => {
     const b = el(id);
     const upd = () => { b.textContent = SAVE.opts[key] ? 'ON' : 'OFF'; b.classList.toggle('on', SAVE.opts[key]); };
-    upd();
-    b.onclick = () => { SAVE.opts[key] = !SAVE.opts[key]; persist(); fn(SAVE.opts[key]); upd(); };
+    upd(); togs.push(upd);
+    b.onclick = () => { SAVE.opts[key] = !SAVE.opts[key]; persist(); fn(SAVE.opts[key]); for (const u of togs) u(); };   // the same option can sit in two menus
   };
   tog('optMusic', 'music', v => AudioSys.setMusic(v));
   tog('optSfx', 'sfx', v => AudioSys.setSfx(v));
@@ -2746,6 +2774,8 @@ function wireMenus() {
   if (SAVE.opts.vrVignette === undefined) SAVE.opts.vrVignette = true;
   if (el('optVrSmooth')) tog('optVrSmooth', 'vrSmoothTurn', () => {});
   if (el('optVrVig')) tog('optVrVig', 'vrVignette', () => {});
+  if (el('optVrSmoothT')) tog('optVrSmoothT', 'vrSmoothTurn', () => {});
+  if (el('optVrVigT')) tog('optVrVigT', 'vrVignette', () => {});
   el('btnAuto').textContent = 'AUTO: ' + (SAVE.opts.auto ? 'ON' : 'OFF');
   el('btnAuto').classList.toggle('on', SAVE.opts.auto);
 }
@@ -2930,6 +2960,11 @@ addEventListener('keydown', e => {
   Haven.dialogKey(e.code);
   e.stopImmediatePropagation(); e.preventDefault();
 }, true);
+
+// the havenDlg is clickable: clicking an option (or picking one with 1-9) closes it, then the mouse locks again
+document.getElementById('havenDlg')?.addEventListener('click', () => setTimeout(() => window.relockMouse?.(), 0));
+addEventListener('keydown', () => { if (Haven.dialogOpen) setTimeout(() => { if (!Haven.dialogOpen) window.relockMouse?.(); }, 0); }, true);
+function uiHoldsMouse() { return !!(window.Haven?.dialogOpen || hubOverlayOpen || window.AvatarCreator?.isOpen || window.PvpMenu?.isOpen); }
 
 /* ============ main loop ============ */
 let lastT = 0, flowT = 0, titleT = 0;
