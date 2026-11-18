@@ -20,7 +20,9 @@ Implemented synchronization refinement:
 - Co-op downed state plus hold-E teammate revive (1.8 seconds, server-validated alive/downed states and 3.25m proximity).
 - Explicit browser-to-room message allowlisting, host-only mission transitions, all-ready start enforcement, and bounded message traffic.
 
-Not included yet: public matchmaking, accounts, PvP, trading, MMO hub, voice chat, anti-cheat-hardening, or database persistence.
+Added later: public game list (server browser) and quick match — see "Finding a game" below.
+
+Not included yet: accounts linked to co-op identity, PvP, trading, MMO hub, voice chat, anti-cheat-hardening, or database persistence.
 
 ## Authority model
 
@@ -57,6 +59,16 @@ Protocol direction is explicit. The room accepts only `PING`, `PLAYER_READY`, `S
 | `js/net/net-client.js` | Fetch/WebSocket wrapper for room creation/joining. |
 | `js/net/net-interpolation.js` | Snapshot buffer and interpolation helpers. |
 | `js/net/net-room.js` | Runtime bridge between the local game loop and network messages. |
+
+## Finding a game
+
+Every real build talks to the official co-op server (`https://earth2049-coop.chandler-fac.workers.dev`) with no setup. Only a local dev copy (localhost or file://) may point somewhere else, from the co-op screen's Advanced field, and anywhere can use `?coopWorker=` for diagnostics.
+
+- **Host Co-op** (title) opens a public game in one click. The co-op screen also offers **Host Private Game** (code only, never listed).
+- **Find Co-op Game** shows the open games list (refreshes every 6 s), **Quick Match**, and **Join by Code**.
+- **Quick Match** (`POST /matchmake`) joins the fullest open lobby; if there is none, it drops into a mission in progress that has a free slot; if there is nothing at all, it opens a new public game and lists it.
+- The list (`GET /rooms?protocol=2`) comes from one `LobbyDirectory` Durable Object (`workers/lobby-directory.js`). Public rooms report to it when someone joins or leaves, when a mission starts or ends, and every 30 s (Durable Object alarm) while anyone is connected. An entry that stops reporting for 90 s drops off; a room with nobody connected is removed at once. Full rooms and other protocol versions are hidden.
+- The host starts without a separate Ready click (pressing Start counts), so a host can start alone and let others drop in. Guests still ready up. After a mission ends the room accepts a new Start.
 
 ## Lobby flow
 

@@ -169,6 +169,7 @@ body.vr-ok .vrbtn{display:block!important}body.vr-ok .vrrow{display:flex!importa
 .btn.primary{border-color:rgba(0,229,255,.7);color:#dffbff;background:rgba(0,60,80,.35);}
 .btn.primary:hover,.btn.primary:active{background:rgba(0,229,255,.25);box-shadow:0 0 28px rgba(0,229,255,.5);}
 .btn.danger{border-color:rgba(255,45,85,.6);}
+.btn.cant{opacity:.45;pointer-events:none;}
 .small{font-size:10px;letter-spacing:.24em;opacity:.45;margin-top:26px;text-transform:uppercase;}
 .gtwallet{margin-top:18px;font-size:13px;letter-spacing:.2em;color:var(--cyan);}
 h2.ovtitle{font-size:clamp(20px,4.6vw,34px);font-weight:900;letter-spacing:.34em;text-transform:uppercase;color:#fff;
@@ -279,6 +280,28 @@ body.dev-open #devToggleBtn{opacity:.55;}
 .cooprow span:last-child{opacity:.7;text-align:right;}
 #coopHint{font-size:11px;line-height:1.6;letter-spacing:.12em;opacity:.75;margin-top:10px;text-align:center;}
 .coop-nameplate{transform:translateY(-10px);}
+.coopname{margin-bottom:12px;}
+.coopacts{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0;}
+.coopacts .btn{flex:1 1 160px;text-align:center;}
+.coopfoot{margin-top:14px;}
+.coophead{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+.coophead label{margin:0;}
+.btn.sm{padding:6px 12px;font-size:10px;}
+#coopBrowser{display:flex;flex-direction:column;gap:6px;margin-top:8px;max-height:min(38vh,320px);overflow:auto;pointer-events:auto;}
+.cooproom{display:flex;align-items:center;gap:12px;border:1px solid rgba(120,150,255,.22);background:rgba(10,14,30,.6);padding:8px 10px;}
+.cooproom .ci{flex:1;min-width:0;}
+.cooproom .cn{font-size:13px;font-weight:700;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cooproom .cm{font-size:10px;letter-spacing:.14em;opacity:.7;text-transform:uppercase;margin-top:2px;}
+.cooproom .cm b{color:var(--yellow);font-weight:700;}
+.cooproom .btn{padding:8px 16px;}
+.coopempty{font-size:11px;letter-spacing:.12em;opacity:.65;padding:12px 4px;text-align:center;}
+.coopjoin{display:flex;gap:8px;margin-top:12px;}
+.coopjoin input{flex:1;text-transform:uppercase;letter-spacing:.3em;}
+.coopjoin .btn{flex:0 0 auto;}
+#coopRoomMeta{font-size:10px;letter-spacing:.16em;opacity:.7;text-transform:uppercase;text-align:center;}
+#coopAdv{margin-top:12px;font-size:10px;letter-spacing:.14em;opacity:.6;pointer-events:auto;}
+#coopAdv summary{cursor:pointer;text-transform:uppercase;}
+#coopAdv label{margin-top:8px;}
 
 /* ---- Rebel Haven: area label + dialogue ---- */
 #havenArea{position:absolute;left:3vw;top:26vh;pointer-events:none;opacity:0;font-family:Consolas,monospace;letter-spacing:.18em;text-shadow:0 0 12px rgba(155,89,255,.6);}
@@ -414,7 +437,7 @@ body.ar-touch #arTouch .at-top{left:50%;transform:translateX(-50%);}
     <div class="btn" id="btnStart">Operation: Unsubscribe</div>
     <div class="btn vrbtn" id="btnVR">Enter VR</div>
     <div class="btn" id="btnHostCoop">Host Co-op</div>
-    <div class="btn" id="btnJoinCoop">Join Co-op</div>
+    <div class="btn" id="btnJoinCoop">Find Co-op Game</div>
     <div class="btn" id="btnArmory">Armory</div>
     <div class="btn" id="btnHelp">Briefing</div>
     <div class="btn" id="btnCloud">Cloud Save</div>
@@ -426,25 +449,34 @@ body.ar-touch #arTouch .at-top{left:50%;transform:translateX(-50%);}
 
 
 <div class="ov" id="ovCoop">
-  <h2 class="ovtitle">Co-op Uplink</h2>
-  <div class="ovsub">Private room · 1-4 Purple Team operatives · personal rewards</div>
+  <h2 class="ovtitle">Co-op</h2>
+  <div class="ovsub">1-4 operatives · drop in any time · personal rewards</div>
   <div class="coopbox">
-    <label>Room Code</label>
-    <div id="coopRoomCode">—</div>
-    <div class="coopgrid">
-      <div><label>Display Name</label><input id="coopName" maxlength="24" value="Purple Operative"></div>
-      <div><label>Join Room Code</label><input id="coopJoinCode" maxlength="8" placeholder="AB12C"></div>
-      <div><label>Worker URL</label><input id="coopWorkerUrl" placeholder="http://127.0.0.1:8787 or https://your-worker.workers.dev"></div>
+    <div class="coopname"><label for="coopName">Your name</label><input id="coopName" maxlength="24" value="Purple Operative"></div>
+    <div id="coopFind">
+      <div class="coopacts">
+        <div class="btn primary" id="btnCoopQuick">Quick Match</div>
+        <div class="btn" id="btnCoopHostPublic">Host Public Game</div>
+        <div class="btn" id="btnCoopHostPrivate">Host Private Game</div>
+      </div>
+      <div class="coophead"><label>Open games</label><div class="btn sm" id="btnCoopRefresh">Refresh</div></div>
+      <div id="coopBrowser"><div class="coopempty">Looking for games…</div></div>
+      <div class="coopjoin"><input id="coopJoinCode" maxlength="8" placeholder="ROOM CODE" autocomplete="off" autocapitalize="characters"><div class="btn" id="btnCoopConnect">Join by Code</div></div>
     </div>
-    <div class="btnrow" style="margin:12px auto 0;">
-      <div class="btn" id="btnSaveProfile">Save Profile</div>
-      <div class="btn primary" id="btnCoopConnect">Connect / Join</div>
-      <div class="btn" id="btnCoopReady">Ready: No</div>
-      <div class="btn primary" id="btnCoopStart" style="display:none;">Start Co-op Run</div>
-      <div class="btn danger" id="btnCoopBack">Leave / Back</div>
+    <div id="coopLobby" style="display:none;">
+      <label>Room code — share it with friends</label>
+      <div id="coopRoomCode">—</div>
+      <div id="coopRoomMeta"></div>
+      <div id="coopPlayers"></div>
+      <div class="coopacts">
+        <div class="btn" id="btnCoopReady">Ready: No</div>
+        <div class="btn primary" id="btnCoopStart" style="display:none;">Start Mission</div>
+        <div class="btn danger" id="btnCoopLeave">Leave Room</div>
+      </div>
     </div>
-    <div id="coopPlayers"></div>
-    <div id="coopHint">Set a Worker URL, host a private room, or join by code. Solo mode never requires network.</div>
+    <div id="coopHint">Quick Match drops you into an open game, or opens one for others to find.</div>
+    <details id="coopAdv"><summary>Advanced</summary><label for="coopWorkerUrl">Co-op server</label><input id="coopWorkerUrl" placeholder="https://earth2049-coop.chandler-fac.workers.dev"></details>
+    <div class="coopacts coopfoot"><div class="btn" id="btnCoopBack">Back</div></div>
   </div>
 </div>
 
@@ -597,10 +629,10 @@ if (/[?&]xremu=1\b/.test(location.search)) document.write('<script src="tools/iw
 <script src="js/run-settlement.js?v=20260713-m2-exact-once-rewards"></script>
 <script src="js/loader.js?v=20261116-modelv"></script>
 <script src="js/net/net-protocol.js?v=20260713-coop-security"></script>
-<script src="js/net/net-config.js?v=20260710-coop-url-fix"></script>
+<script src="js/net/net-config.js?v=20261117-coop"></script>
 <script src="js/net/net-interpolation.js?v=20260710-coop-sync-v2"></script>
-<script src="js/net/net-client.js?v=20260713-coop-security"></script>
-<script src="js/net/net-room.js?v=20260713-coop-security"></script>
+<script src="js/net/net-client.js?v=20261117-coop"></script>
+<script src="js/net/net-room.js?v=20261117-coop"></script>
 <script src="js/vr.js?v=20261112-vr2"></script>
 <script src="js/gamepad.js?v=20261116-field"></script>
 <script src="js/audio.js?v=20261111-haven"></script>
@@ -635,8 +667,8 @@ if (/[?&]xremu=1\b/.test(location.search)) document.write('<script src="tools/iw
 <script src="js/arena/arena-main.js?v=20261116-touch"></script>
 <script src="js/cloud-save.js?v=20261116-cloud"></script>
 <script src="js/field-ops.js?v=20261116-origin"></script>
-<script src="js/title.js?v=20261116-cloud"></script>
+<script src="js/title.js?v=20261117-coop"></script>
 <script src="js/devconsole.js?v=20261111-wardrobe"></script>
-<script src="js/game.js?v=20261116-feel"></script>
+<script src="js/game.js?v=20261117-coop"></script>
 </body>
 </html>
