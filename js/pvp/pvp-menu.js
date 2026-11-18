@@ -19,6 +19,7 @@
   #pvpMenu button:hover,#pvpMenu button:focus{border-color:#ffd400;color:#ffd400;outline:none}
   #pvpMenu button.on{background:#ffd400;color:#111;border-color:#ffd400}#pvpMenu button.go{background:#ff2bd6;border-color:#ff2bd6;color:#fff;font-weight:bold}
   #pvpMenu button:disabled{opacity:.35;cursor:default}
+  #pvpMenu button.big{display:block;width:100%;padding:16px;font-size:18px;letter-spacing:.2em;margin:6px 0 4px}
   #pvpMenu .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
   #pvpMenu .card{background:rgba(20,15,40,.78);border:1px solid rgba(255,255,255,.12);padding:12px 14px}
   #pvpMenu .card h3{margin:0 0 6px;font-size:15px;color:#00e5ff}#pvpMenu .card p{margin:4px 0 8px;font-size:12px;opacity:.82;text-transform:none;letter-spacing:0;line-height:1.4}
@@ -77,8 +78,9 @@
   function classOptions(sel) { return PvpProgress.classes().map((c, i) => `<option value="${i}" ${i === sel ? 'selected' : ''}>${esc(c.name)}${c.premade ? '' : ' (CUSTOM)'}</option>`).join(''); }
   function renderPlay(body) {
     body.innerHTML = `<div class="grid">
-      <div class="card"><h3>QUICKPLAY</h3><p>Pick a playlist. You drop into an open match, or a new one starts. Bots fill every empty slot, so there is always a game.</p>
-        <div class="row">${Object.values(PVP.PLAYLISTS).map(p => `<button data-qp="${p.id}" title="${esc(p.sub)}">${p.name}</button>`).join('')}</div><p class="hint">Online. Needs the match server.</p></div>
+      <div class="card"><h3>QUICK MATCH</h3><p>One button: you drop into the best open match, or a new one starts with bots in every empty slot, so there is always a game. No codes, no room names.</p>
+        <button class="go big" data-qp="any">QUICK MATCH</button>
+        <label>OR PICK A PLAYLIST</label><div class="row">${Object.values(PVP.PLAYLISTS).map(p => `<button data-qp="${p.id}" title="${esc(p.sub)}">${p.name}</button>`).join('')}</div><p class="qpStatus hint">Online. Needs the match server.</p></div>
       <div class="card"><h3>OFFLINE // VS BOTS</h3><p>Any mode, any map, right now. Plays in this browser, no connection needed. A match with no other humans pays 75% XP, half DRIP and no GigaTech.</p>
         <label>MODE</label><select data-k="mode">${modeOptions(st.mode)}</select><label>MAP</label><select data-k="map">${mapOptions(st.map)}</select>
         <div class="row"><div style="flex:1"><label>BOT SKILL</label><select data-k="botSkill">${Object.entries(PVP.BOT_SKILL).map(([k, v]) => `<option value="${k}" ${k === st.botSkill ? 'selected' : ''}>${v.name}</option>`).join('')}</select></div>
@@ -97,11 +99,14 @@
     act('join', () => joinRoom(body.querySelector('[data-k="code"]').value));
     act('refresh', () => refreshRooms(body));
     refreshRooms(body);
+    clearInterval(roomsT);
+    roomsT = setInterval(() => { if (!isOpen() || T || tab !== 'play') { clearInterval(roomsT); return; } refreshRooms(body); }, 6000);
   }
+  let roomsT = 0;
   async function refreshRooms(body) {
     const box = body.querySelector('.rooms'); if (!box) return;
     lastRooms = await PvpNet.listRooms();
-    box.innerHTML = lastRooms.length ? `<table>${lastRooms.map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.playlist || '')}</td><td>${r.players}/${r.max}</td><td>${r.state === 'run' ? 'IN MATCH' : 'LOBBY'}</td><td><button data-room="${esc(r.code)}">JOIN</button></td></tr>`).join('')}</table>` : 'No open rooms right now. Quickplay opens one.';
+    box.innerHTML = lastRooms.length ? `<table>${lastRooms.map(r => `<tr><td>${esc(r.name)}</td><td>${esc(r.playlist || '')}</td><td>${r.players}/${r.max}</td><td>${r.state === 'run' ? 'IN MATCH' : 'LOBBY'}</td><td><button data-room="${esc(r.code)}">JOIN</button></td></tr>`).join('')}</table>` : 'No open rooms right now. QUICK MATCH opens one for others to find.';
     box.querySelectorAll('[data-room]').forEach(b => b.onclick = () => joinRoom(b.dataset.room));
   }
   function startOffline() {
@@ -119,10 +124,14 @@
     try { const r = await PvpNet.createRoom({ playerId: w.id, name: w.name + '’S ROOM', public: listed, playlist: PVP.MODES[st.mode].playlist, settings: { mode: st.mode, map: st.map, botSkill: st.botSkill } }); connect(r.roomCode); }
     catch (e) { status('Could not reach the match server. Offline matches still work.'); }
   }
+  let qpBusy = false;
   async function quickplay(pl) {
-    const w = who();
+    if (qpBusy) return; qpBusy = true;
+    const w = who(), box = ov?.querySelector('.qpStatus');
+    if (box) box.textContent = 'Finding a match…';
     try { const r = await PvpNet.quickplay({ playerId: w.id, name: w.name, playlist: pl }); connect(r.roomCode); }
-    catch (e) { status('Could not reach the match server. Offline matches still work.'); }
+    catch (e) { const m = 'Could not reach the match server. Offline matches still work.'; if (box) box.textContent = m; else status(m); }
+    finally { qpBusy = false; }
   }
   function joinRoom(code) { code = String(code || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); if (code.length < 4) return; connect(code); }
   function connect(code) {

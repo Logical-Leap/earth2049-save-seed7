@@ -122,7 +122,7 @@ AR.PERKS = [
   { id: 'jetdash', n: 'JET DASH', s: 'ZOOMER FUEL', r: 1, stack: 1, boost: 2.2, d: 'SHIFT / L3 now DASHES instead of sprinting: 2 charges, a burst of i-frames, +8% move speed.', fx: S => { S.dashMode = true; } },
   { id: 'dash', n: 'DASH CHARGE', s: 'ZOOMER FUEL', r: 1, stack: 2, needs: 'dashMode', d: '+1 dash charge. Dashes recharge 20% faster.', fx: S => { S.dashes += 1; S.dashCd *= 0.8; } },
   { id: 'ricochet', n: 'COMMENT SECTION', s: 'REPLY GUYS LLC', r: 1, stack: 3, d: 'Hits bounce to a nearby enemy for 45% damage.', fx: S => { S.ricochet += 1; } },
-  { id: 'clickbait', n: 'CLICKBAIT', s: 'YOU WONT BELIEVE', r: 1, stack: 2, d: 'Kills explode for 40 damage in 3.5 m.', fx: S => { S.volatile += 1; } },
+  { id: 'clickbait', n: 'CLICKBAIT', s: 'YOU WONT BELIEVE', r: 1, stack: 2, d: 'Kills explode for 24 damage in 3 m. A kill from the blast bursts once more at half strength.', fx: S => { S.volatile += 1; } },
   { id: 'ragebait', n: 'RAGE BAIT', s: 'OUTRAGE.FM', r: 1, stack: 2, d: 'Each kill within 2.5 s of another: +8% damage (stacks to x10).', fx: S => { S.ragebait += 1; } },
   { id: 'engage', n: 'ENGAGEMENT FARMING', s: 'SHILLZ X GIGACORP', r: 1, stack: 2, d: 'Headshot kills refund 4 rounds into the mag.', fx: S => { S.headRefund += 4; } },
   { id: 'boot', n: 'BIG BOOT', s: 'KICKSTARTER', r: 1, stack: 2, d: 'Kick deals x3 damage (and resets a dash charge with JET DASH).', fx: S => { S.kick += 2; S.kickDash = true; } },

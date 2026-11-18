@@ -268,7 +268,7 @@ AR.Enemies = (() => {
     }
     if (air) AR.Mission?.style('juggle');
   }
-  function explode(x, y, z, radius, dmg, owner, knock = 10, src = 'explosion') {
+  function explode(x, y, z, radius, dmg, owner, knock = 10, src = 'explosion', chain = 0) {
     AR.Fx.explosion(x, y, z, radius * 0.6);
     AR.Sfx.explosion(x, y, z, Math.min(1.4, radius / 3.5));
     for (const e of list.slice()) {
@@ -279,11 +279,11 @@ AR.Enemies = (() => {
       if (!AR.World.los(x, y + 0.2, z, e.body.pos.x, e.body.pos.y + e.body.h * 0.5, e.body.pos.z)) continue;
       const f = 1 - Math.max(0, d - e.body.r) / radius * 0.6;
       const dir = V3(dx, 0, dz).normalize();
-      damage(e, dmg * f, { src, dir, knock: knock * f, x: e.headPos.x, y: e.headPos.y, z: e.headPos.z });
+      damage(e, dmg * f, { src, chain, dir, knock: knock * f, x: e.headPos.x, y: e.headPos.y, z: e.headPos.z });
       if (!e.dying && !e.boss && !e.d.fly && e.d.knock > 0.2) { e.body.vel.y = Math.max(e.body.vel.y, 6 * f * e.d.knock + 2); e.body.onGround = false; }
     }
     const P = AR.Player.P;
-    if (P?.alive) {
+    if (P?.alive && src !== 'volatile') {                // your own kill blasts never knock you around
       const b = P.body, dx = b.pos.x - x, dy = b.pos.y + 0.9 - y, dz = b.pos.z - z, d = Math.hypot(dx, dy, dz);
       if (d < radius + 0.4) {
         const f = 1 - d / (radius + 0.4);
@@ -303,6 +303,7 @@ AR.Enemies = (() => {
     }
   }
 
+  const VOLATILE = { dmg: 24, radius: 3 };            // per CLICKBAIT stack (was 40 in 3.5 m, chaining without limit)
   function kill(e, info, lastHit) {
     if (e.dying) return;
     e.dying = true; e.deathT = 0;
@@ -325,8 +326,11 @@ AR.Enemies = (() => {
       e.spin.set(rand(-2, 2), rand(-3, 3), 0);
     }
     if (!e.noDrops) AR.Drops.fromKill(e, info);
-    if (AR.Player.S.volatile) {
-      setTimeout(() => explode(e.body.pos.x, e.body.pos.y + 0.8, e.body.pos.z, 3.5, 40 * AR.Player.S.volatile, 'player', 6, 'volatile'), 120);
+    // CLICKBAIT: a kill bursts; a kill from that burst bursts once more at half strength, and the chain stops there
+    const depth = info.src === 'volatile' ? (info.chain || 0) + 1 : 0;
+    if (AR.Player.S.volatile && depth <= 1) {
+      const dmg = VOLATILE.dmg * AR.Player.S.volatile * (depth ? 0.5 : 1);
+      setTimeout(() => { if (AR.active && AR.Mission?.M) explode(e.body.pos.x, e.body.pos.y + 0.8, e.body.pos.z, VOLATILE.radius, dmg, 'player', 4, 'volatile', depth); }, 120);   // not after the mission ended
     }
   }
   function dist2Player(e) {

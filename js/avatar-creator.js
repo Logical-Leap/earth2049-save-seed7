@@ -1,12 +1,12 @@
 /* Loadout creator: a full-screen overlay to mix and match the avatar kit (see js/avatar.js).
  *
- *   const L = await AvatarCreator.open({ loadout, ownedOnly: true, title: 'DRIP DEALER' });   // null if closed unsaved
+ *   const L = await AvatarCreator.open({ loadout, ownedOnly: true, title: 'DRIP DEALER' });   // the saved loadout (it autosaves on close)
  *
  * Options:
  *   loadout     starting loadout (default: AvatarKit.load())
  *   ownedOnly   locked items can be tried on but not saved (default true); false = free mode for dev / photo mode
  *   title       header text (the vendor's name)
- *   onSave(L)   called on SAVE (after AvatarKit.save(L) unless persist: false)
+ *   onSave(L)   called whenever it closes (it autosaves) (after AvatarKit.save(L) unless persist: false)
  *   onClose()   called whenever the overlay closes
  *   shop        optional vendor surface (see js/wardrobe.js Wardrobe.shop()): wallet(), collection(), featured(), closest(n),
  *               badge(id) html, detail(id) html, action(id) -> {label, enabled} | null, buy(id) -> bool, seen(ids).
@@ -97,7 +97,7 @@
     return `<div class="avc-top"><h1>${title}<small>mix, match, grind for the drip<span class="avc-wal"></span></small></h1><div class="avc-bar">
 <button data-a="sex">♂ BODY A</button><button data-a="anim">▶ IDLE</button><button data-a="rand">🎲 RANDOM</button>
 <button data-a="fp">👁 FIRST PERSON</button><button data-a="squad">👥 SQUAD</button><button data-a="code">⧉ CODE</button>
-<button data-a="save" class="save">✔ SAVE</button><button data-a="close">✕</button></div></div>
+<button data-a="save" class="save">✔ DONE</button><button data-a="close">✕</button></div></div>
 <div class="avc-dot"></div><div class="avc-tip fpt">Drag to look around. Look down to check your fit.</div>
 <div class="avc-tip sqt">Your squad, randomized. Tap SQUAD again for a new squad.</div>
 <div class="avc-panel"><button class="avc-fold" data-a="fold">☰</button><div class="avc-tabs"></div><div class="avc-grid"></div><div class="avc-info"></div></div>
@@ -188,8 +188,8 @@
       $('.avc-tabs').innerHTML = [...(shop ? [['today', '★ TODAY'], ['closet', '✦ BIG CLOSET']] : []), ...cats.map(c => [c.id, c.label]), ['colors', 'COLOURS']]
         .map(([id, lab]) => `<button data-tab="${id}" class="${S.tab === id ? 'on' : ''}">${lab}</button>`).join('');
       const locked = ownedOnly ? K().lockedIn(S.L) : [];
-      const sv = $('[data-a=save]'); sv.disabled = locked.length > 0;
-      sv.title = locked.length ? 'Unlock first: ' + locked.map(id => item(id).name).join(', ') : 'Save this loadout';
+      const sv = $('[data-a=save]');
+      sv.title = locked.length ? 'Saves your fit. Locked pieces you are trying on stay off: ' + locked.map(id => item(id).name).join(', ') : 'Your fit saves automatically when you leave';
       const grid = $('.avc-grid'), info = $('.avc-info');
       if (S.tab === 'colors') {
         grid.className = 'avc-grid avc-cols';
@@ -266,7 +266,25 @@
       if (opts.onClose) opts.onClose(L);
       resolveP(L);
     }
-    function close() { finish(null); }
+    // what gets kept when the player leaves: everything they own; a locked piece they were only trying on
+    // goes back to what that slot had when they came in (or the starter piece)
+    function keepable() {
+      const L = K().validate(S.L);
+      if (!ownedOnly) return L;
+      const start = S.start, def = K().validate({ sex: L.sex });
+      for (const [c, id] of Object.entries(L.items)) if (!K().isOwned(id))
+        L.items[c] = start && start.sex === L.sex && start.items[c] && K().isOwned(start.items[c]) ? start.items[c] : def.items[c];
+      return L;
+    }
+    function commit() {
+      if (!S.L || opts.persist === false && !opts.onSave) return null;
+      const L = keepable();
+      if (opts.persist !== false) K().save(L);
+      if (opts.onSave) opts.onSave(L);
+      return L;
+    }
+    // backing out (✕, Esc, DONE) always saves: nobody should lose a fit for forgetting a button
+    function close() { finish(commit()); }
     let toastT = 0;
     function toast(text) {
       const t = $('.avc-toast'); t.textContent = text; t.classList.add('show');
@@ -297,7 +315,7 @@
         if (L.sex !== S.L.sex) body(L); else dress(L); $('.avc-dlg').classList.remove('show'); }
       else if (a === 'dlgx') $('.avc-dlg').classList.remove('show');
       else if (a === 'fold') root.classList.toggle('collapsed');
-      else if (a === 'save') { const L = K().validate(S.L); if (opts.persist !== false) K().save(L); if (opts.onSave) opts.onSave(L); finish(L); }
+      else if (a === 'save') close();
       else if (a === 'close') close();
     });
     $('[data-a=squad]').addEventListener('dblclick', () => setMode('solo'));
@@ -335,7 +353,8 @@
 
     K().ready().then(() => {
       if (S.closed) return;
-      body(opts.loadout || K().load());
+      S.start = K().validate(opts.loadout || K().load());
+      body(S.start);
       $('.avc-load').remove(); resize(); focus(); frame();
       open.api = { get L() { return S.L; }, get me() { return S.me; }, setMode, refresh, spin: d => { if (S.mode === 'fp') S.fpYaw -= d; else S.want.yaw -= d; }, equip: (c, id) => { S.L.items[c] = id; dress(S.L); },
         set tab(t) { S.tab = t; refresh(); focus(); }, look: (y, p) => { S.fpYaw = y; S.fpPitch = p; },

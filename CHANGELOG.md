@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-11-18 — Playtest batch 3
+
+- **The Fitting Room saves on the way out.** Back out with ✕, Esc or DONE and your fit is saved: no more losing it for forgetting SAVE. Anything you own stays on; a locked piece you were only trying on goes back to what you had in that slot.
+- **Looking down shows your body, not the inside of it.** The body steps back as you look down, so you see the front of your chest, legs and shoes. Same in VR.
+- **Nothing you wear clips through the camera.** Any worn piece that comes within a hand's width of the lens (back items in a jump, chains and collars in a slide) is hidden for that frame, in flat play and VR.
+- **VR is easy to find.** Play in VR is on the title screen even without a headset. It opens a VR panel: headset status, Enter VR, smooth turning, comfort vignette, and how to play on a Quest or PC VR. The VR options are also in the pause menu now.
+- **E to talk no longer opens the pause menu.** The dialogue releasing the mouse used to look like tabbing away. The mouse locks again when the dialogue closes.
+- **Click dialogue options with the mouse.** The options now take clicks (the HUD layer was swallowing them). Hover highlights them; 1-9 still works.
+- **GigaLeague QUICK MATCH:** one big button at the top of PLAY finds the best open match in any playlist, or starts one with bots. The open-rooms list refreshes on its own. Playlist buttons are still there.
+- **CLICKBAIT (arena) and Volatile Rounds (runs) toned down.** The kill burst is smaller (24 damage in 3 m per CLICKBAIT stack, was 40 in 3.5 m) and chains only once, at half strength, instead of setting off every nearby kill in turn. Your own kill bursts no longer knock you around.
+- Fixed: a kill in the last moments of a mission could throw an error after the mission ended.
+
 ## 2026-11-18 — GigaLeague: competitive PvP
 
 - **New mode: GigaLeague (PvP).** Open it from the title screen ("GigaLeague (PvP)") or from 5ON at the Dreamcaster rig. The design is the project doc `claude/multiplayer.md`; how it is built is `docs/PVP.md`.
