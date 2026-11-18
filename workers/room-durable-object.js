@@ -49,14 +49,14 @@ export class RoomDurableObject {
   async fetch(request) {
     const url=new URL(request.url);
     if(request.method==='OPTIONS') return new Response(null,{headers:{'access-control-allow-origin':'*','access-control-allow-methods':'GET,POST,OPTIONS','access-control-allow-headers':'content-type'}});
-    if(url.pathname.endsWith('/init')&&request.method==='POST'){ const body=await request.json().catch(()=>({})); await this.initRoom(codeFromId(body.roomCode),sanitizePlayer(body.player),Number(body.maxPlayers||4)); return json(this.publicRoom()); }
+    if(url.pathname.endsWith('/init')&&request.method==='POST'){ const body=await request.json().catch(()=>({})); await this.initRoom(codeFromId(body.roomCode),sanitizePlayer(body.player),Number(body.maxPlayers||4),{ listed:body.public===true, name:String(body.name||'').slice(0,32) }); return json(this.publicRoom()); }
     if(url.pathname.endsWith('/state')){ await this.loadRoom(); return this.room?json({room:this.publicRoom(),snapshot:this.snapshot()}):json({error:'room_not_found'},404); }
     if(request.headers.get('upgrade')==='websocket') return this.handleWebSocket(request);
     return json({error:'not_found'},404);
   }
-  async initRoom(roomCode,host,maxPlayers){ this.room={roomCode,hostPlayerId:host.id,maxPlayers:Math.min(4,Math.max(1,maxPlayers||4)),players:{[host.id]:host},playerStates:{},enemies:{},pickups:{},objective:null,pending:[],state:'lobby',seed:null,district:0,wave:0,waveDelay:0,phase:'lobby',directorThreat:0.5,worldRevision:0,createdAt:Date.now(),updatedAt:Date.now()}; await this.state.storage.put('room',this.room); }
+  async initRoom(roomCode,host,maxPlayers,opts={}){ this.room={roomCode,listed:!!opts.listed,name:opts.name||(host.name+'\u2019s squad').slice(0,32),hostPlayerId:host.id,maxPlayers:Math.min(4,Math.max(1,maxPlayers||4)),players:{[host.id]:host},playerStates:{},enemies:{},pickups:{},objective:null,pending:[],state:'lobby',seed:null,district:0,wave:0,waveDelay:0,phase:'lobby',directorThreat:0.5,worldRevision:0,createdAt:Date.now(),updatedAt:Date.now()}; await this.state.storage.put('room',this.room); }
   async loadRoom(){ if(!this.room){ this.room=await this.state.storage.get('room'); if(this.room){ this.room.playerStates ||= {}; this.room.enemies ||= {}; this.room.pickups ||= {}; this.room.objective ||= null; this.room.pending ||= []; this.room.waveDelay ||= 0; this.room.directorThreat ||= 0.5; this.room.worldRevision ||= 0; } } }
-  publicRoom(){ const r=this.room; return {roomCode:r.roomCode,hostPlayerId:r.hostPlayerId,maxPlayers:r.maxPlayers,state:r.state,seed:r.seed,district:r.district,wave:r.wave,phase:r.phase,worldRevision:r.worldRevision,players:Object.values(r.players)}; }
+  publicRoom(){ const r=this.room; return {roomCode:r.roomCode,listed:!!r.listed,name:r.name||'',hostPlayerId:r.hostPlayerId,maxPlayers:r.maxPlayers,state:r.state,seed:r.seed,district:r.district,wave:r.wave,phase:r.phase,worldRevision:r.worldRevision,players:Object.values(r.players)}; }
   snapshot(){ const r=this.room; return {revision:r.worldRevision,seed:r.seed,district:r.district,wave:r.wave,waveDelay:r.waveDelay,phase:r.phase,objective:r.objective||null,pending:r.pending||[],directorThreat:r.directorThreat,players:Object.values(r.playerStates),enemies:Object.values(r.enemies),pickups:Object.values(r.pickups)}; }
   async save(force=false){ if(!this.room)return; const now=Date.now(); if(force||!this.dirtyWorld||now-this.lastWorldSave>=2000){ this.room.updatedAt=now; await this.state.storage.put('room',this.room); this.dirtyWorld=false; this.lastWorldSave=now; } }
   async handleWebSocket(request){
@@ -66,12 +66,12 @@ export class RoomDurableObject {
     if(!this.room.players[player.id]&&Object.keys(this.room.players).length>=this.room.maxPlayers)return json({error:'room_full'},409);
     const old=this.sessions.get(player.id); try{old?.close(4001,'replaced_by_reconnect');}catch{}
     const pair=new WebSocketPair(),[client,server]=Object.values(pair); server.accept(); this.sessions.set(player.id,server);
-    this.room.players[player.id]=Object.assign({},this.room.players[player.id]||{},player,{connected:true}); await this.save(true);
+    this.room.players[player.id]=Object.assign({},this.room.players[player.id]||{},player,{connected:true}); await this.save(true); await this.report();
     server.addEventListener('message',ev=>this.onMessage(player.id,ev.data)); server.addEventListener('close',()=>this.disconnect(player.id,server)); server.addEventListener('error',()=>this.disconnect(player.id,server));
     this.send(player.id,MSG.ROOM_STATE,{room:this.publicRoom()}); this.send(player.id,MSG.WORLD_SNAPSHOT,{snapshot:this.snapshot()}); this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()},player.id);
     return new Response(null,{status:101,webSocket:client});
   }
-  async disconnect(playerId,socket){ if(this.sessions.get(playerId)!==socket)return; this.sessions.delete(playerId); this.messageRates.delete(playerId); if(this.room?.players?.[playerId])this.room.players[playerId].connected=false; if(this.room?.hostPlayerId===playerId){const next=Object.values(this.room.players).find(p=>p.connected);if(next)this.room.hostPlayerId=next.id;} await this.save(true); if(this.room)this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()}); }
+  async disconnect(playerId,socket){ if(this.sessions.get(playerId)!==socket)return; this.sessions.delete(playerId); this.messageRates.delete(playerId); if(this.room?.players?.[playerId])this.room.players[playerId].connected=false; if(this.room?.hostPlayerId===playerId){const next=Object.values(this.room.players).find(p=>p.connected);if(next)this.room.hostPlayerId=next.id;} await this.save(true); await this.report(); if(this.room)this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()}); }
   isHost(id){ return id===this.room.hostPlayerId; }
   reject(id,message){ this.send(id,MSG.ERROR,{message}); }
   withinRateLimit(playerId){ const now=Date.now(), current=this.messageRates.get(playerId); if(!current||now-current.since>=1000){this.messageRates.set(playerId,{since:now,count:1});return true;} current.count++; return current.count<=SECURITY_LIMITS.maxMessagesPerSecond; }
@@ -84,18 +84,19 @@ export class RoomDurableObject {
     if(!CLIENT_MESSAGE_TYPE_SET.has(msg.type))return this.reject(playerId,msg.type===MSG.REWARD_GRANT?'reward_grant is server-origin only':'Client message type not allowed');
     if(HOST_ONLY_TYPES.has(msg.type)&&!this.isHost(playerId))return this.reject(playerId,'Host authority required');
     if(msg.type===MSG.PING)return this.send(playerId,MSG.PONG,{now:Date.now()});
-    if(msg.type===MSG.PLAYER_READY){if(this.room.state!=='lobby')return this.reject(playerId,'Ready state is locked after run start');this.room.players[playerId].ready=!!msg.ready;await this.save(true);return this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()});}
+    if(msg.type===MSG.PLAYER_READY){if(this.room.state==='run')return this.reject(playerId,'Ready state is locked after run start');this.room.players[playerId].ready=!!msg.ready;await this.save(true);return this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()});}
     if(msg.type===MSG.START_RUN){
-      if(this.room.state!=='lobby')return this.reject(playerId,'Run already started');
+      if(this.room.state==='run')return this.reject(playerId,'Run already started');
+      this.room.players[playerId].ready=true;                       // pressing start is the host's ready
       if(!this.allConnectedReady())return this.reject(playerId,'All connected players must be ready');
       this.room.state='run';this.room.seed=finite(msg.seed,Date.now());this.room.district=boundedInt(msg.district,0,0,100);this.room.wave=0;this.room.waveDelay=0;this.room.phase='intro';this.room.objective=null;this.room.pending=[];this.room.directorThreat=0.5;this.room.enemies={};this.room.pickups={};this.room.playerStates={};this.room.worldRevision++;await this.save(true);
-      this.broadcast(MSG.START_RUN,{seed:this.room.seed,district:this.room.district,tier:boundedInt(msg.tier,1,1,100)});return this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()});
+      this.broadcast(MSG.START_RUN,{seed:this.room.seed,district:this.room.district,tier:boundedInt(msg.tier,1,1,100)});await this.report();return this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()});
     }
     if(msg.type===MSG.PLAYER_STATE){
       if(!this.requireRun(playerId))return;
       const prior=this.room.playerStates[playerId]||{}; const state=['alive','downed','dead'].includes(msg.state)?msg.state:(prior.state||'alive'); const ps={playerId,name:this.room.players[playerId].name,color:this.room.players[playerId].color,position:vec(msg.position),yaw:finite(msg.yaw),pitch:finite(msg.pitch),hp:Math.max(0,finite(msg.hp)),armor:Math.max(0,finite(msg.armor)),state,weapon:String(msg.weapon||'pistol').slice(0,30),updatedAt:Date.now()}; this.room.playerStates[playerId]=ps;this.room.players[playerId].state=state;
       if(this.room.hostPlayerId===playerId&&state!=='alive'){const next=Object.values(this.room.players).find(p=>p.id!==playerId&&p.connected&&this.room.playerStates[p.id]?.state==='alive');if(next){this.room.hostPlayerId=next.id;this.broadcast(MSG.ROOM_STATE,{room:this.publicRoom()});}}
-      const connected=Object.values(this.room.players).filter(p=>p.connected),wiped=connected.length>0&&connected.every(p=>this.room.playerStates[p.id]?.state&&this.room.playerStates[p.id].state!=='alive');if(wiped&&this.room.state==='run'){this.room.state='failed';await this.save(true);this.broadcast(MSG.RUN_FAILED,{reason:'full_wipe'});}
+      const connected=Object.values(this.room.players).filter(p=>p.connected),wiped=connected.length>0&&connected.every(p=>this.room.playerStates[p.id]?.state&&this.room.playerStates[p.id].state!=='alive');if(wiped&&this.room.state==='run'){this.room.state='failed';for(const p of Object.values(this.room.players))p.ready=false;await this.save(true);await this.report();this.broadcast(MSG.RUN_FAILED,{reason:'full_wipe'});}
       this.dirtyWorld=true;await this.save();return this.broadcast(MSG.PLAYER_STATE,ps,playerId);
     }
     if(!this.requireRun(playerId))return;
@@ -109,11 +110,21 @@ export class RoomDurableObject {
     if(msg.type===MSG.BOSS_STATE){const boss=safeBossState(msg.boss||msg);this.room.phase=String(msg.phase||this.room.phase).slice(0,40);this.bump();await this.save();return this.broadcast(MSG.BOSS_STATE,{boss,phase:this.room.phase,revision:this.room.worldRevision},playerId);}
     if(msg.type===MSG.OBJECTIVE_STATE){this.room.objective=safeObjectiveState(msg.objective||msg);this.bump();await this.save();return this.broadcast(MSG.OBJECTIVE_STATE,{objective:this.room.objective,revision:this.room.worldRevision},playerId);}
     if(msg.type===MSG.DISTRICT_COMPLETE){this.room.district=boundedInt(msg.district,this.room.district,0,100);this.room.phase='district_complete';this.bump();await this.save(true);return this.broadcast(MSG.DISTRICT_COMPLETE,{district:this.room.district,revision:this.room.worldRevision});}
-    if(msg.type===MSG.RUN_COMPLETE||msg.type===MSG.RUN_FAILED){this.room.state=msg.type===MSG.RUN_COMPLETE?'complete':'failed';this.room.phase=this.room.state;this.bump();await this.save(true);return this.broadcast(msg.type,{reason:String(msg.reason||'').slice(0,80),district:this.room.district,revision:this.room.worldRevision});}
+    if(msg.type===MSG.RUN_COMPLETE||msg.type===MSG.RUN_FAILED){this.room.state=msg.type===MSG.RUN_COMPLETE?'complete':'failed';this.room.phase=this.room.state;for(const p of Object.values(this.room.players))p.ready=false;this.bump();await this.save(true);await this.report();return this.broadcast(msg.type,{reason:String(msg.reason||'').slice(0,80),district:this.room.district,revision:this.room.worldRevision});}
     return this.reject(playerId,'Client message type not handled');
   }
   async handleRevive(playerId,msg){const targetId=String(msg.targetPlayerId||'').slice(0,80),a=this.room.playerStates[playerId],b=this.room.playerStates[targetId];if(!a||!b||a.state!=='alive'||b.state!=='downed')return this.reject(playerId,'Revive unavailable');const dx=a.position.x-b.position.x,dz=a.position.z-b.position.z;if(Math.hypot(dx,dz)>REVIVE_RANGE)return this.reject(playerId,'Move closer to revive');if(finite(msg.heldMs)<REVIVE_HOLD_MS)return this.reject(playerId,'Hold revive longer');b.state='alive';b.hp=30;this.room.players[targetId].state='alive';this.bump();await this.save(true);this.broadcast(MSG.REVIVE,{playerId:targetId,reviverId:playerId,hp:b.hp,revision:this.room.worldRevision});}
   bump(){this.room.worldRevision++;this.dirtyWorld=true;}
+  // public rooms tell the server browser who is in them; private rooms never appear there
+  async report(){
+    const dir=this.env?.LOBBIES; if(!dir||!this.room)return;
+    const r=this.room, connected=this.sessions.size;     // a room shows up once someone is actually in it, and drops off when the last one leaves
+    const host=r.players[r.hostPlayerId]?.name||'Operative';
+    const entry={code:r.roomCode,name:r.name||host,host,players:r.listed?connected:0,max:r.maxPlayers,state:r.state==='run'?'run':'lobby',district:r.district,protocol:PROTOCOL_VERSION};
+    try{ await dir.get(dir.idFromName('directory')).fetch('https://directory/update',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(entry)}); }catch{}
+    if(r.listed&&this.sessions.size&&this.state.storage.setAlarm){ try{ if(!(await this.state.storage.getAlarm?.()))await this.state.storage.setAlarm(Date.now()+30_000); }catch{} }
+  }
+  async alarm(){ await this.loadRoom(); if(this.room&&this.sessions.size)await this.report(); }
   send(playerId,type,payload){const ws=this.sessions.get(playerId);if(ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({protocolVersion:PROTOCOL_VERSION,type,t:Date.now(),...payload}));}
   broadcast(type,payload,except){const body=JSON.stringify({protocolVersion:PROTOCOL_VERSION,type,t:Date.now(),...payload});for(const[id,ws]of this.sessions)if(id!==except&&ws.readyState===WebSocket.OPEN)ws.send(body);}
 }

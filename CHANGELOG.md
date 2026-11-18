@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-17 — Co-op: one-click hosting, server browser and quick match
+
+- **Hosting works on the live site.** The game only knew the co-op server address on the old pages.dev site, so on GitHub Pages hosting failed unless you typed a server URL. Every real build now uses the official server with no setup; the server field is tucked under Advanced for local testing.
+- **Host Co-op opens a public game in one click.** Host Private Game is there for code-only rooms.
+- **Find Co-op Game:** a list of open games (name, players, in lobby or mission in progress) with Join buttons, refreshing on its own, plus Quick Match and Join by Code.
+- **Quick Match** puts you in the best open lobby, or drops you into a mission with a free slot, or opens a new listed game if nothing is open.
+- **Hosts don't need to ready up.** Start Mission starts right away (guests still ready up), so you can start alone and let people drop in. A squad can start another mission after one ends.
+- Clearer messages when a room is full, closed, or the server can't be reached; a failed join no longer keeps retrying in the background.
+
 ## 2026-11-16 — Gun feel fixes from playtest
 
 - **Controller aim assist toned way down.** It no longer turns the camera for you. A small slow-down over a target (at most 25%, was 55%), a narrower target cone, and only a light pull, only while you are already steering toward the target with the right stick (about a quarter of the old strength). Moving without touching the right stick gets no help. Phones get a little more help than a controller, still about a third less than before.

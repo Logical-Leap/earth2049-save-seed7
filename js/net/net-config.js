@@ -2,13 +2,14 @@
 'use strict';
 (function (global) {
   const params = new URLSearchParams(location.search);
+  const OFFICIAL = 'https://earth2049-coop.chandler-fac.workers.dev';
+  // Every real build (GitHub Pages, pages.dev, the store builds) talks to the official co-op server.
+  // Only a local dev copy may point somewhere else, from the advanced field, or anywhere with ?coopWorker=.
+  const local = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:';
   const stored = (() => { try { return localStorage.getItem('e2049.coop.workerUrl') || ''; } catch (e) { return ''; } })();
-  const officialWorkerUrl = location.hostname === 'earth2049-save-seed7.pages.dev' ? 'https://earth2049-coop.chandler-fac.workers.dev' : '';
   const NET_CONFIG = {
-    // The official Pages deployment must not be hijacked by a stale localhost or
-    // retired Worker URL saved before production was configured. A query-string
-    // override remains available for explicit diagnostics.
-    workerUrl: params.get('coopWorker') || officialWorkerUrl || stored,
+    officialWorkerUrl: OFFICIAL,
+    workerUrl: params.get('coopWorker') || (local && stored) || OFFICIAL,
     protocolVersion: 2,
     maxPlayers: 4,
     snapshotHz: 15,

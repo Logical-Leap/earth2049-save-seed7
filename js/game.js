@@ -2226,15 +2226,61 @@ function applyPickupCollectNet(msg) {
   pk.dead = true;
   if (pk.mesh) scene.remove(pk.mesh);
 }
+function coopEsc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c])); }
 function renderCoopLobby(room) {
   const list = el('coopPlayers');
   if (!list) return;
-  if (!room) { list.innerHTML = '<div class="cooprow">Disconnected</div>'; return; }
+  const inRoom = !!(room && CoopRoom?.isCoop);
+  el('coopFind').style.display = inRoom ? 'none' : '';
+  el('coopLobby').style.display = inRoom ? '' : 'none';
+  if (!inRoom) { el('btnCoopReady').classList.remove('primary'); el('btnCoopReady').textContent = 'Ready: No'; if (el('ovCoop').classList.contains('show')) refreshCoopBrowser(); return; }
   el('coopRoomCode').textContent = room.roomCode || CoopRoom.roomCode || '—';
-  list.innerHTML = (room.players || []).map(p => '<div class="cooprow"><span style="color:' + (p.color || '#9b59ff') + '">●</span> ' + p.name + (p.id === room.hostPlayerId ? ' <b>HOST</b>' : '') + '<span>' + (p.ready ? 'READY' : 'STANDBY') + ' · LV ' + (p.effectiveLevel || 1) + '</span></div>').join('');
-  const host = room.hostPlayerId === ensureLocalProfile().id;
-  el('btnCoopStart').style.display = host ? 'block' : 'none';
+  const players = (room.players || []).filter(p => p.connected !== false);
+  el('coopRoomMeta').textContent = (room.listed ? 'Public — listed in open games' : 'Private — code only') + ' · ' + players.length + '/' + (room.maxPlayers || 4)
+    + (room.state === 'run' ? ' · mission in progress' : '');
+  list.innerHTML = players.map(p => '<div class="cooprow"><span><span style="color:' + coopEsc(p.color || '#9b59ff') + '">●</span> ' + coopEsc(p.name) + (p.id === room.hostPlayerId ? ' <b>HOST</b>' : '') + '</span><span>'
+    + (p.id === room.hostPlayerId ? 'HOSTING' : p.ready ? 'READY' : 'NOT READY') + ' · LV ' + (Number(p.effectiveLevel) || 1) + '</span></div>').join('');
+  const me = ensureLocalProfile().id, host = room.hostPlayerId === me;
+  el('btnCoopStart').style.display = host ? '' : 'none';
+  el('btnCoopReady').style.display = host ? 'none' : '';
+  const waiting = players.filter(p => p.id !== room.hostPlayerId && !p.ready).length;
+  el('coopHint').textContent = host
+    ? (players.length < 2 ? 'Start now and others can drop in mid-mission, or wait for the squad.' : waiting ? 'Waiting on ' + waiting + ' to ready up.' : 'Everyone is ready. Start when you are.')
+    : 'Ready up. The host starts the mission.';
 }
+let coopBrowseT = 0, coopBrowseBusy = false;
+async function refreshCoopBrowser() {
+  const box = el('coopBrowser');
+  if (!box || coopBrowseBusy || CoopRoom?.isCoop) return;
+  coopBrowseBusy = true;
+  try {
+    const rooms = await CoopRoom.listRooms();
+    if (CoopRoom?.isCoop) return;
+    box.innerHTML = rooms.length ? rooms.map(r => '<div class="cooproom"><div class="ci"><div class="cn">' + coopEsc(r.name) + '</div><div class="cm">'
+      + '<b>' + r.players + '/' + r.max + '</b> · ' + (r.state === 'run' ? 'mission in progress · drop in' : 'in lobby') + ' · host ' + coopEsc(r.host) + '</div></div>'
+      + '<div class="btn primary" data-room="' + coopEsc(r.code) + '">Join</div></div>').join('')
+      : '<div class="coopempty">No open games right now. Host one, or hit Quick Match and others will find you.</div>';
+    box.querySelectorAll('[data-room]').forEach(b => { b.onclick = () => { AudioSys.sfx('ui'); joinCoopRoom(b.dataset.room); }; });
+  } catch (e) { box.innerHTML = '<div class="coopempty">' + coopEsc(e.message || 'Could not load open games.') + '</div>'; }
+  finally { coopBrowseBusy = false; }
+}
+function startCoopBrowsing() {
+  clearInterval(coopBrowseT);
+  refreshCoopBrowser();
+  coopBrowseT = setInterval(() => { if (!el('ovCoop').classList.contains('show') || CoopRoom?.isCoop) return; refreshCoopBrowser(); }, 6000);
+}
+function coopBusy(on) { for (const id of ['btnCoopQuick', 'btnCoopHostPublic', 'btnCoopHostPrivate', 'btnCoopConnect']) el(id)?.classList.toggle('cant', !!on); }
+async function coopAction(label, fn) {
+  if (coopBusy.on) return; coopBusy.on = true; coopBusy(true);
+  setProfileName(el('coopName').value);
+  el('coopHint').textContent = label;
+  try { await fn(); renderCoopLobby(CoopRoom.lobby || { roomCode:CoopRoom.roomCode, hostPlayerId:CoopRoom.isHost ? SAVE.profile.id : '', players:[SAVE.profile] }); }
+  catch (e) { el('coopHint').textContent = e.message || String(e); refreshCoopBrowser(); }
+  finally { coopBusy.on = false; coopBusy(false); }
+}
+function hostCoopRoom(isPublic) { return coopAction(isPublic ? 'Opening a public game…' : 'Opening a private game…', () => CoopRoom.host({ public:isPublic })); }
+function joinCoopRoom(code) { code = String(code || '').trim().toUpperCase(); if (!code) { el('coopHint').textContent = 'Type a room code first.'; return; } return coopAction('Joining ' + code + '…', () => CoopRoom.join(code)); }
+function quickMatchCoop() { return coopAction('Finding a game…', async () => { const d = await CoopRoom.quickMatch(); if (d.created) banner('CO-OP', 'NO OPEN GAMES — YOURS IS LISTED, OTHERS CAN JOIN'); }); }
 
 /* ============ HUD ============ */
 function banner(main, sub) {
@@ -2602,33 +2648,16 @@ function addMetaCard(u, add) {
 }
 
 
-async function hostCoopFlow() {
+function openCoopScreen() {
   ensureLocalProfile();
   el('coopName').value = SAVE.profile.name;
   el('coopWorkerUrl').value = NET_CONFIG.workerUrl || '';
-  el('coopHint').textContent = 'Creating private room...';
-  try {
-    const code = await CoopRoom.host();
-    el('coopHint').textContent = 'Share room code ' + code + '. Host starts when the squad is ready.';
-    renderCoopLobby(CoopRoom.lobby || { roomCode:code, hostPlayerId:SAVE.profile.id, players:[SAVE.profile] });
-  } catch (e) { el('coopHint').textContent = e.message || String(e); }
+  renderCoopLobby(CoopRoom?.isCoop ? CoopRoom.lobby : null);
+  if (!CoopRoom?.isCoop) el('coopHint').textContent = 'Quick Match drops you into an open game, or opens one for others to find.';
+  startCoopBrowsing();
 }
-function prepJoinCoopFlow() {
-  ensureLocalProfile();
-  el('coopName').value = SAVE.profile.name;
-  el('coopWorkerUrl').value = NET_CONFIG.workerUrl || '';
-  el('coopHint').textContent = 'Enter a private room code to join a co-op lobby.';
-  renderCoopLobby(null);
-  el('btnCoopConnect').onclick = async () => {
-    setProfileName(el('coopName').value);
-    NetConfig.setWorkerUrl(el('coopWorkerUrl').value);
-    const code = el('coopJoinCode').value.trim().toUpperCase();
-    if (!code) { el('coopHint').textContent = 'Room code required.'; return; }
-    el('coopHint').textContent = 'Joining ' + code + '...';
-    try { await CoopRoom.join(code); el('coopHint').textContent = 'Joined ' + code + '. Wait for host start.'; }
-    catch (e) { el('coopHint').textContent = e.message || String(e); }
-  };
-}
+async function hostCoopFlow() { openCoopScreen(); if (!CoopRoom?.isCoop) await hostCoopRoom(true); }
+function prepJoinCoopFlow() { openCoopScreen(); }
 
 function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
@@ -2636,11 +2665,18 @@ function wireMenus() {
   el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); startArena(); };
   el('btnHostCoop').onclick = async () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); await hostCoopFlow(); };
   el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
-  el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); updateTitle(); show('ovTitle'); };
+  el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); clearInterval(coopBrowseT); updateTitle(); show('ovTitle'); };
+  el('btnCoopLeave').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); el('coopHint').textContent = 'Left the room.'; };
+  el('btnCoopQuick').onclick = () => { AudioSys.sfx('ui'); quickMatchCoop(); };
+  el('btnCoopHostPublic').onclick = () => { AudioSys.sfx('ui'); hostCoopRoom(true); };
+  el('btnCoopHostPrivate').onclick = () => { AudioSys.sfx('ui'); hostCoopRoom(false); };
+  el('btnCoopRefresh').onclick = () => { AudioSys.sfx('ui'); refreshCoopBrowser(); };
+  el('btnCoopConnect').onclick = () => { AudioSys.sfx('ui'); joinCoopRoom(el('coopJoinCode').value); };
+  el('coopJoinCode').onkeydown = e => { if (e.key === 'Enter') joinCoopRoom(el('coopJoinCode').value); };
+  el('coopName').onchange = e => setProfileName(e.target.value);
   el('btnCoopReady').onclick = () => { AudioSys.sfx('ui'); const ready = !el('btnCoopReady').classList.contains('primary'); el('btnCoopReady').classList.toggle('primary', ready); el('btnCoopReady').textContent = ready ? 'Ready: Yes' : 'Ready: No'; CoopRoom?.setReady?.(ready); };
   el('btnCoopStart').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.startRun?.(); };
-  el('btnSaveProfile').onclick = () => { setProfileName(el('coopName').value); AudioSys.sfx('pickup'); renderCoopLobby(CoopRoom?.lobby); };
-  el('coopWorkerUrl').onchange = e => NetConfig?.setWorkerUrl?.(e.target.value);
+  el('coopWorkerUrl').onchange = e => { NetConfig?.setWorkerUrl?.(e.target.value || NET_CONFIG.officialWorkerUrl); refreshCoopBrowser(); };
   el('btnArmory').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); renderArmory(); show('ovArmory'); };
   el('btnArmBack').onclick = () => {
     AudioSys.sfx('ui');
