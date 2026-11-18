@@ -1453,6 +1453,23 @@ function updateHubPrompt() {
   el('btnPick').textContent = 'USE';
   el('btnPick').style.display = isTouch ? 'flex' : 'none';
 }
+/* GIGALEAGUE (PvP): js/pvp/pvp-menu.js hands a match here; it runs in the arena runtime (js/arena/arena-pvp.js).
+ * A match that starts while another is still on screen (the next one in an online room) waits for the arena to exit. */
+let pendingPvp = null;
+function startPvpMatch(opts) {
+  AudioSys.init(); AudioSys.resume?.();
+  if (state === 'arena') { pendingPvp = opts; window.AR?.exit?.(); return; }
+  Music.stinger?.('deploy');
+  startArena({ map: opts.map, pvp: opts });
+}
+window.startPvpMatch = startPvpMatch;
+function openPvpMenu() {
+  if (!window.PvpMenu) return;
+  const inHub = !!G?.hub;
+  if (inHub) { hubOverlayOpen = true; paused = true; document.exitPointerLock?.(); hideOverlays(); }
+  PvpMenu.open({ onClose: () => { if (inHub && G?.hub) { hubOverlayOpen = false; paused = false; } else if (state === 'title') { updateTitle(); el('ovTitle').classList.add('show'); } } });
+}
+window.openPvpMenu = openPvpMenu;
 /* Rebel Haven NPC dialogue actions -> the hub's services. */
 /* Operation: Unsubscribe — the combat arena runtime (js/arena/) takes over the renderer for the mission.
  * The classic district runs stay available to co-op via newRun({ district:0, fromHub:true }). */
@@ -1465,8 +1482,10 @@ async function startArena(opts = {}) {
   setState('arena');
   paused = false;
   G = null;
-  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, op: opts.op || null, map: opts.map || null, onExit: () => {
+  await Arena.start({ scene, camera, renderer, composer, gunGroup, heat: opts.heat ?? SAVE.arena?.heat ?? 0, op: opts.op || null, map: opts.map || null, pvp: opts.pvp || null, onExit: () => {
     if (World.group) World.group.visible = true;
+    const next = pendingPvp; pendingPvp = null;
+    if (next) { setState('loading'); startArena({ map: next.map, pvp: next }); return; }
     setState('loading');
     newRun({ hub:true });
   } });
@@ -1501,6 +1520,7 @@ function havenAction(action, npc) {
   if (action === 'deploy') { Music.stinger('deploy'); startArena(); return; }
   if (action.startsWith('deploy_') && window.AR?.MAPS?.[action.slice(7)]) { Music.stinger('deploy'); startArena({ map: action.slice(7) }); return; }
   if (action === 'grid') { openCityGrid(); return; }
+  if (action === 'pvp') { openPvpMenu(); return; }
   if (action === 'board') { openMissionBoard(); return; }
   if (action === 'heal') { G.p.hp = G.p.maxHp; G.p.armor = G.p.maxArmor; AudioSys.sfx('pickup'); banner("NINJ'S CLINIC", 'PATCHED UP. NO BILL. NO SUBSCRIPTION.'); return; }
   if (action === 'wardrobe') { openWardrobe(); return; }
@@ -2663,6 +2683,7 @@ function wireMenus() {
   const show = id => { for (const o of document.querySelectorAll('.ov')) o.classList.remove('show'); if (id) el(id).classList.add('show'); };
   el('btnHub').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); newRun({ hub:true }); };
   el('btnStart').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); startArena(); };
+  if (el('btnPvp')) el('btnPvp').onclick = () => { CoopRoom?.leave?.(); AudioSys.init(); AudioSys.sfx('ui'); show(null); openPvpMenu(); };
   el('btnHostCoop').onclick = async () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); await hostCoopFlow(); };
   el('btnJoinCoop').onclick = () => { AudioSys.init(); AudioSys.sfx('ui'); show('ovCoop'); prepJoinCoopFlow(); };
   el('btnCoopBack').onclick = () => { AudioSys.sfx('ui'); CoopRoom?.leave?.(); clearInterval(coopBrowseT); updateTitle(); show('ovTitle'); };

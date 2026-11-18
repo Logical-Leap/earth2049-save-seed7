@@ -2,11 +2,11 @@
   "name": "earth2049-save-seed7",
   "version": "1.0.0",
   "private": true,
-  "description": "EARTH 2049: SAVE SEED 7 — local dev server",
+  "description": "EARTH 2049: SAVE SEED 7 \u2014 local dev server",
   "scripts": {
     "scenes:manifest": "node scripts/build-scene-manifest.js",
     "scenes:check": "node scripts/build-scene-manifest.js --check",
-    "qa:assets": "npm run scenes:check && node scripts/validate-release-assets.js",
+    "qa:assets": "npm run scenes:check && node scripts/validate-release-assets.js && node scripts/build-pvp-maps.js --check",
     "test": "npm run qa:assets && node --test tests/*.test.js",
     "test:accounts": "node --test tests/accounts-api.itest.js",
     "test:m2:browser": "node scripts/qa/m2-browser-acceptance.js",
@@ -16,7 +16,8 @@
     "pages:prepare": "node scripts/prepare-pages-dist.js",
     "pages:deploy": "npm run pages:prepare && wrangler pages deploy dist-pages --project-name earth2049-save-seed7 --branch main --commit-dirty=true",
     "coop:dev": "wrangler dev --config wrangler.jsonc --local --port 8787",
-    "coop:deploy": "wrangler deploy --config wrangler.jsonc"
+    "coop:deploy": "wrangler deploy --config wrangler.jsonc",
+    "pvp:maps": "node scripts/build-pvp-maps.js"
   },
   "devDependencies": {
     "playwright-core": "^1.61.1",

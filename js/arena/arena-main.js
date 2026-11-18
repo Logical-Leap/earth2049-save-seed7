@@ -37,6 +37,8 @@ const Arena = (() => {
 
   AR.pause = on => pause(on);                    // the touch controls' pause button
   function pause(on) {
+    if (on && AR.Pvp?.on && AR.PvpMission.transport?.kind === 'online') { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); AR.pvpMenuOpen = true; return; }
+    if (!on && AR.pvpMenuOpen) { AR.pvpMenuOpen = false; AR.Hud.pause(false); AR.lockPointer(); return; }
     AR.paused = on; AR.pausedByLock = false;
     AR.Player.clearInput();
     if (on) { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); }
@@ -50,6 +52,8 @@ const Arena = (() => {
     AR.scene = opts.scene; AR.camera = opts.camera; AR.renderer = opts.renderer; AR.composer = opts.composer;
     AR.Hud.build(); AR.Hud.show(false);
     const ls = AR.el('loadScreen');
+    // GigaLeague (PvP): AR.PvpMission stands in for the mission while a match is up
+    if (opts.pvp) { AR.MissionPve = AR.MissionPve || AR.Mission; AR.Mission = AR.PvpMission; } else if (AR.MissionPve) AR.Mission = AR.MissionPve;
     const map = AR.MAP = AR.pickMap(opts.op, opts.map);                 // every district is a map (js/arena/arena-maps.js)
     if (ls) { ls.style.display = 'flex'; ls.textContent = map.load; }
     AudioSys.init(); AudioSys.resume(); AR.Sfx.init();
@@ -64,7 +68,7 @@ const Arena = (() => {
     AR.Fx.init(opts.scene); AR.Enemies.init(opts.scene); AR.Drops.init(opts.scene);
     if (!AR.Player.ready) { AR.Player.init(opts.camera, opts.composer); AR.Player.ready = true; } else AR.Player.attachPass(opts.composer);
     AR.Player.useGunFeel(opts.gunGroup);                  // the art department's first-person rig, if it is loaded
-    begin(opts.heat, opts.op);
+    if (opts.pvp) await beginPvp(opts); else begin(opts.heat, opts.op);
     if (ls) ls.style.display = 'none';
     loading = false;
   }
@@ -74,6 +78,14 @@ const Arena = (() => {
     AR.active = true; AR.paused = false; AR.menu = false; hitstopT = 0; slowT = 0; flowT = 0; lastNode = -1;
     AR.Hud.show(true);
     AR.Mission.start({ heat, op: op || null });
+    AR.lockPointer();
+  }
+  async function beginPvp(opts) {
+    const ps = AR.World.markers('playerStart')[0];
+    AR.Player.reset({ x: ps.pos[0], y: ps.pos[1], z: ps.pos[2], yaw: ps.yaw }, null);
+    AR.active = true; AR.paused = false; AR.menu = false; hitstopT = 0; slowT = 0; flowT = 0; lastNode = -1;
+    AR.Hud.show(true);
+    await AR.PvpMission.start(opts);
     AR.lockPointer();
   }
   const propCache = {};
@@ -112,6 +124,7 @@ const Arena = (() => {
     AR.active = false; AR.paused = false; AR.menu = false; AR.Touch?.sleep();
     AR.Hud.show(false); AR.Hud.letterbox(false); AR.Hud.pause(false);
     AR.Mission.dispose(); AR.Boss.dispose(); AR.Enemies.dispose(); AR.Drops.dispose(); AR.Fx.dispose();
+    if (AR.MissionPve) AR.Mission = AR.MissionPve;
     AR.Player.dispose(ctx.composer);
     AR.World.unload(ctx.scene);
     if (ctx.props) { ctx.scene.remove(ctx.props); ctx.props = null; }

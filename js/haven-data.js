@@ -52,6 +52,7 @@ const HAVEN_NPCS = {
     greet: "Rig's warm. The OG Device is humming like it owes somebody money. You going in, or are you sightseeing?",
     options: [
       { t: 'Deploy me.', action: 'deploy', reply: 'Cast initiated. Try to come back with all your fingers this time.' },
+      { t: 'Put me in the GigaLeague.', action: 'pvp', reply: 'The bloodsport? Sure. You die, your debt revives you, the feed gets content. Everybody wins except you.' },
       { t: 'Drop me into a district.', reply: 'Pick a block. Every one of them is somebody\'s, until it isn\'t.', menu: () => havenDistrictOptions() },
       { t: "What's the Dreamcaster?", reply: "Operation Dreamcaster. The OG Device cuts a hole in Turing's timeline and drops you into a simulation of a district. Die in there, you wake up here with a headache and less dignity. Win, and we keep whatever you dragged back." },
       { t: 'You flew in the Collapse War?', reply: 'Gunship. Forty-one sorties. Now I fly a folding chair next to a portal. Progress, baby.' },

@@ -11,12 +11,15 @@ const int = (v, lo, hi) => Math.min(hi, Math.max(lo, Math.floor(Number(v) || 0))
 export function sanitizeEntry(raw) {
   const code = clip(raw?.code, 8).replace(/[^A-Z0-9]/gi, '').toUpperCase();
   if (!code) return null;
+  const pvp = raw.kind === 'pvp', cap = pvp ? 16 : 4;            // GigaLeague (PvP) rooms hold up to 16; co-op squads 4
   return {
     code,
     name: clip(raw.name, 32) || 'Open squad',
     host: clip(raw.host, 24) || 'Operative',
-    players: int(raw.players, 0, 4),
-    max: int(raw.max, 1, 4) || 4,
+    players: int(raw.players, 0, cap),
+    max: int(raw.max, 1, cap) || cap,
+    kind: pvp ? 'pvp' : 'coop',
+    playlist: pvp ? clip(raw.playlist, 12) : '',
     state: ['lobby', 'run'].includes(raw.state) ? raw.state : 'lobby',
     district: int(raw.district, 0, 100),
     protocol: int(raw.protocol, 0, 99),
@@ -33,8 +36,8 @@ export function listable(entries, now = Date.now(), protocol = 0) {
 }
 
 /** quick match: the best open lobby (a mission already running is a fallback, since drop-in works) */
-export function bestMatch(entries, now = Date.now(), protocol = 0) {
-  const open = listable(entries, now, protocol);
+export function bestMatch(entries, now = Date.now(), protocol = 0, playlist = '') {
+  const open = listable(entries, now, protocol).filter(e => !playlist || e.playlist === playlist);
   return open.find(e => e.state === 'lobby') || open[0] || null;
 }
 
@@ -64,7 +67,7 @@ export class LobbyDirectory {
       await this.persist();
       return Response.json({ ok: true });
     }
-    if (url.pathname.endsWith('/match')) return Response.json({ room: bestMatch(Object.values(rooms), Date.now(), protocol) });
+    if (url.pathname.endsWith('/match')) return Response.json({ room: bestMatch(Object.values(rooms), Date.now(), protocol, clip(url.searchParams.get('playlist'), 12)) });
     if (url.pathname.endsWith('/list')) return Response.json({ rooms: listable(Object.values(rooms), Date.now(), protocol) });
     return Response.json({ error: 'not_found' }, { status: 404 });
   }

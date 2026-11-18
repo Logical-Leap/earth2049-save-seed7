@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-11-18 — GigaLeague: competitive PvP
+
+- **New mode: GigaLeague (PvP).** Open it from the title screen ("GigaLeague (PvP)") or from 5ON at the Dreamcaster rig. The design is the project doc `claude/multiplayer.md`; how it is built is `docs/PVP.md`.
+- **Modes, maps and play options:**
+  - 12 modes in three playlists: Core (CoD-style), Classic Arena (Halo-style) and Party.
+  - All 10 district maps.
+  - Quickplay by playlist, private and public rooms with codes, a host lobby with custom rules and a map vote, and offline matches against bots.
+- **Authority:** one authoritative simulation (`js/pvp/pvp-sim.js`) runs on the match server and in the browser.
+  - Lag-compensated hits.
+  - Checks on movement, fire rate and ammo.
+  - Bots on the nav graphs, with three skill levels.
+- **Loadouts and streaks:**
+  - Create-a-class: 11 guns (5 use stand-in models), 16 attachments as sidegrades, 12 perks, 4 lethals, 4 tacticals.
+  - 8 scorestreaks, from Oracular Systems' Predictive Ping up to the Server Wipe.
+- **Progression:**
+  - Player levels 1–55, prestige, weapon levels 1–20, and the seven rarities as a camo ladder.
+  - DRIP, and a little GigaTech capped at 75 a day.
+  - In the core playlist rarity is cosmetic: `GunFeel.setFair()` keeps handling and magazines equal.
+- **HUD:** score bar, kill feed, minimap with radar, streaks, killcam, respawn screen with class change, scoreboard, the Notification Bomb flash, results and a podium.
+- **Server:** match server `PvpMatchDurableObject` (`workers/pvp-match.js`), with routes under `/pvp/`. Run `npm run coop:deploy` to ship it (migration `v3`).
+- **Tests:** `tests/pvp-sim.test.js` and `tests/pvp-server.test.js`. They play every mode to a finish and check anti-cheat, lag compensation, rewards and progression.
+
 ## 2026-11-17 — The Big Closet: 107 new cosmetics
 
 - **The wardrobe more than doubles: 107 new items in every slot, from Common to Relic.** Each one is modelled for both bodies and takes the outfit's colours like everything else.

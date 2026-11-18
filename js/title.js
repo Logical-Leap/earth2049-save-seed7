@@ -42,6 +42,7 @@
     btnHub: 'Drop into the Rebel Haven: gear up, get dressed, talk to the crew.',
     btnStart: 'Cast straight into the Plaza. Burn the relays. Get out alive.',
     btnVR: 'Put the headset on. The whole game, fully immersive: your hands, your gun, your city.',
+    btnPvp: 'The GigaLeague: competitive PvP. Quickplay, private rooms, or offline against bots. Create-a-class, scorestreaks, 12 modes.',
     btnHostCoop: 'Open a game for up to four operatives. Anyone can find it, or share the code.',
     btnJoinCoop: 'Quick match, browse open games, or join a friend by code.',
     btnArmory: 'Spend banked GigaTech on permanent upgrades.',
@@ -176,7 +177,7 @@
     const st = document.createElement('style'); st.id = 'titleCss'; st.textContent = CSS; document.head.appendChild(st);
     const btn = id => { const b = document.getElementById(id); return b; };
     const gt = btn('titleGT'), best = btn('titleBest');
-    const groups = [['PLAY', ['btnHub', 'btnStart', 'btnVR']], ['SQUAD', ['btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnCloud', 'btnLook']]];
+    const groups = [['PLAY', ['btnHub', 'btnStart', 'btnVR']], ['SQUAD', ['btnPvp', 'btnHostCoop', 'btnJoinCoop']], ['PREPARE', ['btnArmory', 'btnHelp', 'btnCloud', 'btnLook']]];
     const keep = {}; for (const [, ids] of groups) for (const id of ids) keep[id] = btn(id);
     root.innerHTML = '';
     root.dataset.phase = 'boot';

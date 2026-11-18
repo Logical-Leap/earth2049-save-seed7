@@ -716,6 +716,7 @@ AR.Enemies = (() => {
   }
   function detonate(p, direct) {
     if (p.tele) p.tele.life = 0.01;
+    if (p.ghost) return;                     // GigaLeague: a local stand-in for a projectile the match owns; its 'boom' event does the explosion
     explode(p.pos.x, p.pos.y, p.pos.z, p.splash, p.dmg * (p.splashDmg || 1), p.owner, p.knock || 8, p.owner === 'player' ? 'explosion' : 'enemyExplosion');
     void direct;
   }

@@ -3,8 +3,10 @@
   "name": "earth2049-coop-test",
   "main": "workers/coop-worker.js",
   "compatibility_date": "2026-07-08",
-  "durable_objects": { "bindings": [ { "name": "ROOMS", "class_name": "RoomDurableObject" }, { "name": "LOBBIES", "class_name": "LobbyDirectory" } ] },
-  "migrations": [ { "tag": "v1", "new_sqlite_classes": ["RoomDurableObject"] }, { "tag": "v2", "new_sqlite_classes": ["LobbyDirectory"] } ],
+  "durable_objects": { "bindings": [ { "name": "ROOMS", "class_name": "RoomDurableObject" }, { "name": "LOBBIES", "class_name": "LobbyDirectory" },
+      { "name": "PVP", "class_name": "PvpMatchDurableObject" } ] },
+  "migrations": [ { "tag": "v1", "new_sqlite_classes": ["RoomDurableObject"] }, { "tag": "v2", "new_sqlite_classes": ["LobbyDirectory"] },
+    { "tag": "v3", "new_sqlite_classes": ["PvpMatchDurableObject"] } ],
   "d1_databases": [ { "binding": "DB", "database_name": "earth2049-accounts-test", "database_id": "00000000-0000-0000-0000-000000000000", "migrations_dir": "migrations" } ],
   "vars": { "DEV_ECHO_CODES": "1" }
 }

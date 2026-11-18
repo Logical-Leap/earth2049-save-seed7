@@ -61,6 +61,8 @@ const GunFeel = (() => {
   const R_HANDLE = [1, .95, .9, .85, .8, .76, .72];          // aim, draw, bolt / pump cycling
   const R_RELOAD = [1, .97, .94, .91, .88, .85, .82];         // reloads speed up less, so no gun ever reloads unrealistically fast
   const R_FLASH = [1, 1.05, 1.1, 1.2, 1.35, 1.45, 1.6];
+  let FAIR = null;                   // GigaLeague: { mag(id) } — handling ignores rarity and magazines come from the match's table
+  const HT = t => (FAIR ? 0 : t);
   const TIER_COL = [0xffc870, 0x9fd0ff, 0xd28cff, 0xffa63c, 0xff5a4a, 0xffd85a, 0x40f0ff];
 
   let camera, scene, gunGroup, armsRoot, flashTex, flashTexWide;
@@ -257,6 +259,7 @@ const GunFeel = (() => {
     return Object.values(m)[0];
   }
   function magSize(id, tier) {
+    if (FAIR?.magOf) { const n = FAIR.magOf(id); if (n) return n; }
     const gltf = AssetLoader?.getModel?.('weapon.' + id), man = gltf?.scene?.userData;
     if (man?.weapon) return magFor(id, man.rarities[Math.min(tier, man.rarities.length - 1)]);
     return Object.values(GUN[id]?.mag || { std: 30 })[0];
@@ -265,6 +268,7 @@ const GunFeel = (() => {
   /* ---------------------------------------------------------------- equip / draw */
   function equip(w) {
     const nv = build(w.id, w.rar | 0);
+    if (nv) { if (nv.baseMag === undefined) nv.baseMag = nv.magSize; nv.magSize = FAIR?.mag?.(w) || nv.baseMag; }
     if (vm) gunGroup.remove(vm.model);
     vm = nv; curW = w;
     st.reload = null; st.drawT = 0; st.adsK = Math.min(st.adsK, .3); st.cycleT = 9; st.rHand = 0;
@@ -345,7 +349,7 @@ const GunFeel = (() => {
     if (!vm || !w || st.reload || st.drawT < 1 || cycling()) return false;
     const mag = vm.magSize;
     if (w.clip >= mag || (w.ammo !== Infinity && w.ammo <= 0)) return false;
-    const tierK = R_RELOAD[vm.tier] * (1 - (window.G?.p?.mods?.reload || 0));
+    const tierK = R_RELOAD[HT(vm.tier)] * (1 - (window.G?.p?.mods?.reload || 0));
     const empty = w.clip === 0;
     if (vm.g.style === 'single' || vm.g.style === 'tube') {
       const tube = vm.g.style === 'tube';
@@ -370,7 +374,7 @@ const GunFeel = (() => {
   }
 
   // the pump or bolt is still cycling after a shot
-  const cycling = () => vm && vm.g.cycle && st.cycleT < vm.g.cycle * R_HANDLE[vm.tier];
+  const cycling = () => vm && vm.g.cycle && st.cycleT < vm.g.cycle * R_HANDLE[HT(vm.tier)];
 
   function canFire(w) {
     if (!vm) return true;
@@ -387,14 +391,14 @@ const GunFeel = (() => {
   /* ---------------------------------------------------------------- firing */
   function fire(w) {
     if (!vm) return { pitch: 0, yaw: 0 };
-    const g = vm.g, tier = vm.tier, rk = R_RECOIL[tier], adsF = 1 - st.adsK * .45;
+    const g = vm.g, tier = vm.tier, rk = R_RECOIL[HT(tier)], adsF = 1 - st.adsK * .45;
     // viewmodel kick: back, up, a little random roll (springs carry it back)
     S.pv[2] += g.vm[0] * 20 * rk * adsF; S.pv[1] += g.vm[0] * 4 * rk * adsF; S.rv[0] += g.vm[1] * 14 * rk * adsF;
     S.rv[2] += (Math.random() - .5) * g.vm[2] * 26 * rk; S.rv[1] += (Math.random() - .5) * g.vm[2] * 12 * rk;
     // camera kick: pitch up with a little yaw wander; most of it recovers, some of it climbs (CoD-style)
     const kp = g.kick[0] * rk * (1 - st.adsK * .25), ky = (Math.random() - .5) * 2 * g.kick[1] * rk;
     S.cv[0] += kp * D2R * 14; S.cv[1] += ky * D2R * 14; S.cv[2] += (Math.random() - .5) * kp * D2R * 4;
-    st.punch = Math.max(st.punch, (g.punch || 0) * (1 + tier * .06));
+    st.punch = Math.max(st.punch, (g.punch || 0) * (1 + HT(tier) * .06));
     // moving parts
     st.partT = 0; st.spinV += 18;
     if (g.fire === 'drum') st.drumTo += Math.PI / 3;
@@ -468,16 +472,16 @@ const GunFeel = (() => {
     const g = vm.g, tier = vm.tier, w = curW, n = vm.node, P = vm.rest;
     // the action after a shot: pump or bolt
     st.cycleT += dt;
-    const cyc = g.cycle ? g.cycle * R_HANDLE[tier] : 0, ck = cyc ? clamp01(st.cycleT / cyc) : 1, inCycle = cyc && st.cycleT < cyc;
+    const cyc = g.cycle ? g.cycle * R_HANDLE[HT(tier)] : 0, ck = cyc ? clamp01(st.cycleT / cyc) : 1, inCycle = cyc && st.cycleT < cyc;
     const boltCycle = inCycle && g.fire === 'boltaction';
     // ADS (not while reloading, drawing, or working a bolt)
     const wantAds = !!s.ads && !st.reload && st.drawT >= 1 && !s.dash && !s.sprint && !boltCycle;
     if (wantAds !== st.ads) { st.ads = wantAds; GunAudio?.foley?.(wantAds ? 'adsIn' : 'adsOut'); }
-    const adsT = g.ads * R_HANDLE[tier];
+    const adsT = g.ads * R_HANDLE[HT(tier)];
     st.adsK += ((st.ads ? 1 : 0) - st.adsK) * Math.min(1, dt / Math.max(.04, adsT * .45));
     const aK = ss(clamp01(st.adsK));
     // draw
-    if (st.drawT < 1) st.drawT = Math.min(1, st.drawT + dt / (g.draw * R_HANDLE[tier]));
+    if (st.drawT < 1) st.drawT = Math.min(1, st.drawT + dt / (g.draw * R_HANDLE[HT(tier)]));
     const dK = 1 - ss(st.drawT);
     // springs: viewmodel and camera
     spring(S.p, S.pv, 160, 17, dt); spring(S.r, S.rv, 190, 18, dt); spring(S.c, S.cv, 95, 16, dt);
@@ -861,7 +865,9 @@ const GunFeel = (() => {
   function hideArms() { if (armsRoot) armsRoot.visible = false; reticle(0); }
   const _update = update;
 
+  function setFair(f) { FAIR = f || null; }
   return {
+    setFair, get fair() { return !!FAIR; },
     init, equip, setArms, hideArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
     get fov() { return st.fov; }, get adsK() { return st.adsK; }, get reloading() { return !!st.reload; },
     get spreadMul() { return 1 - st.adsK * (vm && SCOPED.has(vm.sightName) ? .96 : .65); },

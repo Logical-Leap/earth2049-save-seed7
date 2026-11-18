@@ -311,7 +311,7 @@ AR.Hud = (() => {
     const ti = AR.Arsenal.tierInfo(g.tier || 0);
     N.wname.textContent = (g.id === 'pistol' ? '' : ti.p + ' ') + g.d.name; N.wname.style.color = ti.c; N.wtag.textContent = (g.id === 'pistol' ? '' : ti.n + ' // ') + g.d.tag;
     const o = P.guns[P.cur === 0 ? 1 : 0];
-    N.other.textContent = o ? `[Q] ${o.d.name}` : '';
+    N.other.textContent = o ? `${AR.Pvp?.on ? '[1/2]' : '[Q]'} ${o.d.name}` : '';
   }
   function toast(t, s) {
     if (!N.toast) return;

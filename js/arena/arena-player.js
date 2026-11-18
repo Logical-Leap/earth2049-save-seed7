@@ -19,10 +19,12 @@ AR.Player = (() => {
   const EYE = 1.62, CROUCH_EYE = 0.98;
 
   const keys = {};
-  const I = { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0,
+  const I = { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, tac: false, streak: 0, use: false, swap: 0,
     padX: 0, padZ: 0, padSprint: false, touchX: 0, touchZ: 0, touchSprint: false };   // touch* = phone controls (arena-touch.js)
   let camera = null, vmScene = null, vmCam = null, vmPass = null, vmRoot = null, vmLight = null, vmAmb = null, boot = null;
   let P = null, S = null;
+  let PF = null;                    // a movement profile (GigaLeague PvP: PVP.MOVE.core / classic / serverless); null = the arena's own feel
+  const pvp = () => !!(window.AR && AR.Pvp && AR.Pvp.on);
   const guns = {};          // 'id:tier' -> first-person model from AR.Arsenal
   let muzzle = null, muzzleLight = null, scopeEl = null;
   const _fwd = V3(), _right = V3(), _tmp = V3(), _a = V3(), _b = V3(), _col = new THREE.Color();
@@ -85,9 +87,10 @@ AR.Player = (() => {
         case 'KeyF': case 'KeyV': I.kick = true; break;
         case 'KeyG': I.nade = true; break;
         case 'KeyE': I.use = true; break;
-        case 'KeyQ': I.swap = -1; break;
+        case 'KeyQ': if (pvp()) I.tac = true; else I.swap = -1; break;
         case 'Digit1': I.swap = 1; break;
         case 'Digit2': I.swap = 2; break;
+        case 'Digit3': case 'Digit4': case 'Digit5': if (pvp()) I.streak = +e.code.slice(5) - 2; break;
         default:
       }
     }, true);
@@ -111,7 +114,7 @@ AR.Player = (() => {
     });
     addEventListener('wheel', e => { if (on()) I.swap = -1; }, { passive: true });
   }
-  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, use: false, swap: 0, padX: 0, padZ: 0, padSprint: false, touchX: 0, touchZ: 0, touchSprint: false }); }
+  function clearInput() { for (const k of Object.keys(keys)) keys[k] = false; Object.assign(I, { fire: false, ads: false, lookX: 0, lookY: 0, jump: 0, dash: false, crouch: false, reload: false, kick: false, nade: false, tac: false, streak: 0, use: false, swap: 0, padX: 0, padZ: 0, padSprint: false, touchX: 0, touchZ: 0, touchSprint: false }); }
 
   /* ================================================================== run state */
   function newStats() {
@@ -119,12 +122,13 @@ AR.Player = (() => {
       ricochet: 0, volatile: 0, ragebait: 0, headRefund: 0, kick: 1, kickDash: false, slideHit: false, copium: false, burn: 0, split: false,
       cancel: false, buddy: 0, viral: false, overshield: 0 };
   }
-  function makeGun(id, tier = 0) {
-    const d = AR.GUNS[id];
-    return { id, d, tier, ammo: Math.round(d.mag * (1 + tier * 0.08)), reserve: d.reserve, fireT: 0, bloom: 0, shot: 0, lastShot: 0, reloadT: 0, reloading: false, shellQ: 0, openT: 0, drum: 0 };
+  function makeGun(id, tier = 0, def = null) {
+    const d = def || AR.GUNS[id];
+    return { id, d, tier, ammo: def ? d.mag : Math.round(d.mag * (1 + tier * 0.08)), reserve: d.reserve, fireT: 0, bloom: 0, shot: 0, lastShot: 0, reloadT: 0, reloading: false, shellQ: 0, openT: 0, drum: 0 };
   }
   function reset(spawn, primary) {
     S = newStats();
+    if (PF) S.airJumps = PF.airJumps;
     P = {
       body: { pos: V3(spawn.x, spawn.y, spawn.z), vel: V3(), r: 0.38, h: 1.8, onGround: true, step: 0.55 },
       yaw: spawn.yaw || 0, pitch: -0.05, eye: EYE, punchP: 0, punchY: 0, punchVP: 0, punchVY: 0,
@@ -172,6 +176,7 @@ AR.Player = (() => {
   }
   function addTrauma(t) { P.trauma = Math.min(1, P.trauma + t); }
   function magSize(g) {
+    if (pvp()) return g.d.mag;                                                    // PvP: the table's magazine, never the rarity's
     if (GF && window.GunFeel) return GunFeel.magSize(g.id, g.tier || 0);           // the gun's real magazine for its rarity
     return Math.max(1, Math.round(g.d.mag * (1 + S.mag + (g.tier || 0) * 0.08)));
   }
@@ -205,8 +210,9 @@ AR.Player = (() => {
   function swapTo(i) {
     if (i === P.cur || !P.guns[i] || P.swapT > 0.05) return;
     const g = gun(); g.reloading = false; g.shellQ = 0;
-    P.cur = i; P.swapT = 0.3;
+    P.cur = i; P.swapT = 0.3 * (pvp() && AR.Pvp.sleight ? 0.65 : 1);
     showGun(); AR.Sfx.reload(null, 'out');
+    if (pvp()) AR.Pvp.swap(i);
   }
 
   /* ================================================================== movement */
@@ -233,11 +239,14 @@ AR.Player = (() => {
     const wl = Math.hypot(wx, wz); if (wl > 0) { wx /= wl; wz /= wl; }
     const analog = Math.min(1, wl);                                     // a half-pushed stick walks
     // sprint: hold SHIFT (or click the left stick) while moving forward; firing, aiming, crouching or reloading breaks it
-    const wantSprint = !S.dashMode && (keys.ShiftLeft || keys.ShiftRight || I.padSprint || I.touchSprint) && mz > 0.35 && !I.ads && !I.fire && !P.crouching && !gun()?.reloading;
+    const wantSprint = !S.dashMode && (!PF || PF.sprint > 1) && (keys.ShiftLeft || keys.ShiftRight || I.padSprint || I.touchSprint) && mz > 0.35 && !I.ads && !I.fire && !P.crouching && !gun()?.reloading;
+    const wasSprint = P.sprinting;
     P.sprinting = wantSprint && (b.onGround || P.sprinting);
+    if (wasSprint && !P.sprinting) P.sprintEnd = performance.now();
     if (!wantSprint) I.padSprint = I.padSprint && mz > 0.35 && !I.fire;
     P.sprintK = damp(P.sprintK || 0, P.sprinting ? 1 : 0, 8, dt);
-    const maxSpd = MAXSPD * (1 + S.speed + (S.dashMode ? 0.08 : 0)) * (1 + (SPRINT - 1) * P.sprintK) * Math.max(0.35, analog) * (P.ads > 0.5 ? 0.72 : 1) * (P.crouching && P.slideT <= 0 ? 0.5 : 1);
+    const spr = PF ? PF.sprint : SPRINT, pk = PF ? PF.speed * (AR.Pvp?.moveK?.() ?? 1) : 1;
+    const maxSpd = MAXSPD * pk * (1 + S.speed + (S.dashMode ? 0.08 : 0)) * (1 + (spr - 1) * P.sprintK) * Math.max(0.35, analog) * (P.ads > 0.5 ? (PF ? PF.adsSpeed : 0.72) : 1) * (P.crouching && P.slideT <= 0 ? (PF ? PF.crouchSpeed : 0.5) : 1);
     const wasGround = b.onGround;
 
     // timers
@@ -266,8 +275,8 @@ AR.Player = (() => {
 
     // crouch / slide
     const hs = Math.hypot(v.x, v.z);
-    if (I.crouch && b.onGround && P.slideT <= 0 && P.slideCd <= 0 && hs > 6.0) {
-      P.slideT = 0.85; P.slideCd = 0.55;
+    if (I.crouch && b.onGround && P.slideT <= 0 && P.slideCd <= 0 && hs > 6.0 * (PF ? PF.speed : 1) && (!PF || PF.slide)) {
+      P.slideT = 0.85; P.slideCd = PF ? PF.slideCd + 0.85 : 0.55;
       const boost = Math.min(4.2, Math.max(0, 15 - hs));
       v.x += v.x / hs * boost; v.z += v.z / hs * boost;
       AR.Sfx.slide(true); P.fovPunch += 4; addTrauma(0.08);
@@ -280,7 +289,9 @@ AR.Player = (() => {
     let jumped = false;
     if (I.jump > 0) {
       if (b.onGround || P.coyote > 0) {
-        v.y = JUMP; b.onGround = false; P.coyote = 0; I.jump = 0; jumped = true; P.airJumpsUsed = 0;
+        let jk = PF ? PF.jump : 1;
+        if (PF?.jumpFatigue) { const since = performance.now() - (P.landAt || -1e9); P.fatigueN = since < 1000 ? (P.fatigueN || 0) + 1 : 0; jk *= Math.pow(1 - PF.jumpFatigue, P.fatigueN); }
+        v.y = JUMP * jk; b.onGround = false; P.coyote = 0; I.jump = 0; jumped = true; P.airJumpsUsed = 0;
         AR.Sfx.jump(false);
         if (P.slideT > 0) { P.slideT = 0; AR.Mission?.style('slidejump'); }
       } else if (P.airJumpsUsed < S.airJumps && P.padT <= 0) {
@@ -298,7 +309,7 @@ AR.Player = (() => {
         else if (P.groundT > 0.03 || !wasGround) friction(v, dt, FRICTION);
         accelerate(v, wx, wz, P.slideT > 0 ? 2 : maxSpd, ACCEL, dt);
       } else {
-        accelerate(v, wx, wz, maxSpd, P.padT > 0 ? AIRACCEL * 0.5 : AIRACCEL, dt);
+        accelerate(v, wx, wz, maxSpd, (P.padT > 0 ? AIRACCEL * 0.5 : AIRACCEL) * (PF ? PF.airAccel : 1), dt);
       }
     }
 
@@ -309,7 +320,15 @@ AR.Player = (() => {
     if (walk && dt > 0) { b.vel.x -= walk.x / dt; b.vel.z -= walk.z / dt; }
     P.groundT = b.onGround ? P.groundT + dt : 0;
     if (b.onGround) { P.airJumpsUsed = 0; P.airT = 0; } else P.airT += dt;
+    // mantle (PvP profiles): pushing into a ledge up to PF.mantle high climbs it
+    if (PF?.mantle && r.hitWall && mz > 0.5 && P.slideT <= 0) {
+      const fx = -sy * 0.55, fz = -cy * 0.55, top = AR.World.floorAt(b.pos.x + fx, b.pos.z + fz, 0.2, b.pos.y + PF.mantle);
+      if (top > b.pos.y + 0.6 && top <= b.pos.y + PF.mantle && !AR.World.bodyBlocked(b.pos.x + fx, top, b.pos.z + fz, b.r * 0.9, 1.7)) {
+        b.pos.set(b.pos.x + fx, top + 0.02, b.pos.z + fz); b.vel.y = 0; b.onGround = true; P.landDip = 0.16; AR.Sfx.land(0.4);
+      }
+    }
     if (r.landed) {
+      P.landAt = performance.now();
       const hard = clamp(-r.impactVy / 18, 0, 1);
       P.landDip = Math.min(0.26, 0.05 + hard * 0.22);
       if (hard > 0.2) { AR.Sfx.land(hard); addTrauma(hard * 0.18); }
@@ -321,7 +340,7 @@ AR.Player = (() => {
     // out of the world: back to the last safe ground
     P.safeT -= dt;
     if (b.onGround && P.safeT <= 0) { P.lastSafe.copy(b.pos); P.safeT = 0.5; }
-    if (b.pos.y < -12) { b.pos.copy(P.lastSafe); v.set(0, 0, 0); takeDamage(10, null, 'fall'); }
+    if (b.pos.y < -12 && !pvp()) { b.pos.copy(P.lastSafe); v.set(0, 0, 0); takeDamage(10, null, 'fall'); }
 
     P.speed = Math.hypot(v.x, v.z);
     // footsteps
@@ -507,7 +526,9 @@ AR.Player = (() => {
     g.fireT -= dt;
     g.bloom = Math.max(0, g.bloom - d.bloomRecover * dt * (g.fireT < -0.1 ? 1.5 : 1));
     if (performance.now() - g.lastShot > 320) g.shot = 0;
-    if (!I.fire) g.held = false;                                // semi-auto guns wait for the trigger to come back up
+    if (!I.fire) { g.held = false; g.bn = 0; }                    // semi-auto guns wait for the trigger to come back up
+    if (d.melee) { if (I.fire && !g.held) { g.held = true; I.kick = true; } return; }        // a knife: the trigger stabs
+    if (I.fire && d.stf && P.sprintEnd && performance.now() - P.sprintEnd < d.stf * 1000 * (1 + (d.stfK || 0))) return;   // sprint-to-fire
     if (gfOn()) { gfFireTick(g, d, dt); return; }
     // reload
     if (I.reload) { I.reload = false; startReload(g); }
@@ -542,16 +563,18 @@ AR.Player = (() => {
     g.fireT += interval; if (g.fireT < -interval) g.fireT = 0;
     g.ammo--; g.lastShot = performance.now(); g.held = !!d.semi;
     shoot(g);
+    if (d.burst && ++g.bn >= d.burst) { g.bn = 0; g.held = true; g.fireT = Math.max(g.fireT, d.burstGap || 0.2); }
     if (g.ammo === 0 && g.reserve > 0) setTimeout(() => { if (P && gun() === g && g.ammo === 0) startReload(g); }, 160);
   }
   function gfFireTick(g, d, dt) {
     const w = gfWeapon(g);
     g.reloading = GunFeel.reloading;
-    if (I.reload) { I.reload = false; GunFeel.reload(w); }
+    if (I.reload) { I.reload = false; if (GunFeel.reload(w) && pvp()) AR.Pvp.reload(P.cur); }
     if (!I.fire || P.swapT > 0 || P.kickT > 0.1 || g.fireT > 0 || (d.semi && g.held)) return;
     if (!GunFeel.canFire(w)) return;
     if (g.ammo <= 0) {
-      if (!GunFeel.reload(w)) {
+      const rl = GunFeel.reload(w); if (rl && pvp()) AR.Pvp.reload(P.cur);
+      if (!rl) {
         GunFeel.dryFire(); g.fireT = 0.3;
         if (g.reserve <= 0 && P.cur === 1) { swapTo(0); AR.Hud.toast('PRIMARY DRY', 'SIDEARM OUT // FIND AMMO'); }
       }
@@ -561,6 +584,7 @@ AR.Player = (() => {
     g.fireT += interval; if (g.fireT < -interval) g.fireT = 0;
     g.ammo--; g.lastShot = performance.now(); g.held = !!d.semi;
     shoot(g);
+    if (d.burst && ++g.bn >= d.burst) { g.bn = 0; g.held = true; g.fireT = Math.max(g.fireT, d.burstGap || 0.2); }
     const k = GunFeel.fire(w);                                 // hands, flash, casings, rarity audio; returns the climb
     P.pitch = clamp(P.pitch + k.pitch, -1.5, 1.5); P.yaw += k.yaw;
     void dt;
@@ -568,6 +592,7 @@ AR.Player = (() => {
   function startReload(g) {
     if (g.reloading || g.ammo >= magSize(g) || g.reserve <= 0) return;
     g.reloading = true; g.inPlayed = false;
+    if (pvp()) AR.Pvp.reload(P.cur);
     g.reloadT = g.d.shellReload ? (g.d.reloadOpen || 0.3) : g.d.reload * S.reload;
     AR.Sfx.reload(g.id, 'out'); P.vm.vrz += 2;
   }
@@ -599,18 +624,21 @@ AR.Player = (() => {
     const copium = S.copium && P.hp < P.maxHp * 0.35;
     const dmgMult = (1 + S.dmg) * (1 + (g.tier || 0) * 0.1) * (copium ? 1.4 : 1) * (AR.Mission?.dmgMult() || 1);
     const shots = d.pellets + (S.split && d.pellets === 1 ? 1 : 0);
+    const pv = pvp() ? [] : null;                                   // PvP: the match decides what these rays hit
     for (let k = 0; k < shots; k++) {
       // uniform disc spread
       const a = Math.random() * Math.PI * 2, rr = Math.sqrt(Math.random()) * Math.tan(spread);       // NOSONAR
       const dir = _fwd.clone().addScaledVector(_right, Math.cos(a) * rr).addScaledVector(upv, Math.sin(a) * rr).normalize();
       const split = S.split && d.pellets === 1 && k === 1;
       if (split) dir.addScaledVector(_right, rand(-0.02, 0.02)).normalize();
+      if (pv) pv.push([dir.x, dir.y, dir.z]);
       if (d.proj) {
-        AR.Enemies.spawnProj({ owner: 'player', x: mz.x, y: mz.y, z: mz.z, dir, ...d.proj, dmg: d.dmg * dmgMult * (split ? 0.5 : 1), knock: d.knock, weapon: g.id });
+        AR.Enemies.spawnProj({ owner: 'player', x: mz.x, y: mz.y, z: mz.z, dir, ...d.proj, dmg: pv ? 0 : d.dmg * dmgMult * (split ? 0.5 : 1), knock: d.knock, weapon: g.id, ghost: !!pv });
         continue;
       }
       hitscan(origin, dir, mz, g, d.dmg * dmgMult * (split ? 0.5 : 1), k);
     }
+    if (pv) AR.Pvp.fire(origin, pv, g);
     // feel
     g.shot++;
     g.bloom = Math.min(d.bloomMax, g.bloom + d.bloom);
@@ -673,6 +701,7 @@ AR.Player = (() => {
     P.kickCd -= dt; P.kickT -= dt;
     if (I.kick && P.kickCd <= 0) {
       P.kickCd = 0.62; P.kickT = 0.32;
+      if (pvp()) AR.Pvp.melee();
       AR.Sfx.kick(); addTrauma(0.12); P.fovPunch -= 2;
       setTimeout(() => {
         if (!P) return;
@@ -690,7 +719,8 @@ AR.Player = (() => {
       }, 90);
     }
     I.kick = false;
-    // grenades
+    // grenades (PvP: the match keeps the count and throws them; Q is the tactical)
+    if (pvp()) { if (I.nade) AR.Pvp.nade(false); if (I.tac) AR.Pvp.nade(true); I.nade = false; I.tac = false; return; }
     P.nadeRe -= dt;
     if (P.nades < 2 && P.nadeRe <= 0) { P.nades++; P.nadeRe = 9; }
     if (I.nade && P.nades > 0) {
@@ -707,6 +737,7 @@ AR.Player = (() => {
   /* ================================================================== damage & health */
   function takeDamage(amount, from, kind) {
     if (!P || !P.alive) return 0;
+    if (pvp() && kind !== 'pvp') return 0;                          // PvP: only the match hurts you
     if (P.iframes > 0 && kind !== 'fall') return 0;
     amount *= AR.Mission?.incomingMult() || 1;
     if (P.slideT > 0 && kind === 'proj') amount *= 0.7;
@@ -743,7 +774,7 @@ AR.Player = (() => {
       move(dt);
       // ADS
       const g = gun();
-      const wantAds = I.ads && !g?.reloading && P.swapT <= 0 && P.slideT <= 0 && P.kickT <= 0 ? 1 : 0;
+      const wantAds = I.ads && !g?.reloading && !g?.d.noZoom && P.swapT <= 0 && P.slideT <= 0 && P.kickT <= 0 ? 1 : 0;
       if (gfOn()) P.ads = GunFeel.adsK;
       else P.ads = AR.clamp(P.ads + (wantAds ? 1 : -1) * rdt / (g?.d.adsTime || 0.14), 0, 1);
       if (I.swap) {
@@ -830,15 +861,18 @@ AR.Player = (() => {
     I.crouch = pad.held(B.B) || keys.ControlLeft || keys.KeyC || false;
     if (pad.down(B.X)) { if (!AR.Drops.use()) I.reload = true; }
     if (pad.down(B.Y) || pad.down(B.LEFT) || pad.down(B.RIGHT)) I.swap = -1;
+    if (pvp() && pad.down(B.UP)) I.tac = true;
+    if (pvp() && pad.down(B.DOWN)) I.streak = 9;
     if (pad.down(B.RB) || pad.down(B.R3)) I.kick = true;
     if (pad.down(B.LB)) I.nade = true;
     if (pad.down(B.L3)) { if (S.dashMode) I.dash = true; else I.padSprint = !I.padSprint; }
   }
   function assistTarget() {
-    if (!AR.Enemies?.list) return null;
+    const list = pvp() ? AR.Pvp.assistList() : AR.Enemies?.list;
+    if (!list) return null;
     eyePos(_eye); aimDir(_aim);
     let best = null;
-    for (const e of AR.Enemies.list) {
+    for (const e of list) {
       if (e.dying || e.relay) continue;
       const h = e.headPos || e.body.pos;
       _to.set(h.x - _eye.x, h.y - 0.25 - _eye.y, h.z - _eye.z);
@@ -874,8 +908,18 @@ AR.Player = (() => {
     P = null;
   }
 
+  /** GigaLeague: set the movement profile (null restores the arena's own) */
+  function setProfile(pf) { PF = pf || null; if (S) S.airJumps = PF ? PF.airJumps : 1; }
+  /** GigaLeague: arm the player with the match's loadout. list: [{ vis, tier, def }] in the match's weapon order */
+  function setLoadout(list, cur = 0) {
+    if (!P) return;
+    P.guns = list.map(x => { const g = makeGun(x.vis, x.tier || 0, x.def); g.pvpId = x.id; return g; });
+    P.cur = Math.min(cur, P.guns.length - 1); P.swapT = 0.35;
+    for (const g of P.guns) g.ammo = g.d.mag;
+    showGun();
+  }
   return {
-    init, reset, tick, padTick, vrTick, assistTarget, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, setProfile, setLoadout, get profile() { return PF; }, padTick, vrTick, assistTarget, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };
