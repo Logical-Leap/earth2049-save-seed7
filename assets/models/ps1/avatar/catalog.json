@@ -1965,6 +1965,1430 @@
     "flavor": "Worth a fortune on Tuesday. Worth a sandwich on Wednesday.",
     "unlock": "Win 10 Cryptid raffles",
     "default": false
+   },
+   {
+    "id": "face_skull",
+    "cat": "face",
+    "name": "Skull Paint",
+    "rarity": 3,
+    "flavor": "Your face, minus the skin subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_barcode",
+    "cat": "face",
+    "name": "Barcode",
+    "rarity": 2,
+    "flavor": "Bald, barcoded and suspiciously good with a piano wire.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_glitch",
+    "cat": "face",
+    "name": "Glitch Tattoo",
+    "rarity": 3,
+    "flavor": "Dead pixels, on purpose. Glows when you lie.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_tear",
+    "cat": "face",
+    "name": "Teardrop Tattoo",
+    "rarity": 1,
+    "flavor": "One for every subscription you could not cancel.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_sadclown",
+    "cat": "face",
+    "name": "Sad Clown",
+    "rarity": 2,
+    "flavor": "The economy did this.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_grid",
+    "cat": "face",
+    "name": "Grid Lines",
+    "rarity": 4,
+    "flavor": "End of line.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_blush",
+    "cat": "face",
+    "name": "Anime Blush",
+    "rarity": 1,
+    "flavor": "Senpai noticed your K/D.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_bolt",
+    "cat": "face",
+    "name": "Glam Bolt",
+    "rarity": 2,
+    "flavor": "Played one gig. On Mars. Sold out.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_gold",
+    "cat": "face",
+    "name": "Gold Leaf",
+    "rarity": 5,
+    "flavor": "Half a face of solid gold. The other half is still paying it off.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_bucket",
+    "cat": "head",
+    "name": "Bucket Helm",
+    "rarity": 1,
+    "flavor": "Shopkeepers cannot see you steal while you wear it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_arrow",
+    "cat": "head",
+    "name": "Arrow Through the Head",
+    "rarity": 1,
+    "flavor": "Used to be a rebel like you.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_party",
+    "cat": "head",
+    "name": "Party Hat",
+    "rarity": 0,
+    "flavor": "It is your birthday every loop.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "clear": 0.002,
+    "drop": 2
+   },
+   {
+    "id": "head_propeller",
+    "cat": "head",
+    "name": "Propeller Beanie",
+    "rarity": 1,
+    "flavor": "Generates zero lift and total confidence.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.66,
+     1.588
+    ]
+   },
+   {
+    "id": "head_hardhat",
+    "cat": "head",
+    "name": "Hard Hat",
+    "rarity": 1,
+    "flavor": "OSHA was acquired in 2041.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.638,
+     1.588
+    ]
+   },
+   {
+    "id": "head_burger",
+    "cat": "head",
+    "name": "Paper Crown",
+    "rarity": 0,
+    "flavor": "Have it your way. Terms and conditions apply.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.114,
+     "hair_short": 1.119,
+     "hair_slick": 1.148,
+     "hair_undercut": 1.247,
+     "hair_bob": 1.175,
+     "hair_long": 1.216,
+     "hair_shaggy": 1.301,
+     "hair_ponytail": 1.121,
+     "hair_afro": 1.753,
+     "hair_bun": 1.121,
+     "hair_mohawk": 1.216
+    }
+   },
+   {
+    "id": "head_headset",
+    "cat": "head",
+    "name": "Pro Gamer Headset",
+    "rarity": 1,
+    "flavor": "Mic always on. Mic always muted.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "clear": 0.008,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.196,
+     "hair_short": 1.201,
+     "hair_slick": 1.198,
+     "hair_undercut": 1.199,
+     "hair_bob": 1.266,
+     "hair_long": 1.297,
+     "hair_shaggy": 1.263,
+     "hair_ponytail": 1.201,
+     "hair_afro": 2.095,
+     "hair_bun": 1.201,
+     "hair_mohawk": 1.196
+    }
+   },
+   {
+    "id": "head_chef",
+    "cat": "head",
+    "name": "Chef Toque",
+    "rarity": 2,
+    "flavor": "Let them cook.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.652,
+     1.652
+    ]
+   },
+   {
+    "id": "head_viking",
+    "cat": "head",
+    "name": "Horned Helm",
+    "rarity": 2,
+    "flavor": "Historically inaccurate. Emotionally accurate.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.648,
+     1.648
+    ]
+   },
+   {
+    "id": "head_gradcap",
+    "cat": "head",
+    "name": "Mortarboard",
+    "rarity": 2,
+    "flavor": "$400k of student debt. Revivable on default.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.652,
+     1.652
+    ]
+   },
+   {
+    "id": "head_tiara",
+    "cat": "head",
+    "name": "Pageant Tiara",
+    "rarity": 2,
+    "flavor": "First runner-up, Miss Server Farm 2046.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.121,
+     "hair_short": 1.13,
+     "hair_slick": 1.174,
+     "hair_undercut": 1.275,
+     "hair_bob": 1.174,
+     "hair_long": 1.209,
+     "hair_shaggy": 1.371,
+     "hair_ponytail": 1.127,
+     "hair_afro": 1.807,
+     "hair_bun": 1.127,
+     "hair_mohawk": 1.243
+    }
+   },
+   {
+    "id": "head_dunce",
+    "cat": "head",
+    "name": "Dunce Cap",
+    "rarity": 0,
+    "flavor": "The only person in the city who read the terms of service.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.658,
+     1.658
+    ]
+   },
+   {
+    "id": "head_wizard",
+    "cat": "head",
+    "name": "Wizard Hat",
+    "rarity": 3,
+    "flavor": "You shall not pass the paywall.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.652,
+     1.652
+    ]
+   },
+   {
+    "id": "head_hood",
+    "cat": "head",
+    "name": "Assassin Hood",
+    "rarity": 3,
+    "flavor": "Nothing is true. Everything is a subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "short",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_pumpkin",
+    "cat": "head",
+    "name": "Jack-o-Lantern",
+    "rarity": 3,
+    "flavor": "Seasonal content, available all year out of spite.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_kabuto",
+    "cat": "head",
+    "name": "Kabuto",
+    "rarity": 4,
+    "flavor": "Seven samurai, six subscriptions.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_spartan",
+    "cat": "head",
+    "name": "Super Soldier Helm",
+    "rarity": 4,
+    "flavor": "Finish the fight. Then finish the battle pass.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_robot",
+    "cat": "head",
+    "name": "Robot Duo Helmet",
+    "rarity": 4,
+    "flavor": "Two French robots called. They want royalties.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_horns",
+    "cat": "head",
+    "name": "Demon Horns",
+    "rarity": 5,
+    "flavor": "Rip and tear, until the patch notes are done.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_googly",
+    "cat": "eyes",
+    "name": "Googly Eyes",
+    "rarity": 0,
+    "flavor": "Your face, but enthusiastic.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_3d",
+    "cat": "eyes",
+    "name": "3D Glasses",
+    "rarity": 0,
+    "flavor": "For watching reality in 3D. It is worse.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_mustache",
+    "cat": "eyes",
+    "name": "Fake Mustache",
+    "rarity": 0,
+    "flavor": "The perfect disguise. Ask anyone.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_heart",
+    "cat": "eyes",
+    "name": "Heart Shades",
+    "rarity": 1,
+    "flavor": "Rose-tinted. Literally.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_aviators",
+    "cat": "eyes",
+    "name": "Aviators",
+    "rarity": 1,
+    "flavor": "You feel the need. The need for a refund.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_stars",
+    "cat": "eyes",
+    "name": "Rock Star Shades",
+    "rarity": 1,
+    "flavor": "Rock star energy. No record deal.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_dealwithit",
+    "cat": "eyes",
+    "name": "Deal-With-It Shades",
+    "rarity": 2,
+    "flavor": "Drops in from the top of the screen.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_cyclops",
+    "cat": "eyes",
+    "name": "Optic Band",
+    "rarity": 3,
+    "flavor": "Ruby lens. Blasting sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_breather",
+    "cat": "eyes",
+    "name": "Breather",
+    "rarity": 3,
+    "flavor": "Heavy breathing included. Asthma was a premium tier.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_hockey",
+    "cat": "eyes",
+    "name": "Hockey Mask",
+    "rarity": 3,
+    "flavor": "Summer camp. Friday night. Bad vibes.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_oni",
+    "cat": "eyes",
+    "name": "Oni Mask",
+    "rarity": 4,
+    "flavor": "Demons are just spirits with bad PR.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_nvg",
+    "cat": "eyes",
+    "name": "Quad NVGs",
+    "rarity": 4,
+    "flavor": "Night vision. Four eyes. Extremely online.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_laser",
+    "cat": "eyes",
+    "name": "Laser Eyes",
+    "rarity": 4,
+    "flavor": "Bullish. Medically inadvisable.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_skull",
+    "cat": "eyes",
+    "name": "Ghost Skull Mask",
+    "rarity": 5,
+    "flavor": "The last thing every lobby sees.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_robe",
+    "cat": "top",
+    "name": "Bathrobe",
+    "rarity": 1,
+    "flavor": "Takes it easy, for all of us.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_tracksuit",
+    "cat": "top",
+    "name": "Squat Tracksuit",
+    "rarity": 1,
+    "flavor": "Three stripes. Legally distinct.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_letterman",
+    "cat": "top",
+    "name": "Letterman Jacket",
+    "rarity": 1,
+    "flavor": "Lettered in doomscrolling.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_flannel",
+    "cat": "top",
+    "name": "Grunge Flannel",
+    "rarity": 1,
+    "flavor": "Smells like server spirit.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_ugly",
+    "cat": "top",
+    "name": "Ugly Holiday Sweater",
+    "rarity": 1,
+    "flavor": "Seasonal content, available all year. Like everything else.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_labcoat",
+    "cat": "top",
+    "name": "Lab Coat",
+    "rarity": 2,
+    "flavor": "Great Scott. The flux toaster is on fire again.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_poncho",
+    "cat": "top",
+    "name": "Desert Poncho",
+    "rarity": 2,
+    "flavor": "A fistful of data. For a few data more.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_leather",
+    "cat": "top",
+    "name": "Studded Leather",
+    "rarity": 2,
+    "flavor": "Punk is not dead. Punk is a subscription now.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_hazmat",
+    "cat": "top",
+    "name": "Hazmat Suit",
+    "rarity": 2,
+    "flavor": "Rated for spills, plagues and comment sections.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_scorpion",
+    "cat": "top",
+    "name": "Scorpion Satin Jacket",
+    "rarity": 3,
+    "flavor": "Drives. Does not talk much. Toothpick sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_sukajan",
+    "cat": "top",
+    "name": "Dragon Souvenir Jacket",
+    "rarity": 3,
+    "flavor": "Embroidered by a robot that has never seen a dragon.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_sneaking",
+    "cat": "top",
+    "name": "Sneaking Suit",
+    "rarity": 4,
+    "flavor": "Tactical espionage outfit. Cardboard box not included.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_mecha",
+    "cat": "top",
+    "name": "Pilot Plugsuit",
+    "rarity": 4,
+    "flavor": "Get in the robot. Then get in therapy.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_power",
+    "cat": "top",
+    "name": "Power Armor",
+    "rarity": 5,
+    "flavor": "War never changes. The subscription price does.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_oyoroi",
+    "cat": "top",
+    "name": "O-Yoroi Armor",
+    "rarity": 5,
+    "flavor": "Lacquered plates and a family crest. The family was a startup.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_dish",
+    "cat": "hands",
+    "name": "Dish Gloves",
+    "rarity": 0,
+    "flavor": "For washing your hands of GigaCorp.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_foam",
+    "cat": "hands",
+    "name": "Foam Finger",
+    "rarity": 0,
+    "flavor": "Number one. In something.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_wraps",
+    "cat": "hands",
+    "name": "Hand Wraps",
+    "rarity": 1,
+    "flavor": "Underground fight club rules apply. Do not talk about it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_hook",
+    "cat": "hands",
+    "name": "Pirate Hook",
+    "rarity": 1,
+    "flavor": "Replaced a cyber hand that wanted a subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_power",
+    "cat": "hands",
+    "name": "Power Mitt",
+    "rarity": 2,
+    "flavor": "It is so bad.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_spiked",
+    "cat": "hands",
+    "name": "Spiked Bracers",
+    "rarity": 2,
+    "flavor": "Heavy metal, light DPS.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_claws",
+    "cat": "hands",
+    "name": "Knuckle Blades",
+    "rarity": 4,
+    "flavor": "Healing factor sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_sweats",
+    "cat": "legs",
+    "name": "Grey Sweatpants",
+    "rarity": 0,
+    "flavor": "Peak menswear, according to the comments.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_ripped",
+    "cat": "legs",
+    "name": "Ripped Skinny Jeans",
+    "rarity": 1,
+    "flavor": "Ripped by fashion. Then by the Serverless.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_camo",
+    "cat": "legs",
+    "name": "Pixel Camo Pants",
+    "rarity": 1,
+    "flavor": "Camouflage for a world made of pixels.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_tutu",
+    "cat": "legs",
+    "name": "Tutu",
+    "rarity": 1,
+    "flavor": "Swan Lake, Server Lake.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_bellbottom",
+    "cat": "legs",
+    "name": "Disco Bell-Bottoms",
+    "rarity": 2,
+    "flavor": "Staying alive. Staying online.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_leather",
+    "cat": "legs",
+    "name": "Leather Pants",
+    "rarity": 2,
+    "flavor": "Squeaks with every step. Worth it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_hakama",
+    "cat": "legs",
+    "name": "Hakama",
+    "rarity": 3,
+    "flavor": "Seven pleats for seven virtues. You have three.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_mecha",
+    "cat": "legs",
+    "name": "Pilot Plugsuit Legs",
+    "rarity": 4,
+    "flavor": "The other half of getting in the robot.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_power",
+    "cat": "legs",
+    "name": "Power Armor Legs",
+    "rarity": 5,
+    "flavor": "Servo knees. Your ankles thank you.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_haidate",
+    "cat": "legs",
+    "name": "Haidate",
+    "rarity": 5,
+    "flavor": "Armoured thighs, lacquered in your colours.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_flipflops",
+    "cat": "feet",
+    "name": "Flip-Flops",
+    "rarity": 0,
+    "flavor": "The sound of giving up.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_clogs",
+    "cat": "feet",
+    "name": "Foam Clogs",
+    "rarity": 0,
+    "flavor": "Sport mode engaged.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_cowboy",
+    "cat": "feet",
+    "name": "Cowboy Boots",
+    "rarity": 1,
+    "flavor": "Spurs jingle. Data rancher approved.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_tabi",
+    "cat": "feet",
+    "name": "Ninja Tabi",
+    "rarity": 2,
+    "flavor": "Split toe. Split second.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_moon",
+    "cat": "feet",
+    "name": "Moon Boots",
+    "rarity": 2,
+    "flavor": "Never been to the moon. Neither has $COOM.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_rollers",
+    "cat": "feet",
+    "name": "Roller Skates",
+    "rarity": 2,
+    "flavor": "Rolling through the dystopia at 12 km/h.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_platform",
+    "cat": "feet",
+    "name": "Platform Boots",
+    "rarity": 3,
+    "flavor": "Rock and roll all night. Battle pass all day.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_rocket",
+    "cat": "feet",
+    "name": "Rocket Boots",
+    "rarity": 4,
+    "flavor": "Cosmetic thrusters. The burns are real.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_mecha",
+    "cat": "feet",
+    "name": "Pilot Plugsuit Boots",
+    "rarity": 4,
+    "flavor": "Rated for synchronised kicking.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_power",
+    "cat": "feet",
+    "name": "Power Armor Sabatons",
+    "rarity": 5,
+    "flavor": "Leaves dents in the pavement. GigaCorp bills you for them.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_surf",
+    "cat": "back",
+    "name": "Surfboard",
+    "rarity": 1,
+    "flavor": "No ocean left. Surf the feed.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_plush",
+    "cat": "back",
+    "name": "Plushie Backpack",
+    "rarity": 1,
+    "flavor": "Its name is Gerald. Gerald has seen things.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_shell",
+    "cat": "back",
+    "name": "Turtle Shell",
+    "rarity": 2,
+    "flavor": "Lives in the sewers. Likes pizza. Legally a turtle.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_boombox",
+    "cat": "back",
+    "name": "Boombox",
+    "rarity": 2,
+    "flavor": "Held over your head outside a window. Restraining order pending.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_flag",
+    "cat": "back",
+    "name": "Rebel Banner",
+    "rarity": 2,
+    "flavor": "Planted on every hill you die on.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_keytar",
+    "cat": "back",
+    "name": "Keytar",
+    "rarity": 2,
+    "flavor": "Synthwave is a lifestyle and a cry for help.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_proton",
+    "cat": "back",
+    "name": "Ghost Vacuum Pack",
+    "rarity": 3,
+    "flavor": "Who you gonna invoice?",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_angel",
+    "cat": "back",
+    "name": "Angel Wings",
+    "rarity": 3,
+    "flavor": "Heaven was acquired. These were in the clearance bin.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_buster",
+    "cat": "back",
+    "name": "Comically Large Sword",
+    "rarity": 4,
+    "flavor": "Compensating? For the economy, yes.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_demon",
+    "cat": "back",
+    "name": "Demon Wings",
+    "rarity": 4,
+    "flavor": "Hell has a subscription tier too. You are on Premium.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_beam",
+    "cat": "back",
+    "name": "Beam Katana",
+    "rarity": 5,
+    "flavor": "Recharge it by shaking it. Do not ask.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_spiderarms",
+    "cat": "back",
+    "name": "Spider Arms",
+    "rarity": 5,
+    "flavor": "Ripped off a SPYD3R node. They still ask you to rate them.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_bowtie",
+    "cat": "neck",
+    "name": "Bow Tie",
+    "rarity": 0,
+    "flavor": "Bow ties are cool. A time traveller said so.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_lei",
+    "cat": "neck",
+    "name": "Flower Lei",
+    "rarity": 0,
+    "flavor": "Aloha means hello, goodbye and please check out.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_medal",
+    "cat": "neck",
+    "name": "Participation Medal",
+    "rarity": 0,
+    "flavor": "You showed up. That is the bar now.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_dogtags",
+    "cat": "neck",
+    "name": "Dog Tags",
+    "rarity": 1,
+    "flavor": "Name, rank, server ID.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_spikes",
+    "cat": "neck",
+    "name": "Spiked Collar",
+    "rarity": 1,
+    "flavor": "Good dog. Bad attitude.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_cassette",
+    "cat": "neck",
+    "name": "Mixtape Pendant",
+    "rarity": 1,
+    "flavor": "Side B is just screaming.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_cowbell",
+    "cat": "neck",
+    "name": "More Cowbell",
+    "rarity": 2,
+    "flavor": "The only prescription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_ruff",
+    "cat": "neck",
+    "name": "Elizabethan Ruff",
+    "rarity": 2,
+    "flavor": "Old money's oldest money.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_clock",
+    "cat": "neck",
+    "name": "Wall Clock Chain",
+    "rarity": 3,
+    "flavor": "Always knows exactly what time it is.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_amulet",
+    "cat": "neck",
+    "name": "Glowing Amulet",
+    "rarity": 4,
+    "flavor": "Plus ten to charisma. In a different game.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_dripchain",
+    "cat": "neck",
+    "name": "DRIP Lord Chain",
+    "rarity": 6,
+    "flavor": "Proof you own the closet. All of it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
    }
   ],
   "f": [
@@ -3196,6 +4620,1430 @@
     "flavor": "Worth a fortune on Tuesday. Worth a sandwich on Wednesday.",
     "unlock": "Win 10 Cryptid raffles",
     "default": false
+   },
+   {
+    "id": "face_skull",
+    "cat": "face",
+    "name": "Skull Paint",
+    "rarity": 3,
+    "flavor": "Your face, minus the skin subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_barcode",
+    "cat": "face",
+    "name": "Barcode",
+    "rarity": 2,
+    "flavor": "Bald, barcoded and suspiciously good with a piano wire.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_glitch",
+    "cat": "face",
+    "name": "Glitch Tattoo",
+    "rarity": 3,
+    "flavor": "Dead pixels, on purpose. Glows when you lie.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_tear",
+    "cat": "face",
+    "name": "Teardrop Tattoo",
+    "rarity": 1,
+    "flavor": "One for every subscription you could not cancel.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_sadclown",
+    "cat": "face",
+    "name": "Sad Clown",
+    "rarity": 2,
+    "flavor": "The economy did this.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_grid",
+    "cat": "face",
+    "name": "Grid Lines",
+    "rarity": 4,
+    "flavor": "End of line.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_blush",
+    "cat": "face",
+    "name": "Anime Blush",
+    "rarity": 1,
+    "flavor": "Senpai noticed your K/D.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_bolt",
+    "cat": "face",
+    "name": "Glam Bolt",
+    "rarity": 2,
+    "flavor": "Played one gig. On Mars. Sold out.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "face_gold",
+    "cat": "face",
+    "name": "Gold Leaf",
+    "rarity": 5,
+    "flavor": "Half a face of solid gold. The other half is still paying it off.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_head"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_bucket",
+    "cat": "head",
+    "name": "Bucket Helm",
+    "rarity": 1,
+    "flavor": "Shopkeepers cannot see you steal while you wear it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_arrow",
+    "cat": "head",
+    "name": "Arrow Through the Head",
+    "rarity": 1,
+    "flavor": "Used to be a rebel like you.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_party",
+    "cat": "head",
+    "name": "Party Hat",
+    "rarity": 0,
+    "flavor": "It is your birthday every loop.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "clear": 0.002,
+    "drop": 2
+   },
+   {
+    "id": "head_propeller",
+    "cat": "head",
+    "name": "Propeller Beanie",
+    "rarity": 1,
+    "flavor": "Generates zero lift and total confidence.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.655,
+     1.583
+    ]
+   },
+   {
+    "id": "head_hardhat",
+    "cat": "head",
+    "name": "Hard Hat",
+    "rarity": 1,
+    "flavor": "OSHA was acquired in 2041.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.633,
+     1.583
+    ]
+   },
+   {
+    "id": "head_burger",
+    "cat": "head",
+    "name": "Paper Crown",
+    "rarity": 0,
+    "flavor": "Have it your way. Terms and conditions apply.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.107,
+     "hair_short": 1.112,
+     "hair_slick": 1.157,
+     "hair_undercut": 1.26,
+     "hair_bob": 1.175,
+     "hair_long": 1.219,
+     "hair_shaggy": 1.358,
+     "hair_ponytail": 1.113,
+     "hair_afro": 1.835,
+     "hair_bun": 1.113,
+     "hair_mohawk": 1.228
+    }
+   },
+   {
+    "id": "head_headset",
+    "cat": "head",
+    "name": "Pro Gamer Headset",
+    "rarity": 1,
+    "flavor": "Mic always on. Mic always muted.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "clear": 0.008,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.194,
+     "hair_short": 1.199,
+     "hair_slick": 1.197,
+     "hair_undercut": 1.197,
+     "hair_bob": 1.279,
+     "hair_long": 1.314,
+     "hair_shaggy": 1.276,
+     "hair_ponytail": 1.199,
+     "hair_afro": 2.207,
+     "hair_bun": 1.199,
+     "hair_mohawk": 1.194
+    }
+   },
+   {
+    "id": "head_chef",
+    "cat": "head",
+    "name": "Chef Toque",
+    "rarity": 2,
+    "flavor": "Let them cook.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.647,
+     1.647
+    ]
+   },
+   {
+    "id": "head_viking",
+    "cat": "head",
+    "name": "Horned Helm",
+    "rarity": 2,
+    "flavor": "Historically inaccurate. Emotionally accurate.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.643,
+     1.643
+    ]
+   },
+   {
+    "id": "head_gradcap",
+    "cat": "head",
+    "name": "Mortarboard",
+    "rarity": 2,
+    "flavor": "$400k of student debt. Revivable on default.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.647,
+     1.647
+    ]
+   },
+   {
+    "id": "head_tiara",
+    "cat": "head",
+    "name": "Pageant Tiara",
+    "rarity": 2,
+    "flavor": "First runner-up, Miss Server Farm 2046.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "fit": {
+     "hair_buzz": 1.112,
+     "hair_short": 1.138,
+     "hair_slick": 1.184,
+     "hair_undercut": 1.289,
+     "hair_bob": 1.168,
+     "hair_long": 1.229,
+     "hair_shaggy": 1.432,
+     "hair_ponytail": 1.119,
+     "hair_afro": 1.889,
+     "hair_bun": 1.119,
+     "hair_mohawk": 1.256
+    }
+   },
+   {
+    "id": "head_dunce",
+    "cat": "head",
+    "name": "Dunce Cap",
+    "rarity": 0,
+    "flavor": "The only person in the city who read the terms of service.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.653,
+     1.653
+    ]
+   },
+   {
+    "id": "head_wizard",
+    "cat": "head",
+    "name": "Wizard Hat",
+    "rarity": 3,
+    "flavor": "You shall not pass the paywall.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2,
+    "cut": [
+     1.647,
+     1.647
+    ]
+   },
+   {
+    "id": "head_hood",
+    "cat": "head",
+    "name": "Assassin Hood",
+    "rarity": 3,
+    "flavor": "Nothing is true. Everything is a subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "short",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_pumpkin",
+    "cat": "head",
+    "name": "Jack-o-Lantern",
+    "rarity": 3,
+    "flavor": "Seasonal content, available all year out of spite.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_kabuto",
+    "cat": "head",
+    "name": "Kabuto",
+    "rarity": 4,
+    "flavor": "Seven samurai, six subscriptions.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_spartan",
+    "cat": "head",
+    "name": "Super Soldier Helm",
+    "rarity": 4,
+    "flavor": "Finish the fight. Then finish the battle pass.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_robot",
+    "cat": "head",
+    "name": "Robot Duo Helmet",
+    "rarity": 4,
+    "flavor": "Two French robots called. They want royalties.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "none",
+    "blocks": [
+     "eyes"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "head_horns",
+    "cat": "head",
+    "name": "Demon Horns",
+    "rarity": 5,
+    "flavor": "Rip and tear, until the patch notes are done.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "hair": "all",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_googly",
+    "cat": "eyes",
+    "name": "Googly Eyes",
+    "rarity": 0,
+    "flavor": "Your face, but enthusiastic.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_3d",
+    "cat": "eyes",
+    "name": "3D Glasses",
+    "rarity": 0,
+    "flavor": "For watching reality in 3D. It is worse.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_mustache",
+    "cat": "eyes",
+    "name": "Fake Mustache",
+    "rarity": 0,
+    "flavor": "The perfect disguise. Ask anyone.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_heart",
+    "cat": "eyes",
+    "name": "Heart Shades",
+    "rarity": 1,
+    "flavor": "Rose-tinted. Literally.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_aviators",
+    "cat": "eyes",
+    "name": "Aviators",
+    "rarity": 1,
+    "flavor": "You feel the need. The need for a refund.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_stars",
+    "cat": "eyes",
+    "name": "Rock Star Shades",
+    "rarity": 1,
+    "flavor": "Rock star energy. No record deal.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_dealwithit",
+    "cat": "eyes",
+    "name": "Deal-With-It Shades",
+    "rarity": 2,
+    "flavor": "Drops in from the top of the screen.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_cyclops",
+    "cat": "eyes",
+    "name": "Optic Band",
+    "rarity": 3,
+    "flavor": "Ruby lens. Blasting sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_breather",
+    "cat": "eyes",
+    "name": "Breather",
+    "rarity": 3,
+    "flavor": "Heavy breathing included. Asthma was a premium tier.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_hockey",
+    "cat": "eyes",
+    "name": "Hockey Mask",
+    "rarity": 3,
+    "flavor": "Summer camp. Friday night. Bad vibes.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_oni",
+    "cat": "eyes",
+    "name": "Oni Mask",
+    "rarity": 4,
+    "flavor": "Demons are just spirits with bad PR.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_nvg",
+    "cat": "eyes",
+    "name": "Quad NVGs",
+    "rarity": 4,
+    "flavor": "Night vision. Four eyes. Extremely online.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_laser",
+    "cat": "eyes",
+    "name": "Laser Eyes",
+    "rarity": 4,
+    "flavor": "Bullish. Medically inadvisable.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "eyes_skull",
+    "cat": "eyes",
+    "name": "Ghost Skull Mask",
+    "rarity": 5,
+    "flavor": "The last thing every lobby sees.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_robe",
+    "cat": "top",
+    "name": "Bathrobe",
+    "rarity": 1,
+    "flavor": "Takes it easy, for all of us.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_tracksuit",
+    "cat": "top",
+    "name": "Squat Tracksuit",
+    "rarity": 1,
+    "flavor": "Three stripes. Legally distinct.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_letterman",
+    "cat": "top",
+    "name": "Letterman Jacket",
+    "rarity": 1,
+    "flavor": "Lettered in doomscrolling.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_flannel",
+    "cat": "top",
+    "name": "Grunge Flannel",
+    "rarity": 1,
+    "flavor": "Smells like server spirit.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_ugly",
+    "cat": "top",
+    "name": "Ugly Holiday Sweater",
+    "rarity": 1,
+    "flavor": "Seasonal content, available all year. Like everything else.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_labcoat",
+    "cat": "top",
+    "name": "Lab Coat",
+    "rarity": 2,
+    "flavor": "Great Scott. The flux toaster is on fire again.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_poncho",
+    "cat": "top",
+    "name": "Desert Poncho",
+    "rarity": 2,
+    "flavor": "A fistful of data. For a few data more.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_leather",
+    "cat": "top",
+    "name": "Studded Leather",
+    "rarity": 2,
+    "flavor": "Punk is not dead. Punk is a subscription now.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_hazmat",
+    "cat": "top",
+    "name": "Hazmat Suit",
+    "rarity": 2,
+    "flavor": "Rated for spills, plagues and comment sections.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_scorpion",
+    "cat": "top",
+    "name": "Scorpion Satin Jacket",
+    "rarity": 3,
+    "flavor": "Drives. Does not talk much. Toothpick sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_sukajan",
+    "cat": "top",
+    "name": "Dragon Souvenir Jacket",
+    "rarity": 3,
+    "flavor": "Embroidered by a robot that has never seen a dragon.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_sneaking",
+    "cat": "top",
+    "name": "Sneaking Suit",
+    "rarity": 4,
+    "flavor": "Tactical espionage outfit. Cardboard box not included.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_mecha",
+    "cat": "top",
+    "name": "Pilot Plugsuit",
+    "rarity": 4,
+    "flavor": "Get in the robot. Then get in therapy.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_power",
+    "cat": "top",
+    "name": "Power Armor",
+    "rarity": 5,
+    "flavor": "War never changes. The subscription price does.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "top_oyoroi",
+    "cat": "top",
+    "name": "O-Yoroi Armor",
+    "rarity": 5,
+    "flavor": "Lacquered plates and a family crest. The family was a startup.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_torso",
+     "upperarm_L",
+     "upperarm_R",
+     "forearm_L",
+     "forearm_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_dish",
+    "cat": "hands",
+    "name": "Dish Gloves",
+    "rarity": 0,
+    "flavor": "For washing your hands of GigaCorp.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_foam",
+    "cat": "hands",
+    "name": "Foam Finger",
+    "rarity": 0,
+    "flavor": "Number one. In something.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_wraps",
+    "cat": "hands",
+    "name": "Hand Wraps",
+    "rarity": 1,
+    "flavor": "Underground fight club rules apply. Do not talk about it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_hook",
+    "cat": "hands",
+    "name": "Pirate Hook",
+    "rarity": 1,
+    "flavor": "Replaced a cyber hand that wanted a subscription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_power",
+    "cat": "hands",
+    "name": "Power Mitt",
+    "rarity": 2,
+    "flavor": "It is so bad.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_spiked",
+    "cat": "hands",
+    "name": "Spiked Bracers",
+    "rarity": 2,
+    "flavor": "Heavy metal, light DPS.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "hands_claws",
+    "cat": "hands",
+    "name": "Knuckle Blades",
+    "rarity": 4,
+    "flavor": "Healing factor sold separately.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hand_L",
+     "b_hand_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_sweats",
+    "cat": "legs",
+    "name": "Grey Sweatpants",
+    "rarity": 0,
+    "flavor": "Peak menswear, according to the comments.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_ripped",
+    "cat": "legs",
+    "name": "Ripped Skinny Jeans",
+    "rarity": 1,
+    "flavor": "Ripped by fashion. Then by the Serverless.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_camo",
+    "cat": "legs",
+    "name": "Pixel Camo Pants",
+    "rarity": 1,
+    "flavor": "Camouflage for a world made of pixels.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_tutu",
+    "cat": "legs",
+    "name": "Tutu",
+    "rarity": 1,
+    "flavor": "Swan Lake, Server Lake.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_bellbottom",
+    "cat": "legs",
+    "name": "Disco Bell-Bottoms",
+    "rarity": 2,
+    "flavor": "Staying alive. Staying online.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_leather",
+    "cat": "legs",
+    "name": "Leather Pants",
+    "rarity": 2,
+    "flavor": "Squeaks with every step. Worth it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_hakama",
+    "cat": "legs",
+    "name": "Hakama",
+    "rarity": 3,
+    "flavor": "Seven pleats for seven virtues. You have three.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_mecha",
+    "cat": "legs",
+    "name": "Pilot Plugsuit Legs",
+    "rarity": 4,
+    "flavor": "The other half of getting in the robot.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_power",
+    "cat": "legs",
+    "name": "Power Armor Legs",
+    "rarity": 5,
+    "flavor": "Servo knees. Your ankles thank you.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "legs_haidate",
+    "cat": "legs",
+    "name": "Haidate",
+    "rarity": 5,
+    "flavor": "Armoured thighs, lacquered in your colours.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_hips",
+     "b_thigh_L",
+     "b_thigh_R",
+     "b_shin_L",
+     "b_shin_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_flipflops",
+    "cat": "feet",
+    "name": "Flip-Flops",
+    "rarity": 0,
+    "flavor": "The sound of giving up.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_clogs",
+    "cat": "feet",
+    "name": "Foam Clogs",
+    "rarity": 0,
+    "flavor": "Sport mode engaged.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_cowboy",
+    "cat": "feet",
+    "name": "Cowboy Boots",
+    "rarity": 1,
+    "flavor": "Spurs jingle. Data rancher approved.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_tabi",
+    "cat": "feet",
+    "name": "Ninja Tabi",
+    "rarity": 2,
+    "flavor": "Split toe. Split second.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_moon",
+    "cat": "feet",
+    "name": "Moon Boots",
+    "rarity": 2,
+    "flavor": "Never been to the moon. Neither has $COOM.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_rollers",
+    "cat": "feet",
+    "name": "Roller Skates",
+    "rarity": 2,
+    "flavor": "Rolling through the dystopia at 12 km/h.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_platform",
+    "cat": "feet",
+    "name": "Platform Boots",
+    "rarity": 3,
+    "flavor": "Rock and roll all night. Battle pass all day.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_rocket",
+    "cat": "feet",
+    "name": "Rocket Boots",
+    "rarity": 4,
+    "flavor": "Cosmetic thrusters. The burns are real.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_mecha",
+    "cat": "feet",
+    "name": "Pilot Plugsuit Boots",
+    "rarity": 4,
+    "flavor": "Rated for synchronised kicking.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "feet_power",
+    "cat": "feet",
+    "name": "Power Armor Sabatons",
+    "rarity": 5,
+    "flavor": "Leaves dents in the pavement. GigaCorp bills you for them.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "replaces": [
+     "b_foot_L",
+     "b_foot_R"
+    ],
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_surf",
+    "cat": "back",
+    "name": "Surfboard",
+    "rarity": 1,
+    "flavor": "No ocean left. Surf the feed.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_plush",
+    "cat": "back",
+    "name": "Plushie Backpack",
+    "rarity": 1,
+    "flavor": "Its name is Gerald. Gerald has seen things.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_shell",
+    "cat": "back",
+    "name": "Turtle Shell",
+    "rarity": 2,
+    "flavor": "Lives in the sewers. Likes pizza. Legally a turtle.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_boombox",
+    "cat": "back",
+    "name": "Boombox",
+    "rarity": 2,
+    "flavor": "Held over your head outside a window. Restraining order pending.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_flag",
+    "cat": "back",
+    "name": "Rebel Banner",
+    "rarity": 2,
+    "flavor": "Planted on every hill you die on.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_keytar",
+    "cat": "back",
+    "name": "Keytar",
+    "rarity": 2,
+    "flavor": "Synthwave is a lifestyle and a cry for help.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_proton",
+    "cat": "back",
+    "name": "Ghost Vacuum Pack",
+    "rarity": 3,
+    "flavor": "Who you gonna invoice?",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_angel",
+    "cat": "back",
+    "name": "Angel Wings",
+    "rarity": 3,
+    "flavor": "Heaven was acquired. These were in the clearance bin.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_buster",
+    "cat": "back",
+    "name": "Comically Large Sword",
+    "rarity": 4,
+    "flavor": "Compensating? For the economy, yes.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_demon",
+    "cat": "back",
+    "name": "Demon Wings",
+    "rarity": 4,
+    "flavor": "Hell has a subscription tier too. You are on Premium.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_beam",
+    "cat": "back",
+    "name": "Beam Katana",
+    "rarity": 5,
+    "flavor": "Recharge it by shaking it. Do not ask.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "back_spiderarms",
+    "cat": "back",
+    "name": "Spider Arms",
+    "rarity": 5,
+    "flavor": "Ripped off a SPYD3R node. They still ask you to rate them.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_bowtie",
+    "cat": "neck",
+    "name": "Bow Tie",
+    "rarity": 0,
+    "flavor": "Bow ties are cool. A time traveller said so.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_lei",
+    "cat": "neck",
+    "name": "Flower Lei",
+    "rarity": 0,
+    "flavor": "Aloha means hello, goodbye and please check out.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_medal",
+    "cat": "neck",
+    "name": "Participation Medal",
+    "rarity": 0,
+    "flavor": "You showed up. That is the bar now.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_dogtags",
+    "cat": "neck",
+    "name": "Dog Tags",
+    "rarity": 1,
+    "flavor": "Name, rank, server ID.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_spikes",
+    "cat": "neck",
+    "name": "Spiked Collar",
+    "rarity": 1,
+    "flavor": "Good dog. Bad attitude.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_cassette",
+    "cat": "neck",
+    "name": "Mixtape Pendant",
+    "rarity": 1,
+    "flavor": "Side B is just screaming.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_cowbell",
+    "cat": "neck",
+    "name": "More Cowbell",
+    "rarity": 2,
+    "flavor": "The only prescription.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_ruff",
+    "cat": "neck",
+    "name": "Elizabethan Ruff",
+    "rarity": 2,
+    "flavor": "Old money's oldest money.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_clock",
+    "cat": "neck",
+    "name": "Wall Clock Chain",
+    "rarity": 3,
+    "flavor": "Always knows exactly what time it is.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_amulet",
+    "cat": "neck",
+    "name": "Glowing Amulet",
+    "rarity": 4,
+    "flavor": "Plus ten to charisma. In a different game.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
+   },
+   {
+    "id": "neck_dripchain",
+    "cat": "neck",
+    "name": "DRIP Lord Chain",
+    "rarity": 6,
+    "flavor": "Proof you own the closet. All of it.",
+    "unlock": "The Big Closet: sold for DRIP at the Fitting Room",
+    "default": false,
+    "drop": 2
    }
   ]
  },

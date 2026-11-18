@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-17 — The Big Closet: 107 new cosmetics
+
+- **The wardrobe more than doubles: 107 new items in every slot, from Common to Relic.** Each one is modelled for both bodies and takes the outfit's colours like everything else.
+  - **Funny:** Bucket Helm (shopkeepers cannot see you steal), Arrow Through the Head, Dunce Cap (the only person who read the terms of service), Foam Finger, Googly Eyes, Fake Mustache, Participation Medal, More Cowbell, Bathrobe, Tutu, Flip-Flops, Foam Clogs.
+  - **Pop-culture parodies, no real names or logos:** Deal-With-It Shades, Laser Eyes, Super Soldier Helm, Robot Duo Helmet, Assassin Hood, Sneaking Suit, Pilot Plugsuit, Scorpion Satin Jacket, Power Armor, Ghost Vacuum Pack, Comically Large Sword, Turtle Shell, Boombox, Wall Clock Chain, Hockey Mask, Disco Bell-Bottoms, Power Mitt.
+  - **Badass:** Kabuto and O-Yoroi Armor, Demon Horns and Demon Wings, Oni Mask, Quad NVGs, Ghost Skull Mask, Knuckle Blades, Beam Katana, Spider Arms, Rocket Boots, Gold Leaf face, Grid Lines face.
+- **How they unlock:** most are sold for DRIP at the Fitting Room at the usual rarity prices. The showpieces need a licence feat first (Heat 7–9 wins, 25 extractions, 2,500 kills and so on). A few are earned only: the Dunce Cap (end the stream 50 times), the Foam Finger (your first extraction), the Participation Medal (10 runs), the Ghost Skull Mask (1,000 headshots) and the Relic DRIP Lord Chain (own 150 items).
+- **A new ✦ BIG CLOSET tab** at the Fitting Room lists every new piece in one row, cheapest first.
+
 ## 2026-11-17 — Co-op: one-click hosting, server browser and quick match
 
 - **Hosting works on the live site.** The game only knew the co-op server address on the old pages.dev site, so on GitHub Pages hosting failed unless you typed a server URL. Every real build now uses the official server with no setup; the server field is tucked under Advanced for local testing.

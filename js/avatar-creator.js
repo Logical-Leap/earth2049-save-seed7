@@ -185,7 +185,7 @@
     function refresh() {
       const cats = K().catalog.categories, R = K().resolve(S.L);
       if (shop) $('.avc-wal').innerHTML = `${shop.wallet()}<i>${shop.collection()}</i>`;
-      $('.avc-tabs').innerHTML = [...(shop ? [['today', '★ TODAY']] : []), ...cats.map(c => [c.id, c.label]), ['colors', 'COLOURS']]
+      $('.avc-tabs').innerHTML = [...(shop ? [['today', '★ TODAY'], ['closet', '✦ BIG CLOSET']] : []), ...cats.map(c => [c.id, c.label]), ['colors', 'COLOURS']]
         .map(([id, lab]) => `<button data-tab="${id}" class="${S.tab === id ? 'on' : ''}">${lab}</button>`).join('');
       const locked = ownedOnly ? K().lockedIn(S.L) : [];
       const sv = $('[data-a=save]'); sv.disabled = locked.length > 0;
@@ -211,6 +211,14 @@
         grid.innerHTML = ids.map(i => card(i, true)).join('');
         info.innerHTML = '<b>★ TODAY</b> The first three are the <span class="avc-sale">DAILY DROP</span>: 35% off until 00:00 UTC. ' +
           'The rest are your <span class="avc-feat">closest unlocks</span>. Every run pays DRIP; your first win each day pays double.';
+        return;
+      }
+      if (S.tab === 'closet') {
+        // the Big Closet drop: every new item in one row, cheapest first, so it's easy to see what just landed
+        const ids = K().catalog.items[S.L.sex].filter(i => i.drop === 2).sort((a, b) => a.rarity - b.rarity || a.cat.localeCompare(b.cat));
+        grid.innerHTML = ids.map(i => card(i, true)).join('');
+        info.innerHTML = `<b>✦ THE BIG CLOSET</b> ${ids.length} new pieces: bucket helms to power armour, a foam finger to a beam katana. ` +
+          'Most are sold for DRIP. The showpieces need a <span class="avc-feat">licence</span> first, and a few can only be <span class="avc-feat">earned</span>.';
         return;
       }
       grid.innerHTML = K().itemsIn(S.L.sex, S.tab).map(i => card(i, false)).join('');
@@ -271,7 +279,7 @@
       const b = e.target.closest('button'); if (!b || b.disabled) return;
       const a = b.dataset.a;
       if (b.dataset.tab) { S.tab = b.dataset.tab; $('.avc-grid').scrollLeft = 0; refresh(); focus(); }
-      else if (b.dataset.item) { const c = b.dataset.cat || S.tab; if (S.tab === 'today') S.tab = c; S.L.items[c] = b.dataset.item; dress(S.L); focus(); }
+      else if (b.dataset.item) { const c = b.dataset.cat || S.tab; if (S.tab === 'today' || S.tab === 'closet') S.tab = c; S.L.items[c] = b.dataset.item; dress(S.L); focus(); }
       else if (a === 'buy') {
         const id = b.dataset.id;
         if (shop.buy(id)) { toast(`UNLOCKED // ${item(id).name.toUpperCase()}`); b.classList.add('flash'); if (opts.onBuy) opts.onBuy(id); }

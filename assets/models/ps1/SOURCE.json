@@ -1,7 +1,7 @@
 {
   "repo": "Logical-Leap/game-art-pipeline",
-  "commit": "4cc60ce75f6d42943026091b7be375790df46aa7",
-  "synced": "2026-11-16",
+  "commit": "4e2072436329aecab2699bc00681325e4309c297",
+  "synced": "2026-11-18",
   "files": [
     "assets/models/ps1/characters/shillz.glb",
     "assets/models/ps1/characters/shillz_big.glb",

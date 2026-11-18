@@ -83,6 +83,16 @@
     own60:      { stat: 'owned', n: 60, t: 'Own 60 wardrobe items' },
     cone:       { stat: 'cone', n: 1, t: 'Find the cone. It is in the Plaza. Somewhere high.' },
     box:        { stat: 'boxed', n: 1, t: 'Hide in the cardboard box in the Haven' },
+    // the Big Closet (drop 2)
+    runs50:     { stat: 'runs', n: 50, t: 'Finish 50 runs' },
+    win25:      { stat: 'wins', n: 25, t: 'Extract 25 times' },
+    heat8:      { stat: 'heatWon', n: 8, t: 'Win a run at Heat 8' },
+    heat9:      { stat: 'heatWon', n: 9, t: 'Win a run at Heat 9' },
+    kills2500:  { stat: 'kills', n: 2500, t: 'Delete 2,500 enemies' },
+    heads1000:  { stat: 'heads', n: 1000, t: 'Land 1,000 headshot kills' },
+    deaths50:   { stat: 'deaths', n: 50, t: 'End the stream 50 times. Read the terms this time.' },
+    dance300:   { stat: 'danceS', n: 300, t: 'Dance on the Haven floor for 5 minutes', unit: 's' },
+    own150:     { stat: 'owned', n: 150, t: 'Own 150 wardrobe items' },
   };
 
   /* ------------------------------------------------------------------ how every non-default item unlocks
@@ -108,6 +118,30 @@
     back_antenna: ['L', 'relays5'], back_guitar: ['F', 'dance60'], back_katana: ['L', 'boots50'], back_cape: ['L', 'win10'], back_cushion: ['S'],
     back_jetpack: ['L', 'jump2000'], back_server: ['L', 'srv2500'], back_wings: ['F', 'own60'],
     neck_headphones: ['S'], neck_scarf: ['S'], neck_bandolier: ['L', 'shotgun200'], neck_chain: ['S'], neck_crypto: ['L', 'score300k'],
+    // ---- the Big Closet (drop 2): mostly shop items, the showpieces behind licences, a few earned-only jokes
+    face_tear: ['S'], face_blush: ['S'], face_barcode: ['S'], face_bolt: ['S'], face_sadclown: ['L', 'deaths25'], face_skull: ['L', 'runs50'],
+    face_glitch: ['L', 'hits300'], face_grid: ['L', 'flawless20'], face_gold: ['L', 'heat8'],
+    head_party: ['S'], head_burger: ['S'], head_dunce: ['F', 'deaths50'], head_arrow: ['S'], head_bucket: ['S'], head_propeller: ['S'],
+    head_hardhat: ['S'], head_headset: ['S'], head_chef: ['S'], head_viking: ['S'], head_gradcap: ['S'], head_tiara: ['S'], head_wizard: ['S'],
+    head_hood: ['L', 'heads250'], head_pumpkin: ['S'], head_kabuto: ['L', 'kills2500'], head_spartan: ['L', 'win25'], head_robot: ['L', 'dance300'],
+    head_horns: ['L', 'heat8'],
+    eyes_googly: ['S'], eyes_3d: ['S'], eyes_mustache: ['S'], eyes_heart: ['S'], eyes_aviators: ['S'], eyes_stars: ['S'],
+    eyes_dealwithit: ['L', 'rankSS'], eyes_cyclops: ['S'], eyes_breather: ['S'], eyes_hockey: ['L', 'kills1000'], eyes_oni: ['L', 'boots100'],
+    eyes_nvg: ['L', 'heads250'], eyes_laser: ['L', 'drip10k'], eyes_skull: ['F', 'heads1000'],
+    top_robe: ['S'], top_tracksuit: ['S'], top_letterman: ['S'], top_flannel: ['S'], top_ugly: ['S'], top_labcoat: ['S'], top_poncho: ['S'],
+    top_leather: ['S'], top_hazmat: ['L', 'srv2500'], top_scorpion: ['L', 'runs25'], top_sukajan: ['S'], top_sneaking: ['L', 'flawless20'],
+    top_mecha: ['L', 'win25'], top_power: ['L', 'kills2500'], top_oyoroi: ['L', 'heat8'],
+    hands_dish: ['S'], hands_foam: ['F', 'win1'], hands_wraps: ['S'], hands_hook: ['S'], hands_power: ['S'], hands_spiked: ['S'],
+    hands_claws: ['L', 'boots100'],
+    legs_sweats: ['S'], legs_ripped: ['S'], legs_camo: ['S'], legs_tutu: ['L', 'dance60'], legs_bellbottom: ['S'], legs_leather: ['S'],
+    legs_hakama: ['S'], legs_mecha: ['L', 'win25'], legs_power: ['L', 'kills2500'], legs_haidate: ['L', 'heat8'],
+    feet_flipflops: ['S'], feet_clogs: ['S'], feet_cowboy: ['S'], feet_tabi: ['S'], feet_moon: ['S'], feet_rollers: ['L', 'km10'],
+    feet_platform: ['S'], feet_rocket: ['L', 'jump2000'], feet_mecha: ['L', 'win25'], feet_power: ['L', 'kills2500'],
+    back_surf: ['S'], back_plush: ['S'], back_shell: ['S'], back_boombox: ['S'], back_flag: ['L', 'win5'], back_keytar: ['S'],
+    back_proton: ['L', 'drones100'], back_angel: ['S'], back_buster: ['L', 'kills1000'], back_demon: ['L', 'heat8'], back_beam: ['L', 'heat7'],
+    back_spiderarms: ['L', 'heat9'],
+    neck_bowtie: ['S'], neck_lei: ['S'], neck_medal: ['F', 'runs10'], neck_dogtags: ['S'], neck_spikes: ['S'], neck_cassette: ['S'],
+    neck_cowbell: ['S'], neck_ruff: ['S'], neck_clock: ['S'], neck_amulet: ['L', 'heat7'], neck_dripchain: ['F', 'own150'],
   };
 
   let SAVE = null, CAT = null, ITEMS = null;
