@@ -11,7 +11,10 @@
 
 AR.Arsenal = (() => {
   const FILES = { pistol: 'volt9_pistol', smg: 'vx2_ripper', shotgun: 'riptide12_shotgun', ar: 'm52_revenant', dmr: 'lrx7_harbinger',
-    energy: 'plasma_lancer', rocket: 'mgl6_thunderer', lmg: 'compliance_saw' };
+    energy: 'plasma_lancer', rocket: 'mgl6_thunderer', lmg: 'compliance_saw',
+    // the GigaLeague's five (PvP only): loaded only when a match starts
+    marksman: 'kr15_adjudicator', burst: 'br3_triplicate', fastsmg: 'mx11_flashsale', revolver: 'severance50_revolver', launcher: 'unsolicited_launcher' };
+  const PVP_ONLY = new Set(['marksman', 'burst', 'fastsmg', 'revolver', 'launcher']);
   const base = {}, texCache = {};
   const TIER = [
     { n: 'COMMON', p: 'SURPLUS', c: '#4caf50' }, { n: 'UNCOMMON', p: 'MODDED', c: '#42a5f5' }, { n: 'RARE', p: 'BLACKMARKET', c: '#ab47bc' },
@@ -23,8 +26,12 @@ AR.Arsenal = (() => {
     const x = c.getContext('2d'); x.drawImage(img, 0, 0);
     return x.getImageData(0, 0, c.width, c.height);
   }
-  async function preload() {
-    await Promise.all(Object.entries(FILES).map(async ([id, f]) => {
+  /** The first-person rig's copy of a gun (key 'weapon.<id>'). The eight core guns come in with the asset manifest at boot;
+   *  the GigaLeague's five load here, when a match starts or the class editor wants to show one. */
+  const fpModel = id => (FILES[id] ? AssetLoader.loadModel('weapon.' + id, `assets/models/ps1/weapons/${FILES[id]}.glb?v=${AR.VERSION}`) : Promise.resolve(null));
+  async function preload(pvp) {
+    if (pvp) await Promise.all([...PVP_ONLY].map(fpModel));
+    await Promise.all(Object.entries(FILES).filter(([id]) => pvp || !PVP_ONLY.has(id)).map(async ([id, f]) => {
       if (base[id]) return;
       const g = await AssetLoader.loadModel('arsenal.' + id, `assets/models/ps1/weapons/${f}.glb?v=${AR.VERSION}`);
       if (!g) return;
@@ -61,7 +68,7 @@ AR.Arsenal = (() => {
     return t;
   }
 
-  /** Build a gun at a rarity. Returns { root (points -Z), holder, parts, anchors, tier, sight, W }. */
+  /** Build a gun at a rarity (opts.attach: create-a-class attachment ids). Returns { root (points -Z), holder, parts, anchors, tier, sight, W }. */
   function build(id, tier = 0, opts = {}) {
     const r = base[id];
     if (!r) return null;
@@ -78,10 +85,12 @@ AR.Arsenal = (() => {
         : new THREE.MeshLambertMaterial({ map: T.map, emissiveMap: T.emis, emissive: new THREE.Color(T.emis ? 1 : 0, T.emis ? 1 : 0, T.emis ? 1 : 0), side: THREE.DoubleSide });
       o.material = m; mats.push(m);
     });
-    // rarity: hide every option node, show this tier's list; loose rounds start hidden
+    // rarity: hide every option node, show this tier's list (plus create-a-class attachments); loose rounds start hidden.
+    // The file stores options not shown at rarity 0 at scale 0, so both scale and visibility are set.
     const all = Object.values(W.options || {}).flat();
-    const show = new Set(W.rarities?.[tier]?.show || []);
-    for (const n of all) { const o = scene.getObjectByName(n); if (o) o.visible = show.has(n); }
+    const fit = window.PvpAttach ? PvpAttach.apply(W, W.rarities?.[tier], opts.attach) : { show: W.rarities?.[tier]?.show || [], sight: W.rarities?.[tier]?.sight };
+    const show = new Set(fit.show);
+    for (const n of all) { const o = scene.getObjectByName(n); if (o) { o.visible = show.has(n); o.scale.setScalar(show.has(n) ? 1 : 0); } }
     for (const n of ['shell', 'round']) { const o = scene.getObjectByName(n); if (o) o.visible = false; }
     const holder = new THREE.Group(); holder.add(scene);
     holder.rotation.y = Math.PI;                                          // +Z forward in the file, -Z forward in view space
@@ -94,9 +103,9 @@ AR.Arsenal = (() => {
       const o = scene.getObjectByName(n);
       if (o) parts[n] = { o, p: o.position.clone(), q: o.quaternion.clone() };
     }
-    const sight = W.rarities?.[tier]?.sight || 'iron';
+    const sight = fit.sight || 'iron';
     return { root, holder, parts, anchors: A, tier, sight, sightA: A['sight_' + sight] || A.sight_iron || new THREE.Vector3(0, 0.08, 0), tip, mats, W, length: W.length || 0.6 };
   }
   const tierInfo = t => TIER[Math.max(0, Math.min(6, t))];
-  return { preload, build, tierInfo, FILES, get loaded() { return Object.keys(base); } };
+  return { preload, build, tierInfo, FILES, fpModel, PVP_ONLY, get loaded() { return Object.keys(base); } };
 })();

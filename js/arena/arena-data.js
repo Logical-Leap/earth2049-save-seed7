@@ -5,7 +5,7 @@
  */
 'use strict';
 
-AR.VERSION = '4e20724';
+AR.VERSION = '52f54e8';
 
 /* ====================================================================== GUNS */
 AR.GUNS = {
@@ -69,6 +69,18 @@ AR.GUNS = {
   },
 };
 AR.PRIMARIES = ['smg', 'shotgun', 'ar', 'dmr', 'energy', 'rocket', 'lmg'];
+/* the GigaLeague's five extra guns (models: game-art-pipeline props/loadout.py). Only PvP hands them out, and PvP sets
+   their numbers from js/pvp/pvp-data.js; these entries give the arena's feel (kick, tracer, sound family) for each model. */
+Object.assign(AR.GUNS, {
+  marksman: Object.assign({}, AR.GUNS.dmr, { name: 'KR-15 ADJUDICATOR', cls: 'marksman', tag: 'MARKSMAN // SEMI-AUTO', kick: 3.4, kickYaw: 0.6, shake: 0.18,
+    fovKick: 2.2, vmKick: 0.15, vmRot: 0.3, pierce: 0, scope: false, tracer: 0xff9bd6, ads: 0.55, adsTime: 0.18 }),
+  burst: Object.assign({}, AR.GUNS.ar, { name: 'BR-3 TRIPLICATE', cls: 'ar', tag: 'BURST RIFLE // THREE PER PULL', kick: 1.25, kickYaw: 0.25, tracer: 0xfff0a0, tracerEvery: 1 }),
+  fastsmg: Object.assign({}, AR.GUNS.smg, { name: 'MX-11 FLASH SALE', cls: 'smg', tag: 'SMG // 1100 RPM', kick: 0.5, kickYaw: 0.7, tracer: 0x9bffd0, tracerEvery: 3 }),
+  revolver: Object.assign({}, AR.GUNS.pistol, { name: 'SEVERANCE .50', cls: 'pistol', tag: 'REVOLVER // SIX ROUNDS', kick: 4.2, kickYaw: 0.8, shake: 0.16, fovKick: 2.6,
+    vmKick: 0.16, vmRot: 0.42, knock: 6, tracer: 0xffc070, reserve: 30 }),
+  launcher: Object.assign({}, AR.GUNS.rocket, { name: 'UNSOLICITED OFFER', cls: 'launcher', tag: 'LAUNCHER // LOCKS ON TO STREAKS', shellReload: false, kick: 5.5, shake: 0.3,
+    proj: { speed: 42, grav: -4, splash: 3.5, splashDmg: 1, bounce: 0, size: 0.24, color: 0xff5030, life: 4, selfKnock: 9 } }),
+});
 
 /* ====================================================================== ENEMIES */
 AR.ENEMIES = {

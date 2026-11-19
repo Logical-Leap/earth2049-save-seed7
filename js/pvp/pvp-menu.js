@@ -33,6 +33,93 @@
   #pvpMenu .lock{opacity:.4}#pvpMenu .tag{font-size:10px;padding:1px 5px;border:1px solid currentColor;margin-left:6px}
   #pvpMenu .hint{font-size:11px;opacity:.7;text-transform:none;letter-spacing:0}
   #pvpMenu .chat{height:120px;overflow:auto;font-size:12px;text-transform:none;background:#0e0b1c;padding:6px;border:1px solid #2b2350}
+  /* class list */
+  #pvpMenu .clist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+  #pvpMenu .ccard{display:flex;flex-direction:column;gap:6px;text-align:left;padding:10px 12px;background:linear-gradient(160deg,rgba(38,26,76,.9),rgba(14,10,30,.92));border-color:#3a2f66}
+  #pvpMenu .ccName{font-size:14px;color:#fff;letter-spacing:.12em}
+  #pvpMenu .ccGuns{display:grid;grid-template-columns:1.25fr 1fr;gap:6px}#pvpMenu .ccGuns span{display:flex;flex-direction:column;min-width:0}
+  #pvpMenu .ccGuns b{font-size:10px;font-weight:normal;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #pvpMenu .ccGuns .thumb{height:52px}
+  #pvpMenu .ccIcons{display:flex;gap:6px;align-items:center;color:#00e5ff}#pvpMenu .ccIcons .sep{width:1px;height:16px;background:#4b3d80;margin:0 2px}
+  #pvpMenu .ccFoot{font-size:10px;color:#ffd400;align-self:flex-end}
+  #pvpMenu .ccard:hover .ccFoot,#pvpMenu .ccard:focus .ccFoot{color:#fff}
+  #pvpMenu .thumb{display:block;width:100%;height:76px;object-fit:contain;opacity:0;transition:opacity .25s}#pvpMenu .thumb.ok{opacity:1}
+  /* create-a-class */
+  #pvpMenu .cacTop{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  #pvpMenu .cacTop input{flex:1;min-width:160px;max-width:420px;font-size:18px;letter-spacing:.14em;padding:8px 10px;text-transform:uppercase}
+  #pvpMenu .cacTop h2{margin:0;font-size:20px;letter-spacing:.14em;color:#fff}
+  #pvpMenu .cacMsg{font-size:11px;padding:4px 8px;opacity:0;transition:opacity .2s;background:#59f59a;color:#08130c}#pvpMenu .cacMsg.show{opacity:1}#pvpMenu .cacMsg.bad{background:#ff5a6e;color:#1a0507}
+  #pvpMenu .cacBody{display:grid;grid-template-columns:280px minmax(0,1fr);gap:12px;align-items:start}
+  #pvpMenu .cacLoad{display:flex;flex-direction:column;gap:6px;position:sticky;top:8px}
+  #pvpMenu .slot{display:grid;grid-template-columns:30px 1fr;gap:2px 8px;align-items:center;text-align:left;width:100%;padding:8px 10px;background:rgba(20,15,40,.86);border-color:#3a2f66}
+  #pvpMenu .slot .sl{grid-column:1/-1;font-size:9px;letter-spacing:.18em;color:#00e5ff}
+  #pvpMenu .slot b{font-weight:normal;font-size:12px;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #pvpMenu .slot .ic{color:#ffd400;display:flex}#pvpMenu .sslot b{white-space:normal;line-height:1.25}
+  #pvpMenu .slot.on{border-color:#ffd400;background:#251c45;box-shadow:inset 3px 0 0 #ffd400}
+  #pvpMenu .gunslot{grid-template-columns:1fr auto}#pvpMenu .gunslot .thumb{grid-column:1/-1;height:70px}
+  #pvpMenu .gunslot b{font-size:14px;color:#fff}#pvpMenu .gunslot small{font-size:9px;color:#9d93c8;grid-column:1;margin:0;letter-spacing:.08em}
+  #pvpMenu .pips{grid-column:2;grid-row:3;display:flex;gap:5px;justify-self:end}#pvpMenu .pips i{width:7px;height:7px;transform:rotate(45deg);border:1px solid #ffd400}#pvpMenu .pips i.f{background:#ffd400}
+  #pvpMenu .atts{grid-column:2;grid-row:4;display:flex;gap:3px;color:#ffd400;justify-self:end}
+  #pvpMenu .pair{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  #pvpMenu .wrap.wide{max-width:1440px}
+  #pvpMenu .cacMain{display:flex;flex-direction:column;gap:12px;min-width:0}
+  #pvpMenu .cacDetail{background:linear-gradient(180deg,rgba(44,30,90,.9),rgba(14,10,30,.94));border:1px solid #4b3d80;padding:12px 14px;min-height:200px}
+  #pvpMenu .dHead{display:flex;gap:12px;align-items:center}#pvpMenu .dHead>div{flex:1;min-width:0}
+  #pvpMenu .dHead h3{margin:0;font-size:20px;color:#fff;letter-spacing:.12em}#pvpMenu .dHead .role{display:block;font-size:11px;color:#00e5ff;margin-top:2px}
+  #pvpMenu .dHead em{font-style:normal;color:#ffd400}#pvpMenu .dHint{font-size:9px;opacity:.5;align-self:flex-start}
+  #pvpMenu .bigic{color:#ffd400;display:flex;padding:6px;border:1px solid #4b3d80;background:#0e0b1c}
+  #pvpMenu .lk{display:inline-flex;gap:4px;align-items:center;font-size:10px;color:#ff9800;margin-top:3px}
+  #pvpMenu .cacStage{position:relative;height:190px;margin:6px -6px 8px;background:radial-gradient(ellipse at 50% 62%,rgba(0,229,255,.14),transparent 62%),repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.03) 39px 40px);border-bottom:1px solid rgba(255,255,255,.08);cursor:grab}
+  #pvpMenu .cacStage.loading::after{content:'LOADING MODEL';position:absolute;inset:0;display:grid;place-items:center;font-size:11px;opacity:.6}
+  #pvpMenu .cacCanvas{display:block;width:100%;height:100%;touch-action:pan-y}
+  #pvpMenu .dCols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+  #pvpMenu .sbar{display:grid;grid-template-columns:112px 1fr;gap:8px;align-items:center;font-size:10px;margin:5px 0;cursor:help}
+  #pvpMenu .track{position:relative;height:8px;background:#0e0b1c;border:1px solid #3a2f66}#pvpMenu .track i{position:absolute;top:0;bottom:0;left:0}
+  #pvpMenu .track .base{background:#e8e6f5}#pvpMenu .track .up{background:#59f59a}#pvpMenu .track .down{background:#ff5a6e}
+  #pvpMenu .track.na{background:repeating-linear-gradient(90deg,#0e0b1c 0 6px,#1d1738 6px 8px)}
+  #pvpMenu .nums{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px;margin-top:10px}
+  #pvpMenu .nums div{background:#0e0b1c;border:1px solid #2b2350;padding:5px 6px;min-width:0}#pvpMenu .nums small{display:block;font-size:8px;opacity:.65;letter-spacing:.08em}
+  #pvpMenu .nums b{font-size:13px;font-weight:normal;color:#fff;white-space:nowrap}#pvpMenu .nums b i{font-style:normal;opacity:.45;margin:0 2px}
+  #pvpMenu .nums .up b{color:#59f59a}#pvpMenu .nums .down b{color:#ff5a6e}
+  #pvpMenu .dText p{text-transform:none;letter-spacing:0;font-size:13px;line-height:1.45;margin:0 0 8px}
+  #pvpMenu .dText ul{margin:0;padding:0;list-style:none;font-size:12px;text-transform:none;letter-spacing:0;line-height:1.45}
+  #pvpMenu .facts{margin-bottom:10px!important;color:#cfe9ff}#pvpMenu .facts li::before{content:'▸ ';color:#00e5ff}
+  #pvpMenu .pc{display:grid;grid-template-columns:1fr 1fr;gap:12px}#pvpMenu .pc h4{margin:0 0 4px;font-size:11px;letter-spacing:.16em}
+  #pvpMenu .pros h4{color:#59f59a}#pvpMenu .cons h4{color:#ff5a6e}
+  #pvpMenu .pros li::before{content:'+ ';color:#59f59a;font-weight:bold}#pvpMenu .cons li::before{content:'− ';color:#ff5a6e;font-weight:bold}
+  #pvpMenu .best{margin-top:10px;font-size:11px;color:#ffd400;border-top:1px solid rgba(255,255,255,.08);padding-top:8px}
+  #pvpMenu .dText.solo{margin-top:10px;max-width:680px}
+  #pvpMenu .cacPick{background:rgba(20,15,40,.78);border:1px solid rgba(255,255,255,.12);padding:12px 14px}
+  #pvpMenu .ptabs{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-bottom:10px}#pvpMenu .ptabs .hint{flex:1;min-width:200px}
+  #pvpMenu .pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}
+  #pvpMenu .pcard{position:relative;display:flex;flex-direction:column;gap:4px;text-align:left;padding:8px 9px;background:#141028;border-color:#3a2f66;min-width:0}
+  #pvpMenu .pcard .pch{display:flex;gap:7px;align-items:center;color:#ffd400}#pvpMenu .pcard .pch b{color:#fff;font-weight:normal;font-size:12px;letter-spacing:.06em}
+  #pvpMenu .pcard .role{font-size:9px;color:#00e5ff}#pvpMenu .pcard .pts{font-size:10px;color:#00e5ff}
+  #pvpMenu .pcard .mini{font-size:11px;text-transform:none;letter-spacing:0;line-height:1.3;opacity:.9}
+  #pvpMenu .mini .g{color:#59f59a;font-weight:bold}#pvpMenu .mini .r{color:#ff5a6e;font-weight:bold}
+  #pvpMenu .pcard.eq{border-color:#ffd400;background:#2a2148}#pvpMenu .pcard.eq::after{content:'';position:absolute;top:8px;right:8px;width:8px;height:8px;transform:rotate(45deg);background:#ffd400;box-shadow:0 0 6px #ffd400}
+  #pvpMenu .pcard .pch{padding-right:16px}#pvpMenu .pcard.eq .pch b{color:#ffd400}
+  #pvpMenu .pcard.lock{opacity:.5}#pvpMenu .pcard.lock .pch{color:#8a80b0}
+  #pvpMenu .pcard.gun .thumb{height:62px}
+  #pvpMenu .minis{display:grid;gap:2px;margin-top:2px}#pvpMenu .mb{display:grid;grid-template-columns:42px 1fr;align-items:center;gap:4px}
+  #pvpMenu .mb small{font-size:7px;opacity:.6}#pvpMenu .mb i{display:block;height:3px;background:#00e5ff;max-width:100%}
+  #pvpMenu .aslot{margin-bottom:12px}#pvpMenu .ash{display:flex;align-items:center;gap:6px;font-size:11px;color:#00e5ff;margin-bottom:6px;letter-spacing:.16em}
+  #pvpMenu .pvpi{flex:none}
+  @media (min-width:1180px){
+    #pvpMenu .cacBody{grid-template-columns:250px minmax(0,1fr)}
+    #pvpMenu .cacMain{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.08fr);align-items:start}
+    #pvpMenu .cacPick{order:1}#pvpMenu .cacDetail{order:2;position:sticky;top:8px;max-height:calc(100vh - 16px);overflow:auto}
+    #pvpMenu .dCols{grid-template-columns:1fr}
+  }
+  @media (max-width:760px){
+    #pvpMenu .wrap{padding:14px 10px 30px}
+    #pvpMenu .cacBody{grid-template-columns:1fr}
+    #pvpMenu .cacLoad{position:static;display:grid;grid-template-columns:1fr 1fr}#pvpMenu .cacLoad .pair{grid-column:1/-1}
+    #pvpMenu .gunslot .thumb{height:54px}
+    #pvpMenu .dCols{grid-template-columns:1fr}#pvpMenu .nums{grid-template-columns:repeat(2,minmax(0,1fr))}#pvpMenu .cacStage{height:150px}
+    #pvpMenu .pgrid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}#pvpMenu .pc{grid-template-columns:1fr}
+    #pvpMenu .dHint{display:none}
+  }
   #pvpMenu .opts{display:flex;gap:6px;flex-wrap:wrap}#pvpMenu .opts label{display:inline-flex;gap:4px;align-items:center;opacity:1;margin:0 8px 0 0;font-size:12px}#pvpMenu .opts input{width:auto}
   `;
 
@@ -230,45 +317,276 @@
     act('say', say); const si = body.querySelector('[data-k="say"]'); if (si) si.onkeydown = e => { if (e.key === 'Enter') say(); e.stopPropagation(); };
   }
 
-  /* ------------------------------------------------------------------ CLASSES */
+  /* ------------------------------------------------------------------ CLASSES
+   * The class list (every class as a card with its guns and equipment), the scorestreak picks, and the create-a-class
+   * editor: a loadout column (primary, secondary, lethal, tactical, three perks), a detail panel (live 3D gun with its
+   * attachments, stat bars with the change a choice would make, the real numbers, plain-language PROS and CONS) and
+   * a picker (weapons, attachments by slot, perks, equipment). Text: js/pvp/pvp-codex.js. Icons: js/pvp/pvp-icons.js.
+   * Gun pictures: js/pvp/pvp-preview.js. Changes save as you make them. */
+  let ed = null;                                   // the open editor: { idx, c (working copy), slot, sub, hover, ro, msg }
+  const ICON = (id, o) => (root.PvpIcons ? PvpIcons.svg(id, o) : '');
+  const CODEX = () => root.PvpCodex;
+  const gunImg = (gid, att, cls = '') => `<img class="thumb ${cls}" alt="" data-thumb="${PVP.GUNS[gid].vis}|${(att || []).join('+')}|${PvpProgress.camoOf(gid)}">`;
+  const fillThumbs = el => root.PvpPreview?.fillThumbs(el);
+  const roleOf = gid => CODEX()?.GUNS[gid]?.role || PVP.GUNS[gid]?.cls?.toUpperCase() || '';
+
   function renderClasses(body) {
-    const lv = PvpProgress.level(), list = PvpProgress.classes();
     if (editing !== null) return renderEditor(body, editing);
-    const line = c => `${clean(PVP.GUNS[c.primary]?.name)} + ${clean(PVP.GUNS[c.secondary]?.name)} // ${clean(PVP.LETHALS[c.lethal]?.name)} // ${clean(PVP.TACTICALS[c.tactical]?.name)} // ${(c.perks || []).map(p => clean(PVP.PERKS[p]?.name)).join(', ')}`;
-    body.innerHTML = `${lv < PVP.CUSTOM_AT ? `<p class="hint">Custom classes open at level ${PVP.CUSTOM_AT}. Until then, pick a premade class before each match or when you respawn.</p>` : ''}
-      <div class="grid">${list.map((c, i) => `<div class="card"><h3>${esc(c.name)}${c.premade ? '<span class="tag">PREMADE</span>' : ''}</h3><p>${esc(line(c))}</p>${c.premade ? '' : `<button data-edit="${i}">EDIT</button>`}</div>`).join('')}</div>
-      <div class="card" style="margin-top:12px"><h3>SCORESTREAKS (PICK ${PVP.STREAK_SLOTS})</h3><p>Points from kills, assists and objectives. They reset when you die.</p>
-      <div class="opts">${PVP.STREAK_ORDER.map(id => { const S = PVP.STREAKS[id], ok = S.lvl <= lv; return `<label class="${ok ? '' : 'lock'}"><input type="checkbox" data-st="${id}" ${PvpProgress.streaks().includes(id) ? 'checked' : ''} ${ok ? '' : 'disabled'}>${clean(S.name)} (${S.pts})${ok ? '' : ' — LV ' + S.lvl}</label>`; }).join('')}</div></div>`;
+    ed = null;
+    const lv = PvpProgress.level(), list = PvpProgress.classes(), mine = PvpProgress.streaks();
+    const card = (c, i) => `<button class="ccard" data-edit="${i}">
+        <span class="ccName">${esc(c.name)}${c.premade ? '<span class="tag">PREMADE</span>' : ''}</span>
+        <span class="ccGuns"><span>${gunImg(c.primary, c.att?.[c.primary])}<b>${clean(PVP.GUNS[c.primary]?.name)}</b></span>
+          <span>${gunImg(c.secondary, c.att?.[c.secondary])}<b>${clean(PVP.GUNS[c.secondary]?.name)}</b></span></span>
+        <span class="ccIcons" title="${esc([PVP.LETHALS[c.lethal]?.name, PVP.TACTICALS[c.tactical]?.name, ...(c.perks || []).map(p => PVP.PERKS[p]?.name)].map(clean).join(' · '))}">
+          ${ICON(c.lethal, { size: 20 })}${ICON(c.tactical, { size: 20 })}<i class="sep"></i>${(c.perks || []).map(p => ICON(p, { size: 20 })).join('')}</span>
+        <span class="ccFoot">${c.premade ? 'VIEW' : 'EDIT'} ▸</span></button>`;
+    body.innerHTML = `${lv < PVP.CUSTOM_AT ? `<p class="hint">Custom classes open at level ${PVP.CUSTOM_AT}. Until then, pick a premade class before each match or when you respawn. Tap one to see what is in it.</p>` : ''}
+      <div class="clist">${list.map(card).join('')}</div>
+      <div class="card" style="margin-top:14px"><h3>SCORESTREAKS — PICK ${PVP.STREAK_SLOTS} <span class="hint">(${mine.length} / ${PVP.STREAK_SLOTS})</span></h3>
+        <p>Points from kills, assists and objectives buy these during a life. Your points reset when you die, so cheaper streaks come out more often.</p>
+        <div class="pgrid">${PVP.STREAK_ORDER.map(id => {
+          const S = PVP.STREAKS[id], ok = S.lvl <= lv, on = mine.includes(id), E = CODEX()?.entry('streak', id);
+          return `<button class="pcard ${on ? 'eq' : ''} ${ok ? '' : 'lock'}" data-st="${id}" ${ok ? '' : 'aria-disabled="true"'}>
+            <span class="pch">${ICON(id)}<b>${clean(S.name)}</b></span><span class="pts">${S.pts.toLocaleString('en-US')} POINTS</span>
+            <span class="mini">${esc(S.d)}</span>${E?.cons?.[0] ? `<span class="mini"><span class="r">−</span> ${esc(E.cons[0])}</span>` : ''}
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${S.lvl}</span>`}</button>`;
+        }).join('')}</div><p class="hint streakMsg"></p></div>`;
     body.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => { editing = +b.dataset.edit; render(); });
-    body.querySelectorAll('[data-st]').forEach(x => x.onchange = () => {
-      const on = [...body.querySelectorAll('[data-st]:checked')].map(i => i.dataset.st);
-      if (on.length > PVP.STREAK_SLOTS) { x.checked = false; return; }
-      PvpProgress.setStreaks(on.sort((a, b) => PVP.STREAKS[a].pts - PVP.STREAKS[b].pts));
+    body.querySelectorAll('[data-st]').forEach(b => b.onclick = () => {
+      const id = b.dataset.st, S = PVP.STREAKS[id], msg = body.querySelector('.streakMsg');
+      if (S.lvl > lv) { msg.textContent = `${clean(S.name)} unlocks at level ${S.lvl}.`; return; }
+      let on = PvpProgress.streaks().slice();
+      if (on.includes(id)) on = on.filter(x => x !== id);
+      else if (on.length >= PVP.STREAK_SLOTS) { msg.textContent = `You can carry ${PVP.STREAK_SLOTS}. Take one off first.`; return; }
+      else on.push(id);
+      PvpProgress.setStreaks(on.sort((a, x) => PVP.STREAKS[a].pts - PVP.STREAKS[x].pts));
+      render();
     });
+    fillThumbs(body);
   }
+
+  const GUN_SLOTS = { primary: 'PRIMARY', secondary: 'SECONDARY' };
+  const slotKind = s => (GUN_SLOTS[s] ? 'gun' : s.startsWith('perk') ? 'perk' : s);
+  const curId = s => { const c = ed.c; return GUN_SLOTS[s] ? c[s] : s.startsWith('perk') ? c.perks[+s.slice(4) - 1] : c[s]; };
+  const attOf = gid => ed.c.att[gid] || [];
+  /** the attachment list with one attachment put on (replacing its slot) or taken off */
+  function toggled(att, a) {
+    if (att.includes(a)) return att.filter(x => x !== a);
+    const sl = PVP.ATTACHMENTS[a].slot, rest = att.filter(x => PVP.ATTACHMENTS[x].slot !== sl);
+    return rest.length >= PVP.MAX_ATTACH ? null : rest.concat(a);
+  }
+  const bnplOn = () => ed.c.perks.includes('bnpl');
+  const secondaryIds = () => (bnplOn() ? PVP.SECONDARY_IDS.concat(PVP.PRIMARY_IDS) : PVP.SECONDARY_IDS);
+
   function renderEditor(body, idx) {
-    const lv = PvpProgress.level(), list = PvpProgress.classes(), c = JSON.parse(JSON.stringify(list[idx])), slot = idx - PVP.PREMADE.length;
-    c.att = c.att || {};
-    const gunSel = (key, ids) => `<select data-f="${key}">${ids.map(id => { const G = PVP.GUNS[id], ok = G.lvl <= lv; return `<option value="${id}" ${c[key] === id ? 'selected' : ''} ${ok ? '' : 'disabled'}>${clean(G.name)}${G.standIn ? ' (STAND-IN ART)' : ''}${ok ? '' : ' — LV ' + G.lvl}</option>`; }).join('')}</select>`;
-    const tbl = (key, T, tier) => `<select data-f="${key}">${Object.entries(T).filter(([, x]) => !tier || x.tier === tier).map(([id, x]) => `<option value="${id}" ${(tier ? c.perks[tier - 1] : c[key]) === id ? 'selected' : ''} ${x.lvl <= lv ? '' : 'disabled'}>${clean(x.name)}${x.lvl <= lv ? '' : ' — LV ' + x.lvl}</option>`).join('')}</select>`;
-    const attBox = gid => { const wl = PvpProgress.weaponLevel(gid), have = c.att[gid] || []; return PVP.ATTACH_SLOTS.map(sl => `<div><b style="font-size:11px">${sl}</b> ${Object.entries(PVP.ATTACHMENTS).filter(([, a]) => a.slot === sl).map(([id, a]) => { const need = PVP.attachLevel(id), ok = wl >= need; return `<label class="${ok ? '' : 'lock'}" title="${esc(a.d)}"><input type="radio" name="a_${gid}_${sl}" data-att="${gid}" value="${id}" ${have.includes(id) ? 'checked' : ''} ${ok ? '' : 'disabled'}>${a.name}${ok ? '' : ' (W' + need + ')'}</label>`; }).join('')}<label><input type="radio" name="a_${gid}_${sl}" data-att="${gid}" value="" ${have.some(a => PVP.ATTACHMENTS[a].slot === sl) ? '' : 'checked'}>NONE</label></div>`).join(''); };
-    const bnpl = (c.perks || []).includes('bnpl');
-    body.innerHTML = `<div class="card"><h3>EDIT CLASS</h3><label>NAME</label><input data-f="name" maxlength="20" value="${esc(c.name)}">
-      <div class="grid" style="margin-top:8px"><div><label>PRIMARY</label>${gunSel('primary', PVP.PRIMARY_IDS)}<label>ATTACHMENTS (UP TO ${PVP.MAX_ATTACH}) — WEAPON LEVEL ${PvpProgress.weaponLevel(c.primary)}</label><div class="opts" style="display:block">${attBox(c.primary)}</div></div>
-      <div><label>SECONDARY${bnpl ? ' (BUY NOW PAY LATER: ANY GUN)' : ''}</label>${gunSel('secondary', bnpl ? PVP.SECONDARY_IDS.concat(PVP.PRIMARY_IDS) : PVP.SECONDARY_IDS)}<label>ATTACHMENTS</label><div class="opts" style="display:block">${attBox(c.secondary)}</div>
-      <label>LETHAL</label>${tbl('lethal', PVP.LETHALS)}<label>TACTICAL</label>${tbl('tactical', PVP.TACTICALS)}
-      <label>PERK 1</label>${tbl('p1', PVP.PERKS, 1)}<label>PERK 2</label>${tbl('p2', PVP.PERKS, 2)}<label>PERK 3</label>${tbl('p3', PVP.PERKS, 3)}</div></div>
-      <p class="hint">Every attachment is a sidegrade: hover one to see what it trades. Rarity is a camo in the core playlist; it never changes a gun.</p>
-      <div class="row"><button class="go" data-act="save">SAVE CLASS</button><button data-act="cancel">CANCEL</button></div></div>`;
-    const read = () => {
-      const g = k => body.querySelector(`[data-f="${k}"]`)?.value;
-      const out = { name: g('name') || 'CUSTOM', primary: g('primary'), secondary: g('secondary'), lethal: g('lethal'), tactical: g('tactical'), perks: [g('p1'), g('p2'), g('p3')], att: {} };
-      for (const gid of [out.primary, out.secondary]) out.att[gid] = [...body.querySelectorAll(`[data-att="${gid}"]:checked`)].map(i => i.value).filter(Boolean).slice(0, PVP.MAX_ATTACH);
-      return out;
+    const list = PvpProgress.classes();
+    if (!list[idx]) { editing = null; return render(); }
+    if (!ed || ed.idx !== idx) {
+      const c = JSON.parse(JSON.stringify(list[idx]));
+      c.att = c.att || {}; c.perks = (c.perks || []).slice(0, 3);
+      ed = { idx, c, slot: 'primary', sub: 'gun', hover: null, ro: !!list[idx].premade, msg: '' };
+    }
+    const c = ed.c;
+    body.closest('.wrap')?.classList.add('wide');               // the editor uses the whole screen width
+    body.innerHTML = `<div class="cac">
+      <div class="cacTop"><button data-act="back">◂ CLASSES</button>
+        ${ed.ro ? `<h2>${esc(c.name)}<span class="tag">PREMADE · READ ONLY</span></h2>` : `<input data-f="name" maxlength="20" value="${esc(c.name)}" aria-label="Class name">`}
+        <span class="cacMsg"></span></div>
+      <div class="cacBody"><div class="cacLoad"></div><div class="cacMain"><div class="cacDetail"></div><div class="cacPick"></div></div></div>
+      <p class="hint" style="margin-top:10px">Every attachment is a trade: it makes one thing better and another worse. Bars show the change before you commit (green better, red worse). Rarity is a camo in the core playlist; it never changes a gun. Changes save as you make them.</p></div>`;
+    body.querySelector('[data-act="back"]').onclick = () => { if (T && !ed.ro) T.send({ t: 'classes', classes: PvpProgress.classes() }); editing = null; ed = null; render(); };
+    const nm = body.querySelector('[data-f="name"]');
+    if (nm) nm.oninput = () => { c.name = nm.value.toUpperCase().slice(0, 20) || 'CUSTOM'; save(true); };
+    drawAll(body);
+  }
+  function drawAll(body) { drawLoad(body); drawDetail(body); drawPick(body); }
+  function flash(body, msg, bad) {
+    const m = body.querySelector('.cacMsg'); if (!m) return;
+    m.textContent = msg; m.className = 'cacMsg show' + (bad ? ' bad' : '');
+    clearTimeout(flash.t); flash.t = setTimeout(() => { m.className = 'cacMsg'; }, 2200);
+  }
+  function save(quiet) {
+    if (ed.ro) return;
+    const lv = PvpProgress.level(), v = window.PvpSim.sanitizeClass(ed.c, lv);
+    v.name = ed.c.name || 'CUSTOM';
+    PvpProgress.saveClass(ed.idx - PVP.PREMADE.length, v);
+    // keep the working copy's attachments for guns not in the class, so switching back restores them
+    const att = Object.assign({}, ed.c.att, v.att);
+    Object.assign(ed.c, v, { att });
+    if (!quiet) flash(ov, 'SAVED');
+  }
+
+  /* ---- the loadout column */
+  function drawLoad(body) {
+    const L = body.querySelector('.cacLoad'), c = ed.c;
+    const gunSlot = key => {
+      const gid = c[key], G = PVP.GUNS[gid], att = attOf(gid);
+      return `<button class="slot gunslot ${ed.slot === key ? 'on' : ''}" data-slot="${key}">
+        <span class="sl">${GUN_SLOTS[key]}${key === 'secondary' && bnplOn() ? ' · ANY GUN' : ''}</span>${gunImg(gid, att)}
+        <b>${clean(G.name)}</b><small>${roleOf(gid)}</small>
+        <span class="pips" title="${att.length} of ${PVP.MAX_ATTACH} attachments">${Array.from({ length: PVP.MAX_ATTACH }, (_, i) => `<i class="${i < att.length ? 'f' : ''}"></i>`).join('')}</span>
+        <span class="atts">${att.map(a => ICON(a, { size: 15 })).join('')}</span></button>`;
     };
-    body.querySelectorAll('select[data-f="primary"],select[data-f="secondary"],select[data-f="p2"]').forEach(s => s.onchange = () => { const v = read(); Object.assign(list[idx], v); if (slot >= 0) PvpProgress.saveClass(slot, v); render(); });
-    body.querySelector('[data-act="save"]').onclick = () => { const v = window.PvpSim.sanitizeClass(read(), lv); v.name = read().name; if (slot >= 0) PvpProgress.saveClass(slot, v); editing = null; render(); if (T) T.send({ t: 'classes', classes: PvpProgress.classes() }); };
-    body.querySelector('[data-act="cancel"]').onclick = () => { editing = null; render(); };
+    const small = (key, label, tbl) => {
+      const id = curId(key), X = tbl[id];
+      return `<button class="slot sslot ${ed.slot === key ? 'on' : ''}" data-slot="${key}"><span class="sl">${label}</span><span class="ic">${ICON(id)}</span><b>${clean(X?.name)}</b></button>`;
+    };
+    L.innerHTML = gunSlot('primary') + gunSlot('secondary') +
+      `<div class="pair">${small('lethal', 'LETHAL', PVP.LETHALS)}${small('tactical', 'TACTICAL', PVP.TACTICALS)}</div>` +
+      [1, 2, 3].map(t => small('perk' + t, 'PERK ' + t, PVP.PERKS)).join('');
+    L.querySelectorAll('[data-slot]').forEach(b => b.onclick = () => {
+      ed.slot = b.dataset.slot; ed.sub = 'gun'; ed.hover = null; drawAll(body);
+      if (innerWidth < 760) body.querySelector('.cacDetail')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    fillThumbs(L);
+  }
+
+  /* ---- the detail panel */
+  const fmtS = v => (v >= 10 ? Math.round(v) : v.toFixed(1)) + ' S';
+  function drawDetail(body) {
+    const D = body.querySelector('.cacDetail'), c = ed.c, C = CODEX(), kind = slotKind(ed.slot), lv = PvpProgress.level();
+    if (!C) { D.innerHTML = ''; return; }
+    if (kind === 'gun') {
+      const gid = c[ed.slot], att = attOf(gid), h = ed.hover;
+      let showGid = gid, showAtt = att, cmp = null, E, note = '';
+      if (h?.kind === 'gun' && h.id !== gid) { showGid = h.id; showAtt = attOf(h.id); cmp = [gid, att]; E = C.entry('gun', showGid, showAtt); }
+      else if (h?.kind === 'attach') {
+        const t = toggled(att, h.id); E = C.entry('attach', h.id);
+        if (t) { showAtt = t; cmp = [gid, att]; note = att.includes(h.id) ? 'TAKING IT OFF' : 'PUTTING IT ON'; } else note = `ALL ${PVP.MAX_ATTACH} SLOTS USED: TAKE ONE OFF FIRST`;
+      } else E = C.entry('gun', gid, att);
+      const st = C.gunStats(showGid, showAtt), base = cmp ? C.gunStats(cmp[0], cmp[1]) : null;
+      const locked = h?.kind === 'gun' ? PVP.GUNS[h.id].lvl > lv : h?.kind === 'attach' ? PvpProgress.weaponLevel(gid) < PVP.attachLevel(h.id) : false;
+      const lockTxt = h?.kind === 'gun' ? `UNLOCKS AT LEVEL ${PVP.GUNS[h.id].lvl}` : h?.kind === 'attach' ? `UNLOCKS AT WEAPON LEVEL ${PVP.attachLevel(h.id)} (YOURS: ${PvpProgress.weaponLevel(gid)})` : '';
+      const attHead = h?.kind === 'attach';
+      D.innerHTML = `<div class="dHead">${attHead ? `<span class="bigic">${ICON(h.id, { size: 34 })}</span>` : ''}<div><h3>${esc(E.title)}</h3>
+          <span class="role">${esc(E.role)}${attHead ? ' ATTACHMENT · FOR ' + clean(PVP.GUNS[gid].name) : ''}${note ? ` · <em>${note}</em>` : ''}</span>
+          ${locked ? `<span class="lk">${ICON('lock', { size: 12 })} ${lockTxt}</span>` : ''}</div>
+          <span class="dHint">${cmp ? 'COMPARED WITH WHAT YOU HAVE' : 'DRAG TO TURN'}</span></div>
+        <div class="cacStage"></div>
+        <div class="dCols"><div class="dStats">${Object.keys(C.BAR_NAMES).map(k => barRow(C, k, st, base)).join('')}${numsHtml(st, base)}</div>
+          <div class="dText">${textHtml(E)}</div></div>`;
+      root.PvpPreview?.show(D.querySelector('.cacStage'), PVP.GUNS[showGid].vis, showAtt, PvpProgress.camoOf(showGid));
+      return;
+    }
+    const id = ed.hover && ed.hover.kind === kind ? ed.hover.id : curId(ed.slot);
+    const E = C.entry(kind, id), X = (kind === 'perk' ? PVP.PERKS : kind === 'lethal' ? PVP.LETHALS : PVP.TACTICALS)[id];
+    const extra = kind === 'lethal' ? [X.dmg && `Damage: up to ${X.dmg}`, X.radius && `Blast radius: ${X.radius} m`, X.fuse && `Fuse: ${X.fuse} s`].filter(Boolean)
+      : kind === 'tactical' ? [X.radius && `Radius: ${X.radius} m`, X.dur && `Lasts: ${X.dur} s`, X.fuse && `Fuse: ${X.fuse} s`].filter(Boolean) : [];
+    D.innerHTML = `<div class="dHead"><span class="bigic">${ICON(id, { size: 40 })}</span><div><h3>${esc(E.title)}</h3><span class="role">${esc(E.role)}</span>
+        ${X.lvl > lv ? `<span class="lk">${ICON('lock', { size: 12 })} UNLOCKS AT LEVEL ${X.lvl}</span>` : ''}</div></div>
+      <div class="dText solo">${textHtml(Object.assign({}, E, { lines: extra }))}</div>`;
+  }
+  function barRow(C, k, st, base) {
+    const v = st.bars[k];
+    if (v == null) return `<div class="sbar" title="${esc(C.BAR_HELP[k])}"><span>${C.BAR_NAMES[k]}</span><div class="track na"></div></div>`;
+    const b = base && base.bars[k] != null ? base.bars[k] : v, lo = Math.min(v, b), hi = Math.max(v, b);
+    return `<div class="sbar" title="${esc(C.BAR_HELP[k])}"><span>${C.BAR_NAMES[k]}</span><div class="track"><i class="base" style="width:${(lo * 100).toFixed(1)}%"></i>${hi - lo > 0.004 ? `<i class="${v > b ? 'up' : 'down'}" style="left:${(lo * 100).toFixed(1)}%;width:${((hi - lo) * 100).toFixed(1)}%"></i>` : ''}</div></div>`;
+  }
+  function numsHtml(st, base) {
+    const n = st.num, o = base?.num;
+    // lowBetter: smaller is the better number
+    const cell = (label, val, show, prev, lowBetter) => {
+      let cls = '';
+      if (o && prev !== undefined && prev !== val && typeof val === 'number') cls = (lowBetter ? val < prev : val > prev) ? 'up' : 'down';
+      return `<div class="${cls}"><small>${label}</small><b>${show}</b></div>`;
+    };
+    const proj = n.fire === 'proj';
+    return `<div class="nums">
+      ${proj ? cell('DIRECT HIT', 1, 'KILLS') : cell('SHOTS TO KILL', n.stkNear * 10 + n.stkFar / 10, `${n.stkNear}<i>/</i>${n.stkFar}`, o && o.stkNear * 10 + o.stkFar / 10, true)}
+      ${proj ? cell('SPLASH', n.splash, n.splash + ' M') : cell('TIME TO KILL', n.ttkNear, n.ttkNear ? n.ttkNear + ' MS' : 'ONE SHOT', o?.ttkNear, true)}
+      ${cell(n.burst ? 'BURSTS / MIN' : 'FIRE RATE', n.rpm, n.rpm + (n.burst ? '' : ' RPM'), o?.rpm, false)}
+      ${cell('MAGAZINE', n.mag, n.mag + ' + ' + n.reserve, o?.mag, false)}
+      ${cell('RELOAD', n.reload, fmtS(n.reload), o?.reload, true)}
+      ${cell('AIM TIME', n.ads, n.ads + ' MS', o?.ads, true)}
+      ${cell('MOVE SPEED', n.move, n.move + '%', o?.move, false)}
+      ${cell('RANGE', n.range ?? 999, n.range ? n.range + ' M' : proj ? '—' : 'NO DROP', o ? o.range ?? 999 : undefined, false)}</div>
+      <p class="hint" style="margin:6px 0 0">SHOTS TO KILL: up close / far away. Time to kill assumes every shot lands.</p>`;
+  }
+  function textHtml(E) {
+    const li = a => a.map(x => `<li>${esc(x)}</li>`).join('');
+    return `${E.blurb ? `<p>${esc(E.blurb)}</p>` : ''}${E.lines?.length ? `<ul class="facts">${li(E.lines)}</ul>` : ''}
+      <div class="pc"><div class="pros"><h4>PROS</h4><ul>${li(E.pros.length ? E.pros : ['—'])}</ul></div><div class="cons"><h4>CONS</h4><ul>${li(E.cons.length ? E.cons : ['—'])}</ul></div></div>
+      ${E.best ? `<div class="best">BEST FOR: ${esc(E.best)}</div>` : ''}`;
+  }
+
+  /* ---- the picker */
+  function drawPick(body) {
+    const P = body.querySelector('.cacPick'), c = ed.c, kind = slotKind(ed.slot), lv = PvpProgress.level(), C = CODEX();
+    let html = '';
+    if (kind === 'gun') {
+      const gid = c[ed.slot], att = attOf(gid), wl = PvpProgress.weaponLevel(gid);
+      html = `<div class="ptabs"><button class="${ed.sub === 'gun' ? 'on' : ''}" data-sub="gun">WEAPON</button>
+        <button class="${ed.sub === 'att' ? 'on' : ''}" data-sub="att">ATTACHMENTS ${att.length} / ${PVP.MAX_ATTACH}</button>
+        <span class="hint">${ed.sub === 'att' ? `${clean(PVP.GUNS[gid].name)} · WEAPON LEVEL ${wl} / ${PVP.WEAPON_MAX}. Kills with it unlock more.` : 'Hover or focus a gun to compare it with yours.'}</span></div>`;
+      if (ed.sub === 'gun') {
+        const ids = ed.slot === 'primary' ? PVP.PRIMARY_IDS : secondaryIds();
+        html += `<div class="pgrid guns">${ids.map(id => {
+          const G = PVP.GUNS[id], ok = G.lvl <= lv, st = C?.gunStats(id, attOf(id));
+          const mini = st ? ['damage', 'range', 'rate', 'mobility'].map(k => `<span class="mb"><small>${C.BAR_NAMES[k].split(' ')[0]}</small><i style="width:${Math.round((st.bars[k] ?? 0) * 100)}%"></i></span>`).join('') : '';
+          return `<button class="pcard gun ${id === gid ? 'eq' : ''} ${ok ? '' : 'lock'}" data-pick="gun:${id}">${gunImg(id, attOf(id))}
+            <span class="pch"><b>${clean(G.name)}</b></span><span class="role">${roleOf(id)}</span><span class="minis">${mini}</span>
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${G.lvl}</span>`}</button>`;
+        }).join('')}</div>`;
+      } else {
+        html += PVP.ATTACH_SLOTS.map(sl => {
+          const ids = Object.keys(PVP.ATTACHMENTS).filter(a => PVP.ATTACHMENTS[a].slot === sl);
+          return `<div class="aslot"><div class="ash">${ICON(sl, { slot: true, size: 18 })}<span>${sl}</span></div><div class="pgrid">${ids.map(a => {
+            const A = PVP.ATTACHMENTS[a], need = PVP.attachLevel(a), ok = wl >= need, pc = C ? C.attachProsCons(a) : { pros: [], cons: [] };
+            return `<button class="pcard att ${att.includes(a) ? 'eq' : ''} ${ok ? '' : 'lock'}" data-pick="attach:${a}">
+              <span class="pch">${ICON(a)}<b>${A.name}</b></span>
+              ${pc.pros.slice(0, 2).map(x => `<span class="mini"><span class="g">+</span> ${esc(x)}</span>`).join('')}
+              ${pc.cons.slice(0, 2).map(x => `<span class="mini"><span class="r">−</span> ${esc(x)}</span>`).join('')}
+              ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} WEAPON LEVEL ${need}</span>`}</button>`;
+          }).join('')}</div></div>`;
+        }).join('');
+      }
+    } else {
+      const tier = kind === 'perk' ? +ed.slot.slice(4) : 0;
+      const T = kind === 'perk' ? PVP.PERKS : kind === 'lethal' ? PVP.LETHALS : PVP.TACTICALS;
+      const ids = Object.keys(T).filter(id => !tier || T[id].tier === tier), cur = curId(ed.slot);
+      html = `<div class="ptabs"><span class="hint">${kind === 'perk' ? `PERK ${tier}: pick one. Each perk slot has its own list.` : kind === 'lethal' ? 'LETHAL: the grenade-slot weapon. One per life (DUMPSTER DIVER refills it).' : 'TACTICAL: equipment that does not kill but wins fights.'}</span></div>
+        <div class="pgrid">${ids.map(id => {
+          const X = T[id], ok = X.lvl <= lv, E = C?.entry(kind, id);
+          return `<button class="pcard ${id === cur ? 'eq' : ''} ${ok ? '' : 'lock'}" data-pick="${kind}:${id}"><span class="pch">${ICON(id)}<b>${clean(X.name)}</b></span>
+            <span class="mini">${esc(X.d)}</span>${E?.cons?.[0] ? `<span class="mini"><span class="r">−</span> ${esc(E.cons[0])}</span>` : ''}
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${X.lvl}</span>`}</button>`;
+        }).join('')}</div>`;
+    }
+    P.innerHTML = html;
+    P.querySelectorAll('[data-sub]').forEach(b => b.onclick = () => { ed.sub = b.dataset.sub; ed.hover = null; drawDetail(body); drawPick(body); });
+    P.querySelectorAll('[data-pick]').forEach(b => {
+      const [k, id] = b.dataset.pick.split(':');
+      const hover = on => { ed.hover = on ? { kind: k, id } : null; clearTimeout(drawPick.t); drawPick.t = setTimeout(() => drawDetail(body), on ? 0 : 60); };
+      b.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hover(true); });
+      b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hover(false); });
+      b.addEventListener('focus', () => { if (b.matches(':focus-visible')) hover(true); });
+      b.addEventListener('blur', () => hover(false));
+      b.onclick = () => pick(body, k, id);
+    });
+    fillThumbs(P);
+  }
+  function pick(body, kind, id) {
+    const c = ed.c, lv = PvpProgress.level();
+    if (ed.ro) { ed.hover = { kind, id }; drawDetail(body); return flash(body, 'PREMADE CLASSES CANNOT BE CHANGED', true); }
+    if (kind === 'gun') {
+      if (PVP.GUNS[id].lvl > lv) { ed.hover = { kind, id }; drawDetail(body); return flash(body, `UNLOCKS AT LEVEL ${PVP.GUNS[id].lvl}`, true); }
+      c[ed.slot] = id;
+    } else if (kind === 'attach') {
+      const gid = c[ed.slot], need = PVP.attachLevel(id);
+      if (PvpProgress.weaponLevel(gid) < need) return flash(body, `UNLOCKS AT WEAPON LEVEL ${need}`, true);
+      const t = toggled(attOf(gid), id);
+      if (!t) return flash(body, `ALL ${PVP.MAX_ATTACH} ATTACHMENT SLOTS ARE IN USE`, true);
+      c.att[gid] = t;
+    } else {
+      const T = kind === 'perk' ? PVP.PERKS : kind === 'lethal' ? PVP.LETHALS : PVP.TACTICALS;
+      if (T[id].lvl > lv) return flash(body, `UNLOCKS AT LEVEL ${T[id].lvl}`, true);
+      if (kind === 'perk') c.perks[+ed.slot.slice(4) - 1] = id; else c[kind] = id;
+      if (!bnplOn() && !PVP.GUNS[c.secondary]?.secondary) c.secondary = 'pistol';
+    }
+    ed.hover = null;
+    save();
+    drawAll(body);
   }
 
   /* ------------------------------------------------------------------ PROGRESS */

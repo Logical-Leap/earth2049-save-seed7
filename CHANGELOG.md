@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-11-19 — GigaLeague create-a-class
+
+The class editor is rebuilt, and every gun in it is now its own model with every attachment on it.
+
+- **Five new guns, modelled with all seven rarities.** They replace the stand-ins:
+  - KR-15 ADJUDICATOR (marksman rifle)
+  - BR-3 TRIPLICATE (bullpup burst rifle)
+  - MX-11 FLASH SALE (compact SMG with the magazine in the grip)
+  - SEVERANCE .50 (revolver)
+  - UNSOLICITED OFFER (rocket launcher)
+- **Attachments are on the gun.** All 16 create-a-class attachments are modelled on all 11 class guns: red dot, holo, 2.5x optic, suppressor, compensator, long and short barrel, vertical and angled grip, extended and fast mag, light and heavy stock, laser, tape and rubber grip. You see them in your hands in a match, and you aim through the optic you picked. The 2.5x optic is a real scope.
+- **A new create-a-class screen.**
+  - **Loadout column:** primary and secondary with pictures of your guns, five pips for attachments, then lethal, tactical and three perks with icons.
+  - **Live 3D preview:** the gun with its attachments. Drag it to turn it.
+  - **Stat bars:** damage, range, fire rate, hip accuracy, recoil control, mobility and handling. Hover or focus a gun or attachment and the bars show the change before you pick it (green better, red worse).
+  - **The real numbers:** shots to kill up close and far away, time to kill, fire rate, magazine, reload, aim time, move speed and range.
+  - **Every item explained in plain words:** what it does, PROS, CONS and what it is best for. This covers every gun, attachment, perk, lethal, tactical and scorestreak. Attachment pros and cons come from its actual numbers.
+  - **Attachments by slot,** each with an icon and its trade. Locked items say when they open. A sixth attachment is refused with the reason.
+  - Changes save as you make them. Premade classes open read-only.
+  - The class list shows every class as a card with its guns and equipment icons. Scorestreaks are picked from cards.
+  - Works on a phone: the layout stacks, nothing scrolls sideways.
+- **The rubber grip now works.** It cuts flinch as its card says.
+- Tests: tests/create-a-class.test.js. Browser check: scripts/qa/create-a-class-e2e.mjs.
+
 ## 2026-11-19 — GigaLeague feel pass
 
 From the first GigaLeague playtest. The aim: a match you can read by ear, feedback that lands, and a controller that works everywhere.

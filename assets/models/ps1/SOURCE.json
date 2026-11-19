@@ -1,7 +1,7 @@
 {
   "repo": "Logical-Leap/game-art-pipeline",
-  "commit": "4e2072436329aecab2699bc00681325e4309c297",
-  "synced": "2026-11-18",
+  "commit": "52f54e8ec69fd29be104c33835d3182031548517",
+  "synced": "2026-11-19",
   "files": [
     "assets/models/ps1/characters/shillz.glb",
     "assets/models/ps1/characters/shillz_big.glb",
@@ -28,6 +28,11 @@
     "assets/models/ps1/weapons/plasma_lancer.glb",
     "assets/models/ps1/weapons/mgl6_thunderer.glb",
     "assets/models/ps1/weapons/compliance_saw.glb",
+    "assets/models/ps1/weapons/kr15_adjudicator.glb",
+    "assets/models/ps1/weapons/br3_triplicate.glb",
+    "assets/models/ps1/weapons/mx11_flashsale.glb",
+    "assets/models/ps1/weapons/severance50_revolver.glb",
+    "assets/models/ps1/weapons/unsolicited_launcher.glb",
     "assets/maps/haven/haven.glb",
     "assets/maps/haven/haven.layout.json",
     "assets/maps/haven/haven.scene.json",

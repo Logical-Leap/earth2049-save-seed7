@@ -25,7 +25,9 @@ const CHARACTERS = {
 };
 // Non-humanoid units built with the props kit (named leg_/spin_ nodes, no clips).
 const UNITS = ['cryptid_drone', 'bots_sentinel'];
-const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer', 'compliance_saw'];
+const WEAPONS = ['volt9_pistol', 'vx2_ripper', 'riptide12_shotgun', 'm52_revenant', 'lrx7_harbinger', 'plasma_lancer', 'mgl6_thunderer', 'compliance_saw',
+  // the GigaLeague's five (loaded when a match starts or the class editor shows one, not at boot)
+  'kr15_adjudicator', 'br3_triplicate', 'mx11_flashsale', 'severance50_revolver', 'unsolicited_launcher'];
 
 if (!fs.existsSync(path.join(src, P))) {
   console.error(`game-art-pipeline not found at ${src}`);

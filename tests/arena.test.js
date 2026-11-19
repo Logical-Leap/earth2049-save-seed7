@@ -83,7 +83,8 @@ test('arena content tables are complete', () => {
   void manifest;
   for (const id of AR.PRIMARIES) assert.ok(AR.GUNS[id], id);
   // every gun has its first-person Arsenal model (all seven rarities in one GLB)
-  const gunFiles = { pistol: 'volt9_pistol', smg: 'vx2_ripper', shotgun: 'riptide12_shotgun', ar: 'm52_revenant', dmr: 'lrx7_harbinger', energy: 'plasma_lancer', rocket: 'mgl6_thunderer', lmg: 'compliance_saw' };
+  const gunFiles = { pistol: 'volt9_pistol', smg: 'vx2_ripper', shotgun: 'riptide12_shotgun', ar: 'm52_revenant', dmr: 'lrx7_harbinger', energy: 'plasma_lancer', rocket: 'mgl6_thunderer', lmg: 'compliance_saw',
+    marksman: 'kr15_adjudicator', burst: 'br3_triplicate', fastsmg: 'mx11_flashsale', revolver: 'severance50_revolver', launcher: 'unsolicited_launcher' };
   for (const id of Object.keys(AR.GUNS)) {
     const f = `assets/models/ps1/weapons/${gunFiles[id]}.glb`;
     assert.ok(exists(f), f);

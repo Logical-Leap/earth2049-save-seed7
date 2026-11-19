@@ -59,7 +59,7 @@ const Arena = (() => {
     AudioSys.init(); AudioSys.resume(); AR.Sfx.init();
     const layout = await AR.World.load(opts.scene, map.dir, map.file);
     await AR.Enemies.preload();
-    await AR.Arsenal.preload();
+    await AR.Arsenal.preload(!!opts.pvp);
     await loadProps(layout);
     const fog = layout.meta?.fog || [0.07, 0.05, 0.12];
     ctx.prevFog = opts.scene.fog; ctx.prevBg = opts.scene.background;

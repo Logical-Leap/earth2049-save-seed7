@@ -181,15 +181,15 @@ AR.PvpMission = (() => {
     const vis = S.vis || 'pistol', base = AR.GUNS[vis] || AR.GUNS.pistol;
     const recoil = 1 + (S.mods?.recoil || 0), sleight = AR.Pvp.sleight ? 0.65 : 1;
     const d = Object.assign({}, base, {
-      name: S.name.replace(/"/g, ''), tag: (S.standIn ? 'STAND-IN MODEL // ' : '') + S.cls.toUpperCase() + ' // ' + (S.burst ? S.burst + '-ROUND BURST' : S.rpm + ' RPM'),
+      name: S.name.replace(/"/g, ''), tag: S.cls.toUpperCase() + ' // ' + (S.burst ? S.burst + '-ROUND BURST' : S.rpm + ' RPM'),
       dmg: S.near[0], pellets: S.pellets, rpm: S.fire === 'burst' ? S.burstRpm : S.rpm, semi: S.fire === 'semi', mag: S.magSize, reserve: S.reserve, reload: (S.reloadT || 0.3) * sleight,
       spread: S.spread[0] * (1 + (S.mods?.spread || 0)), adsSpread: S.spread[1], adsTime: S.ads * (1 + (S.mods?.ads || 0)), kick: base.kick * recoil, kickYaw: base.kickYaw * recoil,
-      burst: S.burst || 0, burstGap: S.fire === 'burst' ? 60 / S.rpm : 0, stf: S.stf, stfK: S.mods?.stf || 0, melee: !!S.melee, noZoom: !!S.noZoom, shellReload: !!S.shell || base.shellReload,
+      burst: S.burst || 0, burstGap: S.fire === 'burst' ? 60 / S.rpm : 0, stf: S.stf, stfK: S.mods?.stf || 0, flinchK: S.mods?.flinch || 0, melee: !!S.melee, noZoom: !!S.noZoom, shellReload: !!S.shell || base.shellReload,
       snd: PVP.GUNS[id]?.snd,
     });
     if (S.zoom) d.ads = 1 / S.zoom * 1.6;
     if (!S.proj) delete d.proj; else d.proj = Object.assign({}, base.proj || {}, { speed: S.proj.speed, grav: S.proj.grav, splash: S.proj.splash, life: S.proj.life, bounce: S.proj.bounce || 0 });
-    return { id, vis, tier: tier || PvpProgress.camoOf(id), def: d };
+    return { id, vis, att: (att || []).slice(), tier: tier || PvpProgress.camoOf(id), def: d };
   }
   function setGuns(guns, cur) {
     const list = guns.map(([id, tier, att]) => { const x = defFor(id, att, tier); if (playlist !== 'classic' && !tier) x.tier = PvpProgress.camoOf(id); return x; });
@@ -228,7 +228,8 @@ AR.PvpMission = (() => {
     const from = v.a && remotes.get(v.a)?.cur?.pos;
     AR.Hud.hurt(v.d, from ? { x: from.x, z: from.z } : { x: v.x, z: v.z }, p);
     AR.Sfx.hurt(v.d);
-    const thick = spawnInfo?.loadout?.perks?.includes('thickskin') ? 0.5 : 1;
+    // THICK SKIN halves flinch; a RUBBER GRIP on the gun in hand takes off its share too
+    const thick = (spawnInfo?.loadout?.perks?.includes('thickskin') ? 0.5 : 1) * (1 + (AR.Player.gun?.d?.flinchK || 0));
     AR.Player.addTrauma(Math.min(0.45, 0.1 + v.d / 70) * thick);
     p.punchVP += (Math.random() - 0.5) * 0.9 * thick; p.punchVY += (Math.random() - 0.5) * 0.9 * thick;       // NOSONAR — flinch
     p.hp = v.hp;

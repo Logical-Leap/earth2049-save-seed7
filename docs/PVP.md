@@ -15,7 +15,7 @@ The menu has three tabs:
   - Private or public rooms with a code.
   - The open-room list.
   - The lobby: host settings, custom rules, the map vote and text chat.
-- **CLASSES:** create-a-class (custom slots open at level 4) and the three scorestreaks you carry.
+- **CLASSES:** create-a-class (custom slots open at level 4) and the three scorestreaks you carry. The editor shows a live 3D gun with its attachments, stat bars with the change a pick would make, the real numbers, and plain-language PROS / CONS for every item (text: js/pvp/pvp-codex.js, icons: js/pvp/pvp-icons.js, pictures: js/pvp/pvp-preview.js).
 - **PROGRESS:** level, prestige, weapon levels, camos, lifetime stats, today's GigaTech against the cap.
 
 **Controls**
@@ -152,7 +152,7 @@ To test locally:
 
 ## Not built yet (see the design doc's phases)
 
-- **Art:** the 5 new guns use stand-in models (marked "STAND-IN" in the class editor); the gunship is a placeholder shape; infected players are avatars, not the Serverless model.
+- **Art:** every class gun has its own model with every attachment on it (game-art-pipeline props/loadout.py; js/pvp/pvp-attach.js applies them); the gunship is a placeholder shape; infected players are avatars, not the Serverless model.
 - **Gunship:** AI-flown. A player-flown gunship is still to come.
 - **Voice:** party voice chat comes after launch, as decided.
 - **Host:** text callouts under the placeholder name THE HOST, with no recorded voice.

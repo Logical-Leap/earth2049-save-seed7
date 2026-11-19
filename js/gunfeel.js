@@ -51,10 +51,22 @@ const GunFeel = (() => {
                hip: [.165, -.195, -.300], ads: .24, draw: .45, flash: [1.3, 'plasma'], shell: 'none', fire: 'coil', punch: 1.2 },
     rocket:  { mag: { shell: 6 }, reload: [.95, .95], style: 'single', rack: 'drum', kick: [4.4, .6], vm: [.13, .42, .07],
                hip: [.175, -.215, -.310], ads: .3, draw: .6, flash: [1.9, 'boom'], shell: 'none', fire: 'drum', punch: 3.5 },
+    // the GigaLeague's five (PvP only; FAIR mode sets the magazine from js/pvp/pvp-data.js)
+    marksman: { mag: { std: 15, ext: 22 }, reload: [2.4, 2.9], style: 'mag', rack: 'bolt', kick: [2.2, .45], vm: [.07, .24, .05],
+               hip: [.165, -.190, -.305], ads: .20, draw: .5, flash: [1.3, 'star'], shell: 'rifle', fire: 'bolt', punch: 1.6 },
+    burst:   { mag: { std: 30, ext: 45 }, reload: [2.3, 2.9], style: 'mag', rack: 'bolt', kick: [.85, .28], vm: [.032, .08, .03],
+               hip: [.165, -.192, -.290], ads: .22, draw: .45, flash: [1.05, 'star'], shell: 'rifle', fire: 'bolt', punch: .45 },
+    fastsmg: { mag: { std: 40, ext: 60 }, reload: [1.9, 2.4], style: 'mag', rack: 'bolt', kick: [.34, .45], vm: [.016, .05, .03],
+               hip: [.155, -.180, -.285], ads: .17, draw: .32, flash: [.8, 'star'], shell: 'pistol', fire: 'bolt', punch: .2 },
+    revolver: { mag: { loader: 6 }, reload: [2.4, 2.4], style: 'mag', rack: 'none', kick: [3.6, .6], vm: [.10, .38, .06],
+               hip: [.150, -.165, -.300], ads: .16, draw: .34, flash: [1.6, 'wide'], shell: 'none', fire: 'drum', punch: 2.6 },
+    launcher: { mag: { rocket: 1 }, reload: [2.6, 2.6], style: 'mag', rack: 'none', kick: [4.8, .6], vm: [.14, .44, .08],
+               hip: [.175, -.230, -.300], ads: .32, draw: .62, flash: [2.0, 'boom'], shell: 'none', fire: 'drum', punch: 4 },
   };
   // aim-down-sights: eye distance to the sight and the zoomed field of view, per optic
-  const SIGHT = { iron: [.30, 62], reddot: [.27, 58], holo: [.29, 56], scope: [.20, 36], long: [.19, 22], thermal: [.22, 28], ladder: [.30, 60] };
-  const SCOPED = new Set(['scope', 'long', 'thermal']);
+  const SIGHT = { iron: [.30, 62], reddot: [.27, 58], holo: [.29, 56], scope: [.20, 36], long: [.19, 22], thermal: [.22, 28], ladder: [.30, 60],
+    handle: [.30, 60], zoom2: [.21, 44] };                       // handle: a carry-handle aperture; zoom2: the create-a-class 2.5x optic
+  const SCOPED = new Set(['scope', 'long', 'thermal', 'zoom2']);
   const GLASS = new Set(['reddot', 'holo']);
   // rarity scaling (tier 0..6): recoil, reload and aim speed, flash size
   const R_RECOIL = [1, .93, .86, .79, .73, .67, .6];
@@ -169,18 +181,33 @@ const GunFeel = (() => {
     maskCache.set(gltf, p);
     return p;
   }
+  /** a gun's albedo tinted to a rarity's finish (the same paint the viewmodel wears); cached per gun + tier */
+  const finishCache = {};
+  function finish(id, tier) {
+    const gltf = AssetLoader?.getModel?.('weapon.' + id), man = gltf?.scene?.userData;
+    if (!man?.weapon) return Promise.resolve(null);
+    const k = id + ':' + tier;
+    if (finishCache[k]) return finishCache[k];
+    const R = man.rarities[Math.min(tier, man.rarities.length - 1)], tint = [[1, 1, 1]];
+    for (const s of Object.keys(man.slots || {})) tint[+s] = R.tints?.[man.slots[s]] || [1, 1, 1];
+    let img = null; gltf.scene.traverse(o => { if (!img && o.isMesh && o.material?.map?.image) img = o.material.map.image; });
+    return (finishCache[k] = prepare(gltf).then(mask => (mask && img ? tintedTexture(img, mask, tint) : null)));
+  }
   function preloadMasks() {
     for (const id of Object.keys(GUN)) { const g = AssetLoader?.getModel?.('weapon.' + id); if (g?.scene?.userData?.weapon) prepare(g); }
   }
   const underGlass = o => { for (let p = o; p; p = p.parent) if (/_glass$/.test(p.name)) return true; return false; };
 
-  function build(id, tier) {
-    const key = id + ':' + tier;
+  function build(id, tier, att) {
+    const key = id + ':' + tier + ':' + (window.PvpAttach ? PvpAttach.key(att) : '');
     if (cache[key]) return cache[key];
     const gltf = AssetLoader?.getModel?.('weapon.' + id);
     const man = gltf?.scene?.userData;
-    if (!man?.weapon) return null;                               // not an arsenal GLB: leave it to the old path
-    const R = man.rarities[Math.min(tier, man.rarities.length - 1)];
+    if (!man?.weapon || !GUN[id]) return null;                   // not an arsenal GLB: leave it to the old path
+    const R0 = man.rarities[Math.min(tier, man.rarities.length - 1)];
+    // create-a-class attachments (GigaLeague): extra option nodes on top of the rarity, an optic swaps the sight
+    const fit = window.PvpAttach && att?.length ? PvpAttach.apply(man, R0, att) : null;
+    const R = fit ? Object.assign({}, R0, { show: fit.show, sight: fit.sight }) : R0;
     const root = THREE.SkeletonUtils ? THREE.SkeletonUtils.clone(gltf.scene) : gltf.scene.clone(true);
     const opts = Object.values(man.options).flat();
     for (const n of opts) { const o = root.getObjectByName(n); if (o) o.scale.setScalar(R.show.includes(n) ? 1 : 0); }
@@ -226,11 +253,11 @@ const GunFeel = (() => {
     const side2 = side1.clone(); side2.rotation.x = Math.PI / 2;
     flash.add(front, side1, side2); flash.visible = false;
     for (const m of [front, side1, side2]) m.renderOrder = 10;
-    const sightName = R.sight || 'iron';
+    const sightName = fit ? fit.kind : R.sight || 'iron', sightAnchor = R.sight || 'iron';
     const v = {
       id, tier, man, R, model, root, tip, flash, flashMat: [front.material, side1.material, side2.material], fcol, hands,
       grip: new THREE.Vector3(0, 0, 0), fore: local('fore'), magA: local('mag'), eject: local('eject'), load: local('load'), tray: local('tray'),
-      sight: local('sight_' + sightName), sightName, eyeD: (SIGHT[sightName] || SIGHT.iron)[0], fov: (SIGHT[sightName] || SIGHT.iron)[1],
+      sight: local('sight_' + sightAnchor), sightName, eyeD: (SIGHT[sightName] || SIGHT.iron)[0], fov: (SIGHT[sightName] || SIGHT.iron)[1],
       node: n => root.getObjectByName(n), rest: {},
       g: GUN[id], magSize: magFor(id, R),
     };
@@ -267,7 +294,7 @@ const GunFeel = (() => {
 
   /* ---------------------------------------------------------------- equip / draw */
   function equip(w) {
-    const nv = build(w.id, w.rar | 0);
+    const nv = build(w.id, w.rar | 0, w.att);
     if (nv) { if (nv.baseMag === undefined) nv.baseMag = nv.magSize; nv.magSize = FAIR?.mag?.(w) || nv.baseMag; }
     if (vm) gunGroup.remove(vm.model);
     vm = nv; curW = w;
@@ -868,12 +895,12 @@ const GunFeel = (() => {
   function setFair(f) { FAIR = f || null; }
   return {
     setFair, get fair() { return !!FAIR; },
-    init, equip, setArms, hideArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, GUN,
+    init, equip, setArms, hideArms, update(dt, s) { _update(dt, s); puffTick(Math.min(dt, .05)); }, fire, dryFire, reload, canFire, magSize, preloadMasks, setVisible, finish, GUN,
     get fov() { return st.fov; }, get adsK() { return st.adsK; }, get reloading() { return !!st.reload; },
     get spreadMul() { return 1 - st.adsK * (vm && SCOPED.has(vm.sightName) ? .96 : .65); },
     get sensMul() { return 1 - st.adsK * (vm ? (1 - vm.fov / 75) * .9 : 0); },
     get cam() { return { pitch: S.c[0], yaw: S.c[1], roll: S.c[2] }; },
-    get active() { return !!vm; }, get drawing() { return st.drawT < 1; }, get cycling() { return !!cycling(); },
+    get active() { return !!vm; }, get view() { return vm ? { id: vm.id, tier: vm.tier, sight: vm.sightName, show: vm.R.show.slice(), root: vm.root } : null; }, get drawing() { return st.drawT < 1; }, get cycling() { return !!cycling(); },
     addPunch(deg) { st.punch = Math.max(st.punch, deg || 0); },
   };
 })();

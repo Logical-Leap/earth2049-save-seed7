@@ -151,7 +151,7 @@ AR.Player = (() => {
   let GF = null;
   const gfOn = () => !!(GF && window.GunFeel && GunFeel.active);
   function gfWeapon(g) {
-    if (!g.gf) g.gf = { id: g.id, get snd() { return g.d?.snd; }, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
+    if (!g.gf) g.gf = { id: g.id, att: g.att || null, get snd() { return g.d?.snd; }, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
       get ammo() { return g.reserve; }, set ammo(v) { g.reserve = v; } };
     return g.gf;
   }
@@ -182,9 +182,9 @@ AR.Player = (() => {
   }
   /** First-person model for a gun instance: the Arsenal GLB at its rarity (cached per gun + tier). */
   function vmOf(g) {
-    const k = g.id + ':' + g.tier;
+    const k = g.id + ':' + g.tier + ':' + (window.PvpAttach ? PvpAttach.key(g.att) : '');
     if (!guns[k]) {
-      const v = AR.Arsenal.build(g.id, g.tier);
+      const v = AR.Arsenal.build(g.id, g.tier, { attach: g.att });
       if (!v) return null;
       v.eject = new THREE.Object3D(); v.eject.position.copy(v.anchors.eject || v.tip.position); v.root.add(v.eject);
       v.root.visible = false; vmRoot.add(v.root);
@@ -922,7 +922,7 @@ AR.Player = (() => {
   /** GigaLeague: arm the player with the match's loadout. list: [{ vis, tier, def }] in the match's weapon order */
   function setLoadout(list, cur = 0) {
     if (!P) return;
-    P.guns = list.map(x => { const g = makeGun(x.vis, x.tier || 0, x.def); g.pvpId = x.id; return g; });
+    P.guns = list.map(x => { const g = makeGun(x.vis, x.tier || 0, x.def); g.pvpId = x.id; g.att = x.att || null; return g; });
     P.cur = Math.min(cur, P.guns.length - 1); P.swapT = 0.35;
     for (const g of P.guns) g.ammo = g.d.mag;
     showGun();
