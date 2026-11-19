@@ -62,9 +62,9 @@ try {
   await tap(0);                                                      // A: wakes the pad (Pad.active)
   await wait(500);
   ok(await pg.evaluate(() => Glyph.mode() === 'xbox' && !!document.querySelector('#pvpMenu .controls .gl.pad.face')), 'touching a controller switches the menu prompts to its buttons (Xbox)');
-  await tap(5);                                                      // RB: next tab
+  await tap(5); await wait(300);                                     // RB: next tab
   ok(await pg.evaluate(() => document.querySelector('#pvpMenu [data-tab].on')?.dataset.tab === 'classes'), 'RB flips the GigaLeague menu to CLASSES');
-  await tap(4);                                                      // LB: back to PLAY
+  await tap(4); await wait(300);                                     // LB: back to PLAY
   ok(await pg.evaluate(() => document.querySelector('#pvpMenu [data-tab].on')?.dataset.tab === 'play' && !!document.querySelector('#pvpMenu .pad-focus')), 'LB flips back, and a button holds the controller focus');
   // a dropdown steps with left / right
   const sel = await pg.evaluate(() => { const s = document.querySelector('#pvpMenu select[data-k="mode"]'); Pad.setFocus(s); return s.value; });
@@ -79,6 +79,8 @@ try {
   await wait(200);
   await pg.evaluate(() => document.querySelector('#pvpMenu [data-act="offline"]').click());
   await pg.waitForFunction(() => window.AR?.Pvp?.on && AR.PvpMission.snap && AR.PvpMission.remotes.size > 3, null, { timeout: 120000 });
+  // an enemy bot that is alive right now (respawned on the spot if they all happen to be dead)
+  await pg.evaluate(() => { window.__enemy = (M, me) => { let q = [...M.players.values()].find(p => p.bot && p.alive && p.team !== me.team); if (!q) { q = [...M.players.values()].find(p => p.bot && p.team !== me.team); M.spawn(q); } return q; }; });
   await pg.evaluate(() => { window.__snd = new Set(); const f = AR.PvpAudio.shot; AR.PvpAudio.shot = function (k, snd, ...a) { __snd.add(snd); return f.call(this, k, snd, ...a); }; });
   await wait(4000);
   ok(await pg.evaluate(() => !Music.current), 'no music during the match');
@@ -94,7 +96,7 @@ try {
   // a round aimed just past the player's head cracks past it
   const wz = await pg.evaluate(async () => {
     const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot), w0 = AR.PvpAudio.stats.whiz;
-    const q = [...M.players.values()].find(p => p.bot && p.alive && p.team !== me.team);
+    const q = __enemy(M, me);
     const eye = [me.pos[0] + 6, me.pos[1] + 1.6, me.pos[2]];
     q.pos = [eye[0], me.pos[1], eye[2]];
     for (let i = 0; i < 3; i++) {
@@ -111,24 +113,39 @@ try {
   // bodies: kill a bot in view and watch its body
   const body = await pg.evaluate(async () => {
     const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot);
-    const q = [...M.players.values()].find(p => p.bot && p.alive && p.team !== me.team);
+    const q = __enemy(M, me);
     const r = AR.PvpMission.remotes.get(q.num);
     M.kill(q, me, { w: 'ar', head: true });
     await new Promise(res => setTimeout(res, 1200));
     const c1 = r.corpse && r.corpse.av.root.visible, clip = r.corpse?.av.clipName;
     await new Promise(res => setTimeout(res, 4000));
     const c2 = r.corpse && r.corpse.av.root.visible;
+    const held = !!r.corpse?.act?.paused && r.corpse.act.time <= r.corpse.hold + 0.01, hold = r.corpse?.hold?.toFixed(2), time = r.corpse?.act?.time?.toFixed(2);
     await new Promise(res => setTimeout(res, 5800));
-    return { c1, clip, c2, c3: !!r.corpse };
+    return { c1, clip, c2, c3: !!r.corpse, held, hold, time };
   });
   ok(body.c1 && body.clip === 'Death', `a killed player's body falls with the Death clip (${body.clip})`);
   ok(body.c2, 'the body is still there five seconds later');
   ok(!body.c3, 'and it clears after about nine seconds');
+  ok(body.held, `the body freezes on the floor: the Death clip stops at ${body.hold}s and never stands back up (time ${body.time})`);
+  // a suppressed enemy gun: its own sound, heard close only
+  const sup = await pg.evaluate(async () => {
+    const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot), q0 = AR.PvpAudio.stats.quiet;
+    const calls = []; const f = GunAudio.shot; GunAudio.shot = function (id, t, o) { calls.push(!!o?.suppressed); return f.apply(this, arguments); };
+    const q = __enemy(M, me);
+    for (const w of q.weapons) w.g = Object.assign({}, w.g, { mods: Object.assign({}, w.g.mods, { quiet: 1 }) });
+    q.pos = [me.pos[0] + 7, me.pos[1], me.pos[2]];
+    for (let i = 0; i < 4; i++) { await new Promise(r => setTimeout(r, 250)); const w = q.weapons[q.cur]; w.next = 0; w.mag = Math.max(w.mag, 2); M.onFire(q.id, { d: [[0, 0, -1]] }); }
+    await new Promise(r => setTimeout(r, 700));
+    GunAudio.shot = f;
+    return { quiet: AR.PvpAudio.stats.quiet - q0, supCalls: calls.filter(Boolean).length };
+  });
+  ok(sup.quiet > 0 && sup.supCalls > 0, `a suppressed enemy gun plays the suppressed sound (${sup.quiet} shots)`);
   // medals: four quick kills by the player = DOUBLE TAP.. FOUR-STACK and a QUAD FEED
   await pg.evaluate(async () => {
     const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot);
     const k0 = M.kill; M.kill = (q, by, i) => (by === me ? k0(q, by, i) : null);     // nobody else scores a kill meanwhile
-    for (let i = 0; i < 4; i++) { const q = [...M.players.values()].find(p => p.bot && p.alive && p.team !== me.team); if (q) M.kill(q, me, { w: 'smg' }); await new Promise(r => setTimeout(r, 250)); }
+    for (let i = 0; i < 4; i++) { const q = __enemy(M, me); if (q) M.kill(q, me, { w: 'smg' }); await new Promise(r => setTimeout(r, 250)); }
     M.kill = k0;
   });
   await wait(1400);
@@ -140,6 +157,18 @@ try {
   ok(fb.medals.some(m => /QUAD FEED|FOUR-STACK|TRIPLE|DOUBLE/.test(m)), `medals pop up (${fb.medals.join(', ')})`);
   ok(parseInt(fb.font, 10) >= 15, `the kill feed is bigger (${fb.font})`);
   ok(/^\+\d+/.test(fb.pts || '') && fb.conf > 0, `a running points total with kill confirms (${fb.pts})`);
+  ok(await pg.evaluate(() => document.querySelectorAll('#pvpHud .md svg.pmedal').length > 0), 'medals show their own emblems');
+  // an announcement and the points at the same time sit in separate bands
+  const bands = await pg.evaluate(async () => {
+    AR.Hud.toast('FLAG A SECURED', 'GIGACORP'); AR.Hud.banner('ROUND 2', 'ATTACK', 2);
+    await new Promise(r => setTimeout(r, 150));
+    const R = s => document.querySelector(s)?.getBoundingClientRect();
+    const t = R('#arHud .toast div'), b = R('#arHud .banner'), p = R('#pvpHud .pts'), sb = R('#pvpHud .sb');
+    const over = (a, c) => a && c && a.bottom > c.top && c.bottom > a.top && a.right > c.left && c.right > a.left && a.height > 0 && c.height > 0;
+    return { tTop: t?.top, pTop: p?.top, sbBottom: sb?.bottom, overlap: over(t, p) || over(b, p), underSb: t && sb && t.top >= sb.bottom };
+  });
+  ok(!bands.overlap && bands.underSb && bands.pTop > 340, `announcements sit under the score bar (${Math.round(bands.tTop)} px), points at the crosshair (${Math.round(bands.pTop)} px), no overlap`);
+  await pg.screenshot({ path: path.join(SHOTS, 'pvp-feel-bands.png') }).catch(() => {});
 
   /* 6b. a controller in the match: prompts, D-pad, class change, scoreboard */
   await pg.evaluate(() => { __pad.on = true; });
@@ -155,9 +184,20 @@ try {
   ok(await pg.evaluate(() => getComputedStyle(document.querySelector('#pvpHud .board')).display === 'block'), 'holding BACK shows the scoreboard');
   await pg.evaluate(() => __press(8, false)); await wait(300);
   ok(await pg.evaluate(() => !AR.paused && getComputedStyle(document.querySelector('#pvpHud .board')).display === 'none'), 'and letting go hides it (BACK does not pause in PvP)');
-  // die, then change class with RB on the respawn screen
-  await pg.evaluate(() => { const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot); M.kill = Object.getPrototypeOf(M).kill.bind(M); M.kill(me, null, { w: 'world' }); });
-  await wait(800);
+  // die to a bot: the death cam looks at them from the front, with your own gun and body off the screen
+  await pg.evaluate(() => { const M = AR.PvpMission.transport.match, me = [...M.players.values()].find(p => !p.bot); M.kill = Object.getPrototypeOf(M).kill.bind(M);
+    const q = __enemy(M, me); window.__killer = q.num; M.kill(me, q, { w: q.weapons[q.cur].id }); });
+  await wait(1800);
+  const dc = await pg.evaluate(() => {
+    const r = AR.PvpMission.remotes.get(__killer), s = r?.cur, c = AR.camera.position;
+    const fx = -Math.sin(s.yaw), fz = -Math.cos(s.yaw), dx = c.x - s.pos.x, dz = c.z - s.pos.z, d = Math.hypot(dx, dz);
+    return { spect: AR.Player.spectating, front: (dx * fx + dz * fz) / (d || 1), d, label: document.querySelector('#pvpHud .kc')?.textContent, card: document.querySelector('#pvpHud .resp h2')?.textContent,
+      hp: document.querySelector('#pvpHud .resp .khp span')?.textContent, vis: av => av, killerShown: r.av.root.visible };
+  });
+  console.log('  deathcam', JSON.stringify(dc));
+  await pg.screenshot({ path: path.join(SHOTS, 'pvp-feel-deathcam.png') }).catch(() => {});
+  ok(dc.spect && dc.killerShown && dc.d > 0.8 && dc.d < 6.5 && (dc.front > 0.5 || dc.d < 1.5), `the death cam is in front of your killer (${dc.d.toFixed(1)} m, facing ${dc.front.toFixed(2)})`);
+  ok(/THE PLAYER WHO GOT YOU/.test(dc.label || '') && /KILLED BY/.test(dc.card || '') && /HEALTH|DOWN/.test(dc.hp || ''), `it names them and shows their health (${dc.hp})`);
   const c0 = await pg.evaluate(() => document.querySelector('#pvpHud .resp .cls button.on')?.dataset.i);
   await tap(5); await wait(300);
   const c1 = await pg.evaluate(() => ({ on: document.querySelector('#pvpHud .resp .cls button.on')?.dataset.i, hint: !!document.querySelector('#pvpHud .resp .gl.pad'), sim: [...AR.PvpMission.transport.match.players.values()].find(p => !p.bot).cls }));

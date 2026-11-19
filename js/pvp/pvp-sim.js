@@ -1391,7 +1391,7 @@
         const dx = q.pos[0] - p.pos[0], dy = q.pos[1] - p.pos[1], dz = q.pos[2] - p.pos[2], d = Math.hypot(dx, dy, dz);
         if (d > (q.camoUntil > this.now ? 8 : 75)) continue;
         const f = dirFrom(p.yaw, 0), inView = (dx * f[0] + dz * f[2]) / (Math.hypot(dx, dz) || 1) > -0.2;
-        const heard = this.now - (q.loudAt || -9) < 1 && d < 35 || d < 6 || B.alertBy === q.id && this.now - B.alertT < 2.5 || q.jugg || q.carry;
+        const heard = this.now - (q.loudAt || -9) < 1 && d < 35 || this.now - (q.quietFire || -9) < 1 && d < 9 || d < 6 || B.alertBy === q.id && this.now - B.alertT < 2.5 || q.jugg || q.carry;
         if (!inView && !heard) continue;
         const qe = this.eye(q);
         const visible = (W.los(eye[0], eye[1], eye[2], qe[0], qe[1], qe[2]) || W.los(eye[0], eye[1], eye[2], q.pos[0], q.pos[1] + 1.0, q.pos[2])) && !this.smoked(eye[0], eye[1], eye[2], q.pos[0], q.pos[1] + 1, q.pos[2]);

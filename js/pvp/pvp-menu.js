@@ -68,6 +68,10 @@
   #pvpMenu .dHead h3{margin:0;font-size:20px;color:#fff;letter-spacing:.12em}#pvpMenu .dHead .role{display:block;font-size:11px;color:#00e5ff;margin-top:2px}
   #pvpMenu .dHead em{font-style:normal;color:#ffd400}#pvpMenu .dHint{font-size:9px;opacity:.5;align-self:flex-start}
   #pvpMenu .bigic{color:#ffd400;display:flex;padding:6px;border:1px solid #4b3d80;background:#0e0b1c}
+  #pvpMenu .glv{border:1px solid #ff9800;background:rgba(255,152,0,.08);padding:8px 10px;margin:4px 0 10px;text-transform:none;letter-spacing:.02em}
+  #pvpMenu .glvh{display:flex;gap:6px;align-items:center;color:#ff9800;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+  #pvpMenu .glvb{display:flex;gap:10px;align-items:center;font-size:12px;margin:6px 0;text-transform:uppercase}#pvpMenu .glvb .bar{flex:1;min-width:80px}
+  #pvpMenu .glv p{margin:2px 0 0;font-size:12px;opacity:.9}
   #pvpMenu .lk{display:inline-flex;gap:4px;align-items:center;font-size:10px;color:#ff9800;margin-top:3px}
   #pvpMenu .cacStage{position:relative;height:190px;margin:6px -6px 8px;background:radial-gradient(ellipse at 50% 62%,rgba(0,229,255,.14),transparent 62%),repeating-linear-gradient(90deg,transparent 0 39px,rgba(255,255,255,.03) 39px 40px);border-bottom:1px solid rgba(255,255,255,.08);cursor:grab}
   #pvpMenu .cacStage.loading::after{content:'LOADING MODEL';position:absolute;inset:0;display:grid;place-items:center;font-size:11px;opacity:.6}
@@ -341,7 +345,7 @@
         <span class="ccIcons" title="${esc([PVP.LETHALS[c.lethal]?.name, PVP.TACTICALS[c.tactical]?.name, ...(c.perks || []).map(p => PVP.PERKS[p]?.name)].map(clean).join(' · '))}">
           ${ICON(c.lethal, { size: 20 })}${ICON(c.tactical, { size: 20 })}<i class="sep"></i>${(c.perks || []).map(p => ICON(p, { size: 20 })).join('')}</span>
         <span class="ccFoot">${c.premade ? 'VIEW' : 'EDIT'} ▸</span></button>`;
-    body.innerHTML = `${lv < PVP.CUSTOM_AT ? `<p class="hint">Custom classes open at level ${PVP.CUSTOM_AT}. Until then, pick a premade class before each match or when you respawn. Tap one to see what is in it.</p>` : ''}
+    body.innerHTML = `${lv < PVP.CUSTOM_AT ? `<p class="hint">Custom classes open at PLAYER LEVEL ${PVP.CUSTOM_AT} (you are level ${lv}). Until then, pick a premade class before each match or when you respawn. Tap one to see what is in it.</p>` : ''}
       <div class="clist">${list.map(card).join('')}</div>
       <div class="card" style="margin-top:14px"><h3>SCORESTREAKS — PICK ${PVP.STREAK_SLOTS} <span class="hint">(${mine.length} / ${PVP.STREAK_SLOTS})</span></h3>
         <p>Points from kills, assists and objectives buy these during a life. Your points reset when you die, so cheaper streaks come out more often.</p>
@@ -350,7 +354,7 @@
           return `<button class="pcard ${on ? 'eq' : ''} ${ok ? '' : 'lock'}" data-st="${id}" ${ok ? '' : 'aria-disabled="true"'}>
             <span class="pch">${ICON(id)}<b>${clean(S.name)}</b></span><span class="pts">${S.pts.toLocaleString('en-US')} POINTS</span>
             <span class="mini">${esc(S.d)}</span>${E?.cons?.[0] ? `<span class="mini"><span class="r">−</span> ${esc(E.cons[0])}</span>` : ''}
-            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${S.lvl}</span>`}</button>`;
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} PLAYER LV ${S.lvl}</span>`}</button>`;
         }).join('')}</div><p class="hint streakMsg"></p></div>`;
     body.querySelectorAll('[data-edit]').forEach(b => b.onclick = () => { editing = +b.dataset.edit; render(); });
     body.querySelectorAll('[data-st]').forEach(b => b.onclick = () => {
@@ -457,7 +461,7 @@
       } else E = C.entry('gun', gid, att);
       const st = C.gunStats(showGid, showAtt), base = cmp ? C.gunStats(cmp[0], cmp[1]) : null;
       const locked = h?.kind === 'gun' ? PVP.GUNS[h.id].lvl > lv : h?.kind === 'attach' ? PvpProgress.weaponLevel(gid) < PVP.attachLevel(h.id) : false;
-      const lockTxt = h?.kind === 'gun' ? `UNLOCKS AT LEVEL ${PVP.GUNS[h.id].lvl}` : h?.kind === 'attach' ? `UNLOCKS AT WEAPON LEVEL ${PVP.attachLevel(h.id)} (YOURS: ${PvpProgress.weaponLevel(gid)})` : '';
+      const lockTxt = h?.kind === 'gun' ? `UNLOCKS AT PLAYER LEVEL ${PVP.GUNS[h.id].lvl} (YOU: ${lv})` : h?.kind === 'attach' ? `UNLOCKS AT ${gunShort(gid)} LEVEL ${PVP.attachLevel(h.id)} (YOURS: ${PvpProgress.weaponLevel(gid)}). LEVEL THE GUN WITH KILLS, NOT YOUR PLAYER LEVEL` : '';
       const attHead = h?.kind === 'attach';
       D.innerHTML = `<div class="dHead">${attHead ? `<span class="bigic">${ICON(h.id, { size: 34 })}</span>` : ''}<div><h3>${esc(E.title)}</h3>
           <span class="role">${esc(E.role)}${attHead ? ' ATTACHMENT · FOR ' + clean(PVP.GUNS[gid].name) : ''}${note ? ` · <em>${note}</em>` : ''}</span>
@@ -474,9 +478,22 @@
     const extra = kind === 'lethal' ? [X.dmg && `Damage: up to ${X.dmg}`, X.radius && `Blast radius: ${X.radius} m`, X.fuse && `Fuse: ${X.fuse} s`].filter(Boolean)
       : kind === 'tactical' ? [X.radius && `Radius: ${X.radius} m`, X.dur && `Lasts: ${X.dur} s`, X.fuse && `Fuse: ${X.fuse} s`].filter(Boolean) : [];
     D.innerHTML = `<div class="dHead"><span class="bigic">${ICON(id, { size: 40 })}</span><div><h3>${esc(E.title)}</h3><span class="role">${esc(E.role)}</span>
-        ${X.lvl > lv ? `<span class="lk">${ICON('lock', { size: 12 })} UNLOCKS AT LEVEL ${X.lvl}</span>` : ''}</div></div>
+        ${X.lvl > lv ? `<span class="lk">${ICON('lock', { size: 12 })} UNLOCKS AT PLAYER LEVEL ${X.lvl} (YOU: ${lv})</span>` : ''}</div></div>
       <div class="dText solo">${textHtml(Object.assign({}, E, { lines: extra }))}</div>`;
   }
+  // "M-52 REVENANT" -> "REVENANT": short enough for a lock badge, clear about which gun's level it means
+  function gunShort(gid) { const n = clean(PVP.GUNS[gid]?.name || gid).replace(/^\[|\]$/g, ''); const w = n.split(' '); return (w.length > 1 && /\d|-/.test(w[0]) ? w.slice(1).join(' ') : n).toUpperCase(); }
+  /** The attachments tab says, up front, that attachments come from the gun's own level, how far along it is and what is next. */
+  function gunLevelBox(gid) {
+    const xp = PvpProgress.S().wxp?.[gid] || 0, W = PVP.weaponLevelOf(xp), name = gunShort(gid);
+    const next = PVP.ATTACH_LADDER[W.level - 1], nextName = next ? PVP.ATTACHMENTS[next]?.name : '';
+    const kills = W.need ? Math.ceil((W.need - W.into) / 100) : 0;
+    return `<div class="glv"><div class="glvh">${ICON('lock', { size: 14 })}<b>ATTACHMENTS UNLOCK WITH THIS GUN'S LEVEL, NOT YOUR PLAYER LEVEL</b></div>
+      <div class="glvb"><span>${esc(name)} LEVEL <b>${W.level}</b> / ${PVP.WEAPON_MAX}</span><div class="bar"><i style="width:${W.need ? Math.round(W.into / W.need * 100) : 100}%"></i></div>
+      <span>${W.need ? `${W.into.toLocaleString('en-US')} / ${W.need.toLocaleString('en-US')} WEAPON XP` : 'MAX LEVEL'}</span></div>
+      <p>Every kill with the ${esc(name)} earns it 100 weapon XP (+25 for a headshot), in any match.${next ? ` Next: <b>${esc(nameOf(nextName))}</b> at ${esc(name)} level ${W.level + 1}, about ${kills} more kill${kills === 1 ? '' : 's'}.` : ' Every attachment is unlocked.'}</p></div>`;
+  }
+  const nameOf = x => String(x || '').replace(/"/g, '');
   function barRow(C, k, st, base) {
     const v = st.bars[k];
     if (v == null) return `<div class="sbar" title="${esc(C.BAR_HELP[k])}"><span>${C.BAR_NAMES[k]}</span><div class="track na"></div></div>`;
@@ -518,7 +535,8 @@
       const gid = c[ed.slot], att = attOf(gid), wl = PvpProgress.weaponLevel(gid);
       html = `<div class="ptabs"><button class="${ed.sub === 'gun' ? 'on' : ''}" data-sub="gun">WEAPON</button>
         <button class="${ed.sub === 'att' ? 'on' : ''}" data-sub="att">ATTACHMENTS ${att.length} / ${PVP.MAX_ATTACH}</button>
-        <span class="hint">${ed.sub === 'att' ? `${clean(PVP.GUNS[gid].name)} · WEAPON LEVEL ${wl} / ${PVP.WEAPON_MAX}. Kills with it unlock more.` : 'Hover or focus a gun to compare it with yours.'}</span></div>`;
+        <span class="hint">${ed.sub === 'att' ? '' : `Guns unlock with your PLAYER level (you: ${lv}). Hover or focus a gun to compare it with yours.`}</span></div>
+        ${ed.sub === 'att' ? gunLevelBox(gid) : ''}`;
       if (ed.sub === 'gun') {
         const ids = ed.slot === 'primary' ? PVP.PRIMARY_IDS : secondaryIds();
         html += `<div class="pgrid guns">${ids.map(id => {
@@ -526,7 +544,7 @@
           const mini = st ? ['damage', 'range', 'rate', 'mobility'].map(k => `<span class="mb"><small>${C.BAR_NAMES[k].split(' ')[0]}</small><i style="width:${Math.round((st.bars[k] ?? 0) * 100)}%"></i></span>`).join('') : '';
           return `<button class="pcard gun ${id === gid ? 'eq' : ''} ${ok ? '' : 'lock'}" data-pick="gun:${id}">${gunImg(id, attOf(id))}
             <span class="pch"><b>${clean(G.name)}</b></span><span class="role">${roleOf(id)}</span><span class="minis">${mini}</span>
-            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${G.lvl}</span>`}</button>`;
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} PLAYER LV ${G.lvl}</span>`}</button>`;
         }).join('')}</div>`;
       } else {
         html += PVP.ATTACH_SLOTS.map(sl => {
@@ -537,7 +555,7 @@
               <span class="pch">${ICON(a)}<b>${A.name}</b></span>
               ${pc.pros.slice(0, 2).map(x => `<span class="mini"><span class="g">+</span> ${esc(x)}</span>`).join('')}
               ${pc.cons.slice(0, 2).map(x => `<span class="mini"><span class="r">−</span> ${esc(x)}</span>`).join('')}
-              ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} WEAPON LEVEL ${need}</span>`}</button>`;
+              ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} ${gunShort(gid)} LV ${need}</span>`}</button>`;
           }).join('')}</div></div>`;
         }).join('');
       }
@@ -545,12 +563,12 @@
       const tier = kind === 'perk' ? +ed.slot.slice(4) : 0;
       const T = kind === 'perk' ? PVP.PERKS : kind === 'lethal' ? PVP.LETHALS : PVP.TACTICALS;
       const ids = Object.keys(T).filter(id => !tier || T[id].tier === tier), cur = curId(ed.slot);
-      html = `<div class="ptabs"><span class="hint">${kind === 'perk' ? `PERK ${tier}: pick one. Each perk slot has its own list.` : kind === 'lethal' ? 'LETHAL: the grenade-slot weapon. One per life (DUMPSTER DIVER refills it).' : 'TACTICAL: equipment that does not kill but wins fights.'}</span></div>
+      html = `<div class="ptabs"><span class="hint">${kind === 'perk' ? `PERK ${tier}: pick one. Each perk slot has its own list. Locked ones open with your PLAYER level (you: ${lv}).` : kind === 'lethal' ? 'LETHAL: the grenade-slot weapon. One per life (DUMPSTER DIVER refills it).' : 'TACTICAL: equipment that does not kill but wins fights.'}</span></div>
         <div class="pgrid">${ids.map(id => {
           const X = T[id], ok = X.lvl <= lv, E = C?.entry(kind, id);
           return `<button class="pcard ${id === cur ? 'eq' : ''} ${ok ? '' : 'lock'}" data-pick="${kind}:${id}"><span class="pch">${ICON(id)}<b>${clean(X.name)}</b></span>
             <span class="mini">${esc(X.d)}</span>${E?.cons?.[0] ? `<span class="mini"><span class="r">−</span> ${esc(E.cons[0])}</span>` : ''}
-            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} LEVEL ${X.lvl}</span>`}</button>`;
+            ${ok ? '' : `<span class="lk">${ICON('lock', { size: 12 })} PLAYER LV ${X.lvl}</span>`}</button>`;
         }).join('')}</div>`;
     }
     P.innerHTML = html;
@@ -570,17 +588,17 @@
     const c = ed.c, lv = PvpProgress.level();
     if (ed.ro) { ed.hover = { kind, id }; drawDetail(body); return flash(body, 'PREMADE CLASSES CANNOT BE CHANGED', true); }
     if (kind === 'gun') {
-      if (PVP.GUNS[id].lvl > lv) { ed.hover = { kind, id }; drawDetail(body); return flash(body, `UNLOCKS AT LEVEL ${PVP.GUNS[id].lvl}`, true); }
+      if (PVP.GUNS[id].lvl > lv) { ed.hover = { kind, id }; drawDetail(body); return flash(body, `UNLOCKS AT PLAYER LEVEL ${PVP.GUNS[id].lvl} (YOU: ${lv})`, true); }
       c[ed.slot] = id;
     } else if (kind === 'attach') {
       const gid = c[ed.slot], need = PVP.attachLevel(id);
-      if (PvpProgress.weaponLevel(gid) < need) return flash(body, `UNLOCKS AT WEAPON LEVEL ${need}`, true);
+      if (PvpProgress.weaponLevel(gid) < need) return flash(body, `UNLOCKS AT ${gunShort(gid)} LEVEL ${need} (YOURS: ${PvpProgress.weaponLevel(gid)}). GET KILLS WITH THIS GUN TO LEVEL IT`, true);
       const t = toggled(attOf(gid), id);
       if (!t) return flash(body, `ALL ${PVP.MAX_ATTACH} ATTACHMENT SLOTS ARE IN USE`, true);
       c.att[gid] = t;
     } else {
       const T = kind === 'perk' ? PVP.PERKS : kind === 'lethal' ? PVP.LETHALS : PVP.TACTICALS;
-      if (T[id].lvl > lv) return flash(body, `UNLOCKS AT LEVEL ${T[id].lvl}`, true);
+      if (T[id].lvl > lv) return flash(body, `UNLOCKS AT PLAYER LEVEL ${T[id].lvl} (YOU: ${lv})`, true);
       if (kind === 'perk') c.perks[+ed.slot.slice(4) - 1] = id; else c[kind] = id;
       if (!bnplOn() && !PVP.GUNS[c.secondary]?.secondary) c.secondary = 'pistol';
     }
@@ -601,7 +619,7 @@
       <div class="card"><h3>LIFETIME</h3><table><tr><td>MATCHES</td><td>${st2.matches}</td></tr><tr><td>WINS</td><td>${st2.wins}</td></tr><tr><td>KILLS / DEATHS</td><td>${st2.kills} / ${st2.deaths} (RATIO ${((st2.kills + 1) / (st2.deaths + 1)).toFixed(2)})</td></tr>
       <tr><td>BEST STREAK</td><td>${st2.best}</td></tr><tr><td>GIGATECH TODAY</td><td>${s.gtDay === PvpProgress.today() ? s.gtToday : 0} / ${PVP.GT.dailyCap}</td></tr><tr><td>REVIVAL FEES OWED</td><td>¤${(st2.deaths * PVP.REVIVAL_FEE).toLocaleString('en-US')}</td></tr></table>
       <p class="hint">PvP pays XP, DRIP for the Fitting Room, and a little GigaTech (capped each day). Campaign rarity finds unlock the same camo here: looks only.</p></div></div>
-      <div class="card" style="margin-top:12px"><h3>WEAPONS AND CAMOS</h3><table><tr><td></td><td>LEVEL</td><td>CAMO</td><td>NEXT CAMO</td><td>KILLS / HEADS / LONGS</td></tr>${guns.map(g => {
+      <div class="card" style="margin-top:12px"><h3>WEAPONS AND CAMOS</h3><p class="hint">Each gun has its own level, from kills with it (100 weapon XP a kill, +25 for a headshot). Gun levels unlock that gun's attachments; your player level unlocks guns, perks and equipment.</p><table><tr><td></td><td>GUN LEVEL</td><td>CAMO</td><td>NEXT CAMO</td><td>KILLS / HEADS / LONGS</td></tr>${guns.map(g => {
         const t = PvpProgress.camoOf(g), R = PVP.CAMO_RULES[t + 1], w = s.wstats[g] || {};
         return `<tr><td>${clean(PVP.GUNS[g].name)}</td><td>${PvpProgress.weaponLevel(g)} / ${PVP.WEAPON_MAX}</td><td>${PVP.CAMO[t]}</td><td>${R ? PVP.CAMO[t + 1] + ': ' + R.d : 'DONE'}</td><td>${w.kills || 0} / ${w.heads || 0} / ${w.longs || 0}</td></tr>`;
       }).join('')}</table><p class="hint">Bot kills level your guns but never count toward camos.</p></div>`;

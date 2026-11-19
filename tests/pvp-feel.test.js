@@ -33,7 +33,7 @@ test('every gun has its own voice, and the gun audio has a recipe for each', () 
     voices.add(g.snd);
   }
   assert.equal(voices.size, Object.values(PVP.GUNS).filter(g => !g.melee).length, 'no two guns share a voice');
-  assert.match(read('js/gunfeel.js'), /GunAudio\?\.shot\?\.\(w\.snd \|\| w\.id, tier\)/, 'the local player hears the same voice others do');
+  assert.match(read('js/gunfeel.js'), /GunAudio\?\.shot\?\.\(w\.snd \|\| w\.id, tier, w\.suppressed/, 'the local player hears the same voice others do');
 });
 
 test('snapshots carry each player\'s rounds fired and melee swings, so every round can be heard', () => {
@@ -152,4 +152,78 @@ test('scripts load in order: glyphs after the gamepad, PvP audio before the PvP 
   const html = read('index.html'), at = f => html.indexOf(f);
   assert.ok(at('js/gamepad.js') < at('js/input-glyphs.js') && at('js/input-glyphs.js') < at('js/arena/arena-hud.js'));
   assert.ok(at('js/arena/arena-pvp-audio.js') > 0 && at('js/arena/arena-pvp-audio.js') < at('js/arena/arena-pvp.js'));
+});
+
+/* ---------------------------------------------------------------- playtest 2 (Nov 19, late) */
+
+test('a suppressor changes the sound, keeps it close, hides the flash and barely alerts anyone', () => {
+  const ga = read('js/gunaudio.js'), au = read('js/arena/arena-pvp-audio.js');
+  assert.match(ga, /function suppressed\(v, t, id\)/, 'a suppressed recipe');
+  assert.match(ga, /o\?\.suppressed \? \(v, tt\) => suppressed\(v, tt, id\)/, 'shot() plays it when asked');
+  const SUPS = vm.runInNewContext('(' + /const SUP = (\{[\s\S]*?\});/.exec(ga)[1] + ')');
+  for (const g of Object.values(PVP.GUNS)) if (!g.melee) assert.ok(SUPS[g.snd], g.snd + ' has a suppressed sound');
+  assert.match(au, /maxD = quiet \? 26 : 170/, 'heard only up close');
+  assert.match(au, /suppressed: true/, 'other players hear the suppressed sound too');
+  assert.match(read('js/arena/arena-player.js'), /get suppressed\(\) \{ return !!g\.d\?\.quiet; \}/);
+  assert.match(read('js/arena/arena-pvp.js'), /quiet: !!S\.mods\?\.quiet/);
+  assert.match(read('js/gunfeel.js'), /fs \* \(w\.suppressed \? 0\.25 : 1\)/, 'smaller flash');
+  assert.match(read('js/pvp/pvp-sim.js'), /q\.quietFire \|\| -9\) < 1 && d < 9/, 'bots hear a suppressed shot only within 9 m');
+});
+
+test('bodies freeze where they land: the Death clip is held at its lowest point, before it gets back up', () => {
+  const pvp = read('js/arena/arena-pvp.js');
+  assert.match(pvp, /function deathHold\(clip\)/);
+  assert.match(pvp, /if \(c\.act && c\.act\.time >= c\.hold\) \{ c\.act\.time = c\.hold; c\.act\.paused = true; \}/);
+  // the clip in the avatar file: falls in about a second, lies still, stands back up at the very end
+  const b = fs.readFileSync(path.join(root, 'assets/models/ps1/avatar/avatar_m_base.glb')), jl = b.readUInt32LE(12), j = JSON.parse(b.slice(20, 20 + jl)), bin = 20 + jl + 8;
+  const an = j.animations.find(a => a.name === 'Death'), ch = an.channels.find(c => j.nodes[c.target.node].name === 'hips' && c.target.path === 'translation');
+  const read3 = i => { const a = j.accessors[i], bv = j.bufferViews[a.bufferView], n = a.type === 'VEC3' ? 3 : 1, o = bin + (bv.byteOffset || 0) + (a.byteOffset || 0); return Array.from({ length: a.count * n }, (_, k) => b.readFloatLE(o + k * 4)); };
+  const t = read3(an.samplers[ch.sampler].input), v = read3(an.samplers[ch.sampler].output);
+  const ys = t.map((_, k) => v[k * 3 + 1]), minY = Math.min(...ys), k0 = ys.findIndex(y => y <= minY + 0.04);
+  assert.ok(t[k0] < 1.3, 'down by ' + t[k0].toFixed(2) + ' s');
+  assert.ok(ys[ys.length - 1] > 0.8, 'and the clip stands back up at the end, which is why it is held');
+});
+
+test('every medal has its own emblem', () => {
+  const sb = { PVP };
+  sb.globalThis = sb;
+  vm.runInNewContext(read('js/pvp/pvp-medal-icons.js'), sb);
+  const M = sb.PvpMedalIcons, seen = new Set();
+  for (const id of Object.keys(PVP.MEDALS)) {
+    assert.ok(M.ids.includes(id), id + ' has a symbol');
+    const svg = M.svg(id, 64);
+    assert.match(svg, /^<svg class="pmedal"/);
+    const sym = svg.replace(/id="pmg\d+"|url\(#pmg\d+\)/g, '');
+    assert.ok(!seen.has(sym), id + ' is unique'); seen.add(sym);
+  }
+  assert.match(read('js/arena/arena-pvp.js'), /PvpMedalIcons\.svg\(id, 64\)/, 'the pop-up uses it');
+  const html = read('index.html');
+  assert.ok(html.indexOf('js/pvp/pvp-medal-icons.js') > html.indexOf('js/pvp/pvp-data.js') && html.indexOf('js/pvp/pvp-medal-icons.js') < html.indexOf('js/arena/arena-pvp.js'));
+});
+
+test('the death cam looks at your killer from the front, live, with your own gun and body hidden', () => {
+  const pvp = read('js/arena/arena-pvp.js'), pl = read('js/arena/arena-player.js');
+  assert.match(pvp, /killcam = \{ mode: 'death'/);
+  assert.match(pvp, /function frontCam\(s, dt, k\)/);
+  assert.match(pvp, /if \(s && \(s\.f & 1\)\) frontCam\(s, rdt, k\); else overCam\(rdt, k\);/);
+  assert.match(pvp, /AR\.Player\.spectate\?\.\(true\)/);
+  assert.match(pl, /function spectate\(on\)/);
+  assert.match(pl, /GF\.gunGroup\.visible = !on; GunFeel\.setVisible\(!on\)/, 'your gun and hands leave the screen');
+  assert.match(pl, /window\.FPBody\?\.show\?\.\(!on\)/, 'and your body');
+});
+
+test('HUD bands: announcements under the score bar, points at the crosshair, never the same place', () => {
+  const pvp = read('js/arena/arena-pvp.js');
+  assert.match(pvp, /#arHud\.pvp \.banner\{top:90px\}/);
+  assert.match(pvp, /#arHud\.pvp \.toast\{top:160px\}/);
+  assert.match(pvp, /#pvpHud \.pts\{position:absolute;left:50%;top:calc\(50% \+ 20px\)/);
+});
+
+test('create-a-class says which level unlocks what: player level for guns, perks and gear; the gun\'s own level for attachments', () => {
+  const m = read('js/pvp/pvp-menu.js');
+  assert.match(m, /ATTACHMENTS UNLOCK WITH THIS GUN'S LEVEL, NOT YOUR PLAYER LEVEL/);
+  assert.match(m, /\$\{gunShort\(gid\)\} LV \$\{need\}/, 'attachment locks name the gun');
+  assert.match(m, /PLAYER LV \$\{G\.lvl\}/, 'gun locks say player level');
+  assert.doesNotMatch(m, /UNLOCKS AT WEAPON LEVEL/);
+  assert.doesNotMatch(m, />\s*LEVEL \$\{(G|X|S)\.lvl\}/);
 });

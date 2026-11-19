@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-11-19 — GigaLeague playtest 2
+
+- **Suppressors really suppress.** A suppressed gun has its own sound: a muffled puff and the action's metal clack instead of the crack and boom. You hear it on your own gun. Other players hear it only within about 26 m, never across the map. The muzzle flash is much smaller, bots only notice it up close, and it stays off the enemy minimap.
+- **Bodies stay down.** The death animation used to play to its end, where the body stands back up. Bodies now stop the moment they hit the floor and stay there until they sink.
+- **Every medal has its own emblem**, CoD-style, instead of a plain box. The shape says the kind of medal (multikill, streak, skill, objective), the colour how big it is, and the symbol what you did. The results screen shows them too.
+- **Create-a-class says what unlocks what.** Locks now say PLAYER LEVEL for guns, perks and equipment, and name the gun for attachments (for example "REVENANT LV 4"). The attachments tab opens with a box explaining that attachments come from that gun's own level, not your player level, plus the gun's XP bar, the next attachment and roughly how many kills away it is. The suppressor's description now matches what it does.
+- **Announcements no longer cover your points.** Match announcements (revived, streaks called in, flags captured, round banners) sit just under the score bar. Your points sit right under the crosshair.
+- **A death cam instead of a killcam.** When you die, the camera goes to whoever killed you, live, in third person from the front, and zooms in. You see their face, outfit, name and the gun in their hands, so you can find them again. Your own gun and body leave the screen, so it no longer shows the gun you were holding. The respawn card shows who, with what, and their health. The Clip of the Match at the end uses the same view.
+
 ## 2026-11-19 — GigaLeague create-a-class
 
 The class editor is rebuilt, and every gun in it is now its own model with every attachment on it.

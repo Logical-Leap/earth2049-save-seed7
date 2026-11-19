@@ -35,6 +35,8 @@ Every button prompt in the menu, the HUD, the respawn screen and the pause menu 
 | Skip killcam (dead) | `SPACE` | A |
 | Change class (dead) | arrow keys or click | LB / RB or D-pad left / right |
 
+In the class editor, every lock says which level opens it: PLAYER LEVEL for guns, perks and equipment, and that gun's own level (from kills with it: 100 weapon XP a kill, +25 for a headshot) for its attachments. The attachments tab leads with the gun's level, its XP bar and the next unlock.
+
 A class picked from the respawn screen applies next life. A class picked from the pause menu in the first 6 seconds of a life, before firing, applies at once (the CoD rule); otherwise next life. The GigaLeague menu works on a controller: the D-pad moves the focus, A presses, B backs out, LB / RB flip tabs, and left / right step through a dropdown.
 
 Touch screens get extra buttons for TACTICAL, STREAK and SCORE.
@@ -45,7 +47,8 @@ Multiplayer never plays music: not in the menu, the lobby, a match or its result
 
 `js/arena/arena-pvp-audio.js` (`AR.PvpAudio`) places other players' sounds in the world. Each player has one emitter (an HRTF panner with a distance and wall low-pass); each kind of sound sets its own distance curve.
 
-- **Gunfire.** Snapshots carry each player's rounds-fired counter (row index 13), so the client plays every round at the gun's rate, not one sound per burst. Every gun has its own voice (`PVP.GUN_SND`, recipes in `js/gunaudio.js`), even where two guns share a model, and the local player hears the same voice, so a gun is learned by using it. Past 45 m a gun is heard as its distant boom (`GunAudio.distant`); a sniper carries further than an SMG. Through a wall it is muffled. A suppressor (row flag 16384) makes it quieter and shorter-range.
+- **Gunfire.** Snapshots carry each player's rounds-fired counter (row index 13), so the client plays every round at the gun's rate, not one sound per burst. Every gun has its own voice (`PVP.GUN_SND`, recipes in `js/gunaudio.js`), even where two guns share a model, and the local player hears the same voice, so a gun is learned by using it. Past 45 m a gun is heard as its distant boom (`GunAudio.distant`); a sniper carries further than an SMG. Through a wall it is muffled.
+- **Suppressors** change the sound, not just the volume: `GunAudio.shot(id, tier, { suppressed: true })` plays a muffled puff, the action's metal clack and a short hiss, per gun (`SUP` in `js/gunaudio.js`), with no crack, boom or rarity layers. You hear it on your own gun; other players hear it only within about 26 m and never as a distant boom (row flag 16384). The muzzle flash shrinks to a quarter. Bots notice a suppressed shot only within 9 m (35 m for a loud one), and it stays off the enemy minimap.
 - **Rounds passing close** to your head crack and whip past, so you know you are the one being shot at.
 - **Footsteps** are loud and placed: enemy steps louder than a teammate's, sprinting loudest, crouch-walking near silent, a landing thuds. The NOISE-CANCELLING perk silences them. Most bot classes skip that perk, so bots can be heard coming.
 - **Pain and death.** A grunt when anyone loses health, a cry and a body hitting the floor when they die. A teammate dying within 45 m also gives a short chirp.
@@ -53,10 +56,12 @@ Multiplayer never plays music: not in the menu, the lobby, a match or its result
 
 What you see:
 
-- **Bodies fall and stay.** The avatar plays its Death clip once and holds it, knocked a little away from the shot. The body stays 8 seconds, then sinks. Each remote player has at most two avatars, swapped between the living player and the body. A teammate's death is marked on the minimap with a fading X for 6 seconds.
+- **Bodies fall and stay.** The avatar plays its Death clip, knocked a little away from the shot, and freezes the moment it is down: the clip ends by standing back up, so `deathHold()` finds the frame where the hips are lowest and the body stops there. The body stays 8 seconds, then sinks. Each remote player has at most two avatars, swapped between the living player and the body. A teammate's death is marked on the minimap with a fading X for 6 seconds.
 - **Kill feed.** Bigger (15 px, 8 seconds, 7 lines). Your kills are gold, your death red, a teammate's death blue. Four of your kills in a row with nobody else's in between is a QUAD FEED: the entries glow.
 - **Points and kill confirms.** Under the crosshair, a running total for the current burst of play, with ELIMINATED lines and the reasons (HEADSHOT, ASSIST, HILL TIME…) under it.
-- **Medals** (`PVP.MEDALS`): multikills, kill streaks, QUAD FEED, revenge, objective plays and more, in the GigaLeague's voice. They pop up a moment apart with a rising sound. The results screen lists the medals of the match.
+- **Medals** (`PVP.MEDALS`): multikills, kill streaks, QUAD FEED, revenge, objective plays and more, in the GigaLeague's voice. They pop up a moment apart with a rising sound. Each has its own emblem (`js/pvp/pvp-medal-icons.js`): the badge shape says the kind (hexagon multikills and the feed, shield streaks, circle skill, diamond objectives), the colour the tier, and a symbol what you did. The results screen shows the emblems of the match.
+- **Death cam.** Dying does not replay the fight from your killer's eyes. The camera leaves your body (your gun, hands and body leave the screen: `AR.Player.spectate`), goes to your killer, live, in third person from the front, and zooms in, so you see their face, outfit, name and the gun in their hands. It never goes through a wall. The respawn card says who, with which gun, and their health, live. No killer to look at (a fall, a streak, they left): the camera rises over where you fell. The Clip of the Match at the end uses the same view, replaying the last kill.
+- **Where things sit on screen**, top to bottom: score bar; objective line; match announcements (banner at 90 px, toasts at 160 px); medals; the crosshair with the points total just under it; objective status; the host's subtitles. Nothing shares a band.
 - **Objective status** under the crosshair says whether you are playing the objective: IN THE HILL // SCORING (with +10 a second and a tick each point), CONTESTED, CAPTURING B with a progress bar, PLANTING / DEFUSING, YOU HAVE THEIR FLAG. It also prompts what can be used right there: hold to plant or defuse, a weapon to pick up. Flags changing hands have their own sounds, and team scores bump when they go up, with a bar toward the limit.
 
 The quick match vote counts down on its own: the server sends the seconds left with each room update, and the menu counts down between updates.

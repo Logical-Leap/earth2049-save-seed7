@@ -159,7 +159,7 @@
     reddot: { slot: 'optic', name: 'RED DOT', d: 'Clean sight picture.', mods: { ads: 0.04, recoil: -0.04 } },
     holo: { slot: 'optic', name: 'HOLO SIGHT', d: 'Wider window, slower to raise.', mods: { ads: 0.06, spread: -0.05 } },
     zoom2: { slot: 'optic', name: '2.5x OPTIC', d: 'Zoomed. Slow up close.', mods: { ads: 0.12, range: 0.1 } },
-    suppressor: { slot: 'muzzle', name: 'SUPPRESSOR', d: 'Stay off the minimap when you fire. Less range.', mods: { quiet: 1, range: -0.15 } },
+    suppressor: { slot: 'muzzle', name: 'SUPPRESSOR', d: 'A quiet, muffled shot heard only up close; off the minimap; a smaller flash. Less range.', mods: { quiet: 1, range: -0.15 } },
     comp: { slot: 'muzzle', name: 'COMPENSATOR', d: 'Less climb. Louder.', mods: { recoil: -0.15, ads: 0.03 } },
     longbarrel: { slot: 'barrel', name: 'LONG BARREL', d: 'More range, slower aim.', mods: { range: 0.25, ads: 0.06, move: -0.03 } },
     shortbarrel: { slot: 'barrel', name: 'SHORT BARREL', d: 'Faster aim, less range.', mods: { range: -0.2, ads: -0.05, move: 0.02 } },

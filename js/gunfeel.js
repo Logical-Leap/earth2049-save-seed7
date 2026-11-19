@@ -434,11 +434,11 @@ const GunFeel = (() => {
     // flash: random roll and scale, coloured by rarity from Epic up
     st.flashT = g.fire === 'pump' ? .06 : .045;
     const fs = g.flash[0] * R_FLASH[tier] * (.85 + Math.random() * .35) * .26;
-    vm.flash.visible = true; vm.flash.scale.setScalar(fs); vm.flash.rotation.z = Math.random() * Math.PI;
+    vm.flash.visible = true; vm.flash.scale.setScalar(fs * (w.suppressed ? 0.25 : 1)); vm.flash.rotation.z = Math.random() * Math.PI;   // a suppressor hides the flash
     for (const m of vm.flashMat) m.opacity = 1;
     // casings (pump and bolt guns throw theirs when the action is worked)
     if (g.shell !== 'none' && g.fire !== 'pump' && g.fire !== 'boltaction') spawnShell(g.shell, tier);
-    GunAudio?.shot?.(w.snd || w.id, tier);                      // w.snd: a GigaLeague gun with its own voice on a shared model
+    GunAudio?.shot?.(w.snd || w.id, tier, w.suppressed ? { suppressed: true } : undefined);   // w.snd: a GigaLeague gun's own voice; w.suppressed: wearing a suppressor
     if (w.clip <= Math.ceil(vm.magSize * .2) && w.clip > 0 && vm.magSize > 6) GunAudio?.foley?.('lowAmmo');
     return { pitch: kp * D2R * .22, yaw: ky * D2R * .12 };   // the permanent share of the kick (climb)
   }

@@ -5,7 +5,8 @@
  *   - sends 30 inputs a second (position, look, stance), fires, reloads, swaps, melees, grenades, uses and streaks;
  *   - draws every other player 100 ms in the past from snapshot history (interpolation), as their Fitting Room avatar;
  *   - draws items, scorestreaks, projectiles, smoke and the mode's objectives;
- *   - runs the PvP HUD: score bar and timer, kill feed, minimap, streaks, respawn screen with class change, killcam,
+ *   - runs the PvP HUD: score bar and timer, kill feed, minimap, streaks, respawn screen with class change, death cam
+ *     (a third-person look at whoever killed you, from the front: their face, name, gun and health),
  *     scoreboard (TAB), flash / stun / blackout overlays, the host's callouts, and the results screen with the podium;
  *   - makes the match readable by ear and by eye (AR.PvpAudio, js/arena/arena-pvp-audio.js): every round other players
  *     fire in that gun's voice from where they are, loud placed footsteps, pain and death cries; bodies fall (the
@@ -185,7 +186,7 @@ AR.PvpMission = (() => {
       dmg: S.near[0], pellets: S.pellets, rpm: S.fire === 'burst' ? S.burstRpm : S.rpm, semi: S.fire === 'semi', mag: S.magSize, reserve: S.reserve, reload: (S.reloadT || 0.3) * sleight,
       spread: S.spread[0] * (1 + (S.mods?.spread || 0)), adsSpread: S.spread[1], adsTime: S.ads * (1 + (S.mods?.ads || 0)), kick: base.kick * recoil, kickYaw: base.kickYaw * recoil,
       burst: S.burst || 0, burstGap: S.fire === 'burst' ? 60 / S.rpm : 0, stf: S.stf, stfK: S.mods?.stf || 0, flinchK: S.mods?.flinch || 0, melee: !!S.melee, noZoom: !!S.noZoom, shellReload: !!S.shell || base.shellReload,
-      snd: PVP.GUNS[id]?.snd,
+      snd: PVP.GUNS[id]?.snd, quiet: !!S.mods?.quiet,
     });
     if (S.zoom) d.ads = 1 / S.zoom * 1.6;
     if (!S.proj) delete d.proj; else d.proj = Object.assign({}, base.proj || {}, { speed: S.proj.speed, grav: S.proj.grav, splash: S.proj.splash, life: S.proj.life, bounce: S.proj.bounce || 0 });
@@ -204,7 +205,7 @@ AR.PvpMission = (() => {
     p2.hp = v.hp; p2.maxHp = v.hp; p2.armor = v.sh || 0; p2.maxArmor = Math.max(1, v.sh || 0); p2.nades = v.loadout.lethal ? 1 : 0;
     setGuns(v.loadout.guns, 0);
     myStreaks = v.loadout.streaks || [];
-    dead = false; killcam = null; spawnInfo = v;
+    dead = false; killcam = null; spawnInfo = v; AR.Player.spectate?.(false);
     hud.classList.remove('dead'); hudEl('resp').style.display = 'none';
     AR.lockPointer();
     if (p && !v.keep) AR.Hud.toast('REVIVED', 'REVIVAL FEE ¤' + PVP.REVIVAL_FEE.toLocaleString('en-US') + ' ADDED TO YOUR ESTATE');
@@ -270,7 +271,10 @@ AR.PvpMission = (() => {
       AR.PvpAudio.ui('dead');
       if (chatOn) AR.Hud.chat(AR.pick(AR.CHAT_USERS), AR.pick(AR.CHAT.death));
       const rs = (mode.respawn || 3) + (spawnInfo?.loadout?.perks?.includes('bnpl') ? 1 : 0);
-      if (killer && remotes.has(killer)) killcam = { num: killer, from: estServer() - Math.min(3.2, rs + 1), to: estServer(), t0: performance.now(), len: Math.min(3.2, rs + 0.6) };
+      // the death cam: not a replay from their eyes, a look at them, live, from the front (so you can find them again)
+      killcam = { mode: 'death', num: killer && remotes.has(killer) ? killer : 0, w: v.w, h: v.h, x: v.x, y: v.y, z: v.z, t0: performance.now(), snap: true };
+      AR.Player.spectate?.(true);
+      void rs;
       showRespawn(v);
     }
   }
@@ -455,11 +459,26 @@ AR.PvpMission = (() => {
     if (r.camo) av.root.traverse(o => { if (o.material) { o.material.transparent = false; o.material.opacity = 1; } });
     const act = av.capsule ? null : av.play?.('Death', 0.08);
     if (act) { act.setLoop(THREE.LoopOnce, 1); act.clampWhenFinished = true; }
-    r.corpse = { av, t0: performance.now(), x: s.pos.x, y: s.pos.y, z: s.pos.z, vx: dir[0] * 2.4, vz: dir[1] * 2.4, vy: 0, floor: floorBelow(s.pos.x, s.pos.y, s.pos.z), tip: 0 };
+    r.corpse = { av, act, hold: act ? deathHold(act.getClip()) : 0, t0: performance.now(), x: s.pos.x, y: s.pos.y, z: s.pos.z, vx: dir[0] * 2.4, vz: dir[1] * 2.4, vy: 0, floor: floorBelow(s.pos.x, s.pos.y, s.pos.z), tip: 0 };
     r.killDir = null;
     // the player lives on in the other body: two avatars a player at most, swapped
     useAvatar(r, r.spare || makeAvatar(r)); r.spare = null;
     r.av.root.visible = false;
+  }
+  /** The Death clip falls, lies still, then gets back up at the end. Find the moment the body is down (the hips at
+   *  their lowest) and freeze there, so a body never stands back up. */
+  const holdCache = new Map();
+  function deathHold(clip) {
+    if (holdCache.has(clip)) return holdCache.get(clip);
+    let hold = Math.min(1.1, clip.duration * 0.35);
+    const tr = clip.tracks.find(t => /hips\.position$/.test(t.name));
+    if (tr) {
+      let minY = Infinity; for (let i = 1; i < tr.values.length; i += 3) minY = Math.min(minY, tr.values[i]);
+      for (let k = 0; k < tr.times.length; k++) if (tr.values[k * 3 + 1] <= minY + 0.04) { hold = tr.times[k] + 0.05; break; }
+    }
+    hold = Math.min(hold, clip.duration * 0.6);
+    holdCache.set(clip, hold);
+    return hold;
   }
   function corpseTick(r, dt, live) {
     const c = r.corpse; if (!c) return;
@@ -475,10 +494,12 @@ AR.PvpMission = (() => {
     c.av.root.position.set(c.x, c.y - sink * 0.9, c.z);
     if (c.av.capsule) { c.tip = Math.min(1, c.tip + dt * 3); c.av.root.rotation.x = -c.tip * 1.45; }
     c.av.update?.(dt);
+    if (c.act && c.act.time >= c.hold) { c.act.time = c.hold; c.act.paused = true; }        // down, and staying down
   }
   function endCorpse(r) {
     const c = r.corpse; if (!c) return;
     c.av.root.visible = false; c.av.root.rotation.x = 0; c.av.gunPivot.visible = true;
+    if (c.act) { c.act.paused = false; c.act.stop(); if (c.av.action === c.act) c.av.action = null; }
     if (r.spare) r.spare.dispose?.();
     r.spare = c.av; r.corpse = null;
   }
@@ -610,17 +631,23 @@ AR.PvpMission = (() => {
     T.tick(rdt);
     const p = P();
     const t = estServer() - INTERP;
-    // killcam: watch the last few seconds from the killer's eyes
+    // the death cam (live, in front of your killer) and the Clip of the Match (a replay of the last kill, the same view)
     if (killcam) {
       const k = (performance.now() - killcam.t0) / 1000;
-      if (k > killcam.len) killcam = null;
-      else {
-        const tt = killcam.from + k * ((killcam.to - killcam.from) / killcam.len);
-        drawRemotes(rdt, tt, killcam.num);
-        const r = remotes.get(killcam.num), s = r && sample(r, tt);
-        if (s) { AR.camera.position.set(s.pos.x, s.pos.y + ((s.f & 2) ? 1.05 : 1.62), s.pos.z); AR.camera.rotation.set(s.pitch, s.yaw, 0, 'YXZ'); }
-        hudEl('kc').style.display = 'block';
+      if (killcam.mode === 'clip') {
+        if (k > killcam.len) { killcam = null; drawRemotes(rdt, t, -1); }
+        else {
+          const tt = killcam.from + Math.max(0, k) * ((killcam.to - killcam.from) / killcam.len);
+          drawRemotes(rdt, tt, -2);
+          const r = remotes.get(killcam.num), s = r && sample(r, tt);
+          if (s) frontCam(s, rdt, Math.max(0, k));
+        }
+      } else {
+        drawRemotes(rdt, t, -1);
+        const s = killcam.num ? remotes.get(killcam.num)?.cur : null;
+        if (s && (s.f & 1)) frontCam(s, rdt, k); else overCam(rdt, k);
       }
+      deathLabel();
     } else { hudEl('kc').style.display = 'none'; drawRemotes(rdt, t, -1); }
     // ents and projectiles glide toward their latest positions
     for (const o of objs.ents.values()) { o.obj.position.x = AR.damp(o.obj.position.x, o.tx, 8, rdt); o.obj.position.y = AR.damp(o.obj.position.y, o.ty, 8, rdt); o.obj.position.z = AR.damp(o.obj.position.z, o.tz, 8, rdt); o.obj.rotation.y = o.yaw || 0; for (const r of o.obj.userData.rotors || []) r.rotation.y += rdt * 30; }
@@ -644,7 +671,7 @@ AR.PvpMission = (() => {
     if (dead && !done && Pd?.active && !Pd.inMenu) {
       if (Pd.down(Pd.BTN.LB) || Pd.down(Pd.BTN.LEFT)) stepClass(-1);
       if (Pd.down(Pd.BTN.RB) || Pd.down(Pd.BTN.RIGHT)) stepClass(1);
-      if (Pd.down(Pd.BTN.A)) { send({ t: 'skip' }); killcam = null; }
+      if (Pd.down(Pd.BTN.A)) send({ t: 'skip' });
     }
     // a streak key, or the next ready streak
     const I = AR.Player.input;
@@ -661,10 +688,49 @@ AR.PvpMission = (() => {
     hudTick(rdt);
   }
 
+  /* ------------------------------------------------ death cam */
+  const _cp = V3(), _lk = V3();
+  /** Third person, in front of the player (a little to their gun side), zooming in: you see their face, outfit, name and gun. */
+  function frontCam(s, dt, k) {
+    const cam = AR.camera, hy = s.pos.y + ((s.f & 2) ? 1.05 : 1.45);
+    const fx = -Math.sin(s.yaw), fz = -Math.cos(s.yaw), rx = Math.cos(s.yaw), rz = -Math.sin(s.yaw);
+    const dist = 5.2 - 3 * Math.pow(Math.min(1, k / 1.4), 0.7), side = 0.55;
+    let tx = s.pos.x + fx * dist + rx * side, ty = hy + 0.12, tz = s.pos.z + fz * dist + rz * side;
+    // never through a wall: pull in to whatever is between you
+    const dx = tx - s.pos.x, dy = ty - hy, dz = tz - s.pos.z, n = Math.hypot(dx, dy, dz) || 1;
+    const hit = AR.World.raycast(s.pos.x, hy, s.pos.z, dx / n, dy / n, dz / n, n);
+    if (hit && hit.t < n) { const m = Math.max(0.9, hit.t - 0.3) / n; tx = s.pos.x + dx * m; ty = hy + dy * m; tz = s.pos.z + dz * m; }
+    _cp.set(tx, ty, tz);
+    const c = killcam; if (c.snap || !c.pos) { c.pos = _cp.clone(); c.snap = false; } else c.pos.lerp(_cp, 1 - Math.exp(-dt * 7));
+    cam.position.copy(c.pos);
+    cam.lookAt(_lk.set(s.pos.x, hy - 0.85, s.pos.z));
+  }
+  /** No player to look at (a fall, a streak, they left): rise over where you died. */
+  function overCam(dt, k) {
+    const cam = AR.camera, c = killcam, h = 2.5 + Math.min(1, k / 2) * 3;
+    _cp.set(c.x + Math.sin(k * 0.3) * 3, c.y + h, c.z + Math.cos(k * 0.3) * 3);
+    if (c.snap || !c.pos) { c.pos = _cp.clone(); c.snap = false; } else c.pos.lerp(_cp, 1 - Math.exp(-dt * 4));
+    cam.position.copy(c.pos);
+    cam.lookAt(_lk.set(c.x, c.y + 0.5, c.z));
+  }
+  function deathLabel() {
+    const el = hudEl('kc'), c = killcam, r = c.num ? remotes.get(c.num) : null;
+    const html = c.mode === 'clip' ? `<b>CLIP OF THE MATCH</b>${esc(nameOf(c.num))}` : r ? `<b>THE PLAYER WHO GOT YOU</b>${esc(r.name)}` : '<b>DOWN</b>NOBODY TO BLAME';
+    if (el._h !== html) { el.innerHTML = html; el._h = html; }
+    el.style.display = 'block';
+    // their health, live, on the respawn card: worth knowing if you want them back
+    const hp = hud.querySelector('.resp .khp');
+    if (hp && r?.cur) { const v = r.cur.f & 1 ? r.cur.hp : 0; hp.querySelector('i').style.width = v + '%'; hp.querySelector('span').textContent = (r.cur.f & 1) ? 'THEIR HEALTH ' + v + '%' : 'THEY ARE DOWN TOO'; }
+  }
+
   /* ================================================================== HUD */
   const CSS = `
   :root{--pvp-ally:#4da6ff;--pvp-enemy:#ff3b5c}
   #arHud.pvp .tl,#arHud.pvp .style,#arHud.pvp .xp{display:none}
+  /* where things sit, top to bottom: score bar; objective line; match announcements (banner, then toasts); medals;
+     the crosshair with points just under it; objective status; the host's subtitles at the bottom. Nothing shares a band. */
+  #arHud.pvp .banner{top:90px}#arHud.pvp .banner .bm{font-size:30px}#arHud.pvp .banner .bsu{font-size:12px;margin-top:2px}
+  #arHud.pvp .toast{top:160px}#arHud.pvp .toast div{font-size:16px}
   #arHud.pvp .chat{top:auto;bottom:120px;right:14px;width:260px;max-height:160px;overflow:hidden}
   #pvpHud{position:fixed;inset:0;pointer-events:none;z-index:41;font-family:Consolas,'Lucida Console',monospace;color:#fff;text-transform:uppercase;letter-spacing:.06em;text-shadow:0 2px 0 #000}
   #pvpHud .sb{position:absolute;left:50%;top:10px;transform:translateX(-50%);display:flex;gap:10px;align-items:stretch}
@@ -684,21 +750,23 @@ AR.PvpMission = (() => {
   #pvpHud .feed .w{color:#c8c8d8;font-size:12px;margin:0 6px}#pvpHud .feed .hs{color:#ffd400}
   #pvpHud .feed .a{color:var(--pvp-ally)}#pvpHud .feed .e{color:var(--pvp-enemy)}#pvpHud .feed .me{color:#ffd400;font-weight:bold}
   @keyframes pvpFeedIn{0%{opacity:0;transform:translateX(30px)}100%{opacity:1;transform:none}}
-  #pvpHud .medals{position:absolute;left:50%;top:22%;transform:translateX(-50%);display:flex;gap:14px;align-items:flex-start}
+  #pvpHud .medals{position:absolute;left:50%;top:196px;transform:translateX(-50%);display:flex;gap:14px;align-items:flex-start}
   #pvpHud .md{width:132px;text-align:center;animation:pvpMd .38s cubic-bezier(.2,1.6,.4,1);transition:opacity .35s,transform .35s}
   #pvpHud .md.out{opacity:0;transform:translateY(-12px) scale(.9)}
-  #pvpHud .md i{display:block;width:54px;height:54px;margin:0 auto 4px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(135deg,#00e5ff,#7a5bff);box-shadow:0 0 18px #00e5ff}
-  #pvpHud .md.t2 i{background:linear-gradient(135deg,#39ff8a,#00e5ff)}#pvpHud .md.t3 i{background:linear-gradient(135deg,#ffd400,#ff7a1a)}
-  #pvpHud .md.t4 i{background:linear-gradient(135deg,#ff2bd6,#ffd400)}#pvpHud .md.t5 i,#pvpHud .md.t6 i{background:linear-gradient(135deg,#fff,#ff2bd6 40%,#00e5ff)}
+  #pvpHud .md svg{display:block;margin:0 auto 4px;filter:drop-shadow(0 0 10px rgba(0,229,255,.55))}
+  #pvpHud .md.t2 svg{filter:drop-shadow(0 0 10px rgba(57,255,138,.55))}#pvpHud .md.t3 svg{filter:drop-shadow(0 0 12px rgba(255,180,0,.6))}
+  #pvpHud .md.t4 svg{filter:drop-shadow(0 0 14px rgba(255,43,214,.65))}#pvpHud .md.t5 svg,#pvpHud .md.t6 svg{filter:drop-shadow(0 0 16px rgba(255,255,255,.7))}
+  #arResults .pvpres .mds{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0}#arResults .pvpres .mds div{width:84px;text-align:center;font-size:9px;line-height:1.2}
+  #arResults .pvpres .mds svg{display:block;margin:0 auto 2px}
   #pvpHud .md b{display:block;font-size:14px;color:#fff;letter-spacing:.08em}#pvpHud .md small{display:block;font-size:9px;opacity:.75;margin-top:2px}
   @keyframes pvpMd{0%{opacity:0;transform:scale(1.9)}100%{opacity:1;transform:none}}
-  #pvpHud .pts{position:absolute;left:50%;top:57%;transform:translateX(-50%);text-align:center;font-weight:bold}
-  #pvpHud .pts .tot{display:block;font-size:30px;color:#ffd400;text-shadow:0 0 12px rgba(255,212,0,.55),0 2px 0 #000}
+  #pvpHud .pts{position:absolute;left:50%;top:calc(50% + 20px);transform:translateX(-50%);text-align:center;font-weight:bold;pointer-events:none}
+  #pvpHud .pts .tot{display:block;font-size:24px;color:#ffd400;text-shadow:0 0 12px rgba(255,212,0,.55),0 2px 0 #000}
   #pvpHud .pts .tot.pop{animation:pvpPop .25s ease-out}
   #pvpHud .pts .ln{display:block;font-size:13px;color:#fff;margin-top:2px}#pvpHud .pts .ln.k{color:var(--pvp-enemy);font-size:15px}
   #pvpHud .pts.fade{opacity:0;transition:opacity .4s}
   @keyframes pvpPop{0%{transform:scale(1.45)}100%{transform:none}}
-  #pvpHud .ost{position:absolute;left:50%;top:66%;transform:translateX(-50%);text-align:center;min-width:300px;display:none}
+  #pvpHud .ost{position:absolute;left:50%;top:71%;transform:translateX(-50%);text-align:center;min-width:300px;display:none}
   #pvpHud .ost b{display:block;font-size:22px;letter-spacing:.12em}#pvpHud .ost small{display:block;font-size:12px;margin-top:3px;opacity:.9}
   #pvpHud .ost .pb{height:8px;margin:6px auto 0;width:280px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4)}#pvpHud .ost .pb i{display:block;height:100%;background:currentColor}
   #pvpHud .ost.good{color:var(--pvp-ally)}#pvpHud .ost.good b{animation:pvpPulse 1s infinite}#pvpHud .ost.cont{color:#ffd400}#pvpHud .ost.cont b{animation:pvpBlink .5s infinite}
@@ -711,14 +779,16 @@ AR.PvpMission = (() => {
   #pvpHud .strk div{opacity:.55}#pvpHud .strk div.r{opacity:1;color:#ffd400;text-shadow:0 0 8px #ffd400}
   #pvpHud .strk .spts{color:#00e5ff;opacity:1;font-size:12px}
   #arHud.pvp .pips{display:none}#arHud.pvp:not(.classic) .bar.ar{display:none}#arHud.pvp.classic .bar.ar i{background:#7a5bff}
-  #pvpHud .resp{position:absolute;left:50%;top:58%;transform:translateX(-50%);text-align:center;display:none;pointer-events:auto;background:rgba(5,4,12,.72);padding:14px 22px;border:1px solid rgba(255,255,255,.2)}
-  #pvpHud .resp h2{margin:0;font-size:22px;color:var(--pvp-enemy)}#pvpHud .resp .s{font-size:12px;opacity:.85;margin:6px 0}
+  #pvpHud .resp .fl{font-size:10px;opacity:.6;margin-bottom:0}
+  #pvpHud .resp{position:absolute;left:50%;bottom:138px;transform:translateX(-50%);text-align:center;display:none;pointer-events:auto;background:rgba(5,4,12,.66);padding:10px 18px;border:1px solid rgba(255,255,255,.2)}
+  #pvpHud .resp h2{margin:0;font-size:22px;color:var(--pvp-enemy)}#pvpHud .resp .s{font-size:12px;opacity:.85;margin:4px 0}
   #pvpHud .resp .cls{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px;max-width:680px}
   #pvpHud .resp .cl{font-size:11px;opacity:.8;margin-top:6px;text-transform:none;letter-spacing:.02em}
   #pvpHud .resp button{font:inherit;font-size:11px;background:#16122a;color:#fff;border:1px solid #6b5aa8;padding:5px 9px;cursor:pointer;text-transform:uppercase}
   #pvpHud .resp button.on{border-color:#ffd400;color:#111;background:#ffd400}
-  #pvpHud .kc{position:absolute;left:0;right:0;top:0;text-align:center;font-size:14px;padding-top:96px;display:none;color:#ff2b4a}
-  #pvpHud .kc b{background:#e0003c;color:#fff;padding:1px 8px;margin-right:8px}
+  #pvpHud .kc{position:absolute;left:0;right:0;top:96px;text-align:center;font-size:20px;display:none;color:#fff;letter-spacing:.1em}
+  #pvpHud .kc b{display:block;width:max-content;margin:0 auto 4px;background:#e0003c;color:#fff;padding:1px 10px;font-size:12px}
+  #pvpHud .resp .khp{width:240px;margin:6px auto 2px;font-size:11px}#pvpHud .resp .khp div{height:6px;background:rgba(255,255,255,.15);margin-top:2px}#pvpHud .resp .khp i{display:block;height:100%;background:var(--pvp-enemy)}
   #pvpHud .flash{position:absolute;inset:0;background:#fff;opacity:0;overflow:hidden}
   #pvpHud .flash i{position:absolute;width:280px;padding:10px 12px;background:#fff;color:#111;border:2px solid #ccc;font-style:normal;font-size:13px;text-transform:none;text-shadow:none;box-shadow:0 6px 20px rgba(0,0,0,.25);border-radius:10px}
   #pvpHud .black{position:absolute;inset:0;background:#000;opacity:0;display:flex;align-items:center;justify-content:center;font-size:20px;color:#00e5ff}
@@ -766,7 +836,7 @@ AR.PvpMission = (() => {
   function onKey(e) {
     if (!AR.Pvp.on) return;
     if (e.code === 'Tab') { scoreOpen = true; e.preventDefault(); }
-    if (dead && e.code === 'Space') { send({ t: 'skip' }); killcam = null; }
+    if (dead && e.code === 'Space') send({ t: 'skip' });
     if (dead && (e.code === 'ArrowLeft' || e.code === 'ArrowRight')) { stepClass(e.code === 'ArrowLeft' ? -1 : 1); e.preventDefault(); }
     if (e.code === 'KeyE') AR.Player.input.useHold = true;
     if (e.code === 'KeyE' && !e.repeat) send({ t: 'use' });
@@ -829,7 +899,7 @@ AR.PvpMission = (() => {
     medalT -= dt;
     if (medalT > 0 || !medalQ.length) return;
     const id = medalQ.shift(), M = PVP.MEDALS[id], box = hudEl('medals'), d = document.createElement('div');
-    d.className = 'md t' + M.tier; d.innerHTML = `<i></i><b>${esc(M.name)}</b><small>${esc(M.d)}</small>`;
+    d.className = 'md t' + M.tier; d.innerHTML = `${window.PvpMedalIcons ? PvpMedalIcons.svg(id, 64) : '<i></i>'}<b>${esc(M.name)}</b><small>${esc(M.d)}</small>`;
     box.prepend(d); while (box.children.length > 3) box.lastChild.remove();
     setTimeout(() => d.classList.add('out'), 2700); setTimeout(() => d.remove(), 3100);
     AR.PvpAudio.ui('medal', M.tier);
@@ -844,8 +914,9 @@ AR.PvpMission = (() => {
     const list = PvpProgress.classes(), cur = O.cls || 0;
     const c = list[cur], line = c ? `${wName(c.primary)} + ${wName(c.secondary)}` : '';
     const classPick = classChange() ? `<div class="s">${G('classPrev')} ${G('classNext')} CHANGE CLASS — APPLIES NEXT LIFE</div><div class="cls">${list.map((c2, i) => `<button data-i="${i}" class="${i === cur ? 'on' : ''}">${esc(c2.name)}</button>`).join('')}</div><div class="cl">${esc(line)}</div>` : '';
-    box.innerHTML = `<h2>${v.k && v.k !== me ? 'KILLED BY ' + esc(nameOf(v.k)) : 'YOU DIED'}</h2><div class="s">${v.k && v.k !== me ? esc(wName(v.w)) + (v.h ? ' // HEADSHOT' : '') : ''}</div>
-      <div class="s rs"></div><div class="s">DEBT REVIVAL IN PROGRESS. YOUR DEBT OUTLIVES YOU.</div>${classPick}`;
+    box.innerHTML = `<h2>${v.k && v.k !== me ? 'KILLED BY ' + esc(nameOf(v.k)) : 'YOU DIED'}</h2><div class="s">${v.k && v.k !== me ? 'WITH THE ' + esc(wName(v.w)) + (v.h ? ' // HEADSHOT' : '') : ''}</div>
+      ${v.k && v.k !== me && remotes.has(v.k) ? '<div class="khp"><span>THEIR HEALTH</span><div><i></i></div></div>' : ''}
+      <div class="s rs"></div>${classPick}`;
     box.querySelectorAll('.cls button').forEach(b => b.onclick = () => pickClass(+b.dataset.i));
     box.style.display = 'block';
     if (!again) respawnAt = performance.now() + ((mode.respawn || 3) + 0.2) * 1000;
@@ -980,7 +1051,6 @@ AR.PvpMission = (() => {
       const html = mode.teams === 2 ? [myTeam, 1 - myTeam].map(t => `<table>${head.replace(mode.name, PVP.TEAM_NAMES[t] + ' — ' + s.ts[t])}${rows.filter(r => r[5] === t).map(row).join('')}</table>`).join('<br>') : `<table>${head}${rows.map(row).join('')}</table>`;
       if (bd._h !== html) { bd.innerHTML = html; bd._h = html; }
     }
-    if (killcam) hudEl('kc').querySelector('span').textContent = esc(nameOf(killcam.num)) + '\'S VIEW';
     drawMinimap();
   }
   function notifications(k) {
@@ -1029,8 +1099,8 @@ AR.PvpMission = (() => {
     const won = mode.teams === 2 ? res.winnerTeam === myTeam : res.winner === me;
     AR.Hud.banner(won ? 'VICTORY' : res.winnerTeam === -1 && mode.teams === 2 ? 'DRAW' : 'DEFEAT', mode.teams === 2 ? PVP.TEAM_NAMES[myTeam] + ' ' + res.teamScore[myTeam] + ' — ' + res.teamScore[1 - myTeam] : (res.rows[0]?.name || '') + ' WINS', 3.5);
     // the clip of the match: the last kill from its killer's eyes
-    if (lastKill && lastKill.k && remotes.has(lastKill.k) && estServer() - lastKill.at < 6) killcam = { num: lastKill.k, from: lastKill.at - 3.4, to: lastKill.at + 0.4, t0: performance.now() + 1200, len: 3.8, clip: true };
-    setTimeout(() => { killcam = null; podium(res); showResults(); }, killcam ? 5200 : 2500);
+    if (lastKill && lastKill.k && remotes.has(lastKill.k) && estServer() - lastKill.at < 6) { killcam = { mode: 'clip', num: lastKill.k, from: lastKill.at - 3.4, to: lastKill.at + 0.4, t0: performance.now() + 1200, len: 3.8, snap: true }; AR.Player.spectate?.(true); }
+    setTimeout(() => { killcam = null; AR.Player.spectate?.(false); podium(res); showResults(); }, killcam ? 5200 : 2500);
   }
   function podium(res) {
     const top = res.rows.slice(0, 3);
@@ -1068,7 +1138,7 @@ AR.PvpMission = (() => {
         REVIVAL FEES THIS MATCH: ¤${fee.toLocaleString('en-US')}. ADDED TO YOUR ESTATE.</div>`;
     }
     const meds = Object.entries(medalCount).sort((a, b) => PVP.MEDALS[b[0]].tier - PVP.MEDALS[a[0]].tier);
-    if (meds.length) rw += `<div class="rw">MEDALS: ${meds.map(([id, n]) => '<b>' + esc(PVP.MEDALS[id].name) + '</b>' + (n > 1 ? ' x' + n : '')).join(' // ')}</div>`;
+    if (meds.length) rw += `<div class="mds">${meds.map(([id, n]) => `<div>${window.PvpMedalIcons ? PvpMedalIcons.svg(id, 46) : ''}${esc(PVP.MEDALS[id].name)}${n > 1 ? ' x' + n : ''}</div>`).join('')}</div>`;
     const online = T.kind === 'online';
     ov.innerHTML = `<div class="arres pvpres"><h1 style="text-align:center">${mode.teams === 2 ? (res.winnerTeam === myTeam ? 'VICTORY' : res.winnerTeam < 0 ? 'DRAW' : 'DEFEAT') : (res.winner === me ? 'VICTORY' : 'GG')}</h1>
       <h2 style="text-align:center">${mode.name} // ${PVP.MAPS[res.map]?.name || res.map}${mode.teams === 2 ? ' // ' + res.teamScore[myTeam] + ' — ' + res.teamScore[1 - myTeam] : ''}</h2>

@@ -26,7 +26,7 @@
 AR.PvpAudio = (() => {
   let ctx = null, out = null, uiOut = null, noiseBuf = null, ready = false, forced = false, voices = 0;
   const em = new Map();
-  const stats = { shots: 0, far: 0, dropped: 0, steps: 0, hurt: 0, death: 0, whiz: 0, ui: 0, swings: 0 };
+  const stats = { shots: 0, far: 0, quiet: 0, dropped: 0, steps: 0, hurt: 0, death: 0, whiz: 0, ui: 0, swings: 0 };
   const L = { x: 0, y: 0, z: 0 };
   const R = (a, b) => a + Math.random() * (b - a);                         // NOSONAR
 
@@ -111,15 +111,23 @@ AR.PvpAudio = (() => {
   const shotK = d => Math.pow(Math.min(1, 7 / Math.max(7, d)), 0.8);       // -5 dB a doubling past 7 m: guns carry
   function shot(key, snd, tier, o = {}) {
     const e = em.get(key); if (!e || !ok() || !window.GunAudio) return;
-    const quiet = !!o.quiet, d = e.d, maxD = quiet ? 32 : 170;
+    const quiet = !!o.quiet, d = e.d, maxD = quiet ? 26 : 170;
     if (d > maxD) return;
-    let k = shotK(d) * occK(e) * (quiet ? 0.32 : 1);
     if (voices > 64) { stats.dropped++; return; }
-    const far = d > (quiet ? 12 : 45) || voices > 36;
     const verbK = Math.min(1.6, 0.6 + d / 60);                             // more room, less gun, the further off it is
-    const life = far ? GunAudio.distant(snd, { dest: e.input, gain: k * 1.1, verbK, when: o.when }) : GunAudio.shot(snd, tier || 0, { dest: e.input, gain: k, verbK, lean: d > 20, when: o.when });
+    let life;
+    if (quiet) {
+      // suppressed: its own sound (the puff and the action clack), heard only close by, and nothing at all past ~26 m
+      const k = Math.pow(1 - d / maxD, 1.4) * occK(e);
+      life = GunAudio.shot(snd, tier || 0, { dest: e.input, gain: k * 1.1, verbK: 0.4, suppressed: true, when: o.when });
+      stats.quiet++;
+    } else {
+      const k = shotK(d) * occK(e), far = d > 45 || voices > 36;
+      life = far ? GunAudio.distant(snd, { dest: e.input, gain: k * 1.1, verbK, when: o.when }) : GunAudio.shot(snd, tier || 0, { dest: e.input, gain: k, verbK, lean: d > 20, when: o.when });
+      if (far) stats.far++;
+    }
     if (!life) return;
-    stats.shots++; if (far) stats.far++;
+    stats.shots++;
     voices++; if (!forced) setTimeout(() => { voices--; }, life * 1000 + 300); else voices--;
   }
   /** a round passing close: the supersonic crack and the whip of air. heavy: a sniper or marksman round */

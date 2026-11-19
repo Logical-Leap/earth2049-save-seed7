@@ -105,7 +105,7 @@ try {
   await wait(200);
   await pg.evaluate(() => document.querySelector('#pvpMenu [data-pick="attach:rubbergrip"]').click());
   const lockMsg = await pg.evaluate(() => document.querySelector('#pvpMenu .cacMsg').textContent);
-  ok(/WEAPON LEVEL/.test(lockMsg), 'a locked attachment says when it opens: ' + lockMsg);
+  ok(/UNLOCKS AT [A-Z0-9 .-]+ LEVEL \d+ \(YOURS: \d+\)/.test(lockMsg) && /GET KILLS WITH THIS GUN/.test(lockMsg), 'a locked attachment says which gun level opens it: ' + lockMsg);
   await pg.evaluate(() => document.querySelector('#pvpMenu [data-sub="gun"]').click());
   await wait(150);
   await pg.evaluate(() => document.querySelector('#pvpMenu [data-pick="gun:ar"]').click());

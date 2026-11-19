@@ -151,7 +151,7 @@ AR.Player = (() => {
   let GF = null;
   const gfOn = () => !!(GF && window.GunFeel && GunFeel.active);
   function gfWeapon(g) {
-    if (!g.gf) g.gf = { id: g.id, att: g.att || null, get snd() { return g.d?.snd; }, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
+    if (!g.gf) g.gf = { id: g.id, att: g.att || null, get snd() { return g.d?.snd; }, get suppressed() { return !!g.d?.quiet; }, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
       get ammo() { return g.reserve; }, set ammo(v) { g.reserve = v; } };
     return g.gf;
   }
@@ -650,7 +650,7 @@ AR.Player = (() => {
     P.fovPunch += d.fovKick;
     addTrauma(d.shake * (1 - P.ads * 0.5));
     if (gfOn()) {
-      AR.Fx.light(mz.x, mz.y, mz.z, d.proj ? d.proj.color : 0xffb060, 2.4, 9, 0.05);
+      if (!d.quiet) AR.Fx.light(mz.x, mz.y, mz.z, d.proj ? d.proj.color : 0xffb060, 2.4, 9, 0.05);
       AR.Mission?.onShot(g);
       return;
     }
@@ -661,8 +661,8 @@ AR.Player = (() => {
     muzzle.scale.setScalar(rand(0.35, 0.6) * (d.pellets > 1 ? 1.5 : 1));
     muzzle.material.color.setHex(d.proj ? d.proj.color : 0xfff0b0);
     muzzleLight.intensity = 6; muzzleLight.color.setHex(d.proj ? d.proj.color : 0xffc070);
-    AR.Fx.light(mz.x, mz.y, mz.z, d.proj ? d.proj.color : 0xffb060, 2.4, 9, 0.05);
-    AR.Sfx.gun(d.sfx, { lastShot: g.ammo <= 3 && g.ammo > 0 && d.mag > 8 });
+    if (d.quiet) { muzzle.scale.multiplyScalar(0.25); muzzleLight.intensity = 0.6; window.GunAudio?.shot?.(d.snd || g.id, g.tier || 0, { suppressed: true }); }
+    else { AR.Fx.light(mz.x, mz.y, mz.z, d.proj ? d.proj.color : 0xffb060, 2.4, 9, 0.05); AR.Sfx.gun(d.sfx, { lastShot: g.ammo <= 3 && g.ammo > 0 && d.mag > 8 }); }
     const ej = vmOf(g)?.eject;
     if (!d.proj && g.id !== 'shotgun' && g.id !== 'dmr' && ej) { const e = vmToWorld(ej, _tmp.clone()); AR.Fx.shell(e.x, e.y, e.z, _right.x, _right.z, 0xc9a040); }
     if ((g.id === 'shotgun' || g.id === 'dmr') && ej) setTimeout(() => { if (P && gun() === g) { const e = vmToWorld(ej, V3()); AR.Fx.shell(e.x, e.y, e.z, _right.x, _right.z, g.id === 'dmr' ? 0xd0b060 : 0xc02020); } }, g.id === 'dmr' ? 420 : 330);
@@ -787,15 +787,14 @@ AR.Player = (() => {
       if (I.use) { I.use = false; AR.Mission?.use(); }
       healthTick(dt);
     }
-    cameraTick(dt, rdt);
-    viewmodelTick(rdt);
+    if (!spectating) { cameraTick(dt, rdt); viewmodelTick(rdt); }          // the death cam owns the camera
     if (gfOn() && !window.VR?.active) {                       // in VR, vrCamera already ran GunFeel and put the gun in your hand
       const mx = AR.clamp((keys.KeyD ? 1 : 0) - (keys.KeyA ? 1 : 0) + I.padX, -1, 1);
       GunFeel.update(rdt, { ads: I.ads && P.slideT <= 0 && P.kickT <= 0 && P.alive, move: Math.min(1, P.speed / 8), strafe: mx, onGround: P.body.onGround,
         dash: P.dashT > 0, sprint: P.sprinting, lookX: -P.swayX / 0.0009, lookY: P.swayY / 0.0009, feetY: P.body.pos.y });
     }
     // your own body under the camera: look down to see your fit (arms come from GunFeel's hands)
-    if (window.FPBody && P.alive && !window.VR?.active) {
+    if (window.FPBody && P.alive && !spectating && !window.VR?.active) {
       const b = P.body;
       FPBody.update(rdt, { x: b.pos.x, y: b.pos.y, z: b.pos.z, yaw: P.yaw, pitch: P.pitch, speed: P.speed, onGround: b.onGround, crouch: P.crouching, slide: P.slideT > 0, arms: false });
     }
@@ -910,7 +909,18 @@ AR.Player = (() => {
   }
   function refillMags() { for (const g of P.guns) if (g) { g.ammo = magSize(g); g.reloading = false; } }
 
+  /** GigaLeague death cam: the camera leaves your body, so your gun, hands and body leave the screen too. */
+  let spectating = false;
+  function spectate(on) {
+    on = !!on; if (on === spectating && !on) return;
+    spectating = on;
+    if (GF) { GF.gunGroup.visible = !on; GunFeel.setVisible(!on); }
+    if (vmRoot) vmRoot.visible = false;
+    window.FPBody?.show?.(!on);
+    if (on && scopeEl) scopeEl.classList.remove('on');
+  }
   function dispose(composer) {
+    if (spectating) spectate(false);
     detachPass(composer);
     if (GF) { GunFeel.setVisible(false); GF.gunGroup.visible = false; }
     if (scopeEl) scopeEl.classList.remove('on');
@@ -928,7 +938,7 @@ AR.Player = (() => {
     showGun();
   }
   return {
-    init, reset, tick, setProfile, setLoadout, get profile() { return PF; }, padTick, vrTick, assistTarget, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, attachPass, detachPass, magSize, clearInput,
+    init, reset, tick, setProfile, setLoadout, get profile() { return PF; }, padTick, vrTick, assistTarget, get input() { return I; }, takeDamage, useGunFeel, get gunFeel() { return gfOn(); }, heal, giveGun, addAmmo, refillMags, addTrauma, eyePos, aimDir, dispose, spectate, get spectating() { return spectating; }, attachPass, detachPass, magSize, clearInput,
     get P() { return P; }, get S() { return S; }, get gun() { return P && gun(); }, get input() { return I; }, get keys() { return keys; },
     spread: () => (P && gun() ? spreadRad(gun()) : 0),
   };

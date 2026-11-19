@@ -11,6 +11,7 @@
  *
  *   GunAudio.shot(id, tier, o)         id: pistol smg shotgun ar dmr lmg energy rocket, and the GigaLeague voices burst fastsmg
  *                                      revolver marksman minigun launcher; tier 0..6; o.dest plays it into a placed emitter
+ *                                      o.suppressed: the gun through a suppressor (puff, action clack, hiss; no crack)
  *   GunAudio.distant(id, o)            the same gun heard from far off (cheap: the crack gone, the boom rolling)
  *   GunAudio.foley(name, tier)         reload, handling and casing sounds (see FOLEY)
  */
@@ -215,6 +216,23 @@ const GunAudio = (() => {
       return { verb: 0.7, gain: 1.05, life: 2.4, lp: 7000 };
     },
   };
+  /* Suppressed: the crack and the boom are gone. What is left is the gas puffing through the baffles (a soft, chesty
+     "thup"), the action cycling (a hard metallic clack, the loudest part) and a short hiss. Quiet, close, and still
+     the gun's own: [thump Hz, clack Hz, weight]. */
+  const SUP = { pistol: [190, 3600, 0.8], smg: [210, 3900, 0.7], ar: [150, 3100, 0.9], dmr: [100, 2500, 1.15], lmg: [125, 2800, 1], energy: [240, 4400, 0.8],
+    rocket: [90, 1800, 1], shotgun: [85, 2100, 1.1], burst: [160, 3400, 0.85], fastsmg: [240, 4300, 0.62], revolver: [115, 2700, 1.05], marksman: [115, 2900, 1],
+    minigun: [135, 3000, 0.8], launcher: [90, 1800, 1] };
+  function suppressed(v, t, id) {
+    const [thump, clack, k] = SUP[id] || SUP.ar;
+    nz(v, t, 0.035, 0.6 * k, 'bandpass', J(1500), 520, 1.1);                    // the puff through the baffles
+    nz(v, t, 0.11, 0.38 * k, 'lowpass', 1000, 180, 0.7);                         // muffled body
+    tone(v, 'sine', J(thump), thump * 0.45, t, 0.002, 0.1, 0.85 * k);           // the thup
+    nz(v, t + 0.01, 0.018, 0.55, 'bandpass', J(clack), clack * 0.8, 3);        // the action: the bolt slams back
+    tone(v, 'square', clack * 0.42, clack * 0.3, t + 0.01, 0.001, 0.012, 0.09);
+    nz(v, t + 0.04, 0.014, 0.32, 'bandpass', clack * 1.15, clack, 4);          // and home again
+    nz(v, t + 0.004, 0.16, 0.12, 'highpass', 6500, 4200, 0.7, 0.02);            // gas hiss
+    return { verb: 0.1, gain: 0.62, life: 0.7, lp: 7500 };
+  }
   const TIER_HZ = [0, 660, 520, 1240, 180, 2637, 1760];       // pitch of each rarity's signature layer
 
   function rarityLayers(v, t, tier, id) {
@@ -230,17 +248,17 @@ const GunAudio = (() => {
   }
 
   let at = null;                                         // previews schedule at an explicit time
-  /** o (optional): { dest: AudioNode to play into (a placed emitter), when: context time, gain, verbK, lean } */
+  /** o (optional): { dest: AudioNode to play into (a placed emitter), when: context time, gain, verbK, lean, suppressed } */
   function shot(id, tier, o) {
     if (!ok()) return;
     tier = tier | 0;
-    const t = (o?.when ?? at ?? ctx.currentTime) + 0.002, f = SHOTS[id] || SHOTS.ar;
+    const t = (o?.when ?? at ?? ctx.currentTime) + 0.002, f = o?.suppressed ? (v, tt) => suppressed(v, tt, id) : SHOTS[id] || SHOTS.ar;
     const probe = ctx.createGain();                      // build into a temp node to learn the voice options first
     const opt = f(probe, t);
     const v = voice(t, { ...opt, gain: (opt.gain || 1) * (1 + tier * 0.06) * (o?.gain ?? 1), verb: (opt.verb || .3) * (1 + tier * 0.08),
       hard: opt.hard || tier >= 4, pan: (Math.random() - .5) * 0.08, life: (opt.life || 1.5) + tier * 0.1, dest: o?.dest, verbK: o?.verbK });
     probe.connect(v);
-    if (!o?.lean) rarityLayers(v, t, tier, id);
+    if (!o?.lean && !o?.suppressed) rarityLayers(v, t, tier, id);
     return opt.life || 1.5;
   }
   /** A gun heard from far away: the crack is gone and the boom rolls. Cheap (five nodes), so a busy match stays light. */
