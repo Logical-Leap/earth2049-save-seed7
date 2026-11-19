@@ -649,7 +649,8 @@ AR.PvpMission = (() => {
         const s = killcam.num ? remotes.get(killcam.num)?.cur : null;
         if (s && (s.f & 1)) frontCam(s, rdt, k); else overCam(rdt, k);
       }
-      deathLabel();
+      // the clip can end (killcam = null) earlier in this same frame
+      if (killcam) deathLabel(); else hudEl('kc').style.display = 'none';
     } else { hudEl('kc').style.display = 'none'; drawRemotes(rdt, t, -1); }
     // ents and projectiles glide toward their latest positions
     for (const o of objs.ents.values()) { o.obj.position.x = AR.damp(o.obj.position.x, o.tx, 8, rdt); o.obj.position.y = AR.damp(o.obj.position.y, o.ty, 8, rdt); o.obj.position.z = AR.damp(o.obj.position.z, o.tz, 8, rdt); o.obj.rotation.y = o.yaw || 0; for (const r of o.obj.userData.rotors || []) r.rotation.y += rdt * 30; }
@@ -716,7 +717,9 @@ AR.PvpMission = (() => {
     cam.lookAt(_lk.set(c.x, c.y + 0.5, c.z));
   }
   function deathLabel() {
-    const el = hudEl('kc'), c = killcam, r = c.num ? remotes.get(c.num) : null;
+    const el = hudEl('kc'), c = killcam;
+    if (!c) { el.style.display = 'none'; return; }
+    const r = c.num ? remotes.get(c.num) : null;
     const html = c.mode === 'clip' ? `<b>CLIP OF THE MATCH</b>${esc(nameOf(c.num))}` : r ? `<b>THE PLAYER WHO GOT YOU</b>${esc(r.name)}` : '<b>DOWN</b>NOBODY TO BLAME';
     if (el._h !== html) { el.innerHTML = html; el._h = html; }
     el.style.display = 'block';
