@@ -394,7 +394,16 @@
       p.classes = classes.slice(0, PVP.CUSTOM_SLOTS + PVP.PREMADE.length).map(c => sanitizeClass(c, level));
       p.level = level || 1;
     }
-    pickClass(id, idx) { const p = this.players.get(id); if (p) p.cls = clamp(idx | 0, 0, (p.classes || PVP.PREMADE).length - 1); }
+    pickClass(id, idx) {
+      const p = this.players.get(id); if (!p) return false;
+      p.cls = clamp(idx | 0, 0, (p.classes || PVP.PREMADE).length - 1);
+      // the CoD rule: a new class picked in the first seconds of a life, before firing, applies at once; otherwise next life
+      const M = this.mode, fixed = M.playlist === 'party' || this.playlist === 'classic' || M.id === 'gungame' || M.id === 'infection' || M.id === 'influencer';
+      if (!p.alive || fixed || p.carry || this.now - (p.spawnedAt ?? -99) > PVP.CLASS_SWAP_WINDOW || (p.firedAt ?? -99) > p.spawnedAt) return false;
+      this.buildLoadout(p);
+      this.send(p.id, { e: 'spawn', x: r2(p.pos[0]), y: r2(p.pos[1]), z: r2(p.pos[2]), yaw: r2(p.yaw), loadout: p.loadout, hp: p.maxHp, sh: p.maxShield, prof: this.playlist, keep: 1, swap: 1 });
+      return true;
+    }
     classOf(p) {
       const list = p.classes || PVP.PREMADE.map(c => sanitizeClass(c, 1));
       return sanitizeClass(list[p.cls] || list[0], p.level || 99);
@@ -427,6 +436,7 @@
     }
     spawn(p) {
       const sp = this.chooseSpawn(p);
+      if (p.bot) { p.classes = p.classes || PVP.BOT_CLASSES.map(c => sanitizeClass(c, 99)); p.level = 99; p.cls = Math.floor(this.rnd() * p.classes.length); }
       this.buildLoadout(p);
       const hm = this.health, hpMul = this.custom.hpMul || 1;
       p.maxHp = (p.jugg ? 400 : p.infected ? 150 : hm.hp) * hpMul; p.hp = p.maxHp;
@@ -509,6 +519,7 @@
       w.next = Math.max(now, w.next) + (g.fire === 'burst' && --w.burstLeft > 0 ? interval : (w.burstLeft = g.burst || 0, 60 / g.rpm));
       w.mag--;
       p.firedAt = now;
+      p.shots = ((p.shots | 0) + 1) & 255;                           // every shot, so other players hear every round (snapshot row)
       if (g.mods?.quiet) p.quietFire = now; else p.loudAt = now;
       const eye = this.eye(p);
       let o = Array.isArray(m.o) ? m.o.map(Number) : eye;
@@ -536,6 +547,7 @@
     onMelee(id) {
       const p = this.players.get(id); if (!p || !p.alive || (p.meleeAt || 0) > this.now) return;
       p.meleeAt = this.now + 0.55;
+      p.swings = ((p.swings | 0) + 1) & 255;
       const eye = this.eye(p), f = dirFrom(p.yaw, p.pitch);
       let best = null, bd = 2.4;
       for (const q of this.enemiesOf(p)) {
@@ -1259,6 +1271,7 @@
         if (p.alive) f |= 1; if (p.fl & 1) f |= 2; if (p.fl & 2) f |= 4; if (p.fl & 4) f |= 8; if (p.fl & 8) f |= 16; if (p.fl & 16 || p.bot) f |= 32;
         if (this.now - (p.firedAt || -9) < 0.2) f |= 64; if (p.camoUntil > this.now) f |= 128; if (p.jugg) f |= 256; if (p.carry) f |= 512; if (p.infected) f |= 1024;
         if (p.weapons[p.cur]?.g.mods?.laser) f |= 2048; if (p.protect > this.now) f |= 4096; if (p.perks.has('noisecancel')) f |= 8192;
+        if (p.weapons[p.cur]?.g.mods?.quiet) f |= 16384;
         // on my radar: a teammate, an enemy who fired loud, an Oracular ping, a cookie, the Influencer, a carrier
         let radar = 0;
         if (me && p !== me) {
@@ -1268,7 +1281,7 @@
         }
         const w = p.weapons[p.cur];
         pl.push([p.num, r2(p.pos[0]), r2(p.pos[1]), r2(p.pos[2]), r2(p.yaw), r2(p.pitch), f, Math.round(Math.max(0, p.hp) / p.maxHp * 100), w ? wcode(w.id) : 0, p.team, radar, w?.g.tier || 0,
-          Math.round((p.shield + p.overshield) / Math.max(1, p.maxShield || 1) * 100)]);
+          Math.round((p.shield + p.overshield) / Math.max(1, p.maxShield || 1) * 100), p.shots | 0, p.swings | 0]);
       }
       const snap = { e: 'snap', t: r2(this.now), st: this.state, pg: this.state === 'pregame' ? r2(this.stateT) : 0, tl: Math.max(0, Math.round(this.mode.rounds ? (this.roundLeft || 0) : this.timeLeft)), ts: this.teamScore, pl,
         pr: this.proj.map(p => [p.id, p.kind, r2(p.pos[0]), r2(p.pos[1]), r2(p.pos[2]), this.players.get(p.owner)?.num || 0]),

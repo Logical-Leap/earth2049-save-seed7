@@ -37,11 +37,11 @@ const Arena = (() => {
 
   AR.pause = on => pause(on);                    // the touch controls' pause button
   function pause(on) {
-    if (on && AR.Pvp?.on && AR.PvpMission.transport?.kind === 'online') { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); AR.pvpMenuOpen = true; return; }
+    if (on && AR.Pvp?.on && AR.PvpMission.transport?.kind === 'online') { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); AR.PvpMission.decoratePause?.(); AR.pvpMenuOpen = true; return; }
     if (!on && AR.pvpMenuOpen) { AR.pvpMenuOpen = false; AR.Hud.pause(false); AR.lockPointer(); return; }
     AR.paused = on; AR.pausedByLock = false;
     AR.Player.clearInput();
-    if (on) { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); }
+    if (on) { AR.unlockPointer(); AR.Hud.pause(true, () => pause(false), () => exit()); if (AR.Pvp?.on) AR.PvpMission.decoratePause?.(); }
     else { AR.Hud.pause(false); AR.lockPointer(); }
   }
 
@@ -164,6 +164,7 @@ const Arena = (() => {
   function musicCue() {
     const ph = AR.Mission.phase;
     if (!AR.active) return null;
+    if (AR.Pvp?.on) return null;                                    // GigaLeague: never any music, so every footstep can be heard
     if (ph === 'results') return AR.Mission.M?.won ? 'outro' : null;
     if (ph === 'boss' || ph === 'bossdead') return 'boss';
     if (ph === 'intro' || ph === 'loadout') return 'title';

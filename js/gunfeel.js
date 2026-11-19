@@ -411,7 +411,7 @@ const GunFeel = (() => {
     for (const m of vm.flashMat) m.opacity = 1;
     // casings (pump and bolt guns throw theirs when the action is worked)
     if (g.shell !== 'none' && g.fire !== 'pump' && g.fire !== 'boltaction') spawnShell(g.shell, tier);
-    GunAudio?.shot?.(w.id, tier);
+    GunAudio?.shot?.(w.snd || w.id, tier);                      // w.snd: a GigaLeague gun with its own voice on a shared model
     if (w.clip <= Math.ceil(vm.magSize * .2) && w.clip > 0 && vm.magSize > 6) GunAudio?.foley?.('lowAmmo');
     return { pitch: kp * D2R * .22, yaw: ky * D2R * .12 };   // the permanent share of the kick (climb)
   }

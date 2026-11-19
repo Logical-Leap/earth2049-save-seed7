@@ -8,8 +8,9 @@
  *   Pad.rumble(strong, weak, ms)
  *
  * Menus: whatever layer is on top (Fitting Room, arena cards/results/pause, Haven dialogue, the game's overlays,
- * the title screen) is navigated spatially: D-pad or left stick moves a glowing focus between its buttons, A
- * presses, B backs out (sends Escape), LB/RB flip tabs in the Fitting Room, START opens or closes pause.
+ * the title screen, the GigaLeague menu) is navigated spatially: D-pad or left stick moves a glowing focus between its
+ * buttons, A presses, B backs out (sends Escape), LB/RB flip tabs in the Fitting Room and the GigaLeague menu, START
+ * opens or closes pause. On a dropdown, left / right steps through its options. A menu that re-renders keeps its focus.
  * Gameplay mapping lives with each mode: AR.Player.padTick (arena) and padGameplay in game.js (Haven, districts).
  */
 'use strict';
@@ -76,7 +77,9 @@ const Pad = (() => {
   function layer() {
     const avc = document.getElementById('avc');
     if (avc) return { key: 'avc', root: avc, sel: '.avc-top button, .avc-tabs button, .avc-grid button, .avc-info button, .avc-dlg.show button, .avc-fold' };
-    for (const id of ['arCards', 'arResults', 'arPause']) { const o = document.getElementById(id); if (o?.classList.contains('on')) return { key: id, root: o, sel: '.arcard, .arbtn' }; }
+    for (const id of ['arCards', 'arResults', 'arPause']) { const o = document.getElementById(id); if (o?.classList.contains('on')) return { key: id, root: o, sel: '.arcard, .arbtn, [data-pcls]' }; }
+    const pvp = document.getElementById('pvpMenu');                   // the GigaLeague menu (js/pvp/pvp-menu.js)
+    if (pvp?.classList.contains('on')) return { key: 'pvpMenu', root: pvp, sel: 'button, select, input[type=checkbox], input[type=radio], input[type=number], input[type=text], input:not([type])' };
     const dlg = document.getElementById('havenDlg');
     if (dlg?.classList.contains('show')) return { key: 'havenDlg', root: dlg, sel: '.opt' };
     const ovs = [...document.querySelectorAll('.ov.show')].filter(o => o.offsetParent !== null || getComputedStyle(o).position === 'fixed');
@@ -85,9 +88,21 @@ const Pad = (() => {
   }
   function items(L) { return [...L.root.querySelectorAll(L.sel)].filter(visible); }
   function clearFocus() { if (focus) focus.classList.remove('pad-focus'); focus = null; }
+  // a menu that re-renders (the PvP lobby updates every few seconds) replaces its buttons: find the same one again
+  let lastSig = '', lastXY = null;
+  const sig = n => n.tagName + '|' + [...n.attributes].filter(a => a.name.startsWith('data-') || a.name === 'name' || a.name === 'value' && n.tagName !== 'INPUT').map(a => a.name + '=' + a.value).join(',') + '|' + (n.tagName === 'SELECT' ? '' : (n.textContent || '').trim().slice(0, 24));
+  function refind(list) {
+    if (!lastSig && !lastXY) return null;
+    const same = list.find(n => sig(n) === lastSig); if (same) return same;
+    if (!lastXY) return null;
+    let best = null, bd = 140;
+    for (const n of list) { const r = n.getBoundingClientRect(), d = Math.hypot(r.left + r.width / 2 - lastXY[0], r.top + r.height / 2 - lastXY[1]); if (d < bd) { bd = d; best = n; } }
+    return best;
+  }
   function setFocus(n) {
     if (focus === n) return;
     clearFocus(); focus = n; if (!n) return;
+    lastSig = sig(n); const rr = n.getBoundingClientRect(); lastXY = [rr.left + rr.width / 2, rr.top + rr.height / 2];
     n.classList.add('pad-focus');
     if (n.classList.contains('arcard')) { document.querySelectorAll('.arcard.sel').forEach(c => c.classList.remove('sel')); n.classList.add('sel'); n.dispatchEvent(new Event('mouseenter')); }
     n.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
@@ -116,7 +131,12 @@ const Pad = (() => {
     /* the city grid is its own game with its own gamepad support: only BACK (View) leaves it */
     if (L.key === 'ovGrid') { if (down(BTN.BACK)) L.root.querySelector('#gridClose')?.click(); return true; }
     const list = items(L);
+    if (L.key === layerKey && focus && !list.includes(focus)) {          // same menu, re-rendered: keep the place
+      const again = refind(list);
+      if (again) { focus = null; setFocus(again); }
+    }
     if (L.key !== layerKey || (focus && !list.includes(focus))) {
+      if (L.key !== layerKey) { lastSig = ''; lastXY = null; }
       layerKey = L.key; clearFocus();
       const pref = list.find(n => n.classList.contains('on') && n.closest('.avc-grid')) || list.find(n => n.classList.contains('arcard')) ||
         list.find(n => n.classList.contains('primary')) ||
@@ -131,15 +151,30 @@ const Pad = (() => {
       if (dir !== lastDir || repeatT <= 0) {
         if (focus?.type === 'range' && (dir === 'left' || dir === 'right')) {
           focus.value = +focus.value + (dir === 'right' ? 1 : -1) * (+focus.step || 1) * 5; focus.dispatchEvent(new Event('input', { bubbles: true }));
+        } else if (focus?.tagName === 'SELECT' && (dir === 'left' || dir === 'right')) {
+          // a dropdown on a controller: left / right steps through its options (skipping locked ones)
+          const o = [...focus.options], step = dir === 'right' ? 1 : -1;
+          let i = focus.selectedIndex;
+          for (let k = 0; k < o.length; k++) { i = (i + step + o.length) % o.length; if (!o[i].disabled) break; }
+          if (i !== focus.selectedIndex) { focus.selectedIndex = i; focus.dispatchEvent(new Event('change', { bubbles: true })); window.AR?.Sfx?.ui?.('hover'); }
+        } else if (focus?.type === 'number' && (dir === 'left' || dir === 'right')) {
+          focus.value = (+focus.value || 0) + (dir === 'right' ? 1 : -1) * (+focus.step || 1); focus.dispatchEvent(new Event('change', { bubbles: true }));
         } else move(list, dir);
         repeatT = dir === lastDir ? 0.11 : 0.35;
       }
     } else repeatT = 0;
     lastDir = dir;
     if (menuLock > 0) return true;
-    if (down(BTN.A) && focus) { focus.click(); rumble(0.1, 0.25, 50); }
+    if (down(BTN.A) && focus) { if (focus.tagName === 'SELECT') { const o = focus.options; focus.selectedIndex = (focus.selectedIndex + 1) % o.length; focus.dispatchEvent(new Event('change', { bubbles: true })); } else focus.click(); rumble(0.1, 0.25, 50); }
     if (down(BTN.B)) key('Escape');
     if (down(BTN.START) && (L.key === 'arPause' || L.key === 'ovPause')) key('Escape');
+    if (L.key === 'pvpMenu') {
+      // GigaLeague menu: LB / RB flip the PLAY / CLASSES / PROGRESS tabs
+      const tabs = [...L.root.querySelectorAll('[data-tab]')];
+      const i = tabs.findIndex(t => t.classList.contains('on'));
+      if (down(BTN.LB) && i > 0) tabs[i - 1].click();
+      if (down(BTN.RB) && i >= 0 && i < tabs.length - 1) tabs[i + 1].click();
+    }
     if (L.key === 'avc') {
       // Fitting Room: LB / RB flip category tabs, RS turns the model
       const tabs = [...L.root.querySelectorAll('.avc-tabs button')];

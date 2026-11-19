@@ -1465,7 +1465,7 @@ let pendingPvp = null;
 function startPvpMatch(opts) {
   AudioSys.init(); AudioSys.resume?.();
   if (state === 'arena') { pendingPvp = opts; window.AR?.exit?.(); return; }
-  Music.stinger?.('deploy');
+  Music.stop?.(0.3); AudioSys.musicStop();                       // multiplayer is silent: not even the deploy stinger
   startArena({ map: opts.map, pvp: opts });
 }
 window.startPvpMatch = startPvpMatch;
@@ -2771,6 +2771,8 @@ function wireMenus() {
   tog('optMusic', 'music', v => AudioSys.setMusic(v));
   tog('optSfx', 'sfx', v => AudioSys.setSfx(v));
   if (el('optRumble')) tog('optRumble', 'rumble', v => { if (v) window.Pad?.rumble(0.6, 0.6, 200); });
+  // which buttons the on-screen prompts name: AUTO follows the device touched last (js/input-glyphs.js)
+  if (el('optPrompts') && window.Glyph) { const b = el('optPrompts'), upd = () => { b.textContent = Glyph.prefLabel(); b.classList.toggle('on', true); }; upd(); b.onclick = () => { Glyph.cycle(); upd(); }; }
   if (SAVE.opts.vrVignette === undefined) SAVE.opts.vrVignette = true;
   if (el('optVrSmooth')) tog('optVrSmooth', 'vrSmoothTurn', () => {});
   if (el('optVrVig')) tog('optVrVig', 'vrVignette', () => {});
@@ -2942,6 +2944,8 @@ function adaptQuality(dt) {
 /* ============ music: pick the cue for what the player is doing ============ */
 function musicDirector() {
   if (!AudioSys.ctx || !SAVE?.opts?.music) return;
+  // multiplayer is silent: no music in the GigaLeague menu, the lobby, a match or its results
+  if (window.PvpMenu?.isOpen?.() || window.AR?.Pvp?.on || pendingPvp) { if (Music.current) Music.stop(0.8); AudioSys.musicStop(); return; }
   let want = null;
   if (state === 'title') want = 'title';
   else if ((state === 'run' || state === 'og') && G) want = G.hub ? 'hub' : (G.phase === 'boss' ? 'boss' : 'combat');
@@ -3029,7 +3033,7 @@ function frame(t) {
       else { AR.Player.vrTick(VR, dt); if (vrYTap) { vrYTap = false; AR.Player.input.swap = -1; } }
     }
     if (window.Pad?.active && AR.active && !Pad.inMenu && !AR.paused && !AR.menu) {
-      if (Pad.down(Pad.BTN.START) || Pad.down(Pad.BTN.BACK)) Arena.pause(true);
+      if (Pad.down(Pad.BTN.START) || (!AR.Pvp?.on && Pad.down(Pad.BTN.BACK))) Arena.pause(true);   // in PvP, BACK (View) holds the scoreboard
       else AR.Player.padTick(Pad, dt);
     }
     Arena.tick(dt);

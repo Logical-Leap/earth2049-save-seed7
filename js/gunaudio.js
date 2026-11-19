@@ -9,7 +9,9 @@
  * Rarity adds layers on top, so a better gun sounds heavier: more sub and drive from Rare up, an energy
  * sweep at Epic, a thunder layer at Legendary, a gold chime at Mythic and Turing glitch bursts at Relic.
  *
- *   GunAudio.shot(id, tier)            id: pistol smg shotgun ar dmr lmg energy rocket; tier 0..6
+ *   GunAudio.shot(id, tier, o)         id: pistol smg shotgun ar dmr lmg energy rocket, and the GigaLeague voices burst fastsmg
+ *                                      revolver marksman minigun launcher; tier 0..6; o.dest plays it into a placed emitter
+ *   GunAudio.distant(id, o)            the same gun heard from far off (cheap: the crack gone, the boom rolling)
  *   GunAudio.foley(name, tier)         reload, handling and casing sounds (see FOLEY)
  */
 'use strict';
@@ -66,13 +68,13 @@ const GunAudio = (() => {
   function voice(t, opt) {
     const v = ctx.createGain(); v.gain.value = opt.gain || 1;
     const drive = ctx.createWaveShaper(); drive.curve = opt.hard ? shaperHard : shaperSoft;
-    const pan = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    const pan = !opt.dest && ctx.createStereoPanner ? ctx.createStereoPanner() : null;      // a placed voice is panned by its emitter
     const lp = ctx.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = opt.lp || 10500; lp.Q.value = .5;
     v.connect(drive); drive.connect(lp);
     let last = lp;
     if (pan) { pan.pan.value = opt.pan || 0; lp.connect(pan); last = pan; }
-    last.connect(bus);
-    const send = ctx.createGain(); send.gain.value = opt.verb || 0.3; last.connect(send); send.connect(verbSend);
+    last.connect(opt.dest || bus);
+    const send = ctx.createGain(); send.gain.value = (opt.verb || 0.3) * (opt.verbK ?? 1); last.connect(send); send.connect(verbSend);
     if (!forced) setTimeout(() => { try { v.disconnect(); drive.disconnect(); lp.disconnect(); pan && pan.disconnect(); send.disconnect(); } catch (_) {} }, ((opt.life || 1.5) + 0.5) * 1000);
     return v;
   }
@@ -170,6 +172,48 @@ const GunAudio = (() => {
       nz(v, t + 0.04, 0.55, 0.32, 'bandpass', 380, 2600, 2.5, 0.08);
       return { verb: 0.55, gain: 1.0, life: 2.0, lp: 6000 };
     },
+    /* GigaLeague guns. Several share a model with a campaign gun, but none share a voice: a player has to be able to
+       tell what is shooting at them by ear. */
+    burst(v, t) {         // [BURST RIFLE]: a higher, drier rifle crack with a hard bolt clack; three of them close together
+      nz(v, t, 0.010, 0.9, 'highpass', 5600); nz(v, t, 0.06, 1.0, 'bandpass', J(3100), 1300, 1.0);
+      tone(v, 'triangle', J(300), 110, t, 0.001, 0.08, 0.7); tone(v, 'sine', J(118), 50, t, 0.002, 0.16, 0.85);
+      tone(v, 'square', J(2300), 1500, t + 0.004, 0.001, 0.02, 0.16);
+      nz(v, t + 0.022, 0.014, 0.4, 'bandpass', 4200, 3400, 3);
+      return { verb: 0.3, gain: 0.92, life: 1.3, lp: 11500 };
+    },
+    fastsmg(v, t) {       // [FAST SMG]: a thin, buzzy zip, almost no body; a mag dump sounds like tearing paper
+      nz(v, t, 0.008, 0.6, 'highpass', 6000); nz(v, t, 0.034, 0.9, 'bandpass', J(4200), 2400, 1.2);
+      tone(v, 'square', J(520), 260, t, 0.001, 0.03, 0.22); tone(v, 'sine', J(170), 90, t, 0.001, 0.05, 0.5);
+      return { verb: 0.14, gain: 0.74, life: 0.7, lp: 13500 };
+    },
+    revolver(v, t) {      // [REVOLVER]: a hand cannon. A deep boom, a long ring and the cylinder clicking round
+      nz(v, t, 0.014, 1.0, 'highpass', 3000); nz(v, t, 0.14, 1.0, 'bandpass', J(1700), 500, 0.7);
+      tone(v, 'sine', J(78), 30, t, 0.002, 0.5, 1.0); tone(v, 'triangle', J(210), 60, t, 0.001, 0.2, 0.8);
+      nz(v, t, 0.34, 0.6, 'lowpass', 1000, 110);
+      tone(v, 'sine', J(1480), 1400, t + 0.02, 0.002, 0.4, 0.05);                     // metal ring
+      nz(v, t + 0.26, 0.016, 0.3, 'bandpass', 3800, 3000, 4); tone(v, 'square', 1700, 1500, t + 0.26, 0.001, 0.01, 0.08);
+      return { verb: 0.6, gain: 1.05, hard: true, life: 2.2, lp: 8000 };
+    },
+    marksman(v, t) {      // [MARKSMAN RIFLE]: a sharp semi-auto snap, lighter than the bolt sniper, with a quick echo
+      nz(v, t, 0.010, 1.0, 'highpass', 6000); nz(v, t, 0.1, 1.0, 'bandpass', J(2900), 900, 0.8);
+      tone(v, 'triangle', J(220), 70, t, 0.001, 0.18, 0.75); tone(v, 'sine', J(90), 34, t, 0.002, 0.36, 0.9);
+      nz(v, t, 0.24, 0.5, 'lowpass', 1100, 140);
+      nz(v, t + 0.16, 0.12, 0.22, 'bandpass', 1700, 600, 0.8);
+      return { verb: 0.55, gain: 0.98, hard: true, life: 2.0, lp: 10500 };
+    },
+    minigun(v, t) {       // INFLUENCER MINIGUN: a motor whine under a fast, low chop; at 1300 RPM it becomes a saw
+      nz(v, t, 0.009, 0.7, 'highpass', 4000); nz(v, t, 0.05, 1.0, 'bandpass', J(1600), 700, 0.9);
+      tone(v, 'sine', J(80), 44, t, 0.001, 0.08, 0.9); tone(v, 'sawtooth', J(140), 90, t, 0.001, 0.05, 0.3);
+      tone(v, 'sawtooth', J(920, 0.01), 900, t, 0.002, 0.07, 0.09);                    // the motor
+      return { verb: 0.3, gain: 0.85, hard: true, life: 1.0, lp: 9000 };
+    },
+    launcher(v, t) {      // [LAUNCHER]: a hollow tube whump, then the rocket motor lighting and screaming off
+      tone(v, 'sine', J(95), 30, t, 0.002, 0.45, 1.0); nz(v, t, 0.3, 0.9, 'lowpass', 600, 80);
+      nz(v, t, 0.04, 0.7, 'highpass', 1800);
+      nz(v, t + 0.06, 0.9, 0.5, 'bandpass', 1400, 4200, 1.8, 0.04);                    // motor hiss
+      tone(v, 'sawtooth', 180, 420, t + 0.06, 0.03, 0.7, 0.14);
+      return { verb: 0.7, gain: 1.05, life: 2.4, lp: 7000 };
+    },
   };
   const TIER_HZ = [0, 660, 520, 1240, 180, 2637, 1760];       // pitch of each rarity's signature layer
 
@@ -186,15 +230,34 @@ const GunAudio = (() => {
   }
 
   let at = null;                                         // previews schedule at an explicit time
-  function shot(id, tier) {
+  /** o (optional): { dest: AudioNode to play into (a placed emitter), when: context time, gain, verbK, lean } */
+  function shot(id, tier, o) {
     if (!ok()) return;
-    const t = (at ?? ctx.currentTime) + 0.002, f = SHOTS[id] || SHOTS.ar;
+    tier = tier | 0;
+    const t = (o?.when ?? at ?? ctx.currentTime) + 0.002, f = SHOTS[id] || SHOTS.ar;
     const probe = ctx.createGain();                      // build into a temp node to learn the voice options first
     const opt = f(probe, t);
-    const v = voice(t, { ...opt, gain: (opt.gain || 1) * (1 + tier * 0.06), verb: (opt.verb || .3) * (1 + tier * 0.08),
-      hard: opt.hard || tier >= 4, pan: (Math.random() - .5) * 0.08, life: (opt.life || 1.5) + tier * 0.1 });
+    const v = voice(t, { ...opt, gain: (opt.gain || 1) * (1 + tier * 0.06) * (o?.gain ?? 1), verb: (opt.verb || .3) * (1 + tier * 0.08),
+      hard: opt.hard || tier >= 4, pan: (Math.random() - .5) * 0.08, life: (opt.life || 1.5) + tier * 0.1, dest: o?.dest, verbK: o?.verbK });
     probe.connect(v);
-    rarityLayers(v, t, tier | 0, id);
+    if (!o?.lean) rarityLayers(v, t, tier, id);
+    return opt.life || 1.5;
+  }
+  /** A gun heard from far away: the crack is gone and the boom rolls. Cheap (five nodes), so a busy match stays light. */
+  // [crack Hz, boom Hz, length s, how far it carries]: a sniper rolls across the map, an SMG barely does
+  const FAR = { pistol: [1900, 120, 0.12, 0.8], smg: [2200, 140, 0.09, 0.8], shotgun: [800, 60, 0.4, 1.3], ar: [1700, 100, 0.16, 1], dmr: [1400, 70, 0.35, 1.7], lmg: [1300, 85, 0.2, 1.15],
+    energy: [2600, 160, 0.22, 1], rocket: [700, 70, 0.4, 1.4], burst: [2100, 115, 0.13, 0.95], fastsmg: [2800, 170, 0.07, 0.7], revolver: [1200, 75, 0.3, 1.35], marksman: [1600, 85, 0.26, 1.4],
+    minigun: [1500, 90, 0.1, 1.2], launcher: [800, 60, 0.45, 1.4] };
+  function distant(id, o) {
+    if (!ok()) return;
+    const [crack, thump, len, carry] = FAR[id] || FAR.ar, t = (o?.when ?? ctx.currentTime) + 0.002;
+    const g = ctx.createGain(); g.gain.value = (o?.gain ?? 1) * carry; g.connect(o?.dest || bus);
+    nz(g, t, 0.05 + len * 0.2, 0.7, 'bandpass', J(crack), crack * 0.45, 0.9);
+    tone(g, 'sine', J(thump), thump * 0.4, t, 0.003, len + 0.1, 0.8);
+    nz(g, t + 0.03, len * 1.6, 0.35, 'lowpass', 700, 90, 0.7, 0.03);
+    const send = ctx.createGain(); send.gain.value = 0.5 * (o?.verbK ?? 1); g.connect(send); send.connect(verbSend);
+    if (!forced) setTimeout(() => { try { g.disconnect(); send.disconnect(); } catch (_) {} }, (len * 2 + 1.2) * 1000);
+    return len * 2 + 0.4;
   }
 
   /* ------------------------------------------------ foley: reloads, handling, casings */
@@ -294,7 +357,7 @@ const GunAudio = (() => {
 
   // tests / audio previews: route everything into another context (e.g. an OfflineAudioContext)
   function _use(c, dest) { ctx = null; init(c, dest); }
-  return { init, shot, foley, boom, _use, set _at(t) { at = t; }, get ready() { return !!ctx; } };
+  return { init, shot, distant, foley, boom, _use, get ctx() { return ctx; }, set _at(t) { at = t; }, get ready() { return !!ctx; }, get ids() { return Object.keys(SHOTS); } };
 })();
 
 if (typeof window !== 'undefined') window.GunAudio = GunAudio;

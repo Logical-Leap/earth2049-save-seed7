@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-11-19 — GigaLeague feel pass
+
+From the first GigaLeague playtest. The aim: a match you can read by ear, feedback that lands, and a controller that works everywhere.
+
+- **No music in multiplayer, ever.** Not in the GigaLeague menu, the lobby, a match or its results. The deploy stinger is gone from PvP too.
+- **You can hear where everyone is.**
+  - Every other player's footsteps are loud and placed in 3D. Enemy steps are louder than a teammate's. Sprinting is loudest, crouching near silent, and landings thud. Walls muffle them. NOISE-CANCELLING still silences them.
+  - Every round other players fire is heard from where they are, in that gun's own voice. Before, enemy guns made one generic "pew" per burst.
+- **Every gun sounds different.** The six GigaLeague guns that shared a voice now have their own: burst rifle, fast SMG, revolver, marksman rifle, minigun and launcher. You hear the same voice when you fire it, so you learn what is shooting at you.
+  - Far guns are heard as a rolling boom, and snipers carry across the map.
+  - Rounds that pass your head crack past it.
+- **Deaths read.** Players grunt when hurt and cry out when they die, then hit the floor. You hear your teammates going down near you, with a short chirp if one dies close by and an X on the minimap where they fell.
+  - Bodies no longer vanish. They play a death animation, fall away from the shot, stay 8 seconds, then sink.
+- **More feedback.**
+  - The kill feed is bigger. Your kills light it up gold, and four of yours in a row is a QUAD FEED.
+  - Under the crosshair you get a running points total with ELIMINATED lines.
+  - Medals pop up with their own sounds: DOUBLE TAP up to ALGORITHM BREAKER, TRENDING / GONE VIRAL streaks, QUAD FEED, REFUND (revenge), HOSTILE TAKEOVER and more. The results screen lists your medals.
+- **Objectives say when you are scoring.**
+  - In Hardpoint: IN THE HILL // SCORING, with a tick and +10 for every second, and CONTESTED when someone is on it with you.
+  - In Domination: CAPTURING B with a progress bar.
+  - Also: planting and defusing progress, flag carrier status, flags changing hands, and team scores that bump as they go up.
+- **Controller.**
+  - Weapon swap is never on the D-pad, in any mode. Y swaps.
+  - In PvP the D-pad holds the scorestreaks (left, up, right = slots 1-3) and the tactical (down).
+  - X uses whatever is right there (plant, defuse, pick up a gun), otherwise it reloads.
+  - VIEW holds the scoreboard.
+  - On the respawn screen, LB / RB change class and A skips the killcam.
+  - The pause menu changes class at any time. It applies at once if you have just spawned and not fired.
+  - The GigaLeague menu is fully navigable: LB / RB flip tabs, the D-pad steps through dropdowns, and B backs out. Its focus stays put when the lobby updates.
+- **Button prompts follow your device.** Every prompt shows the right button for what you are holding: keyboard keys, or Xbox, PlayStation or Switch labels. Settings > Button Prompts can pin one.
+- **The quick match vote counts down** second by second.
+- **Bots are more varied.** They carry every core gun (shotgun, sniper, LMG, marksman, burst, fast SMG…) and pick a new class each life.
+- Fixed: placeholder gun names showed double brackets in the kill feed.
+
 ## 2026-11-18 — Playtest batch 3
 
 - **The Fitting Room saves on the way out.** Back out with ✕, Esc or DONE and your fit is saved: no more losing it for forgetting SAVE. Anything you own stays on; a locked piece you were only trying on goes back to what you had in that slot.

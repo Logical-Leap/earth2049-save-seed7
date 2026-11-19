@@ -6,7 +6,12 @@
  *   - draws every other player 100 ms in the past from snapshot history (interpolation), as their Fitting Room avatar;
  *   - draws items, scorestreaks, projectiles, smoke and the mode's objectives;
  *   - runs the PvP HUD: score bar and timer, kill feed, minimap, streaks, respawn screen with class change, killcam,
- *     scoreboard (TAB), flash / stun / blackout overlays, the host's callouts, and the results screen with the podium.
+ *     scoreboard (TAB), flash / stun / blackout overlays, the host's callouts, and the results screen with the podium;
+ *   - makes the match readable by ear and by eye (AR.PvpAudio, js/arena/arena-pvp-audio.js): every round other players
+ *     fire in that gun's voice from where they are, loud placed footsteps, pain and death cries; bodies fall (the
+ *     avatar's Death clip) and stay a few seconds; medals, a running points total and kill confirms; objective status
+ *     (in the hill, capturing, planting) with its own sounds; a teammate's death marked on the minimap.
+ * Multiplayer never plays music. Every button prompt follows the device in hand (js/input-glyphs.js).
  */
 'use strict';
 
@@ -21,7 +26,9 @@ AR.PvpMission = (() => {
   const remotes = new Map();                 // num -> { num, name, team, bot, look, av, gun, buf: [[t, x,y,z, yaw,pitch, flags, hp, w, team, radar, tier, sh]], tag }
   const objs = { items: new Map(), ents: new Map(), proj: new Map(), smoke: [], marks: [] };
   const selfHist = [], podiumAvs = [];
-  const INTERP = 0.1;
+  const INTERP = 0.1, BODY_STAY = 8, BODY_SINK = 1.4;
+  let medalQ = [], multi = { n: 0, at: -99 }, feedRun = 0, lastKiller = 0, ptsRun = { n: 0, at: 0, lines: [] }, allyX = [];
+  let objIn = null, hillRun = 0, padBoard = false, glyphOff = null, useHint = null, replaying = false, medalCount = {}, lastDeath = null, scoreSeen = null;
   const WEAPONS = () => window.PvpSim.WEAPON_IDS;
   const P = () => AR.Player.P;
 
@@ -37,6 +44,9 @@ AR.PvpMission = (() => {
   AR.Pvp.melee = () => send({ t: 'melee' });
   AR.Pvp.nade = tac => { const p = P(); if (!p) return; const d = AR.Player.aimDir(V3()); send({ t: tac ? 'tac' : 'nade', d: [d.x, d.y, d.z] }); AR.Sfx.reload(null, 'out'); };
   AR.Pvp.moveK = () => (stunUntil > performance.now() ? 0.6 : 1);
+  // a controller's X: use when there is something to use right here, else reload (js/arena/arena-player.js padTick)
+  AR.Pvp.useContext = () => !!useHint;
+  AR.Pvp.use = () => send({ t: 'use' });
   AR.Pvp.assistList = () => {
     const out = [];
     for (const r of remotes.values()) { const s = r.cur; if (!s || !(s.f & 1) || r.team === myTeam && mode?.teams === 2 || r.num === me) continue; out.push({ body: { pos: s.pos }, headPos: V3(s.pos.x, s.pos.y + 1.6, s.pos.z), dying: false }); }
@@ -52,6 +62,10 @@ AR.PvpMission = (() => {
     // the arena lights levels through baked probes, not lights: give the avatars (lit materials) light of their own
     const hemi = new THREE.HemisphereLight(0xe6e0ff, 0x3a3050, 1.5), sun = new THREE.DirectionalLight(0xfff0e0, 0.9); sun.position.set(0.4, 1, 0.3); root.add(hemi, sun);
     buildHud();
+    AR.PvpAudio.init(); AR.PvpAudio.reset();
+    medalQ = []; multi = { n: 0, at: -99 }; feedRun = 0; lastKiller = 0; ptsRun = { n: 0, at: 0, lines: [] }; allyX = []; objIn = null; hillRun = 0; useHint = null; replaying = false;
+    medalCount = {}; lastDeath = null; scoreSeen = null;
+    glyphOff?.(); glyphOff = window.Glyph?.onChange(() => { if (!hud) return; hudEl('strk')._h = ''; hudEl('ost')._h = ''; if (dead && lastDeath && !done) showRespawn(lastDeath, true); });
     window.GunFeel?.setFair?.({ mag: () => AR.Player.gun?.d.mag });
     AR.Player.setProfile(PVP.MOVE[playlist]);
     const p = P(); if (p) { p.alive = false; p.armor = 0; p.maxArmor = 1; }
@@ -63,7 +77,7 @@ AR.PvpMission = (() => {
     for (const m of O.queued || []) onMessage(m);
     AR.Hud.chatTitle?.(PVP.HOST.title);
     AR.Hud.banner(mode.name, mode.how, 4);
-    Music.play?.('combat');
+    Music.stop?.(0.4); AudioSys.musicStop?.();                     // no music in multiplayer, ever
   }
   function dispose() {
     AR.Pvp.on = false;
@@ -71,8 +85,9 @@ AR.PvpMission = (() => {
     if (T?.kind === 'local') T.close();
     window.GunFeel?.setFair?.(null);
     AR.Player.setProfile(null);
-    for (const r of remotes.values()) { r.av?.dispose?.(); r.tag?.remove(); }
+    for (const r of remotes.values()) dropRemote(r);
     remotes.clear();
+    AR.PvpAudio.reset(); glyphOff?.(); glyphOff = null;
     if (root) { AR.scene.remove(root); root = null; }
     hud?.remove(); hud = null;
     document.getElementById('arHud')?.classList.remove('pvp', 'classic');
@@ -104,11 +119,12 @@ AR.PvpMission = (() => {
       r.buf.push([now].concat(row.slice(1)));
       if (r.buf.length > 160) r.buf.shift();
     }
-    for (const [num, r] of remotes) if (!s.pl.some(x => x[0] === num)) { r.av?.root && (r.av.root.visible = false); r.tag?.remove(); r.av?.dispose?.(); remotes.delete(num); }
+    for (const [num, r] of remotes) if (!s.pl.some(x => x[0] === num)) { dropRemote(r); remotes.delete(num); }
     if (s.me) applyMe(s.me);
     syncItems(s.it); syncEnts(s.en); syncProj(s.pr); syncSmoke(s.sm); syncObjectives(s.ob);
     // selfHist uses server time for the killcam
   }
+  function dropRemote(r) { r.tag?.remove(); r.av?.dispose?.(); r.corpse?.av?.dispose?.(); r.spare?.dispose?.(); AR.PvpAudio.drop(r.num); }
   function estServer() { return snapLast ? serverT + (performance.now() - snapRecv) / 1000 : 0; }
   function selfStats(row) { const p = P(); if (!p) return; if (!(row[6] & 1) && p.alive && !dead) { /* death arrives as an event */ } }
   function applyMe(m) {
@@ -169,6 +185,7 @@ AR.PvpMission = (() => {
       dmg: S.near[0], pellets: S.pellets, rpm: S.fire === 'burst' ? S.burstRpm : S.rpm, semi: S.fire === 'semi', mag: S.magSize, reserve: S.reserve, reload: (S.reloadT || 0.3) * sleight,
       spread: S.spread[0] * (1 + (S.mods?.spread || 0)), adsSpread: S.spread[1], adsTime: S.ads * (1 + (S.mods?.ads || 0)), kick: base.kick * recoil, kickYaw: base.kickYaw * recoil,
       burst: S.burst || 0, burstGap: S.fire === 'burst' ? 60 / S.rpm : 0, stf: S.stf, stfK: S.mods?.stf || 0, melee: !!S.melee, noZoom: !!S.noZoom, shellReload: !!S.shell || base.shellReload,
+      snd: PVP.GUNS[id]?.snd,
     });
     if (S.zoom) d.ads = 1 / S.zoom * 1.6;
     if (!S.proj) delete d.proj; else d.proj = Object.assign({}, base.proj || {}, { speed: S.proj.speed, grav: S.proj.grav, splash: S.proj.splash, life: S.proj.life, bounce: S.proj.bounce || 0 });
@@ -191,6 +208,8 @@ AR.PvpMission = (() => {
     hud.classList.remove('dead'); hudEl('resp').style.display = 'none';
     AR.lockPointer();
     if (p && !v.keep) AR.Hud.toast('REVIVED', 'REVIVAL FEE ¤' + PVP.REVIVAL_FEE.toLocaleString('en-US') + ' ADDED TO YOUR ESTATE');
+    if (v.swap) { AR.Hud.toast('CLASS CHANGED', (PvpProgress.classes()[O.cls || 0]?.name || '') + ' // YOU HAD NOT FIRED YET, SO IT APPLIES NOW'); AR.PvpAudio.ui('confirm'); }
+    multi.n = 0; hillRun = 0;
   }
 
   /* ------------------------------------------------ hits, kills, death */
@@ -219,15 +238,35 @@ AR.PvpMission = (() => {
   function onKillEv(v) {
     feed(v);
     lastKill = Object.assign({ at: estServer() }, v);
-    const p = P();
+    const p = P(), ally = n => mode.teams === 2 && n !== me && teamOf(n) === myTeam;
+    // the victim cries out where they fell; their body falls away from the shot
+    const r = remotes.get(v.v);
+    if (r) {
+      const kp = v.k === me ? p?.body.pos : remotes.get(v.k)?.cur?.pos;
+      if (kp && v.k !== v.v) { const dx = v.x - kp.x, dz = v.z - kp.z, n = Math.hypot(dx, dz) || 1; r.killDir = [dx / n, dz / n]; } else r.killDir = null;
+      AR.PvpAudio.place(r.num, v.x, v.y + 1.3, v.z);
+      AR.PvpAudio.vocal(r.num, 'death', r.voice, ally(v.v));
+    }
+    // a teammate down: marked on the minimap for a few seconds, and a short chirp if it was near you
+    if (ally(v.v)) { allyX.push({ x: v.x, z: v.z, at: performance.now() }); const c = AR.camera.position; if (Math.hypot(c.x - v.x, c.z - v.z) < 45) AR.PvpAudio.ui('allyDown'); }
     if (v.k === me && v.v !== me) {
-      AR.Sfx.kill(v.s, v.h); AR.hitstop?.(0.04);
+      AR.Sfx.kill(Math.min(10, v.s), v.h); AR.hitstop?.(0.04);
+      AR.PvpAudio.ui('confirm'); if (v.h) AR.PvpAudio.ui('head');
+      confirmLine(v);
+      const t = performance.now() / 1000;
+      multi.n = t - multi.at <= PVP.MULTI_WINDOW ? multi.n + 1 : 1; multi.at = t;
+      if (multi.n >= 2) medal('multi' + Math.min(6, multi.n));
+      if (v.s === 5 || v.s === 10 || v.s === 15 || v.s === 20) medal('streak' + v.s);
+      if (lastKiller && v.v === lastKiller) { medal('revenge'); lastKiller = 0; }
+      if (v.w === 'melee' || v.w === 'knife') medal('melee');
+      window.Pad?.rumble(0.35, 0.6, 90);
       if (chatOn) AR.Hud.chat(AR.pick(AR.CHAT_USERS), AR.pick(v.h ? AR.CHAT.head : v.s >= 3 ? AR.CHAT.multi : AR.CHAT.kill));
-      if (v.s === 3 || v.s === 5 || v.s === 10) AR.Hud.toast('TRENDING x' + v.s, 'ENGAGEMENT IS UP');
     }
     if (v.v === me && p) {
       dead = true; deadAt = performance.now(); p.alive = false; killer = v.k && v.k !== me ? v.k : 0;
+      lastKiller = killer; multi.n = 0; hillRun = 0;
       AR.unlockPointer();
+      AR.PvpAudio.ui('dead');
       if (chatOn) AR.Hud.chat(AR.pick(AR.CHAT_USERS), AR.pick(AR.CHAT.death));
       const rs = (mode.respawn || 3) + (spawnInfo?.loadout?.perks?.includes('bnpl') ? 1 : 0);
       if (killer && remotes.has(killer)) killcam = { num: killer, from: estServer() - Math.min(3.2, rs + 1), to: estServer(), t0: performance.now(), len: Math.min(3.2, rs + 0.6) };
@@ -248,19 +287,22 @@ AR.PvpMission = (() => {
     }
   }
   function onStreakEv(v) {
-    if (v.st === 'ready') { AR.Hud.toast('STREAK READY', PVP.STREAKS[v.id].name.replace(/"/g, '') + ' // PRESS ' + slotKey(v.id)); AR.Sfx.levelUp?.(); }
+    if (v.st === 'ready') { AR.Hud.toast('STREAK READY', PVP.STREAKS[v.id].name.replace(/"/g, '') + ' // PRESS ' + slotKey(v.id)); AR.PvpAudio.ui('streak'); window.Pad?.rumble(0.2, 0.5, 120); }
     if (v.st === 'used') {
       const S = PVP.STREAKS[v.id], mine = v.by === me, friendly = mode.teams === 2 ? v.team === myTeam : mine;
       AR.Hud.toast(mine ? 'STREAK ACTIVE' : friendly ? 'FRIENDLY ' + S.name.replace(/"/g, '') : 'ENEMY ' + S.name.replace(/"/g, ''), mine ? S.d : nameOf(v.by));
       if (v.id === 'wipe' && !friendly) AR.Hud.banner('SERVER WIPE INCOMING', 'TEN SECONDS. FIND GOD.', 4);
     }
   }
-  function slotKey(id) { const i = myStreaks.indexOf(id); return i >= 0 ? '[' + (i + 3) + ']' : '[3]'; }
+  function slotKey(id) { const i = Math.max(0, myStreaks.indexOf(id)); return window.Glyph ? Glyph.label('streak' + (i + 1)) : '[' + (i + 3) + ']'; }
   function onObjEv(v) {
     const T2 = PVP.TEAM_NAMES;
-    if (v.k === 'flag') AR.Hud.toast('FLAG ' + v.id, (v.owner === myTeam ? 'SECURED' : 'LOST') + ' // ' + T2[v.owner]);
+    if (v.k === 'flag') { AR.Hud.toast('FLAG ' + v.id, (v.owner === myTeam ? 'SECURED' : 'LOST') + ' // ' + T2[v.owner]); AR.PvpAudio.ui(v.owner === myTeam ? 'captured' : 'lost'); }
+    if (v.k === 'flagCap') AR.PvpAudio.ui(v.team === myTeam ? 'captured' : 'lost');
+    if (v.k === 'planted') AR.PvpAudio.ui(objState?.att === myTeam ? 'captured' : 'lost');
+    if (v.k === 'defused') AR.PvpAudio.ui(objState?.att === myTeam ? 'lost' : 'captured');
     if (v.k === 'halftime') AR.Hud.banner('HALFTIME', 'SIDES SWITCH', 3);
-    if (v.k === 'hill') AR.Hud.toast('HILL MOVED', 'GET TO IT');
+    if (v.k === 'hill') { AR.Hud.toast('HILL MOVED', 'GET TO IT'); AR.PvpAudio.ui('contested'); }
     if (v.k === 'harvest' && v.by === me) AR.Hud.toast('DATA HARVESTED', '+1 FOR THE TEAM');
     if (v.k === 'deny' && v.by === me) AR.Hud.toast('DRIVE DENIED', 'THEIR POINT IS GONE');
     if (v.k === 'flagTaken') AR.Hud.toast(v.team === myTeam ? 'YOUR FLAG IS TAKEN' : 'WE HAVE THEIR FLAG', nameOf(v.by));
@@ -276,35 +318,45 @@ AR.PvpMission = (() => {
   /* ================================================================== remote players */
   function addRemote(num) {
     const info = roster.get(num) || {};
-    const r = { num, name: info.name || 'OPERATIVE', team: info.team ?? 0, bot: !!info.bot, buf: [], cur: null, anim: '', lastF: 0, stepT: 0 };
-    let L = null;
+    const r = { num, name: info.name || 'OPERATIVE', team: info.team ?? 0, bot: !!info.bot, buf: [], cur: null, anim: '', lastF: 0, stepT: 0, airT: 0,
+      look: null, voice: num % 2 ? 'f' : 'm', shotQ: [], lastShots: null, lastSwings: null, lastHp: 100, gruntAt: 0, whizAt: 0, corpse: null, spare: null, resync: true };
     if (window.AvatarKit?.loaded) {
-      try { L = info.look ? AvatarKit.decode(info.look) : null; } catch (e) { L = null; }
-      if (!L) L = AvatarKit.randomLoadout(num % 2 ? 'f' : 'm');
-      try { r.av = AvatarKit.create(L); r.av.play?.('Idle Combat', 0); } catch (e) { r.av = null; }
+      try { r.look = info.look ? AvatarKit.decode(info.look) : null; } catch (e) { r.look = null; }
+      if (!r.look) r.look = AvatarKit.randomLoadout(num % 2 ? 'f' : 'm');
+      r.voice = r.look?.sex === 'f' ? 'f' : r.look?.sex === 'm' ? 'm' : r.voice;
     }
-    if (!r.av) {                                                 // no avatar kit: a capsule in team colours
-      const g = new THREE.Group(), m = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 1.75, 8), new THREE.MeshLambertMaterial({ color: 0x8866cc }));
-      m.position.y = 0.88; g.add(m); r.av = { root: g, update() {}, play() {}, dispose() {} };
-    }
-    root.add(r.av.root);
-    // a gun carried at the chest, pointed where they aim
-    r.gunPivot = new THREE.Group(); r.gunPivot.position.set(0.22, 1.32, 0); r.av.root.add(r.gunPivot);
-    r.laser = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(), V3(0, 0, 40)]), new THREE.LineBasicMaterial({ color: 0xff2020, transparent: true, opacity: 0.55 }));
-    r.laser.visible = false; r.gunPivot.add(r.laser);
+    useAvatar(r, makeAvatar(r));
     r.tag = document.createElement('div'); r.tag.className = 'pvptag'; hudEl('tags').appendChild(r.tag);
     remotes.set(num, r);
     return r;
   }
+  /** One body for a remote player: their Fitting Room avatar (a capsule without the kit), carrying a gun at the chest. */
+  function makeAvatar(r) {
+    let av = null;
+    if (r.look && window.AvatarKit?.loaded) { try { av = AvatarKit.create(r.look); av.play?.('Idle Combat', 0); } catch (e) { av = null; } }
+    if (!av) {
+      const g = new THREE.Group(), m = new THREE.Mesh(new THREE.CylinderGeometry(0.38, 0.38, 1.75, 8), new THREE.MeshLambertMaterial({ color: 0x8866cc }));
+      m.position.y = 0.88; g.add(m); av = { root: g, update() {}, play() { return null; }, dispose() { g.parent?.remove(g); }, capsule: true };
+    }
+    root.add(av.root);
+    av.gunPivot = new THREE.Group(); av.gunPivot.position.set(0.22, 1.32, 0); av.root.add(av.gunPivot);
+    av.laser = new THREE.Line(new THREE.BufferGeometry().setFromPoints([V3(), V3(0, 0, 40)]), new THREE.LineBasicMaterial({ color: 0xff2020, transparent: true, opacity: 0.55 }));
+    av.laser.visible = false; av.gunPivot.add(av.laser);
+    return av;
+  }
+  function useAvatar(r, av) {
+    r.av = av; r.gunPivot = av.gunPivot; r.laser = av.laser; r.gun = av.gun || null; r.gunId = av.gunId || null; r.anim = ''; r.camo = false;
+    av.gunPivot.visible = true; av.root.rotation.set(0, 0, 0);
+  }
   function setRemoteGun(r, w, tier) {
     const id = WEAPONS()[w] || 'pistol';
     if (r.gunId === id + ':' + tier) return;
-    r.gunId = id + ':' + tier;
-    if (r.gun) { r.gunPivot.remove(r.gun.root); r.gun = null; }
+    r.gunId = r.av.gunId = id + ':' + tier;
+    if (r.gun) { r.gunPivot.remove(r.gun.root); r.gun = r.av.gun = null; }
     const vis = PVP.GUNS[id]?.vis; if (!vis) return;
     const v = AR.Arsenal.build(vis, tier || 0); if (!v) return;
     v.root.scale.setScalar(1.05); v.root.rotation.set(0, 0, 0);
-    r.gunPivot.add(v.root); r.gun = v;
+    r.gunPivot.add(v.root); r.gun = r.av.gun = v;
   }
   /** a player's state at time t, from the snapshot buffer (linear between the two snapshots around t) */
   function sample(r, t) {
@@ -315,16 +367,27 @@ AR.PvpMission = (() => {
     const k = c[0] > a[0] ? clamp((t - a[0]) / (c[0] - a[0]), 0, 1) : 0;
     const L = (i) => a[i] + (c[i] - a[i]) * k;
     let dy = c[4] - a[4]; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
-    return { pos: V3(L(1), L(2), L(3)), yaw: a[4] + dy * k, pitch: L(5), f: c[6], hp: c[7], w: c[8], team: c[9], radar: c[10], tier: c[11], sh: c[12], vx: (c[1] - a[1]) / Math.max(0.01, c[0] - a[0]), vz: (c[3] - a[3]) / Math.max(0.01, c[0] - a[0]) };
+    // the counters (rounds fired, melee swings) step when time passes the snapshot that raised them
+    const at = k >= 1 || t >= c[0] ? c : a;
+    return { pos: V3(L(1), L(2), L(3)), yaw: a[4] + dy * k, pitch: L(5), f: c[6], hp: c[7], w: c[8], team: c[9], radar: c[10], tier: c[11], sh: c[12], shots: at[13] | 0, swings: at[14] | 0,
+      vx: (c[1] - a[1]) / Math.max(0.01, c[0] - a[0]), vz: (c[3] - a[3]) / Math.max(0.01, c[0] - a[0]) };
   }
   function drawRemotes(dt, t, hideNum) {
-    const cam = AR.camera, w = innerWidth, h = innerHeight, pv = V3();
+    const cam = AR.camera, w = innerWidth, h = innerHeight, pv = V3(), live = hideNum === -1, ms = performance.now();
+    if (!live) replaying = true; else if (replaying) { replaying = false; for (const r of remotes.values()) r.resync = true; }
     for (const r of remotes.values()) {
       const s = sample(r, t); r.cur = s;
+      corpseTick(r, dt, live);
       const av = r.av; if (!av || !s) continue;
       const alive = !!(s.f & 1);
       av.root.visible = alive && r.num !== hideNum;
-      if (!alive) { if (r.wasAlive) { AR.Fx.emit(AR.Fx.glow, s.pos.x, s.pos.y + 1, s.pos.z, r.team === myTeam && mode.teams === 2 ? 0x4da6ff : 0xff3b5c, 22, 4, 0.5); } r.wasAlive = false; r.tag.style.display = 'none'; continue; }
+      if (live) AR.PvpAudio.place(r.num, s.pos.x, s.pos.y + ((s.f & 2) ? 1.0 : 1.45), s.pos.z);
+      // the killcam replays the past: nothing in it makes a sound or leaves a body; afterwards the counters catch up quietly
+      if (!live || r.resync) { r.lastShots = s.shots; r.lastSwings = s.swings; r.shotQ.length = 0; r.lastHp = s.hp; r.wasAlive = alive; r.resync = !live; }
+      if (!alive) {
+        if (live && r.wasAlive) dieRemote(r, s);
+        r.wasAlive = false; r.tag.style.display = 'none'; r.lastShots = s.shots; r.lastSwings = s.swings; r.shotQ.length = 0; r.lastHp = 100; continue;
+      }
       r.wasAlive = true;
       av.root.position.copy(s.pos);
       av.root.rotation.y = s.yaw + Math.PI;
@@ -335,13 +398,36 @@ AR.PvpMission = (() => {
       if (r.camo !== camo) { r.camo = camo; av.root.traverse(o => { if (o.material) { o.material.transparent = camo; o.material.opacity = camo ? 0.12 : 1; } }); }
       r.laser.visible = !!(s.f & 2048);
       // animation
-      const sp = Math.hypot(s.vx, s.vz), crouch = s.f & 2;
-      const anim = !(s.f & 32) ? 'Jump' : crouch ? (sp > 0.6 ? 'Crouch Walk' : 'Crouch Idle') : sp > 5.2 ? 'Run' : sp > 0.6 ? 'Walk' : 'Idle Combat';
+      const sp = Math.hypot(s.vx, s.vz), crouch = s.f & 2, ground = !!(s.f & 32);
+      const anim = !ground ? 'Jump' : crouch ? (sp > 0.6 ? 'Crouch Walk' : 'Crouch Idle') : sp > 5.2 ? 'Run' : sp > 0.6 ? 'Walk' : 'Idle Combat';
       if (anim !== r.anim) { r.anim = anim; av.play?.(anim, 0.15); }
       av.update?.(dt);
-      // footsteps (not for NOISE-CANCELLING), and gunfire
-      if ((s.f & 32) && sp > 2 && !(s.f & 8192)) { r.stepT -= dt * sp; if (r.stepT <= 0) { r.stepT = 2.6; footstep(s.pos, r.team !== myTeam || mode.teams !== 2); } }
-      if ((s.f & 64) && !(r.lastF & 64)) remoteShot(r, s);
+      if (live) {
+        const enemy = mode.teams !== 2 || r.team !== myTeam;
+        // footsteps, loud and placed (not with NOISE-CANCELLING); a landing thuds
+        if (!(s.f & 8192)) {
+          if (ground && r.airT > 0.35) AR.PvpAudio.step(r.num, 'land', enemy);
+          if (ground && sp > 1.6) {
+            const kind = crouch ? 'crouch' : sp > 5.2 ? 'run' : 'walk';
+            r.stepT -= dt * sp;
+            if (r.stepT <= 0) { r.stepT = kind === 'run' ? 2.9 : kind === 'crouch' ? 1.7 : 2.2; AR.PvpAudio.step(r.num, kind, enemy); }
+          }
+        }
+        r.airT = ground ? 0 : r.airT + dt;
+        // every round they fired since the last frame, at the gun's own rate
+        const n = (s.shots - r.lastShots + 256) & 255;
+        if (n > 0 && n < 48) {
+          const G = PVP.GUNS[WEAPONS()[s.w]], gap = G ? 60000 / (G.fire === 'burst' ? G.burstRpm : G.rpm) : 90;
+          let at = Math.max(ms, r.shotQ.length ? r.shotQ[r.shotQ.length - 1] + gap : ms);
+          for (let i = 0; i < n && r.shotQ.length < 16; i++, at += gap) r.shotQ.push(at);
+        }
+        r.lastShots = s.shots;
+        while (r.shotQ.length && r.shotQ[0] <= ms) { r.shotQ.shift(); remoteShot(r, s); }
+        const sw = (s.swings - r.lastSwings + 256) & 255; if (sw > 0 && sw < 8) AR.PvpAudio.swing(r.num); r.lastSwings = s.swings;
+        // pain: a grunt when they lose health (teammates too, so you hear your side getting hurt)
+        if (s.hp < r.lastHp - 2 && ms - r.gruntAt > 380) { r.gruntAt = ms; AR.PvpAudio.vocal(r.num, 'hurt', r.voice, !enemy); }
+        r.lastHp = s.hp;
+      }
       r.lastF = s.f;
       // nameplate: teammates always, enemies only when you can see them
       const enemy = mode.teams !== 2 || r.team !== myTeam;
@@ -358,19 +444,62 @@ AR.PvpMission = (() => {
       }
     }
   }
+  /* ------------------------------------------------ bodies: the avatar plays its Death clip, stays a few seconds, sinks */
+  function floorBelow(x, y, z) { const hit = AR.World.raycast(x, y + 0.6, z, 0, -1, 0, 30); return hit ? y + 0.6 - hit.t : y; }
+  function dieRemote(r, s) {
+    if (r.corpse) endCorpse(r);                                   // a second death before the last body cleared
+    const av = r.av, dir = r.killDir || [0, 0];
+    av.root.visible = true; av.root.position.copy(s.pos); av.root.rotation.y = s.yaw + Math.PI;
+    av.gunPivot.visible = false; av.laser.visible = false;
+    if (r.camo) av.root.traverse(o => { if (o.material) { o.material.transparent = false; o.material.opacity = 1; } });
+    const act = av.capsule ? null : av.play?.('Death', 0.08);
+    if (act) { act.setLoop(THREE.LoopOnce, 1); act.clampWhenFinished = true; }
+    r.corpse = { av, t0: performance.now(), x: s.pos.x, y: s.pos.y, z: s.pos.z, vx: dir[0] * 2.4, vz: dir[1] * 2.4, vy: 0, floor: floorBelow(s.pos.x, s.pos.y, s.pos.z), tip: 0 };
+    r.killDir = null;
+    // the player lives on in the other body: two avatars a player at most, swapped
+    useAvatar(r, r.spare || makeAvatar(r)); r.spare = null;
+    r.av.root.visible = false;
+  }
+  function corpseTick(r, dt, live) {
+    const c = r.corpse; if (!c) return;
+    const age = (performance.now() - c.t0) / 1000;
+    if (age > BODY_STAY + BODY_SINK) { endCorpse(r); return; }
+    c.av.root.visible = live;                                     // bodies belong to now, not to the killcam
+    // knocked back a little from the shot, falling to the floor
+    const k = Math.exp(-dt * 5); c.vx *= k; c.vz *= k;
+    const nx = c.x + c.vx * dt, nz = c.z + c.vz * dt;
+    if (AR.World.los(c.x, c.y + 0.5, c.z, nx, c.y + 0.5, nz)) { c.x = nx; c.z = nz; }
+    if (c.y > c.floor) { c.vy -= 22 * dt; c.y = Math.max(c.floor, c.y + c.vy * dt); }
+    const sink = age > BODY_STAY ? (age - BODY_STAY) / BODY_SINK : 0;
+    c.av.root.position.set(c.x, c.y - sink * 0.9, c.z);
+    if (c.av.capsule) { c.tip = Math.min(1, c.tip + dt * 3); c.av.root.rotation.x = -c.tip * 1.45; }
+    c.av.update?.(dt);
+  }
+  function endCorpse(r) {
+    const c = r.corpse; if (!c) return;
+    c.av.root.visible = false; c.av.root.rotation.x = 0; c.av.gunPivot.visible = true;
+    if (r.spare) r.spare.dispose?.();
+    r.spare = c.av; r.corpse = null;
+  }
+  const HEAVY = new Set(['sniper', 'marksman', 'revolver']);
   function remoteShot(r, s) {
-    const w = WEAPONS()[s.w], G = PVP.GUNS[w]; if (!G || G.melee) return;
+    const id = WEAPONS()[s.w], G = PVP.GUNS[id]; if (!G || G.melee) return;
     const o = V3(s.pos.x, s.pos.y + ((s.f & 2) ? 1.05 : 1.55), s.pos.z), d = window.PvpSim.dirFrom(s.yaw, s.pitch);
     const hit = AR.World.raycast(o.x, o.y, o.z, d[0], d[1], d[2], 120), t = hit ? hit.t : 120;
     AR.Fx.trace(o.x + d[0] * 0.6, o.y + d[1] * 0.6, o.z + d[2] * 0.6, o.x + d[0] * t, o.y + d[1] * t, o.z + d[2] * t, AR.GUNS[G.vis]?.tracer || 0xffe080, 0.06);
-    AR.Fx.light(o.x + d[0] * 0.6, o.y, o.z + d[2] * 0.6, 0xffb060, 2, 7, 0.05);
-    const cam = AR.camera.position, dist = cam.distanceTo(o);
-    if (dist < 90 && !(r.quietShot)) AR.Sfx.enemyShot(o.x, o.y, o.z, G.cls === 'shotgun' || G.cls === 'sniper' ? 'heavy' : 'bolt');
-  }
-  function footstep(pos, enemy) {
-    const c = AR.camera.position, d = c.distanceTo(pos);
-    if (d > 28) return;
-    AR.Sfx.step?.(enemy && d < 14);                               // enemy footsteps play louder than teammates' (CoD rule)
+    const quiet = !!(s.f & 16384);
+    if (!quiet) AR.Fx.light(o.x + d[0] * 0.6, o.y, o.z + d[2] * 0.6, 0xffb060, 2, 7, 0.05);
+    AR.PvpAudio.shot(r.num, G.snd || 'ar', s.tier, { quiet });
+    // a round passing close to your head cracks past it: you know you are the one being shot at
+    const hostile = mode.teams !== 2 || r.team !== myTeam;
+    if (hostile && !dead) {
+      const c = AR.camera.position, wx = c.x - o.x, wy = c.y - o.y, wz = c.z - o.z, tc = wx * d[0] + wy * d[1] + wz * d[2];
+      if (tc > 2 && tc < t + 1) {
+        const mx = o.x + d[0] * tc, my = o.y + d[1] * tc, mz = o.z + d[2] * tc, miss = Math.hypot(c.x - mx, c.y - my, c.z - mz);
+        const ms = performance.now();
+        if (miss < (G.pellets > 1 ? 1.6 : 2.6) && ms - r.whizAt > 70) { r.whizAt = ms; AR.PvpAudio.whiz(mx, my, mz, HEAVY.has(id)); }
+      }
+    }
   }
 
   /* ================================================================== items, streaks, projectiles, smoke, objectives */
@@ -507,6 +636,15 @@ AR.PvpMission = (() => {
       send({ t: 'input', p: [+b.pos.x.toFixed(3), +b.pos.y.toFixed(3), +b.pos.z.toFixed(3)], v: [+b.vel.x.toFixed(2), +b.vel.y.toFixed(2), +b.vel.z.toFixed(2)], yaw: +p.yaw.toFixed(3), pitch: +p.pitch.toFixed(3), fl, w: p.cur });
       selfHist.push([estServer(), b.pos.x, b.pos.y, b.pos.z, p.yaw, p.pitch]); if (selfHist.length > 200) selfHist.shift();
     }
+    AR.PvpAudio.frame(AR.camera);
+    // a controller while dead (the arena's own pad handling stops when you die): change class, skip the killcam
+    const Pd = window.Pad;
+    padBoard = !!(Pd?.active && !Pd.inMenu && Pd.held(Pd.BTN.BACK));
+    if (dead && !done && Pd?.active && !Pd.inMenu) {
+      if (Pd.down(Pd.BTN.LB) || Pd.down(Pd.BTN.LEFT)) stepClass(-1);
+      if (Pd.down(Pd.BTN.RB) || Pd.down(Pd.BTN.RIGHT)) stepClass(1);
+      if (Pd.down(Pd.BTN.A)) { send({ t: 'skip' }); killcam = null; }
+    }
     // a streak key, or the next ready streak
     const I = AR.Player.input;
     if (I.streak) {
@@ -535,19 +673,49 @@ AR.PvpMission = (() => {
   #pvpHud .objl{position:absolute;left:50%;top:66px;transform:translateX(-50%);font-size:13px;color:#00e5ff;white-space:nowrap}
   #pvpHud .objl span{display:inline-block;width:22px;text-align:center;margin:0 3px;border:1px solid #fff;background:rgba(0,0,0,.5)}
   #pvpHud .objl span.ally{border-color:var(--pvp-ally);background:rgba(77,166,255,.45)}#pvpHud .objl span.enemy{border-color:var(--pvp-enemy);background:rgba(255,59,92,.45)}#pvpHud .objl span.cont{border-color:#ffd400}
-  #pvpHud .feed{position:absolute;right:14px;top:14px;width:330px;font-size:12px;text-align:right}
-  #pvpHud .feed div{margin-bottom:3px;background:rgba(0,0,0,.45);display:inline-block;padding:1px 6px;clear:both;float:right;animation:arIn .18s}
-  #pvpHud .feed .a{color:var(--pvp-ally)}#pvpHud .feed .e{color:var(--pvp-enemy)}#pvpHud .feed .me{color:#ffd400}
+  #pvpHud .feed{position:absolute;right:14px;top:14px;width:440px;font-size:15px;text-align:right}
+  #pvpHud .feed div{margin-bottom:4px;background:rgba(0,0,0,.62);display:inline-block;padding:3px 10px;clear:both;float:right;white-space:nowrap;animation:pvpFeedIn .22s ease-out;border-right:3px solid rgba(255,255,255,.25);transition:opacity .5s}
+  #pvpHud .feed div.mine{background:rgba(255,212,0,.24);border-right-color:#ffd400;box-shadow:0 0 12px rgba(255,212,0,.35)}
+  #pvpHud .feed div.died{background:rgba(255,40,70,.28);border-right-color:var(--pvp-enemy)}
+  #pvpHud .feed div.allyd{border-right-color:var(--pvp-ally)}
+  #pvpHud .feed div.qf{border-right-color:#ff2bd6;box-shadow:0 0 16px rgba(255,43,214,.65)}
+  #pvpHud .feed div.old{opacity:0}
+  #pvpHud .feed .w{color:#c8c8d8;font-size:12px;margin:0 6px}#pvpHud .feed .hs{color:#ffd400}
+  #pvpHud .feed .a{color:var(--pvp-ally)}#pvpHud .feed .e{color:var(--pvp-enemy)}#pvpHud .feed .me{color:#ffd400;font-weight:bold}
+  @keyframes pvpFeedIn{0%{opacity:0;transform:translateX(30px)}100%{opacity:1;transform:none}}
+  #pvpHud .medals{position:absolute;left:50%;top:22%;transform:translateX(-50%);display:flex;gap:14px;align-items:flex-start}
+  #pvpHud .md{width:132px;text-align:center;animation:pvpMd .38s cubic-bezier(.2,1.6,.4,1);transition:opacity .35s,transform .35s}
+  #pvpHud .md.out{opacity:0;transform:translateY(-12px) scale(.9)}
+  #pvpHud .md i{display:block;width:54px;height:54px;margin:0 auto 4px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);background:linear-gradient(135deg,#00e5ff,#7a5bff);box-shadow:0 0 18px #00e5ff}
+  #pvpHud .md.t2 i{background:linear-gradient(135deg,#39ff8a,#00e5ff)}#pvpHud .md.t3 i{background:linear-gradient(135deg,#ffd400,#ff7a1a)}
+  #pvpHud .md.t4 i{background:linear-gradient(135deg,#ff2bd6,#ffd400)}#pvpHud .md.t5 i,#pvpHud .md.t6 i{background:linear-gradient(135deg,#fff,#ff2bd6 40%,#00e5ff)}
+  #pvpHud .md b{display:block;font-size:14px;color:#fff;letter-spacing:.08em}#pvpHud .md small{display:block;font-size:9px;opacity:.75;margin-top:2px}
+  @keyframes pvpMd{0%{opacity:0;transform:scale(1.9)}100%{opacity:1;transform:none}}
+  #pvpHud .pts{position:absolute;left:50%;top:57%;transform:translateX(-50%);text-align:center;font-weight:bold}
+  #pvpHud .pts .tot{display:block;font-size:30px;color:#ffd400;text-shadow:0 0 12px rgba(255,212,0,.55),0 2px 0 #000}
+  #pvpHud .pts .tot.pop{animation:pvpPop .25s ease-out}
+  #pvpHud .pts .ln{display:block;font-size:13px;color:#fff;margin-top:2px}#pvpHud .pts .ln.k{color:var(--pvp-enemy);font-size:15px}
+  #pvpHud .pts.fade{opacity:0;transition:opacity .4s}
+  @keyframes pvpPop{0%{transform:scale(1.45)}100%{transform:none}}
+  #pvpHud .ost{position:absolute;left:50%;top:66%;transform:translateX(-50%);text-align:center;min-width:300px;display:none}
+  #pvpHud .ost b{display:block;font-size:22px;letter-spacing:.12em}#pvpHud .ost small{display:block;font-size:12px;margin-top:3px;opacity:.9}
+  #pvpHud .ost .pb{height:8px;margin:6px auto 0;width:280px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.4)}#pvpHud .ost .pb i{display:block;height:100%;background:currentColor}
+  #pvpHud .ost.good{color:var(--pvp-ally)}#pvpHud .ost.good b{animation:pvpPulse 1s infinite}#pvpHud .ost.cont{color:#ffd400}#pvpHud .ost.cont b{animation:pvpBlink .5s infinite}
+  #pvpHud .ost.cap{color:#fff}#pvpHud .ost.bad{color:var(--pvp-enemy)}#pvpHud .ost.use{color:#fff}
+  @keyframes pvpPulse{50%{text-shadow:0 0 16px currentColor,0 2px 0 #000}}@keyframes pvpBlink{50%{opacity:.35}}
+  #pvpHud .sb .t{position:relative}#pvpHud .sb .t.bump{animation:pvpPop .3s ease-out}
+  #pvpHud .sb .t s{position:absolute;left:0;bottom:-7px;height:3px;background:currentColor;opacity:.8;text-decoration:none}
   #pvpHud .mm{position:absolute;left:14px;top:14px;width:168px;height:168px;border:1px solid rgba(255,255,255,.35);background:rgba(5,4,12,.55);border-radius:50%;overflow:hidden}
-  #pvpHud .strk{position:absolute;left:18px;bottom:122px;font-size:11px;line-height:1.5}
+  #pvpHud .strk{position:absolute;left:18px;bottom:122px;font-size:12px;line-height:1.75}
   #pvpHud .strk div{opacity:.55}#pvpHud .strk div.r{opacity:1;color:#ffd400;text-shadow:0 0 8px #ffd400}
   #pvpHud .strk .spts{color:#00e5ff;opacity:1;font-size:12px}
   #arHud.pvp .pips{display:none}#arHud.pvp:not(.classic) .bar.ar{display:none}#arHud.pvp.classic .bar.ar i{background:#7a5bff}
   #pvpHud .resp{position:absolute;left:50%;top:58%;transform:translateX(-50%);text-align:center;display:none;pointer-events:auto;background:rgba(5,4,12,.72);padding:14px 22px;border:1px solid rgba(255,255,255,.2)}
   #pvpHud .resp h2{margin:0;font-size:22px;color:var(--pvp-enemy)}#pvpHud .resp .s{font-size:12px;opacity:.85;margin:6px 0}
-  #pvpHud .resp .cls{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px;max-width:640px}
+  #pvpHud .resp .cls{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:8px;max-width:680px}
+  #pvpHud .resp .cl{font-size:11px;opacity:.8;margin-top:6px;text-transform:none;letter-spacing:.02em}
   #pvpHud .resp button{font:inherit;font-size:11px;background:#16122a;color:#fff;border:1px solid #6b5aa8;padding:5px 9px;cursor:pointer;text-transform:uppercase}
-  #pvpHud .resp button.on{border-color:#ffd400;color:#ffd400}
+  #pvpHud .resp button.on{border-color:#ffd400;color:#111;background:#ffd400}
   #pvpHud .kc{position:absolute;left:0;right:0;top:0;text-align:center;font-size:14px;padding-top:96px;display:none;color:#ff2b4a}
   #pvpHud .kc b{background:#e0003c;color:#fff;padding:1px 8px;margin-right:8px}
   #pvpHud .flash{position:absolute;inset:0;background:#fff;opacity:0;overflow:hidden}
@@ -557,9 +725,6 @@ AR.PvpMission = (() => {
   #pvpHud .board{position:absolute;left:50%;top:14%;transform:translateX(-50%);min-width:560px;background:rgba(5,4,12,.86);border:1px solid rgba(255,255,255,.25);padding:10px 14px;display:none;font-size:13px}
   #pvpHud .board table{width:100%;border-collapse:collapse}#pvpHud .board td,#pvpHud .board th{padding:2px 8px;text-align:right}#pvpHud .board td:first-child,#pvpHud .board th:first-child{text-align:left}
   #pvpHud .board tr.me td{color:#ffd400}#pvpHud .board tr.a td:first-child{color:var(--pvp-ally)}#pvpHud .board tr.e td:first-child{color:var(--pvp-enemy)}
-  #pvpHud .pts{position:absolute;left:50%;top:40%;transform:translateX(-50%);font-size:16px;color:#ffd400;font-weight:bold}
-  #pvpHud .pts div{animation:pvpPts 1.1s forwards}
-  @keyframes pvpPts{0%{opacity:0;transform:translateY(8px)}15%{opacity:1;transform:none}80%{opacity:1}100%{opacity:0;transform:translateY(-14px)}}
   #pvpHud .pg{position:absolute;left:50%;top:28%;transform:translateX(-50%);font-size:34px;color:#00e5ff;font-weight:bold;display:none;text-align:center}
   #pvpHud .pg small{display:block;font-size:13px;color:#fff;opacity:.85}
   #pvpHud .tags{position:absolute;inset:0}
@@ -578,8 +743,9 @@ AR.PvpMission = (() => {
   function buildHud() {
     if (!document.getElementById('pvpCss')) { const st = document.createElement('style'); st.id = 'pvpCss'; st.textContent = CSS; document.head.appendChild(st); }
     hud = document.createElement('div'); hud.id = 'pvpHud';
-    hud.innerHTML = `<div class="tags"></div><div class="sb"><div class="t a">0</div><div class="m"><b>10:00</b><span class="mn"></span></div><div class="t e">0</div></div>
+    hud.innerHTML = `<div class="tags"></div><div class="sb"><div class="t a"><span>0</span><s></s></div><div class="m"><b>10:00</b><span class="mn"></span></div><div class="t e"><span>0</span><s></s></div></div>
       <div class="objl"></div><div class="feed"></div><canvas class="mm" width="168" height="168"></canvas><div class="strk"></div><div class="pts"></div><div class="pg"></div>
+      <div class="medals"></div><div class="ost"></div>
       <div class="kc"><b>KILLCAM</b><span></span></div><div class="resp"></div><div class="board"></div>
       <div class="stun"></div><div class="flash"></div><div class="black">THE SERVERS HAVE BEEN WIPED. PLEASE HOLD.</div>
       <div class="tb"><button data-k="tac">TACTICAL</button><button data-k="streak">STREAK</button><button data-k="board">SCORE</button></div>`;
@@ -600,49 +766,169 @@ AR.PvpMission = (() => {
     if (!AR.Pvp.on) return;
     if (e.code === 'Tab') { scoreOpen = true; e.preventDefault(); }
     if (dead && e.code === 'Space') { send({ t: 'skip' }); killcam = null; }
-    if (dead && e.code === 'KeyC') hudEl('resp').querySelector('.cls')?.classList.toggle('open');
+    if (dead && (e.code === 'ArrowLeft' || e.code === 'ArrowRight')) { stepClass(e.code === 'ArrowLeft' ? -1 : 1); e.preventDefault(); }
     if (e.code === 'KeyE') AR.Player.input.useHold = true;
     if (e.code === 'KeyE' && !e.repeat) send({ t: 'use' });
   }
   function onKeyUp(e) { if (e.code === 'Tab') scoreOpen = false; if (e.code === 'KeyE') AR.Player.input.useHold = false; }
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
   function fmtT(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); }
+  const WNAME = { melee: 'MELEE', world: 'THE WORLD', fall: 'GRAVITY', wipe: 'SERVER WIPE', throwknife: 'KNIFE', frag: 'FRAG', sticky: 'STICKY AD', popup: 'POP-UP', charge: 'THE CHARGE', broadcaster: 'AD BROADCASTER', sponsored: 'SPONSORED DRONE', gunship: 'GUNSHIP' };
+  // placeholder gun names are written "[BURST RIFLE]": drop the brackets so the feed does not show [[BURST RIFLE]]
+  const wName = w => (PVP.GUNS[w]?.name || WNAME[w] || String(w).toUpperCase()).replace(/"/g, '').replace(/^\[(.*)\]$/, '$1');
+  /** The kill feed: who killed whom with what. Your kills light up gold; four in a row unbroken is a QUAD FEED. */
   function feed(v) {
     const box = hudEl('feed'), d = document.createElement('div');
     const cls = n => (n === me ? 'me' : mode.teams === 2 && teamOf(n) === myTeam ? 'a' : 'e');
-    const wname = (PVP.GUNS[v.w]?.name || { melee: 'MELEE', world: 'THE WORLD', fall: 'GRAVITY', wipe: 'SERVER WIPE', throwknife: 'KNIFE', frag: 'FRAG', sticky: 'STICKY AD', popup: 'POP-UP', charge: 'THE CHARGE', broadcaster: 'AD BROADCASTER', sponsored: 'SPONSORED DRONE', gunship: 'GUNSHIP' }[v.w] || String(v.w).toUpperCase()).replace(/"/g, '');
-    d.innerHTML = v.k ? `<span class="${cls(v.k)}">${esc(nameOf(v.k))}</span> [${esc(wname)}${v.h ? ' ⊙' : ''}] <span class="${cls(v.v)}">${esc(nameOf(v.v))}</span>` : `<span class="${cls(v.v)}">${esc(nameOf(v.v))}</span> [${esc(wname)}]`;
+    const helped = (v.a || []).includes(me) && v.k !== me ? ' <span class="me">+ YOU</span>' : '';
+    d.innerHTML = v.k && v.k !== v.v ? `<span class="${cls(v.k)}">${esc(nameOf(v.k))}</span>${helped}<span class="w">[${esc(wName(v.w))}]${v.h ? ' <span class="hs">⊕</span>' : ''}</span><span class="${cls(v.v)}">${esc(nameOf(v.v))}</span>`
+      : `<span class="${cls(v.v)}">${esc(nameOf(v.v))}</span><span class="w">[${esc(wName(v.w))}]</span>`;
+    if (v.k === me && v.v !== me) d.classList.add('mine');
+    else if (v.v === me) d.classList.add('died');
+    else if (mode.teams === 2 && teamOf(v.v) === myTeam) d.classList.add('allyd');
     box.prepend(d);
-    while (box.children.length > 6) box.lastChild.remove();
-    setTimeout(() => d.remove(), 6000);
+    if (v.k === me && v.v !== me) { feedRun++; if (feedRun === 4) medal('quadFeed'); if (feedRun === 8) medal('fullFeed'); } else feedRun = 0;
+    if (feedRun >= 4) [...box.children].slice(0, feedRun).forEach(x => x.classList.add('qf'));
+    while (box.children.length > 7) box.lastChild.remove();
+    setTimeout(() => d.classList.add('old'), 8000); setTimeout(() => d.remove(), 8600);
   }
+  /** Centre of the screen: a running points total for this burst of play, with the reasons under it. */
+  const WHY = { kill: '', head: 'HEADSHOT', assist: 'ASSIST', longshot: 'LONGSHOT', endStreak: 'STREAK ENDED', firstBlood: 'FIRST BLOOD', capture: 'CAPTURE', defend: 'DEFENDED', harvest: 'HARVESTED',
+    deny: 'DENIED', hill: 'HILL TIME', plant: 'PLANTED', defuse: 'DEFUSED', flagCap: 'FLAG CAPTURE', flagReturn: 'FLAG RETURN', flagTake: 'FLAG TAKEN', ball: 'HOLDING THE HOT TAKE', shootDown: 'SHOT DOWN',
+    survive: 'SURVIVED', infect: 'INFECTED', influencerKill: 'INFLUENCER DOWN' };
+  const PTS_MEDAL = new Set(['head', 'longshot', 'endStreak', 'firstBlood', 'capture', 'defend', 'plant', 'defuse', 'flagCap', 'flagReturn', 'harvest', 'shootDown', 'influencerKill']);
   function popPts(n, why) {
-    const box = hudEl('pts'), d = document.createElement('div');
-    d.textContent = '+' + n + ' ' + ({ kill: '', head: 'HEADSHOT', assist: 'ASSIST', longshot: 'LONGSHOT', endStreak: 'STREAK ENDED', firstBlood: 'FIRST BLOOD', capture: 'CAPTURE', defend: 'DEFEND', harvest: 'HARVESTED',
-      deny: 'DENIED', hill: '', plant: 'PLANTED', defuse: 'DEFUSED', flagCap: 'CAPTURE', flagReturn: 'RETURN', flagTake: 'FLAG', ball: '', shootDown: 'SHOT DOWN', survive: 'SURVIVED', infect: 'INFECTED', influencerKill: 'INFLUENCER DOWN' }[why] ?? '');
-    if (why === 'hill' || why === 'ball') return;
-    box.innerHTML = ''; box.appendChild(d);
+    const now = performance.now();
+    if (now - ptsRun.at > 2400) { ptsRun.n = 0; ptsRun.lines = []; }
+    ptsRun.n += n; ptsRun.at = now;
+    if (why === 'hill' || why === 'ball') { AR.PvpAudio.ui('tick'); hillRun += n; }
+    const label = WHY[why] ?? '';
+    if (label) {
+      const same = ptsRun.lines.find(l => l.why === why);
+      if (same) same.n += n; else ptsRun.lines.unshift({ why, txt: label, n });
+      ptsRun.lines = ptsRun.lines.slice(0, 4);
+    }
+    if (PTS_MEDAL.has(why)) medal(why);
+    drawPts(true);
   }
-  function showRespawn(v) {
+  function confirmLine(v) {
+    ptsRun.lines.unshift({ why: 'k' + v.v, txt: 'ELIMINATED ' + nameOf(v.v), n: 0, kill: true });
+    ptsRun.lines = ptsRun.lines.slice(0, 4); ptsRun.at = performance.now();
+    drawPts(false);
+  }
+  function drawPts(pop) {
+    const box = hudEl('pts');
+    box.classList.remove('fade');
+    box.innerHTML = (ptsRun.n ? `<span class="tot${pop ? ' pop' : ''}">+${ptsRun.n}</span>` : '') + ptsRun.lines.map(l => `<span class="ln${l.kill ? ' k' : ''}">${esc(l.txt)}${l.n ? ' +' + l.n : ''}</span>`).join('');
+  }
+  /** A medal pops up top centre with its own sound. They queue a moment apart so a big multikill reads as a run. */
+  function medal(id) { if (PVP.MEDALS[id]) { medalQ.push(id); medalCount[id] = (medalCount[id] || 0) + 1; } }
+  let medalT = 0;
+  function medalTick(dt) {
+    medalT -= dt;
+    if (medalT > 0 || !medalQ.length) return;
+    const id = medalQ.shift(), M = PVP.MEDALS[id], box = hudEl('medals'), d = document.createElement('div');
+    d.className = 'md t' + M.tier; d.innerHTML = `<i></i><b>${esc(M.name)}</b><small>${esc(M.d)}</small>`;
+    box.prepend(d); while (box.children.length > 3) box.lastChild.remove();
+    setTimeout(() => d.classList.add('out'), 2700); setTimeout(() => d.remove(), 3100);
+    AR.PvpAudio.ui('medal', M.tier);
+    if (M.tier >= 3) window.Pad?.rumble(0.3, 0.7, 160);
+    medalT = 0.28;
+  }
+  const G = (a) => (window.Glyph ? Glyph.act(a, 'pvp') : '[' + a + ']');
+  const classChange = () => playlist === 'core' && mode.playlist !== 'party' && !['gungame', 'infection', 'influencer'].includes(mode.id);
+  function showRespawn(v, again) {
     const box = hudEl('resp');
-    hud.classList.add('dead');
+    hud.classList.add('dead'); lastDeath = v;
     const list = PvpProgress.classes(), cur = O.cls || 0;
-    const wname = (PVP.GUNS[v.w]?.name || String(v.w).toUpperCase()).replace(/"/g, '');
-    const classPick = playlist === 'core' && mode.playlist !== 'party' ? `<div class="s">CHANGE CLASS [C] — APPLIES NEXT LIFE</div><div class="cls">${list.map((c, i) => `<button data-i="${i}" class="${i === cur ? 'on' : ''}">${esc(c.name)}</button>`).join('')}</div>` : '';
-    box.innerHTML = `<h2>${v.k && v.k !== me ? 'KILLED BY ' + esc(nameOf(v.k)) : 'YOU DIED'}</h2><div class="s">${v.k && v.k !== me ? esc(wname) + (v.h ? ' // HEADSHOT' : '') : ''}</div>
+    const c = list[cur], line = c ? `${wName(c.primary)} + ${wName(c.secondary)}` : '';
+    const classPick = classChange() ? `<div class="s">${G('classPrev')} ${G('classNext')} CHANGE CLASS — APPLIES NEXT LIFE</div><div class="cls">${list.map((c2, i) => `<button data-i="${i}" class="${i === cur ? 'on' : ''}">${esc(c2.name)}</button>`).join('')}</div><div class="cl">${esc(line)}</div>` : '';
+    box.innerHTML = `<h2>${v.k && v.k !== me ? 'KILLED BY ' + esc(nameOf(v.k)) : 'YOU DIED'}</h2><div class="s">${v.k && v.k !== me ? esc(wName(v.w)) + (v.h ? ' // HEADSHOT' : '') : ''}</div>
       <div class="s rs"></div><div class="s">DEBT REVIVAL IN PROGRESS. YOUR DEBT OUTLIVES YOU.</div>${classPick}`;
-    box.querySelectorAll('.cls button').forEach(b => b.onclick = () => { O.cls = +b.dataset.i; send({ t: 'class', i: O.cls }); box.querySelectorAll('.cls button').forEach(x => x.classList.toggle('on', x === b)); });
+    box.querySelectorAll('.cls button').forEach(b => b.onclick = () => pickClass(+b.dataset.i));
     box.style.display = 'block';
-    respawnAt = performance.now() + ((mode.respawn || 3) + 0.2) * 1000;
+    if (!again) respawnAt = performance.now() + ((mode.respawn || 3) + 0.2) * 1000;
+    box.querySelector('.rs')._h = '';
+  }
+  function pickClass(i) {
+    const list = PvpProgress.classes(); i = (i + list.length) % list.length;
+    O.cls = i; send({ t: 'class', i });
+    const box = hudEl('resp');
+    box.querySelectorAll('.cls button').forEach(x => x.classList.toggle('on', +x.dataset.i === i));
+    const c = list[i], cl = box.querySelector('.cl'); if (cl && c) cl.textContent = wName(c.primary) + ' + ' + wName(c.secondary);
+    AR.Sfx.ui?.('hover');
+  }
+  const stepClass = d => { if (classChange()) pickClass((O.cls || 0) + d); };
+  /** Change class from the pause menu at any time: at once if you have only just spawned and not fired, else next life. */
+  function decoratePause() {
+    const ov = document.getElementById('arPause'); if (!ov || !AR.Pvp.on) return;
+    const list = PvpProgress.classes(), cur = O.cls || 0;
+    const ctl = ov.querySelector('div[style]');
+    if (ctl) ctl.innerHTML = pvpControls();
+    const h2 = ov.querySelector('h2'); if (h2 && T.kind === 'online') h2.textContent = 'THE MATCH IS STILL RUNNING';
+    if (classChange()) {
+      const box = document.createElement('div'); box.className = 'pcls';
+      box.innerHTML = `<div style="font-size:12px;margin:8px 0 4px">CHANGE CLASS — APPLIES NEXT LIFE (AT ONCE IF YOU JUST SPAWNED AND HAVE NOT FIRED)</div><div class="arbtns" style="flex-wrap:wrap">${list.map((c, i) => `<button class="arbtn${i === cur ? ' y' : ''}" data-pcls="${i}">${esc(c.name)}</button>`).join('')}</div>`;
+      ov.querySelector('.arbtns')?.before(box);
+      box.querySelectorAll('[data-pcls]').forEach(b => b.onclick = () => { pickClass(+b.dataset.pcls); box.querySelectorAll('[data-pcls]').forEach(x => x.classList.toggle('y', x === b)); });
+    }
+    const q = ov.querySelector('#arQuit'); if (q) q.textContent = 'LEAVE MATCH';
+  }
+  function pvpControls() {
+    const rows = [['fire', 'FIRE'], ['ads', 'AIM'], ['reload', 'RELOAD'], ['use', 'HOLD TO USE / PLANT / DEFUSE'], ['swap', 'SWAP'], ['lethal', 'LETHAL'], ['tactical', 'TACTICAL'], ['melee', 'MELEE'],
+      ['jump', 'JUMP'], ['crouch', 'CROUCH / SLIDE'], ['sprint', 'SPRINT'], ['streak1', 'STREAK 1'], ['streak2', 'STREAK 2'], ['streak3', 'STREAK 3'], ['score', 'SCOREBOARD']];
+    return rows.map(([a, n]) => `<span style="display:inline-block;min-width:200px;margin:2px 6px">${G(a)} ${n}</span>`).join('');
   }
   function hudMe(m) {
     const strk = hudEl('strk');
     if (myStreaks.length && mode.streakMax > 0) {
       const loyal = spawnInfo?.loadout?.perks?.includes('loyalty') ? 100 : 0;
-      const html = `<div class="spts">${m.sp} POINTS // [G] ${m.n} LETHAL // [Q] ${m.tc} TACTICAL</div>` + myStreaks.map((id, i) => { const S = PVP.STREAKS[id], c = Math.max(100, S.pts - loyal); return `<div class="${streakReady.includes(id) ? 'r' : ''}">[${i + 3}] ${S.name.replace(/"/g, '').replace('ORACULAR SYSTEMS ', '')} ${streakReady.includes(id) ? '// READY' : c}</div>`; }).join('');
+      const html = `<div class="spts">${m.sp} POINTS // ${G('lethal')} ${m.n} LETHAL // ${G('tactical')} ${m.tc} TACTICAL</div>` + myStreaks.map((id, i) => { const S = PVP.STREAKS[id], c = Math.max(100, S.pts - loyal); return `<div class="${streakReady.includes(id) ? 'r' : ''}">${G('streak' + (i + 1))} ${S.name.replace(/"/g, '').replace('ORACULAR SYSTEMS ', '')} ${streakReady.includes(id) ? '// READY' : c}</div>`; }).join('');
       if (strk._h !== html) { strk.innerHTML = html; strk._h = html; }
-    } else { const h = `<div class="spts">[G] ${m.n} LETHAL // [Q] ${m.tc} TACTICAL</div>`; if (strk._h !== h) { strk.innerHTML = h; strk._h = h; } }
-    if (dead) { const rs = hudEl('resp').querySelector('.rs'); if (rs) rs.textContent = m.rs > 0 ? 'REVIVED IN ' + m.rs.toFixed(1) + ' // SPACE TO SKIP' : 'REVIVING…'; }
+    } else { const h = `<div class="spts">${G('lethal')} ${m.n} LETHAL // ${G('tactical')} ${m.tc} TACTICAL</div>`; if (strk._h !== h) { strk.innerHTML = h; strk._h = h; } }
+    if (dead) { const rs = hudEl('resp').querySelector('.rs'); if (rs) { const h = m.rs > 0 ? 'REVIVED IN ' + m.rs.toFixed(1) + (mode.rounds ? '' : ' // ' + G('skip') + ' SKIP') : 'REVIVING…'; if (rs._h !== h) { rs.innerHTML = h; rs._h = h; } } }
+  }
+  function bump(el) { el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  /** The objective box under the crosshair. It answers "am I playing the objective right?" at a glance. */
+  function objHud(s) {
+    const box = hudEl('ost'), ob = s.ob, p = P();
+    let st = null; useHint = null;
+    if (p && !dead && s.st !== 'pregame') {
+      const pos = p.body.pos, near = (x, y, z, r) => Math.hypot(pos.x - x, pos.z - z) < r && Math.abs(pos.y - y) < 3;
+      if (ob?.k === 'hill' && near(ob.p[0], ob.p[1], ob.p[2], 5)) {
+        st = ob.o === -2 ? { c: 'cont', b: 'CONTESTED', m: 'CLEAR THEM OUT TO SCORE', k: 'cont' } : ob.o === myTeam ? { c: 'good', b: 'IN THE HILL // SCORING', m: '+' + PVP.POINTS.hillSec + ' A SECOND // YOUR HILL TIME +' + hillRun, k: 'held' } : { c: 'bad', b: 'IN THE HILL', m: 'HOLD IT', k: 'in' };
+      } else if (ob?.k === 'hill') hillRun = 0;
+      if (ob?.k === 'dom') for (const [id, x, y, z, owner, prog, cont] of ob.f) {
+        if (!near(x, y, z, 4.2)) continue;
+        const ours = myTeam === 0 ? (1 - prog) / 2 : (prog + 1) / 2;          // 0: theirs .. 1: ours
+        st = cont ? { c: 'cont', b: 'CONTESTED // ' + id, m: 'NOBODY CAPTURES WHILE BOTH TEAMS ARE ON IT', bar: ours, k: 'cont' } : owner === myTeam ? { c: 'good', b: 'DEFENDING ' + id, m: 'YOUR TEAM SCORES WHILE IT IS YOURS', k: 'def' }
+          : { c: 'cap', b: 'CAPTURING ' + id, m: Math.round(ours * 100) + '%', bar: ours, k: 'cap' + id };
+        break;
+      }
+      if (ob?.k === 'ball' && ob.c === me) st = { c: 'good', b: 'YOU HAVE THE HOT TAKE', m: 'EVERYONE CAN SEE YOU // +' + hillRun, k: 'ball' };
+      if (ob?.k === 'ctf' && ob.f.some(f => f[5] === me)) st = { c: 'good', b: 'YOU HAVE THEIR FLAG', m: 'BRING IT HOME', k: 'flag' };
+      if (ob?.k === 'snd') {
+        const uh = s.me?.uh || 0, att = ob.att === myTeam;
+        if (uh > 0) { const need = ob.pl ? mode.defuseTime : mode.plantTime; st = { c: 'cap', b: ob.pl ? 'DEFUSING' : 'PLANTING', m: Math.round(uh / need * 100) + '%', bar: uh / need, k: 'uh' }; }
+        else if (att && ob.bc === me && !ob.pl && ob.sites.some(x => near(x[0], x[1], x[2], 3.2))) { useHint = 'plant'; st = { c: 'use', b: '{useHold} TO PLANT', m: 'SITE ' + 'AB'[ob.sites.findIndex(x => near(x[0], x[1], x[2], 3.2))], k: 'plant' }; }
+        else if (!att && ob.pl && near(ob.sites[ob.pl.site][0], ob.sites[ob.pl.site][1], ob.sites[ob.pl.site][2], 2.2)) { useHint = 'defuse'; st = { c: 'use', b: '{useHold} TO DEFUSE', m: Math.ceil(ob.pl.left) + 'S LEFT', k: 'defuse' }; }
+        else if (att && ob.bc === me) st = { c: 'good', b: 'YOU CARRY THE CHARGE', m: 'TAKE IT TO SITE A OR B', k: 'carry' };
+      }
+      if (!st) {                                                               // a weapon on the floor to swap for
+        let best = null, bd = 1.8;
+        for (const o of objs.items.values()) { if (o.kind !== 'weapon') continue; const d = Math.hypot(o.x - pos.x, o.z - pos.z); if (d < bd && Math.abs(o.y - pos.y) < 2) { bd = d; best = o; } }
+        if (best) { useHint = 'pickup'; st = { c: 'use', b: '{use} PICK UP ' + wName(best.extra), m: 'SWAPS FOR THE GUN IN YOUR HANDS', k: 'pick' + best.extra }; }
+      }
+    }
+    // sounds when the state changes under you
+    const key = st?.k || '';
+    if (objIn !== key) {
+      if (key === 'cont' && objIn) AR.PvpAudio.ui('contested');
+      objIn = key;
+    }
+    if (st?.bar !== undefined && st.k.startsWith('cap')) { const step = Math.floor(st.bar * 10); if (box._step !== undefined && step > box._step) AR.PvpAudio.ui('capTick', st.bar); box._step = step; } else box._step = undefined;
+    const html = st ? `<b>${window.Glyph ? Glyph.text(st.b) : esc(st.b)}</b><small>${esc(st.m)}</small>${st.bar !== undefined ? `<div class="pb"><i style="width:${Math.round(clamp(st.bar, 0, 1) * 100)}%"></i></div>` : ''}` : '';
+    if (box._h !== html || box._c !== st?.c) { box.innerHTML = html; box._h = html; box._c = st?.c; box.className = 'ost' + (st ? ' ' + st.c : ''); box.style.display = st ? 'block' : 'none'; }
   }
   function hudTick(dt) {
     const s = snapLast; if (!s || !hud) return;
@@ -653,9 +939,17 @@ AR.PvpMission = (() => {
     if (mode.teams === 2) { mine = s.ts[myTeam]; theirs = s.ts[1 - myTeam]; }
     else { const meRow = boardRows.find(r => r[0] === me); const top = boardRows.filter(r => r[0] !== me).sort((a, b) => b[1] - a[1])[0]; mine = mode.id === 'gungame' || mode.id === 'influencer' ? (s.me?.s || 0) : (meRow?.[1] ?? s.me?.k ?? 0); theirs = top?.[1] ?? 0; }
     if (mode.id === 'gungame') mine = (s.me?.gi ?? 0) + 1;
-    A.textContent = mine; E.textContent = theirs;
+    A.firstChild.textContent = mine; E.firstChild.textContent = theirs;
+    const lim = mode.limit || 0;
+    if (lim && mode.teams === 2 && mode.id !== 'snd') { A.lastChild.style.width = Math.min(100, mine / lim * 100) + '%'; E.lastChild.style.width = Math.min(100, theirs / lim * 100) + '%'; }
+    if (scoreSeen) { if (mine > scoreSeen[0]) bump(A); if (theirs > scoreSeen[1]) bump(E); }
+    scoreSeen = [mine, theirs];
     M.textContent = s.st === 'pregame' ? 'WARMUP' : fmtT(s.tl);
     MN.textContent = mode.short + ' // ' + (mode.rounds ? 'ROUND ' + (s.ob?.r || 1) : 'TO ' + mode.limit);
+    // what you are doing for the objective right now (in the hill, capturing, planting), and what you can use here
+    objHud(s);
+    medalTick(dt);
+    if (ptsRun.lines.length || ptsRun.n) { if (now - ptsRun.at > 2400) { ptsRun.n = 0; ptsRun.lines = []; hudEl('pts').classList.add('fade'); } }
     // pregame countdown
     const pg = hudEl('pg');
     if (s.st === 'pregame' && s.pg > 0) { pg.style.display = 'block'; pg.innerHTML = 'LIVE IN ' + Math.ceil(s.pg) + '<small>' + mode.name + ' // ' + (PVP.MAPS[O.map]?.name || '') + '</small>'; } else pg.style.display = 'none';
@@ -675,10 +969,10 @@ AR.PvpMission = (() => {
     hudEl('flash').style.opacity = fk; if (fk <= 0 && hudEl('flash').children.length) hudEl('flash').innerHTML = '';
     hudEl('stun').style.opacity = stunUntil > now ? 1 : 0;
     hudEl('black').style.opacity = blackUntil > now ? 0.94 : 0;
-    // scoreboard
-    const bd = hudEl('board');
-    bd.style.display = scoreOpen ? 'block' : 'none';
-    if (scoreOpen) {
+    // scoreboard: TAB, or hold BACK (View / Create) on a controller
+    const bd = hudEl('board'), board = scoreOpen || padBoard;
+    bd.style.display = board ? 'block' : 'none';
+    if (board) {
       const rows = boardRows.slice().sort((a, b) => b[4] - a[4]);
       const row = r => `<tr class="${r[0] === me ? 'me' : mode.teams === 2 ? (r[5] === myTeam ? 'a' : 'e') : ''}"><td>${esc(nameOf(r[0]))}${roster.get(r[0])?.bot ? ' <small>BOT</small>' : ''}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td>${r[4]}</td><td>${((r[1] + 1) / (r[2] + 1)).toFixed(2)}</td></tr>`;
       const head = '<tr><th>' + (mode.name) + '</th><th>K</th><th>D</th><th>A</th><th>SCORE</th><th>RATIO</th></tr>';
@@ -715,6 +1009,13 @@ AR.PvpMission = (() => {
       else if (s.radar === 2) dot(s.pos.x, s.pos.z, '#ff3b5c');
     }
     for (const o of objs.ents.values()) dot(o.obj.position.x, o.obj.position.z, o.team === myTeam ? '#4da6ff' : '#ff3b5c', 5);
+    const nowMs = performance.now();
+    allyX = allyX.filter(x => nowMs - x.at < 6000);
+    for (const x of allyX) {                                                   // a teammate died here
+      const [a, b] = to(x.x, x.z); if (Math.hypot(a - R2, b - R2) > R2 - 4) continue;
+      c.globalAlpha = 1 - (nowMs - x.at) / 6000; c.strokeStyle = '#9fd0ff'; c.lineWidth = 2.5;
+      c.beginPath(); c.moveTo(a - 4, b - 4); c.lineTo(a + 4, b + 4); c.moveTo(a + 4, b - 4); c.lineTo(a - 4, b + 4); c.stroke(); c.globalAlpha = 1; c.lineWidth = 1;
+    }
     c.fillStyle = '#ffd400'; c.beginPath(); c.moveTo(R2, R2 - 7); c.lineTo(R2 - 5, R2 + 5); c.lineTo(R2 + 5, R2 + 5); c.fill();
   }
 
@@ -765,6 +1066,8 @@ AR.PvpMission = (() => {
         ${S.unlocks.length ? 'UNLOCKED: <b>' + S.unlocks.map(u => u.name.replace(/"/g, '')).join(', ') + '</b><br>' : ''}${S.weapons.length ? 'WEAPON LEVELS: <b>' + S.weapons.map(w => PVP.GUNS[w.gun].name.replace(/"/g, '') + ' ' + w.level).join(', ') + '</b><br>' : ''}${S.camos.length ? 'CAMOS: <b>' + S.camos.map(c => PVP.GUNS[c.gun].name.replace(/"/g, '') + ' ' + PVP.CAMO[c.tier]).join(', ') + '</b><br>' : ''}
         REVIVAL FEES THIS MATCH: ¤${fee.toLocaleString('en-US')}. ADDED TO YOUR ESTATE.</div>`;
     }
+    const meds = Object.entries(medalCount).sort((a, b) => PVP.MEDALS[b[0]].tier - PVP.MEDALS[a[0]].tier);
+    if (meds.length) rw += `<div class="rw">MEDALS: ${meds.map(([id, n]) => '<b>' + esc(PVP.MEDALS[id].name) + '</b>' + (n > 1 ? ' x' + n : '')).join(' // ')}</div>`;
     const online = T.kind === 'online';
     ov.innerHTML = `<div class="arres pvpres"><h1 style="text-align:center">${mode.teams === 2 ? (res.winnerTeam === myTeam ? 'VICTORY' : res.winnerTeam < 0 ? 'DRAW' : 'DEFEAT') : (res.winner === me ? 'VICTORY' : 'GG')}</h1>
       <h2 style="text-align:center">${mode.name} // ${PVP.MAPS[res.map]?.name || res.map}${mode.teams === 2 ? ' // ' + res.teamScore[myTeam] + ' — ' + res.teamScore[1 - myTeam] : ''}</h2>
@@ -784,7 +1087,7 @@ AR.PvpMission = (() => {
   }
   const noop = () => {};
   return {
-    start, tick, dispose, waypoints, padAt,
+    start, tick, dispose, waypoints, padAt, decoratePause,
     style: noop, say: (w, t, d) => AR.Hud.say(w, t, d), onShot(g) { const k = g?.d ? Math.min(1, (g.d.dmg * (g.d.pellets || 1)) / 140) : 0.2; window.Pad?.rumble(0.08 + k * 0.5, 0.2 + k * 0.4, 45 + k * 60); if (window.VR?.active) VR.recoil(0.2 + k * 0.7); },
     onDamage: noop, onKill: noop, onHurt: noop, onDeath: noop, nearMiss: noop, addChips: noop, addDrip: noop, noteUnlock: noop, use: noop,
     summonAround: noop, bossPhase: noop, bossDead: noop, ringCrash: noop, nextBeatIn: () => 1, headline: noop, addXp: noop,

@@ -151,7 +151,7 @@ AR.Player = (() => {
   let GF = null;
   const gfOn = () => !!(GF && window.GunFeel && GunFeel.active);
   function gfWeapon(g) {
-    if (!g.gf) g.gf = { id: g.id, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
+    if (!g.gf) g.gf = { id: g.id, get snd() { return g.d?.snd; }, get rar() { return g.tier || 0; }, get clip() { return g.ammo; }, set clip(v) { g.ammo = v; },
       get ammo() { return g.reserve; }, set ammo(v) { g.reserve = v; } };
     return g.gf;
   }
@@ -859,10 +859,19 @@ AR.Player = (() => {
     I.ads = pad.lt > 0.35;
     if (pad.down(B.A)) I.jump = 0.14;
     I.crouch = pad.held(B.B) || keys.ControlLeft || keys.KeyC || false;
-    if (pad.down(B.X)) { if (!AR.Drops.use()) I.reload = true; }
-    if (pad.down(B.Y) || pad.down(B.LEFT) || pad.down(B.RIGHT)) I.swap = -1;
-    if (pvp() && pad.down(B.UP)) I.tac = true;
-    if (pvp() && pad.down(B.DOWN)) I.streak = 9;
+    // Y swaps weapons. The D-pad never does: in GigaLeague it holds the scorestreaks (left / up / right = slots 1-3)
+    // and the tactical (down), the way the CoD controller layout does.
+    if (pad.down(B.Y)) I.swap = -1;
+    if (pvp()) {
+      // X: use when there is something to use right here (a weapon on the floor, the charge to plant or defuse), else reload
+      if (pad.down(B.X)) { if (AR.Pvp.useContext?.()) { AR.Pvp.use?.(); I.padUse = true; } else I.reload = true; }
+      I.useHold = I.padUse && pad.held(B.X) || false;
+      if (!pad.held(B.X)) I.padUse = false;
+      if (pad.down(B.LEFT)) I.streak = 1;
+      if (pad.down(B.UP)) I.streak = 2;
+      if (pad.down(B.RIGHT)) I.streak = 3;
+      if (pad.down(B.DOWN)) I.tac = true;
+    } else if (pad.down(B.X)) { if (!AR.Drops.use()) I.reload = true; }
     if (pad.down(B.RB) || pad.down(B.R3)) I.kick = true;
     if (pad.down(B.LB)) I.nade = true;
     if (pad.down(B.L3)) { if (S.dashMode) I.dash = true; else I.padSprint = !I.padSprint; }

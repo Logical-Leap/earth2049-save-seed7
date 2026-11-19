@@ -20,19 +20,48 @@ The menu has three tabs:
 
 **Controls**
 
-| Action | Keyboard and mouse | Controller |
+Every button prompt in the menu, the HUD, the respawn screen and the pause menu shows the button of the device in hand (`js/input-glyphs.js`): keyboard keys on mouse and keyboard, the controller's own labels on a controller (Xbox, PlayStation or Switch, read from the pad's name). Settings > Button Prompts (also on the GigaLeague PLAY tab) pins one: AUTO, KEYBOARD, XBOX, PLAYSTATION or SWITCH.
+
+| Action | Keyboard and mouse | Controller (Xbox labels) |
 |---|---|---|
 | Lethal grenade | `G` | LB |
-| Tactical | `Q` | D-pad up |
+| Tactical | `Q` | D-pad down |
 | Melee | `F` | RB or R3 |
-| Use, plant, defuse (hold) | `E` | — |
-| Swap weapon | `1` / `2` / wheel | — |
-| Scorestreaks | `3` `4` `5` | D-pad down (next ready streak) |
-| Scoreboard | `TAB` (hold) | — |
-| Skip killcam, respawn | `SPACE` | — |
-| Change class while dead | `C` | — |
+| Use, plant, defuse, pick up (hold) | `E` | X when there is something to use, else X reloads |
+| Swap weapon | `1` / `2` / wheel | Y (never the D-pad) |
+| Scorestreaks 1 / 2 / 3 | `3` `4` `5` | D-pad left / up / right |
+| Scoreboard | `TAB` (hold) | VIEW (hold) |
+| Pause, change class | `ESC` | MENU |
+| Skip killcam (dead) | `SPACE` | A |
+| Change class (dead) | arrow keys or click | LB / RB or D-pad left / right |
+
+A class picked from the respawn screen applies next life. A class picked from the pause menu in the first 6 seconds of a life, before firing, applies at once (the CoD rule); otherwise next life. The GigaLeague menu works on a controller: the D-pad moves the focus, A presses, B backs out, LB / RB flip tabs, and left / right step through a dropdown.
 
 Touch screens get extra buttons for TACTICAL, STREAK and SCORE.
+
+## What a match sounds and feels like
+
+Multiplayer never plays music: not in the menu, the lobby, a match or its results. `game.js`'s music director stops music while the GigaLeague is up, and the arena asks for no cue. So every footstep can be heard.
+
+`js/arena/arena-pvp-audio.js` (`AR.PvpAudio`) places other players' sounds in the world. Each player has one emitter (an HRTF panner with a distance and wall low-pass); each kind of sound sets its own distance curve.
+
+- **Gunfire.** Snapshots carry each player's rounds-fired counter (row index 13), so the client plays every round at the gun's rate, not one sound per burst. Every gun has its own voice (`PVP.GUN_SND`, recipes in `js/gunaudio.js`), even where two guns share a model, and the local player hears the same voice, so a gun is learned by using it. Past 45 m a gun is heard as its distant boom (`GunAudio.distant`); a sniper carries further than an SMG. Through a wall it is muffled. A suppressor (row flag 16384) makes it quieter and shorter-range.
+- **Rounds passing close** to your head crack and whip past, so you know you are the one being shot at.
+- **Footsteps** are loud and placed: enemy steps louder than a teammate's, sprinting loudest, crouch-walking near silent, a landing thuds. The NOISE-CANCELLING perk silences them. Most bot classes skip that perk, so bots can be heard coming.
+- **Pain and death.** A grunt when anyone loses health, a cry and a body hitting the floor when they die. A teammate dying within 45 m also gives a short chirp.
+- **Melee swings** whoosh (row index 14 counts them).
+
+What you see:
+
+- **Bodies fall and stay.** The avatar plays its Death clip once and holds it, knocked a little away from the shot. The body stays 8 seconds, then sinks. Each remote player has at most two avatars, swapped between the living player and the body. A teammate's death is marked on the minimap with a fading X for 6 seconds.
+- **Kill feed.** Bigger (15 px, 8 seconds, 7 lines). Your kills are gold, your death red, a teammate's death blue. Four of your kills in a row with nobody else's in between is a QUAD FEED: the entries glow.
+- **Points and kill confirms.** Under the crosshair, a running total for the current burst of play, with ELIMINATED lines and the reasons (HEADSHOT, ASSIST, HILL TIME…) under it.
+- **Medals** (`PVP.MEDALS`): multikills, kill streaks, QUAD FEED, revenge, objective plays and more, in the GigaLeague's voice. They pop up a moment apart with a rising sound. The results screen lists the medals of the match.
+- **Objective status** under the crosshair says whether you are playing the objective: IN THE HILL // SCORING (with +10 a second and a tick each point), CONTESTED, CAPTURING B with a progress bar, PLANTING / DEFUSING, YOU HAVE THEIR FLAG. It also prompts what can be used right there: hold to plant or defuse, a weapon to pick up. Flags changing hands have their own sounds, and team scores bump when they go up, with a bar toward the limit.
+
+The quick match vote counts down on its own: the server sends the seconds left with each room update, and the menu counts down between updates.
+
+Bots carry every core gun (`PVP.BOT_CLASSES`) and pick a new class each life.
 
 ## Pieces
 
@@ -45,6 +74,8 @@ Touch screens get extra buttons for TACTICAL, STREAK and SCORE.
 | `workers/coop-worker.js` | Routes: `POST /pvp/rooms`, `GET /pvp/rooms`, `POST /pvp/matchmake {playlist}`, `/pvp/<code>/ws`, `/pvp/<code>/state`. |
 | `workers/lobby-directory.js` | The same open-room directory as co-op, under the name `pvp-directory`. PvP entries hold up to 16 players and carry their playlist. |
 | `js/pvp/pvp-net.js` | Transports. `PvpNet.local(opts)` runs the sim in this browser; `PvpNet.online(code, who)` connects over a WebSocket. The client code is the same either way. |
+| `js/arena/arena-pvp-audio.js` | `AR.PvpAudio`: other players' sounds placed in the world (gunfire, close rounds, footsteps, pain, death, melee) and the flat cues for scoring, captures, medals and kill confirms. |
+| `js/input-glyphs.js` | `Glyph`: button prompts for the device in hand, and the BUTTON PROMPTS setting. |
 | `js/arena/arena-pvp.js` | `AR.PvpMission` stands in for `AR.Mission` during a match, and `AR.Pvp` is what `arena-player` calls. It covers remote avatars with 100 ms interpolation, items, streaks, projectiles, smoke and objectives, and the HUD: score bar, kill feed, minimap, streaks, respawn screen with class change, killcam, scoreboard, flash, stun and blackout, the host's lines, and the results screen with the podium. |
 | `js/pvp/pvp-progress.js` | `SAVE.pvp`: level, prestige, weapon XP, camos, classes, stats and the daily GigaTech cap. Cloud saves sync it with the rest of the save. |
 | `js/pvp/pvp-menu.js` | The GigaLeague menu. |

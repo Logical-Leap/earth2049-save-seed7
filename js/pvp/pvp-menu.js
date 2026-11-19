@@ -19,6 +19,8 @@
   #pvpMenu button:hover,#pvpMenu button:focus{border-color:#ffd400;color:#ffd400;outline:none}
   #pvpMenu button.on{background:#ffd400;color:#111;border-color:#ffd400}#pvpMenu button.go{background:#ff2bd6;border-color:#ff2bd6;color:#fff;font-weight:bold}
   #pvpMenu button:disabled{opacity:.35;cursor:default}
+  #pvpMenu .ctl{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:4px 14px;font-size:12px;margin:4px 0 6px}
+  #pvpMenu .ctl span{white-space:nowrap}
   #pvpMenu button.big{display:block;width:100%;padding:16px;font-size:18px;letter-spacing:.2em;margin:6px 0 4px}
   #pvpMenu .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
   #pvpMenu .card{background:rgba(20,15,40,.78);border:1px solid rgba(255,255,255,.12);padding:12px 14px}
@@ -55,6 +57,16 @@
     render();
   }
   function close() { ov?.classList.remove('on'); onClose?.(); }
+  addEventListener('keydown', e => {
+    if (e.key !== 'Escape' || !isOpen()) return;
+    const a = document.activeElement;
+    if (a && ov.contains(a) && (a.tagName === 'INPUT' || a.tagName === 'SELECT')) { a.blur(); return; }
+    e.preventDefault();
+    if (editing !== null) { editing = null; render(); return; }
+    ov.querySelector('[data-act="close"]')?.click();
+  });
+  // the button prompts follow the device: re-draw the controls card when it changes
+  root.Glyph?.onChange(() => { if (!isOpen()) return; const c = ov.querySelector('.controls'); if (c) render(); });
   const isOpen = () => !!ov?.classList.contains('on');
 
   function render() {
@@ -76,6 +88,14 @@
   function modeOptions(sel) { return PVP.MODE_ORDER.map(m => `<option value="${m}" ${m === sel ? 'selected' : ''}>${clean(PVP.MODES[m].name)} — ${PVP.PLAYLISTS[PVP.MODES[m].playlist].name}</option>`).join(''); }
   function mapOptions(sel) { return PVP.MAP_ORDER.map(m => `<option value="${m}" ${m === sel ? 'selected' : ''}>${PVP.MAPS[m].name} — ${PVP.MAPS[m].region}</option>`).join(''); }
   function classOptions(sel) { return PvpProgress.classes().map((c, i) => `<option value="${i}" ${i === sel ? 'selected' : ''}>${esc(c.name)}${c.premade ? '' : ' (CUSTOM)'}</option>`).join(''); }
+  /** The controls, in the buttons of whatever the player is holding (js/input-glyphs.js). */
+  function controlsHtml() {
+    const g = a => (root.Glyph ? Glyph.act(a, 'pvp') : '[' + a + ']');
+    const rows = [['fire', 'FIRE'], ['ads', 'AIM'], ['reload', 'RELOAD'], ['use', 'HOLD: USE, PLANT, DEFUSE, PICK UP'], ['swap', 'SWAP WEAPON'], ['lethal', 'LETHAL'], ['tactical', 'TACTICAL'],
+      ['melee', 'MELEE'], ['jump', 'JUMP'], ['crouch', 'CROUCH / SLIDE'], ['sprint', 'SPRINT'], ['streak1', 'STREAK 1'], ['streak2', 'STREAK 2'], ['streak3', 'STREAK 3'], ['score', 'SCOREBOARD (HOLD)'], ['pause', 'PAUSE / CHANGE CLASS']];
+    return `<div class="ctl">${rows.map(([a, n]) => `<span>${g(a)} ${n}</span>`).join('')}</div>
+      <p class="hint">Dead: ${g('classPrev')} ${g('classNext')} change class for the next life, ${g('skip')} skip the killcam.</p>`;
+  }
   function renderPlay(body) {
     body.innerHTML = `<div class="grid">
       <div class="card"><h3>QUICK MATCH</h3><p>One button: you drop into the best open match, or a new one starts with bots in every empty slot, so there is always a game. No codes, no room names.</p>
@@ -90,11 +110,13 @@
         <div class="row"><button data-act="host">HOST PRIVATE</button><button data-act="hostPublic">HOST PUBLIC</button></div>
         <label>JOIN BY CODE</label><div class="row"><input data-k="code" maxlength="6" placeholder="ABCDE" style="flex:1;text-transform:uppercase"><button data-act="join">JOIN</button></div></div>
       <div class="card"><h3>OPEN ROOMS</h3><div class="rooms hint">Loading…</div><button data-act="refresh" style="margin-top:8px">REFRESH</button></div></div>
-      <p class="hint" style="margin-top:14px">Controls: [3] [4] [5] scorestreaks // [Q] tactical // [G] lethal // [F] melee // [E] use, plant, defuse // [TAB] scoreboard // [SPACE] skip the killcam. Controller: D-pad up tactical, D-pad down streak.</p>`;
+      <div class="card controls" style="margin-top:12px"><h3>CONTROLS</h3>${controlsHtml()}
+        <div class="row" style="margin-top:8px;align-items:center"><span class="hint" style="margin:0">BUTTON PROMPTS</span><button data-act="prompts">${root.Glyph ? Glyph.prefLabel() : 'AUTO'}</button><span class="hint" style="margin:0">AUTO follows whatever you touched last.</span></div></div>`;
     body.querySelectorAll('select[data-k]').forEach(s => s.onchange = () => { st[s.dataset.k] = s.dataset.k === 'cls' ? +s.value : s.value; if (s.dataset.k === 'mode') render(); });
     body.querySelectorAll('[data-qp]').forEach(b => b.onclick = () => quickplay(b.dataset.qp));
     const act = (a, fn) => { const b = body.querySelector(`[data-act="${a}"]`); if (b) b.onclick = fn; };
     act('offline', () => startOffline());
+    act('prompts', () => { root.Glyph?.cycle(); render(); });
     act('host', () => hostRoom(false)); act('hostPublic', () => hostRoom(true));
     act('join', () => joinRoom(body.querySelector('[data-k="code"]').value));
     act('refresh', () => refreshRooms(body));
@@ -141,10 +163,21 @@
     room = { code, players: [], settings: {}, connecting: true };
     tab = 'play'; render();
   }
-  function leaveRoom() { if (T) { T.close(); T = null; room = null; chatLog = []; } }
+  function leaveRoom() { if (T) { T.close(); T = null; room = null; chatLog = []; voteEnd = 0; } }
+  let voteEnd = 0;
+  const voteLeft = () => Math.max(0, voteEnd ? (voteEnd - performance.now()) / 1000 : (room?.voteLeft || 0));
+  setInterval(() => {
+    if (!isOpen()) return;
+    const v = ov.querySelector('.voteLeft'); if (v) { const n = String(Math.ceil(voteLeft())); if (v.textContent !== n) v.textContent = n; }
+  }, 200);
   let pending = null;
   function onNet(m) {
-    if (m.t === 'room') { room = m.room; if (isOpen() && tab === 'play') render(); }
+    if (m.t === 'room') {
+      room = m.room;
+      // the server sends the seconds left only when the room changes: count down here between updates
+      if (room?.options && Number.isFinite(room.voteLeft)) voteEnd = performance.now() + room.voteLeft * 1000; else voteEnd = 0;
+      if (isOpen() && tab === 'play') render();
+    }
     if (m.t === 'chat') { chatLog.push(m); if (chatLog.length > 40) chatLog.shift(); const c = ov?.querySelector('.chat'); if (c) { c.innerHTML += `<div><b>${esc(m.from)}</b>: ${esc(m.text)}</div>`; c.scrollTop = 1e6; } }
     if (m.t === 'err' && m.m === 'host_only') status('Only the host can change that.');
     if (m.t === 'closed') { status(m.why === 'replaced' ? 'You joined from somewhere else.' : 'Lost the match server.'); T = null; room = null; if (isOpen()) render(); }
@@ -169,7 +202,7 @@
       <table>${(r.players || []).map(p => `<tr><td>${esc(p.name)}${p.host ? '<span class="tag">HOST</span>' : ''}</td><td>LV ${p.level}</td><td>${esc(p.input)}</td></tr>`).join('')}</table>
       <p class="hint">Share the code. Bots fill the empty slots and step aside when people join.</p>
       <div class="row"><button data-act="leave">LEAVE ROOM</button></div></div>
-      <div class="card"><h3>${r.options ? 'VOTE // ' + (r.voteLeft || 0) + 'S' : 'MATCH'}</h3>
+      <div class="card"><h3>${r.options ? 'VOTE // <span class="voteLeft">' + Math.ceil(voteLeft()) + '</span>S' : 'MATCH'}</h3>
       ${r.options ? `<div class="row" style="flex-direction:column;align-items:stretch">${[0, 1, 2].map(i => `<button data-vote="${i}">${opt(r.options[i], i)} // ${(r.votes || []).filter(v => v === i).length}</button>`).join('')}</div>` : ''}
       ${!r.quick ? `<label>MODE</label><select data-s="mode" ${host ? '' : 'disabled'}>${modeOptions(set.mode || st.mode)}</select><label>MAP</label><select data-s="map" ${host ? '' : 'disabled'}>${mapOptions(set.map || st.map)}</select>
       <div class="row"><div style="flex:1"><label>BOT SKILL</label><select data-s="botSkill" ${host ? '' : 'disabled'}>${Object.entries(PVP.BOT_SKILL).map(([k, v]) => `<option value="${k}" ${k === set.botSkill ? 'selected' : ''}>${v.name}</option>`).join('')}</select></div>

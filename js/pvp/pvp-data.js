@@ -120,6 +120,11 @@
     knife: { name: 'KNIFE', cls: 'melee', vis: null, fire: 'melee', rpm: 120, near: [200, 2], far: [200, 2], head: 1, pellets: 1, spread: [0, 0], mag: 1, reserve: 0, reload: 0, ads: 0.1,
       move: 1.1, stf: 0, melee: true },
   };
+  // what each gun sounds like (js/gunaudio.js). Every gun has its own voice, even where two share a model, so a player can
+  // tell by ear what is shooting at them. The local player hears the same voice, so the sound is learned by using the gun.
+  PVP.GUN_SND = { ar: 'ar', smg: 'smg', shotgun: 'shotgun', sniper: 'dmr', lmg: 'lmg', pistol: 'pistol', marksman: 'marksman', burst: 'burst', fastsmg: 'fastsmg',
+    revolver: 'revolver', launcher: 'launcher', plasma: 'energy', mgl: 'rocket', minigun: 'minigun' };
+  for (const [id, snd] of Object.entries(PVP.GUN_SND)) PVP.GUNS[id].snd = snd;
   PVP.PRIMARY_IDS = ['ar', 'smg', 'shotgun', 'sniper', 'lmg', 'marksman', 'burst', 'fastsmg'];
   PVP.SECONDARY_IDS = ['pistol', 'revolver', 'launcher'];
 
@@ -215,6 +220,26 @@
   };
   PVP.STREAK_ORDER = ['ping', 'downtime', 'dronedrop', 'broadcaster', 'sponsored', 'collab', 'gunship', 'wipe'];
   PVP.STREAK_SLOTS = 3;
+  PVP.CLASS_SWAP_WINDOW = 6;                 // seconds after spawning in which a class change applies at once (if you have not fired)
+
+  /* Medals: the pop-up rewards for doing something well. Names in the GigaLeague's voice. tier 1..6 sets the sound. */
+  PVP.MEDALS = {
+    multi2: { name: 'DOUBLE TAP', d: 'TWO KILLS, QUICK', tier: 1 }, multi3: { name: 'TRIPLE THREAT', d: 'THREE KILLS, QUICK', tier: 2 },
+    multi4: { name: 'FOUR-STACK', d: 'FOUR KILLS, QUICK', tier: 3 }, multi5: { name: 'BULK DISCOUNT', d: 'FIVE KILLS, QUICK', tier: 4 }, multi6: { name: 'ALGORITHM BREAKER', d: 'SIX OR MORE, QUICK', tier: 5 },
+    quadFeed: { name: 'QUAD FEED', d: 'THE LAST FOUR KILLS IN THE FEED ARE ALL YOURS', tier: 4 }, fullFeed: { name: 'THE WHOLE FEED', d: 'EIGHT IN A ROW IN THE FEED', tier: 6 },
+    streak5: { name: 'TRENDING', d: 'FIVE KILLS WITHOUT DYING', tier: 2 }, streak10: { name: 'GONE VIRAL', d: 'TEN KILLS WITHOUT DYING', tier: 4 },
+    streak15: { name: 'MAIN CHARACTER', d: 'FIFTEEN KILLS WITHOUT DYING', tier: 5 }, streak20: { name: 'TERMS OF SERVICE VIOLATION', d: 'TWENTY KILLS WITHOUT DYING', tier: 6 },
+    firstBlood: { name: 'FIRST BLOOD', d: 'THE FIRST KILL OF THE MATCH', tier: 2 }, head: { name: 'HEADLINE', d: 'HEADSHOT', tier: 1 },
+    longshot: { name: 'LONG-TERM PLAN', d: 'A KILL FROM FAR AWAY', tier: 1 }, revenge: { name: 'REFUND', d: 'YOU KILLED YOUR KILLER', tier: 2 },
+    endStreak: { name: 'CANCELLED', d: 'YOU ENDED THEIR STREAK', tier: 2 }, melee: { name: 'HANDS-ON SUPPORT', d: 'A MELEE KILL', tier: 1 },
+    capture: { name: 'HOSTILE TAKEOVER', d: 'YOU CAPTURED IT', tier: 2 }, defend: { name: 'GATEKEEPER', d: 'A KILL DEFENDING YOUR ZONE', tier: 1 },
+    plant: { name: 'SCHEDULED MAINTENANCE', d: 'CHARGE PLANTED', tier: 2 }, defuse: { name: 'UNSUBSCRIBED', d: 'CHARGE DEFUSED', tier: 3 },
+    flagCap: { name: 'DATA EXFILTRATED', d: 'FLAG CAPTURED', tier: 3 }, flagReturn: { name: 'CHARGEBACK', d: 'FLAG RETURNED', tier: 1 },
+    harvest: { name: 'HARVESTED', d: 'DATA DRIVE BANKED', tier: 1 }, shootDown: { name: 'AD BLOCKER', d: 'SCORESTREAK SHOT DOWN', tier: 2 },
+    influencerKill: { name: 'DEPLATFORMED', d: 'YOU TOOK DOWN THE INFLUENCER', tier: 3 },
+  };
+  PVP.MULTI_WINDOW = 4.5;                    // seconds between kills that still count as one multikill
+
   PVP.POINTS = { kill: 100, assist: 50, head: 25, endStreak: 50, longshot: 25, capture: 200, defend: 100, harvest: 100, deny: 50, hillSec: 10, plant: 250, defuse: 250,
     flagCap: 400, flagReturn: 100, flagTake: 100, ballSec: 10, shootDown: 150, firstBlood: 50, survive: 200, infect: 100, influencerKill: 200 };
 
@@ -226,6 +251,16 @@
     { name: 'SUPPORT', primary: 'smg', secondary: 'pistol', lethal: 'frag', tactical: 'vape', perks: ['dumpster', 'loyalty', 'thickskin'], att: {} },
     { name: 'BREACHER', primary: 'ar', secondary: 'pistol', lethal: 'frag', tactical: 'vape', perks: ['dumpster', 'sleight', 'noisecancel'], att: {} },
   ];
+  // Bots carry every kind of gun, a new class each life, so a match sounds (and plays) like a lobby of real players
+  // (only the RECON bots run NOISE-CANCELLING, so most bots can be heard coming, as most players can)
+  PVP.BOT_CLASSES = PVP.PREMADE.map(c => (c.name === 'RECON' ? c : Object.assign({}, c, { perks: c.perks.map(k => (k === 'noisecancel' ? 'thickskin' : k)) }))).concat([
+    { name: 'BOT SHOTGUN', primary: 'shotgun', secondary: 'pistol', lethal: 'sticky', tactical: 'vape', perks: ['dumpster', 'sleight', 'thickskin'], att: {} },
+    { name: 'BOT SNIPER', primary: 'sniper', secondary: 'pistol', lethal: 'frag', tactical: 'notify', perks: ['donottrack', 'loyalty', 'thickskin'], att: {} },
+    { name: 'BOT GUNNER', primary: 'lmg', secondary: 'pistol', lethal: 'frag', tactical: 'notify', perks: ['dumpster', 'loyalty', 'thickskin'], att: {} },
+    { name: 'BOT MARKSMAN', primary: 'marksman', secondary: 'revolver', lethal: 'frag', tactical: 'notify', perks: ['donottrack', 'sleight', 'thickskin'], att: {} },
+    { name: 'BOT BURST', primary: 'burst', secondary: 'pistol', lethal: 'sticky', tactical: 'vape', perks: ['dumpster', 'sleight', 'thickskin'], att: {} },
+    { name: 'BOT RUSHER', primary: 'fastsmg', secondary: 'revolver', lethal: 'frag', tactical: 'vape', perks: ['donottrack', 'sleight', 'thickskin'], att: {} },
+  ]);
   PVP.CUSTOM_AT = 4;            // custom classes open at this player level
   PVP.CUSTOM_SLOTS = 10;
   PVP.DEFAULT_STREAKS = ['ping', 'dronedrop', 'sponsored'];

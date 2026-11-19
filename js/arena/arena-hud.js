@@ -306,12 +306,18 @@ AR.Hud = (() => {
     }
   }
   function flash(kind) { if (kind === 'dash') dashT = 1; }
+  let lastW = null;
+  window.Glyph?.onChange(() => { if (lastW && N.other) weapon(lastW[0], lastW[1]); });
   function weapon(g, P) {
     if (!N.wname || !g) return;
+    lastW = [g, P];
     const ti = AR.Arsenal.tierInfo(g.tier || 0);
     N.wname.textContent = (g.id === 'pistol' ? '' : ti.p + ' ') + g.d.name; N.wname.style.color = ti.c; N.wtag.textContent = (g.id === 'pistol' ? '' : ti.n + ' // ') + g.d.tag;
     const o = P.guns[P.cur === 0 ? 1 : 0];
-    N.other.textContent = o ? `${AR.Pvp?.on ? '[1/2]' : '[Q]'} ${o.d.name}` : '';
+    // the swap prompt names the button in hand (js/input-glyphs.js): Q / 1-2 on keys, Y (or △) on a controller
+    const ctx = AR.Pvp?.on ? 'pvp' : 'arena';
+    N.other.innerHTML = o ? (window.Glyph ? Glyph.act('swap', ctx) + ' ' + Glyph.text(o.d.name, ctx) : `${AR.Pvp?.on ? '[1/2]' : '[Q]'} ${o.d.name}`) : '';
+    N.other._g = window.Glyph?.mode();
   }
   function toast(t, s) {
     if (!N.toast) return;
@@ -326,9 +332,11 @@ AR.Hud = (() => {
   }
   function prompt(t) {
     if (!N.prompt) return;
-    if (t && window.Pad?.active) t = t.replace('[E]', '[X]');
-    else if (t && AR.Touch?.on) t = t.replace('[E] ', 'TAP USE: ');
-    if (t) { if (N.prompt.textContent !== t) N.prompt.textContent = t; N.prompt.style.display = 'block'; } else N.prompt.style.display = 'none';
+    if (t && AR.Touch?.on && !window.Pad?.active) t = t.replace('[E] ', 'TAP USE: ');
+    // [E]-style keys become the button in hand: the keyboard key, or the controller's own label (js/input-glyphs.js)
+    const key = t ? t + '|' + (window.Glyph?.mode() || '') : '';
+    if (t) { if (N.prompt._k !== key) { N.prompt.innerHTML = window.Glyph ? Glyph.text(t, AR.Pvp?.on ? 'pvp' : 'arena') : t.replace(/[<>&]/g, ''); N.prompt._k = key; } N.prompt.style.display = 'block'; }
+    else { N.prompt.style.display = 'none'; N.prompt._k = ''; }
   }
   let subT = null;
   function say(who, text, dur) {
@@ -452,14 +460,19 @@ AR.Hud = (() => {
     ov.querySelector('#arRetry').onclick = onRetry; ov.querySelector('#arHaven').onclick = onHaven;
     ov.classList.add('on');
   }
+  /** The controls for the device in hand only: keys on keyboard, the controller's own buttons on a controller. */
+  function controlsHtml() {
+    if (!window.Glyph) return 'WASD move &middot; SPACE jump &middot; SHIFT sprint &middot; LMB fire &middot; RMB aim &middot; R reload &middot; Q swap &middot; F kick &middot; G grenade &middot; E pick up';
+    const g = a => Glyph.act(a, 'arena');
+    const rows = [['move', 'MOVE'], ['look', 'LOOK'], ['fire', 'FIRE'], ['ads', 'AIM'], ['jump', 'JUMP (AGAIN IN THE AIR)'], ['sprint', 'SPRINT'], ['crouch', 'SLIDE / CROUCH'],
+      ['reload', 'RELOAD'], ['swap', 'SWAP'], ['melee', 'KICK'], ['lethal', 'HYPE GRENADE'], ['use', 'PICK UP'], ['pause', 'PAUSE']];
+    return rows.map(([a, n]) => `<span style="display:inline-block;min-width:190px;margin:2px 6px">${g(a)} ${n}</span>`).join('');
+  }
   function pause(on, onResume, onQuit) {
     const ov = el('arPause');
     if (!on) { ov.classList.remove('on'); return; }
     ov.innerHTML = `<h1>PAUSED</h1><h2>THE STREAM IS STILL LIVE</h2>
-      <div style="font-size:12px;line-height:1.9;text-align:left;opacity:.85;text-transform:none;letter-spacing:.02em">
-      WASD move &middot; SPACE jump (again in the air) &middot; SHIFT sprint (dash with JET DASH) &middot; CTRL / C slide (while sprinting)<br>
-      LMB fire &middot; RMB aim &middot; R reload &middot; Q / wheel / 1 2 swap &middot; F kick &middot; G hype grenade &middot; E pick up<br>
-      <b>CONTROLLER</b>: LS move &middot; RS look &middot; RT fire &middot; LT aim &middot; A jump &middot; B crouch / slide &middot; X pick up / reload &middot; Y swap &middot; RB kick &middot; LB grenade &middot; L3 sprint &middot; START pause</div>
+      <div style="font-size:12px;line-height:1.9;text-align:left;opacity:.85;text-transform:none;letter-spacing:.02em">${controlsHtml()}</div>
       <div class="arbtns"><button class="arbtn y" id="arRes">RESUME</button><button class="arbtn" id="arQuit">ABANDON RUN</button></div>`;
     ov.querySelector('#arRes').onclick = onResume; ov.querySelector('#arQuit').onclick = onQuit;
     ov.classList.add('on');
