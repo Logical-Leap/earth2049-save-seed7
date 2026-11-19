@@ -351,7 +351,7 @@ AR.MAPS = {
     jumbo: { head: '$COOM +412%', live: 'THE EXCHANGE FLOOR // BLITZ TV', sub: 'NOT FINANCIAL ADVICE', dead: ['$COOM -99%', 'IT WAS NEVER MONEY'], deadOn: 'relays' },
     chatTitle: 'BLITZ TV // THE EXCHANGE FLOOR',
     areas: {
-      summon: ['floor', 'plaza', 'mint', 'pyramid'], mod1: ['plaza', 'floor'], mod2: ['plaza', 'mint'],
+      summon: ['floor', 'plaza', 'mint', 'pyramid', 'mempool'], mod1: ['plaza', 'floor', 'mempool'], mod2: ['plaza', 'mint'],
       flood: ['floor', 'plaza', 'pyramid', 'gallery', 'mint'], extract: ['vault', 'floor', 'plaza'], trickle: ['vault', 'floor'],
     },
     lines: {

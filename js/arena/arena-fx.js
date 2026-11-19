@@ -162,6 +162,11 @@ AR.Fx = (() => {
     let L = lights.find(l => l.t <= 0) || lights.reduce((a, b) => (a.t < b.t ? a : b));
     L.l.color.setHex(hex); L.l.distance = dist; L.l.position.set(x, y, z); L.i0 = intensity; L.t = life; L.t0 = life; L.l.intensity = intensity;
   }
+  /** A teleporter going off: a column of light, a ring on the floor, a burst of motes. */
+  function teleFlash(x, y, z, hex = 0x9b59ff) {
+    flash(x, y + 1, z, hex, 2.2, 0.25); shock(x, y, z, hex, 2.4, 0.4); light(x, y + 1.2, z, hex, 2.5, 9, 0.35);
+    emit(glow, x, y + 0.6, z, hex, 26, 2.2, 0.6, { up: 5 });
+  }
   /** Ground telegraph: a ring that fills toward `life`, then pops. Returns a handle. */
   function telegraph(x, y, z, radius, hex, life) {
     const g = new THREE.Group(); g.position.set(x, y + 0.05, z);
@@ -287,6 +292,6 @@ AR.Fx = (() => {
     tickTracers(dt); tickLive(dt); tickNumbers(dt, camera);
   }
 
-  return { init, dispose, tick, emit, impact, blood, gib, shell, explosion, flash, shock, light, telegraph, beam, trace, decal, number,
+  return { init, dispose, tick, emit, impact, blood, gib, shell, explosion, flash, shock, light, teleFlash, telegraph, beam, trace, decal, number,
     get glow() { return glow; }, get debris() { return debris; } };
 })();

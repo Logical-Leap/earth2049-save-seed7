@@ -10,6 +10,8 @@
     "test": "npm run qa:assets && node --test tests/*.test.js",
     "qa:pvp-feel": "node scripts/qa/pvp-feel-e2e.mjs",
     "qa:create-a-class": "node scripts/qa/create-a-class-e2e.mjs",
+    "qa:map-rework": "node scripts/qa/map-rework-e2e.mjs",
+    "maps:metrics": "node scripts/map-metrics.js",
     "test:accounts": "node --test tests/accounts-api.itest.js",
     "test:m2:browser": "node scripts/qa/m2-browser-acceptance.js",
     "predev": "node scripts/build-scene-manifest.js",

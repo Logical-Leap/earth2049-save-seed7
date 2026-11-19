@@ -176,6 +176,15 @@ AR.Sfx = (() => {
     tone(b, t, 0.08, 'square', base, base, 0.12); tone(b, t + 0.05, 0.1, 'square', base * 1.5, base * 1.5, 0.1);
     if (kind === 'chip') tone(b, t + 0.1, 0.12, 'square', base * 2, base * 2, 0.08);
   }
+  /** a teleporter: a rising shimmer with a hollow thump. With a position it is placed (someone else), without it is yours. */
+  function tele(x, y, z) {
+    if (!ok()) return;
+    const s = x === undefined ? { vol: 1, pan: 0 } : spatial(x, y, z, 45);
+    if (s.vol <= 0.01) return;
+    const b = voiceBus(0.55 * (0.3 + s.vol * 0.7), s.pan, 0.8), t = now();
+    tone(b, t, 0.35, 'sine', 140, 60, 0.7); tone(b, t, 0.5, 'triangle', 300, 2400, 0.25); tone(b, t + 0.05, 0.45, 'sine', 900, 3600, 0.12);
+    noise(b, t, 0.4, 'bandpass', 1200, 6000, 2, 0.25, 0.02);
+  }
   function explosion(x, y, z, big = 1) {
     if (!ok()) return;
     const s = spatial(x, y, z, 90);
@@ -324,7 +333,7 @@ AR.Sfx = (() => {
 
   return {
     ambience,
-    init, gun, dry: dry_, reload, hit, kill, headshot, hurt, shieldBreak, step, jump, land, dash, slide, pad, kick, pickup,
+    init, gun, dry: dry_, reload, hit, kill, headshot, hurt, shieldBreak, step, jump, land, dash, slide, pad, tele, kick, pickup,
     explosion, enemyShot, telegraph, enemyHurt, groan, relayHum, ui, heartbeat, listener, levelUp, gem, cardDeal, cardHover, cardPick,
     set enabled(v) { enabled = v; },
   };

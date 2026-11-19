@@ -336,6 +336,9 @@ AR.Player = (() => {
     // jump pads
     const pad = AR.Mission?.padAt(b.pos.x, b.pos.y, b.pos.z);
     if (pad && P.padT <= 0) launchPad(pad);
+    // teleporters: step on, come out at the other end facing its way, with your speed. Step off before it works again.
+    const tp = AR.Mission?.teleAt?.(b.pos.x, b.pos.y, b.pos.z);
+    if (tp && !P.teleLock) teleport(tp); else if (!tp) P.teleLock = false;
 
     // out of the world: back to the last safe ground
     P.safeT -= dt;
@@ -349,6 +352,16 @@ AR.Player = (() => {
       if (P.stepT <= 0) { P.stepT = 2.6; AR.Sfx.step(P.speed > 7); }
       P.bobT += dt * P.speed * 1.25;
     }
+  }
+  function teleport(tp) {
+    const b = P.body, t = tp.target, sp = Math.hypot(b.vel.x, b.vel.z);
+    AR.Fx.teleFlash?.(b.pos.x, b.pos.y, b.pos.z);
+    b.pos.set(t[0], t[1] + 0.05, t[2]);
+    if (Number.isFinite(tp.exitYaw)) { const dy = tp.exitYaw - P.yaw; P.yaw = tp.exitYaw; const c = Math.cos(dy), s = Math.sin(dy); b.vel.set(b.vel.x * c + b.vel.z * s, b.vel.y, -b.vel.x * s + b.vel.z * c); }
+    if (sp > 9) { const k = 9 / sp; b.vel.x *= k; b.vel.z *= k; }
+    P.lastSafe.copy(b.pos); P.teleLock = true; P.camY = b.pos.y; P.fovPunch += 6; addTrauma(0.08);   // the camera jumps with you (no glide)
+    AR.Sfx.tele?.(); AR.Fx.teleFlash?.(t[0], t[1], t[2]);
+    AR.Mission?.style?.('pad');
   }
   function launchPad(pad) {
     const b = P.body, t = pad.target, apex = Math.max(t[1], b.pos.y) + 2.6;

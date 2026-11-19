@@ -54,6 +54,7 @@ AR.Mission = (() => {
     M.fireMul = 1 / (1 + M.heat * 0.08);
     M.projMul = 1 + M.heat * 0.05;
     M.pads = AR.World.markers('pad');
+    M.teles = AR.World.markers('tele');
     M.extraction = AR.World.markers('extraction')[0];
     M.spawns = AR.World.markers('spawn');
     buildStage();
@@ -956,6 +957,11 @@ AR.Mission = (() => {
     for (const p of M.pads) if (Math.abs(x - p.pos[0]) < 1.0 && Math.abs(z - p.pos[2]) < 1.0 && y - p.pos[1] > -0.2 && y - p.pos[1] < 0.5) return p;
     return null;
   }
+  function teleAt(x, y, z) {
+    if (!M?.teles) return null;
+    for (const p of M.teles) if (Math.hypot(x - p.pos[0], z - p.pos[2]) < 0.9 && y - p.pos[1] > -0.3 && y - p.pos[1] < 0.8) return p;
+    return null;
+  }
   function nextBeatIn(min) {
     const b = Music.beat(); const spb = 0.5;
     let t = (1 - b.phase) * spb;
@@ -969,7 +975,7 @@ AR.Mission = (() => {
   }
 
   return {
-    start, tick, dispose, style, say, onShot, onDamage, onKill, onHurt, onDeath, nearMiss, addChips, addDrip, noteUnlock, use, padAt, waypoints, summonAround,
+    start, tick, dispose, style, say, onShot, onDamage, onKill, onHurt, onDeath, nearMiss, addChips, addDrip, noteUnlock, use, padAt, teleAt, waypoints, summonAround,
     bossPhase, bossDead, ringCrash, nextBeatIn, headline,
     dev: { act1: () => startAct1(), act2: () => startAct2(), act3: () => startAct3(), boss: () => startBoss(), extract: () => { M.phase = 'bossdead'; startExtract(); } },
     dmgMult: () => (M ? 1 + (M.rank >= 3 ? 0.1 : 0) + M.rage * 0.08 : 1),

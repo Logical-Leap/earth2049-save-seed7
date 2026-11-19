@@ -165,6 +165,7 @@ AR.PvpMission = (() => {
       case 'efire': { const e = objs.ents.get(v.id); if (e) { AR.Fx.trace(e.obj.position.x, e.obj.position.y, e.obj.position.z, v.x, v.y, v.z, 0xff3b5c, 0.08); AR.Sfx.enemyShot(e.obj.position.x, e.obj.position.y, e.obj.position.z, 'bolt'); } break; }
       case 'entdown': if (!v.quiet) { AR.Fx.explosion(v.x, v.y, v.z, 2.2); AR.Sfx.explosion(v.x, v.y, v.z, 0.8); } break;
       case 'item': break;
+      case 'tele': if (v.num !== me) { AR.Sfx.tele?.(v.x, v.y, v.z); AR.Fx.teleFlash?.(v.x, v.y, v.z); } break;
       case 'power': if (v.num === me) AR.Hud.toast(v.k === 'overshield' ? PVP.CLASSIC_PICKUPS.find(x => x.kind === 'overshield').name : PVP.CLASSIC_PICKUPS.find(x => x.kind === 'camo').name, v.k === 'overshield' ? '+100 SHIELD FOR 30 S' : 'NEARLY INVISIBLE FOR 30 S'); break;
       case 'obj': onObjEv(v); break;
       case 'round': AR.Hud.banner('ROUND ' + v.n, mode.id === 'snd' ? (v.attack === myTeam ? 'ATTACK // PLANT THE CHARGE' : 'DEFEND // STOP THE CHARGE') : 'ROUND START', 3); break;
@@ -369,7 +370,8 @@ AR.PvpMission = (() => {
     let a = b[0], c = b[b.length - 1];
     if (t <= a[0]) c = a; else if (t >= c[0]) a = c;
     else for (let i = b.length - 1; i > 0; i--) if (b[i - 1][0] <= t) { a = b[i - 1]; c = b[i]; break; }
-    const k = c[0] > a[0] ? clamp((t - a[0]) / (c[0] - a[0]), 0, 1) : 0;
+    let k = c[0] > a[0] ? clamp((t - a[0]) / (c[0] - a[0]), 0, 1) : 0;
+    if (Math.hypot(c[1] - a[1], c[3] - a[3]) > 8) k = k < 0.5 ? 0 : 1;          // a teleporter: jump, never slide across the map
     const L = (i) => a[i] + (c[i] - a[i]) * k;
     let dy = c[4] - a[4]; dy = Math.atan2(Math.sin(dy), Math.cos(dy));
     // the counters (rounds fired, melee swings) step when time passes the snapshot that raised them
@@ -1156,9 +1158,13 @@ AR.PvpMission = (() => {
     for (const m of AR.World.markers('pad')) if (Math.abs(x - m.pos[0]) < 1.0 && Math.abs(z - m.pos[2]) < 1.0 && y - m.pos[1] > -0.2 && y - m.pos[1] < 0.5) return m;
     return null;
   }
+  function teleAt(x, y, z) {
+    for (const m of AR.World.markers('tele')) if (Math.hypot(x - m.pos[0], z - m.pos[2]) < 0.9 && y - m.pos[1] > -0.3 && y - m.pos[1] < 0.8) return m;
+    return null;
+  }
   const noop = () => {};
   return {
-    start, tick, dispose, waypoints, padAt, decoratePause,
+    start, tick, dispose, waypoints, padAt, teleAt, decoratePause,
     style: noop, say: (w, t, d) => AR.Hud.say(w, t, d), onShot(g) { const k = g?.d ? Math.min(1, (g.d.dmg * (g.d.pellets || 1)) / 140) : 0.2; window.Pad?.rumble(0.08 + k * 0.5, 0.2 + k * 0.4, 45 + k * 60); if (window.VR?.active) VR.recoil(0.2 + k * 0.7); },
     onDamage: noop, onKill: noop, onHurt: noop, onDeath: noop, nearMiss: noop, addChips: noop, addDrip: noop, noteUnlock: noop, use: noop,
     summonAround: noop, bossPhase: noop, bossDead: noop, ringCrash: noop, nextBeatIn: () => 1, headline: noop, addXp: noop,

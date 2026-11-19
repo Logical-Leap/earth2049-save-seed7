@@ -1,5 +1,39 @@
 # Changelog
 
+## 2026-11-19 — Maps up to the gold standard, teleporters
+
+From the playtest: the Yield Works, the Upgrade Basilica and the Ministry of Forms are the standard for tone and play. Every other map is reworked toward them. Each map is measured against those three: how much one spot sees, how many sightlines run past 50 m, how strong the best perch is, and how much cover is in reach. All of them now land in the same range (`npm run maps:metrics`).
+
+- **Teleporters**, Boarding Action style. Step on one and you come out at its partner facing the room, with your speed.
+  - They work for you, for bots and enemies (nav link type 3), and on the match server. The server accepts the jump and tells everyone, so other players blink, they don't slide across the map.
+  - A sound and a flash play at both ends.
+- **The Living Towers.** The high ground was too strong. Now:
+  - Three two-way teleporter pairs (BLOCK 9 RIDESHARE): courtyard to top gallery, courtyard to roof, and first gallery to second gallery across the void.
+  - Giant ad banners hang through the void, and canopies cover the couch market. No perch sees the whole atrium.
+  - Cover on the roof and every gallery.
+- **Downtown.** No more ninety-metre lines.
+  - On the avenue: a jack-knifed delivery truck, GigaCorp's SMILE BOOTH, a scaffold with ad hoardings, median pylons, a news stand and the HYPE DOGS food truck.
+  - Two chicanes on the monorail deck, and billboards and a water tank on the roofs.
+  - Awnings over the shopfronts.
+- **The Parts Pit.** No longer one open bowl.
+  - A two-storey sorter around the crane's mast: fight through it on the floor, or cross the catwalks to its upper room.
+  - Stacks of scrap bales.
+  - Three pod barns on the first terrace, with lofts on the rim.
+- **The Web.** The empty yard is now buildings:
+  - the dispatch dock;
+  - three walled paint booths;
+  - the charging barn;
+  - rack aisles in front of the Loop.
+  Server towers rise out of the sump, containers stand at the pit corners, and two teleporter pairs cross the yard.
+- **The $COOM Pyramid.**
+  - Its base is hollow: four corridors meet in the Mempool, a gold chamber under the second tier.
+  - Steps up the back face.
+  - A mint house around the rigs, plus ticker pylons, airdrop boards and cover.
+- **Pier Zero:** floating containers in the channels.
+- **Engagement Plaza:** selfie booths, ad totems, speaker stacks, camera towers, mezzanine kiosks and VIP hoardings.
+- Every reworked map plays start to finish in the campaign, and runs an offline GigaLeague match with bots.
+- Tests: `tests/map-rework.test.js`, plus teleporter checks in `tests/district-maps.test.js`. Browser check: `npm run qa:map-rework`.
+
 ## 2026-11-19 — GigaLeague playtest 2
 
 - **Suppressors really suppress.** A suppressed gun has its own sound: a muffled puff and the action's metal clack instead of the crack and boom. You hear it on your own gun. Other players hear it only within about 26 m, never across the map. The muzzle flash is much smaller, bots only notice it up close, and it stays off the enemy minimap.

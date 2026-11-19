@@ -85,6 +85,21 @@ for (const m of Object.values(AR.MAPS)) {
     }
   });
 
+  test(`${m.id}: teleporters come out on open floor, on the nav, off any pad, with a nav link`, () => {
+    const L = layout(m), { nodes, edges } = L.meta.nav, tp = L.markers.filter(x => x.kind === 'tele');
+    const nearest = p => { let b = -1, bd = 1e9; nodes.forEach((n, i) => { const d = Math.hypot(n[0] - p[0], (n[1] - p[1]) * 3, n[2] - p[2]); if (d < bd) { bd = d; b = i; } }); return [b, bd]; };
+    for (const t of tp) {
+      assert.ok(Array.isArray(t.target) && Number.isFinite(t.exitYaw), t.name + ' target and facing');
+      const [a, da] = nearest(t.pos), [b, db] = nearest(t.target);
+      assert.ok(da < 1.8 && db < 1.8, `${t.name}: pad ${da.toFixed(1)} m, exit ${db.toFixed(1)} m from the nav`);
+      assert.ok(edges.some(e => e[0] === a && e[1] === b && e[2] === 3), t.name + ' has its teleporter link');
+      for (const o of tp) assert.ok(Math.hypot(o.pos[0] - t.target[0], o.pos[2] - t.target[2]) > 1.6 || Math.abs(o.pos[1] - t.target[1]) > 1, `${t.name} comes out on ${o.name}`);
+      const y = t.target[1];
+      const inside = L.colliders.find(c => c.min[0] < t.target[0] + 0.4 && c.max[0] > t.target[0] - 0.4 && c.min[2] < t.target[2] + 0.4 && c.max[2] > t.target[2] - 0.4 && c.min[1] < y + 1.7 && c.max[1] > y + 0.3);
+      assert.ok(!inside, `${t.name} comes out inside ${inside?.name}`);
+    }
+  });
+
   test(`${m.id}: the words for every beat`, () => {
     for (const k of ['load', 'place', 'region', 'title', 'act1Obj', 'act2Obj', 'act3Obj', 'relayWord', 'chatTitle', 'lostTitle', 'lostSub']) assert.equal(typeof m[k], 'string', k);
     for (const k of ['act1', 'act2', 'act3']) assert.equal(m[k].length, 2, k);

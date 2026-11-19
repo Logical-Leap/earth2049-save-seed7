@@ -258,7 +258,8 @@ AR.World = (() => {
     src.nodes.forEach((p, i) => pos.set(p, i * 3));
     const out = Array.from({ length: n }, () => []), inn = Array.from({ length: n }, () => []);
     const add = (a, b, type) => {
-      const w = Math.hypot(pos[b * 3] - pos[a * 3], pos[b * 3 + 1] - pos[a * 3 + 1], pos[b * 3 + 2] - pos[a * 3 + 2]) * (type === 2 ? 0.6 : type === 1 ? 1.3 : 1);
+      let w = Math.hypot(pos[b * 3] - pos[a * 3], pos[b * 3 + 1] - pos[a * 3 + 1], pos[b * 3 + 2] - pos[a * 3 + 2]) * (type === 2 ? 0.6 : type === 1 ? 1.3 : 1);
+      if (type === 3) w = 1.5;                                  // teleporter: a step, wherever it goes
       out[a].push([b, w, type]); inn[b].push([a, w, type]);
     };
     for (const [a, b, t] of src.edges) { add(a, b, t); if (t === 0) add(b, a, 0); }

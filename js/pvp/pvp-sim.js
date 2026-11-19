@@ -51,6 +51,7 @@
       relays: mk('relay').map(m => [r2(m.pos[0]), r2(m.pos[1]), r2(m.pos[2])]),
       perches: mk('perch').map(m => [r2(m.pos[0]), r2(m.pos[1]), r2(m.pos[2])]),
       pads: mk('pad').map(m => [r2(m.pos[0]), r2(m.pos[1]), r2(m.pos[2]), r2(m.target[0]), r2(m.target[1]), r2(m.target[2])]),
+      teles: mk('tele').map(m => [r2(m.pos[0]), r2(m.pos[1]), r2(m.pos[2]), r2(m.target[0]), r2(m.target[1]), r2(m.target[2])]),
       start: st ? [r2(st.pos[0]), r2(st.pos[1]), r2(st.pos[2]), r2(st.yaw || 0)] : [0, 0, 0, 0],
       extraction: (mk('extraction')[0]?.pos || [0, 0, 0]).map(r2),
       nav: nav ? { nodes: nav.nodes.map(p => [Math.round(p[0] * 10) / 10, Math.round(p[1] * 10) / 10, Math.round(p[2] * 10) / 10]), edges: nav.edges.map(e => [e[0], e[1], e[2] | 0]) } : null,
@@ -132,7 +133,7 @@
       const n = src.nodes.length, pos = new Float32Array(n * 3);
       src.nodes.forEach((p, i) => pos.set(p, i * 3));
       const out = Array.from({ length: n }, () => []);
-      const add = (a, b, t) => { const w = Math.hypot(pos[b * 3] - pos[a * 3], pos[b * 3 + 1] - pos[a * 3 + 1], pos[b * 3 + 2] - pos[a * 3 + 2]) * (t === 2 ? 0.6 : t === 1 ? 1.3 : 1); out[a].push(b, w, t); };
+      const add = (a, b, t) => { const w = t === 3 ? 1.5 : Math.hypot(pos[b * 3] - pos[a * 3], pos[b * 3 + 1] - pos[a * 3 + 1], pos[b * 3 + 2] - pos[a * 3 + 2]) * (t === 2 ? 0.6 : t === 1 ? 1.3 : 1); out[a].push(b, w, t); };
       for (const [a, b, t] of src.edges) { if (a >= n || b >= n) continue; add(a, b, t); if (t === 0) add(b, a, 0); }
       const hash = new Map();
       for (let i = 0; i < n; i++) { const k = Math.round(pos[i * 3] / 2) * 4096 + Math.round(pos[i * 3 + 2] / 2); let a = hash.get(k); if (!a) hash.set(k, a = []); a.push(i); }
@@ -316,6 +317,7 @@
       uniq.sort((p, q) => Math.hypot(p[0] - this.mid[0], p[2] - this.mid[2]) - Math.hypot(q[0] - this.mid[0], q[2] - this.mid[2]));
       this.itemSpots = uniq;
       this.pads = src.pads;
+      this.teles = src.teles || [];
     }
 
     /* ------------------------------------------------ messaging */
@@ -491,8 +493,10 @@
       const dh = Math.hypot(P[0] - p.pos[0], P[2] - p.pos[2]);
       const stun = p.stunUntil > this.now ? 0.6 : 1;
       const maxH = (PVP.MAX_HSPEED * stun) * dt + 1.2;
-      let bad = dh > maxH || P[0] < b.min[0] - 2 || P[0] > b.max[0] + 2 || P[2] < b.min[2] - 2 || P[2] > b.max[2] + 2 || P[1] > b.max[1] + 12;
-      if (!bad && dh > 0.05) {                                         // no walking through walls: test the move at knee and chest height
+      // a teleporter: the move from its pad to its exit is legal, however far (and no wall test between them)
+      const tele = dh > maxH && this.teleMove(p.pos, P);
+      let bad = !tele && dh > maxH || P[0] < b.min[0] - 2 || P[0] > b.max[0] + 2 || P[2] < b.min[2] - 2 || P[2] > b.max[2] + 2 || P[1] > b.max[1] + 12;
+      if (!bad && !tele && dh > 0.05) {                                // no walking through walls: test the move at knee and chest height
         const dx = (P[0] - p.pos[0]) / dh, dz = (P[2] - p.pos[2]) / dh;
         for (const y of [0.7, 1.3]) { const hit = W.raycast(p.pos[0], Math.max(p.pos[1], P[1]) + y, p.pos[2], dx, 0, dz, dh); if (hit && hit.t < dh - 0.45) { bad = true; break; } }
       }
@@ -502,10 +506,18 @@
         return;
       }
       if (P[1] < Math.min(-12, b.min[1] - 6)) { this.kill(p, null, { w: 'fall' }); return; }
+      if (tele) this.all({ e: 'tele', num: p.num, x: r2(P[0]), y: r2(P[1]), z: r2(P[2]) });
       p.pos = P; p.vel = Array.isArray(m.v) ? m.v.map(v => clamp(Number(v) || 0, -60, 60)) : [0, 0, 0];
       p.yaw = Number(m.yaw) || 0; p.pitch = clamp(Number(m.pitch) || 0, -1.6, 1.6); p.fl = m.fl | 0;
       if (Number.isInteger(m.w) && p.weapons[m.w]) p.cur = m.w;
       if (p.fl & 2 && this.playlist !== 'classic') p.fl &= ~2 | 0;
+    }
+    /** a move from a teleporter pad to its exit (with room for the frames either side of the jump) */
+    teleMove(a, b) {
+      for (const t of this.teles) {
+        if (Math.hypot(a[0] - t[0], a[2] - t[2]) < 2.6 && Math.abs(a[1] - t[1]) < 1.6 && Math.hypot(b[0] - t[3], b[2] - t[5]) < 3.2 && Math.abs(b[1] - t[4]) < 1.8) return true;
+      }
+      return false;
     }
     onFire(id, m) {
       const p = this.players.get(id); if (!p || !p.alive || this.state === 'pregame' && this.mode.rounds) return;
@@ -1351,7 +1363,9 @@
         if (B.path && B.pi < B.path.length) {
           const n = W.node(B.path[B.pi]);
           const dx = n[0] - p.pos[0], dz = n[2] - p.pos[2], d = Math.hypot(dx, dz);
-          if (d < 0.7 && Math.abs(n[1] - p.pos[1]) < 2.2) B.pi++;
+          const et = B.pi > 0 ? W.edgeType(B.path[B.pi - 1], B.path[B.pi]) : 0;
+          if (et === 3) { p.pos = [n[0], n[1], n[2]]; B.pi++; B.edgeT = 0; this.all({ e: 'tele', num: p.num, x: r2(n[0]), y: r2(n[1]), z: r2(n[2]) }); }   // through a teleporter
+          else if (d < 0.7 && Math.abs(n[1] - p.pos[1]) < 2.2) B.pi++;
           else { mvx = dx / d; mvz = dz / d; B.edgeT = B.pi > 0 ? W.edgeType(B.path[B.pi - 1], B.path[B.pi]) : 0; B.edgeY = n[1]; }
         } else if (Math.hypot(goal[0] - p.pos[0], goal[2] - p.pos[2]) > 0.8) { const dx = goal[0] - p.pos[0], dz = goal[2] - p.pos[2], d = Math.hypot(dx, dz); mvx = dx / d; mvz = dz / d; }
         if (!T || B.seen <= 0.05) p.yaw = this.turn(p.yaw, Math.atan2(-mvx, -mvz), dt * 6);

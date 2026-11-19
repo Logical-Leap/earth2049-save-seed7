@@ -360,6 +360,16 @@ AR.Enemies = (() => {
     if (nx < 0) return out.set(pp.x, pp.y, pp.z);
     AR.World.nodePos(nx, out);
     const dd = Math.hypot(out.x - b.pos.x, out.z - b.pos.z);
+    // teleporter edge: step onto the pad node, come out at the exit
+    if (nav.nextType[e.node] === 3) {
+      const here = AR.World.nodePos(e.node, _w);
+      if (Math.hypot(here.x - b.pos.x, here.z - b.pos.z) < 1.0 && Math.abs(here.y - b.pos.y) < 1) {
+        AR.Fx.teleFlash?.(b.pos.x, b.pos.y, b.pos.z); b.pos.set(out.x, out.y + 0.05, out.z); b.vel.set(0, 0, 0);
+        AR.Fx.teleFlash?.(out.x, out.y, out.z); AR.Sfx.tele?.(out.x, out.y, out.z); e.node = nx; e.nodeT = 0.6;
+        return out;
+      }
+      return out.copy(here);
+    }
     // jump pad edge: launch when standing on the pad node
     if (nav.nextType[e.node] === 2 && dd > 3 && b.onGround) {
       const here = AR.World.nodePos(e.node, _w);
